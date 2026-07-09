@@ -1,0 +1,43 @@
+"""PreCompact: compact 직전, 트랜스크립트를 파싱해 handover.md에
+자동 항목을 확정적으로 기록한다 (모델 의존 없음). 절대 compact를
+막지 않는다 — 어떤 경우에도 exit 0.
+"""
+import os
+import sys
+from datetime import datetime
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _common
+
+
+def main(payload):
+    cwd = payload.get("cwd", "")
+    if not _common.project_gate(cwd):
+        return
+    transcript = payload.get("transcript_path", "")
+    prompts, edited = _common.parse_transcript(transcript) if transcript else ([], [])
+
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    trigger = payload.get("trigger", "auto")
+    sid = str(payload.get("session_id", ""))[:8]
+
+    lines = [f"## {now} ({trigger} compact 직전, session {sid})", ""]
+    if prompts:
+        lines.append("- 사용자 요청(최근):")
+        lines += [f"  - {p}" for p in prompts]
+    if edited:
+        lines.append("- 수정 파일:")
+        lines += [f"  - `{fp}`" for fp in edited[:15]]
+        if len(edited) > 15:
+            lines.append(f"  - …외 {len(edited) - 15}개")
+    if not prompts and not edited:
+        lines.append("- (트랜스크립트에서 추출된 내용 없음)")
+    lines += ["", f"⚠️ 자동 생성({trigger} compact) — 세션이 이어지면 이 항목을 다듬어 주세요."]
+
+    handover = os.path.join(cwd, "handover.md")
+    _common.prepend_entry(handover, "\n".join(lines))
+    _common.rotate(handover)
+
+
+if __name__ == "__main__":
+    _common.run(main)

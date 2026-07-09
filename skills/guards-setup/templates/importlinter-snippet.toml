@@ -1,0 +1,23 @@
+# vibe-check: pyproject.toml에 병합할 import-linter 설정 (d-2)
+# 레이어는 예시다 — 설치 시 CLAUDE.md 폴더 지도에서 실제 레이어를
+# 추론해 사용자와 확인한 뒤 채울 것.
+# 실행: lint-imports  (pip install import-linter)
+
+[tool.importlinter]
+root_package = "{package_name}"
+
+[[tool.importlinter.contracts]]
+name = "레이어 방향 강제 (위가 아래를 쓰고, 아래는 위를 모른다)"
+type = "layers"
+layers = [
+  "{package_name}.routers",
+  "{package_name}.services",
+  "{package_name}.core",
+]
+
+[[tool.importlinter.contracts]]
+name = "순환 의존 금지"
+type = "independence"
+modules = [
+  # 서로 import하면 안 되는 형제 모듈들을 나열
+]

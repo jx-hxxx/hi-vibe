@@ -1,0 +1,12 @@
+# vibe-check: pyproject.toml에 병합할 mypy 설정 (d-1: 타입 strict)
+# 입문자 프로젝트에는 단계 적용을 제안: 먼저 아래 3개만 켜고,
+# 익숙해지면 strict = true로 승격.
+
+[tool.mypy]
+# 1단계 (권장 시작점)
+check_untyped_defs = true
+no_implicit_optional = true
+warn_unused_ignores = true
+
+# 2단계 (준비되면 주석 해제)
+# strict = true

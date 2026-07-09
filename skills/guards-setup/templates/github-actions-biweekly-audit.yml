@@ -1,0 +1,113 @@
+# ──────────────────────────────────────────────────────────────
+# vibe-check 격주 구조 감사
+# ──────────────────────────────────────────────────────────────
+# 매월 1일·15일에 CI에서 Claude Code가 저장소 구조를 감사하고
+# 결과를 GitHub 이슈로 올립니다. 직전 감사(audit/* 태그) 이후
+# 코드 변경이 없으면(문서 제외) 실행하지 않습니다.
+#
+# 설치 준비 (README의 안내 참고):
+#   1. 로컬에서 `claude setup-token` 실행 → 구독 OAuth 토큰 생성
+#      → 저장소 Settings > Secrets and variables > Actions에
+#        CLAUDE_CODE_OAUTH_TOKEN 으로 등록
+#   2. Settings > Actions > General > Workflow permissions를
+#      "Read and write permissions"로 설정
+# ──────────────────────────────────────────────────────────────
+name: vibe-check biweekly audit
+
+on:
+  schedule:
+    - cron: '0 9 1,15 * *'
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: '변경 없어도 강제 실행'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_audit: ${{ steps.detect.outputs.should_audit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: 직전 감사 이후 코드 변경 감지 (문서 제외)
+        id: detect
+        run: |
+          if [ "${{ inputs.force_run }}" = "true" ]; then
+            echo "should_audit=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          LAST_AUDIT=$(git tag -l 'audit/*' --sort=-creatordate | head -1)
+          if [ -z "$LAST_AUDIT" ]; then
+            echo "should_audit=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          CHANGED=$(git diff --name-only "$LAST_AUDIT"..HEAD -- '.' \
+            ':!*.md' ':!*.txt' ':!*.rst' ':!docs/**' ':!LICENSE*' \
+            ':!.gitignore' ':!.gitattributes' | wc -l | tr -d ' ')
+          echo "changed=$CHANGED"
+          if [ "$CHANGED" -eq 0 ]; then
+            echo "should_audit=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_audit=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  audit:
+    needs: check-changes
+    if: needs.check-changes.outputs.should_audit == 'true'
+    runs-on: ubuntu-latest
+    env:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Claude Code 설치
+        run: npm install -g @anthropic-ai/claude-code
+      - name: vibe-check 플러그인 설치
+        run: |
+          claude plugin marketplace add jx-hxxx/vibe-check
+          claude plugin install vibe-check@vibe-check-marketplace
+      - name: 토큰 확인
+        run: |
+          if [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN secret이 없습니다. 'claude setup-token'으로 만들어 등록하세요."
+            exit 1
+          fi
+      - name: 구조 감사 실행
+        run: |
+          # 구독 인증을 쓰기 위해 API 키 변수 제거 (있으면 API 인증이 우선됨)
+          unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN
+          claude \
+            --permission-mode acceptEdits \
+            --max-turns 40 \
+            -p "
+          /vibe-check:audit 를 실행해 저장소 전체를 스캔한 뒤,
+          write-gate post-write 체크리스트 관점(중복/죽은 코드 후보/
+          비대 파일/순환 의존/문서 동기화)으로 구조 감사 보고서를
+          작성해 저장소 루트의 STRUCTURE_AUDIT.md 에 저장하세요.
+          모든 지적에 file:line 근거를 붙이고, repo-xray 계약대로
+          스캔 범위를 명시하세요. 전면 재작성 제안은 금지.
+          " || true
+          if [ ! -s STRUCTURE_AUDIT.md ]; then
+            echo "::error::STRUCTURE_AUDIT.md가 생성되지 않았습니다."
+            exit 1
+          fi
+      - name: 감사 태그 + 이슈 게시
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          git tag "audit/$DATE-$(date +%H%M)" && git push origin --tags
+          gh issue create \
+            --title "vibe-check 구조 감사: $DATE" \
+            --body-file STRUCTURE_AUDIT.md

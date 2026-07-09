@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "check:cycles": "dpdm --no-warning --no-tree --exit-code circular:1 src"
+  },
+  "devDependencies": {
+    "dpdm": "^3.14.0"
+  }
+}

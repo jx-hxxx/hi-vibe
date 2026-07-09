@@ -1,0 +1,37 @@
+# vibe-check guards: push/PR마다 기계 게이트 실행 (d-2, d-3)
+# 설치 시 프로젝트 언어에 맞는 job만 남길 것.
+name: vibe-guards
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python-guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff mypy import-linter
+      - name: ruff (복잡도·미사용 코드)
+        run: ruff check .
+      - name: mypy (타입)
+        run: mypy .
+      - name: import-linter (레이어·순환)
+        run: lint-imports
+
+  js-guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - name: eslint (복잡도·중첩·갓펑션)
+        run: npx eslint .
+      - name: 순환 의존
+        run: npm run check:cycles

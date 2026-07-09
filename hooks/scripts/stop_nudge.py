@@ -1,0 +1,47 @@
+"""Stop: 이번 세션에 실질 코드 변경이 있었는데 CHANGELOG.md가 안
+갱신됐으면 사용자에게 한 번만 알린다. 절대 턴을 막지(block) 않는다 —
+잔소리 훅은 플러그인 삭제로 이어지는 지름길이다.
+"""
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _common
+
+DOC_SUFFIXES = (".md", ".txt", ".rst")
+
+
+def main(payload):
+    cwd = payload.get("cwd", "")
+    if not _common.project_gate(cwd):
+        return
+    sid = str(payload.get("session_id", "unknown"))
+    flag_dir = os.path.join(cwd, ".vibe-check", "state")
+    flag = os.path.join(flag_dir, f"{sid}.nudged")
+    if os.path.isfile(flag):
+        return
+
+    transcript = payload.get("transcript_path", "")
+    if not transcript:
+        return
+    _, edited = _common.parse_transcript(transcript)
+    code_edits = [f for f in edited if not f.endswith(DOC_SUFFIXES)]
+    changelog_touched = any(os.path.basename(f) == "CHANGELOG.md" for f in edited)
+    if not code_edits or changelog_touched:
+        return
+
+    os.makedirs(flag_dir, exist_ok=True)
+    with open(flag, "w", encoding="utf-8") as f:
+        f.write("nudged\n")
+    _common.emit(
+        "Stop",
+        system_message=(
+            "vibe-check: 이번 세션에 코드 변경이 있었는데 CHANGELOG.md 기록이 "
+            "없어요. 실질적인 변경이었다면 /vibe-check:log 로 남겨두세요. "
+            "(사소한 수정이면 무시해도 됩니다 — 이 알림은 세션당 1회)"
+        ),
+    )
+
+
+if __name__ == "__main__":
+    _common.run(main)

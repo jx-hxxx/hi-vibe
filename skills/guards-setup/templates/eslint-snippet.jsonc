@@ -1,0 +1,14 @@
+// vibe-check: eslint 설정(flat config의 rules 블록)에 병합할 규칙
+// 과중첩·갓펑션을 린트가 거부하게 한다 (d-3)
+{
+  "rules": {
+    "complexity": ["warn", 10],
+    "max-depth": ["warn", 3],
+    "max-lines-per-function": ["warn", { "max": 60, "skipBlankLines": true, "skipComments": true }],
+    "max-params": ["warn", 4],
+    "no-empty": ["error", { "allowEmptyCatch": false }]
+    // TypeScript 프로젝트라면 추가:
+    // "@typescript-eslint/no-explicit-any": "error",
+    // "@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "never" }]
+  }
+}

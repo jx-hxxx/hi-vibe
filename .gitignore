@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+*.pyc
+.vibe-check/
+.repo-xray/
+node_modules/
