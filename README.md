@@ -128,18 +128,23 @@ type commands in order — **just talk normally:**
 
 ## Commands at a glance
 
-| Command | When |
-|---|---|
-| `/hi-vibe:welcome` | first time, or when unsure what to use |
-| `/hi-vibe:doctor` | right after install, or when unsure hooks are running |
-| `/hi-vibe:init` | once per project (installs the doc system) |
-| `/hi-vibe:pre-write` | **before** creating a new function/file |
-| `/hi-vibe:post-write` | **after** writing code (`--deep` = clean-eyes design review) |
-| `/hi-vibe:handover` | session-end handover |
-| `/hi-vibe:log` | record a substantive change in CHANGELOG |
-| `/hi-vibe:recall` | "why did we do it this way before?" — search the records |
-| `/hi-vibe:audit` | full structure checkup |
-| `/hi-vibe:guards` | install a linter (auto code checker) — machine blocks bad code |
+| Command | When | Fires |
+|---|---|---|
+| `/hi-vibe:welcome` | first time, or when unsure what to use | 🖐 manual |
+| `/hi-vibe:doctor` | right after install, or when unsure hooks are running | 🖐 manual |
+| `/hi-vibe:init` | once per project (installs the doc system) | 🖐 manual |
+| `/hi-vibe:pre-write` | **before** creating a new function/file | ⚡ auto |
+| `/hi-vibe:post-write` | **after** writing code (`--deep` = clean-eyes design review) | ⚡ auto |
+| `/hi-vibe:handover` | session-end handover | ⚡ auto |
+| `/hi-vibe:log` | record a substantive change in CHANGELOG | ⚡ auto |
+| `/hi-vibe:recall` | "why did we do it this way before?" — search the records | ⚡ auto |
+| `/hi-vibe:audit` | full structure checkup | 🖐 manual |
+| `/hi-vibe:guards` | install a linter (auto code checker) — machine blocks bad code | 🖐 manual |
+
+> **⚡ auto** = fires on its own from natural language ("make me…" / "done")
+> or hooks (e.g. compaction). The command is just a button for when you want
+> to be explicit.
+> **🖐 manual** = you run it when needed (install / setup / diagnosis).
 
 ## Updating (when a new version ships)
 
