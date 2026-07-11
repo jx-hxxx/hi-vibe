@@ -1,6 +1,6 @@
 {
   "name": "hi-vibe",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Vibe-coding seatbelt for Claude Code — doc automation (CLAUDE.md/MODULE.md/handover/CHANGELOG) + AI discipline (root-cause first, no unfounded claims) + machine enforcement (ruff/eslint/import cycles).",
   "author": {
     "name": "jx-hxxx"
