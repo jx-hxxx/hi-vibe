@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-07-11
+
+### Changed
+- **welcome 대폭 간소화**: 기존 welcome이 문서 4종 표 + 명령어 전체 목록 + 훅 세부를 다 쏟아내 "첫인상부터 부담"이던 문제. 이제 👋 인사 + hi-vibe 한 줄 소개 + 할 일 하나(새 프로젝트면 init, 그다음 평소처럼) + README 링크(github.com/jx-hxxx/hi-vibe)로 몇 줄만. 자세한 건 README로 위임. docs-keeper welcome 모드 + welcome 커맨드 양쪽 지침 수정.
+
 ## [0.3.3] - 2026-07-11
 
 ### Changed

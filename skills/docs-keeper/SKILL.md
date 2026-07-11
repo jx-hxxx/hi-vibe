@@ -130,14 +130,27 @@ Rotation: if the file has more than 20 entries, move the older half to
 
 ## Mode: welcome
 
-Open with a warm one-line greeting that starts with 👋, in the user's
-language (Korean "👋 안녕하세요, hi-vibe예요!" / English "👋 Hi, I'm
-hi-vibe!"). Then explain — **in the user's language**, kindly and
-briefly: the 4 documents table above, the command map (init → 평소엔
-pre-write/post-write → 세션 끝 handover → 변경 후 log → 과거가 궁금하면
-recall → 가끔 audit/guards/doctor), and that hooks auto-record handover
-before every compact. If CLAUDE.md or handover.md is missing here,
-offer `/hi-vibe:init`.
+**Keep it SHORT — a greeting, not a manual.** A wall of text (the full
+docs table, every command, hook internals) overwhelms a first-time user
+and defeats the point. Do NOT dump those. Just, in the **user's
+language** (Korean if they speak Korean, English if English), a few
+lines:
+
+1. A warm one-line 👋 greeting (Korean "👋 안녕하세요, hi-vibe예요!" /
+   English "👋 Hi, I'm hi-vibe!").
+2. One line on what hi-vibe is — a **vibe-coding seatbelt**: keeps the
+   repo clean (memory, discipline, machine guards) while you code with AI.
+3. The **one** thing to do now — e.g. Korean "새 프로젝트면
+   `/hi-vibe:init` 한 번, 그 다음엔 평소처럼 코딩하면 나머진 알아서
+   돌아가요" / English "run `/hi-vibe:init` once in a new project, then
+   just code — the rest runs on its own."
+4. For anything more, point to the README:
+   **https://github.com/jx-hxxx/hi-vibe** — "자세한 건 여기 README를
+   읽어보세요" / "see the README there for details."
+
+If this project has no CLAUDE.md or handover.md, offer to run
+`/hi-vibe:init`. That's the whole welcome — do not expand it into
+tables or command lists.
 
 ## Doc-sync contract (applies everywhere)
 
