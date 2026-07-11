@@ -1,9 +1,9 @@
 ---
 name: repo-xray
 description: >-
-  Evidence-based repository structure analysis for Python and JavaScript
-  projects. Runs a bundled scanner script and answers only from its JSON
-  output — never from guessing. Use this skill whenever the user asks about
+  Evidence-based repository structure analysis for Python and
+  JavaScript/TypeScript (js/jsx/ts/tsx) projects. Runs a bundled scanner
+  script and answers only from its JSON output — never from guessing. Use this skill whenever the user asks about
   duplicate code, unused/dead code, "does function X already exist?",
   cleaning up or refactoring the codebase, oversized files, or repo
   structure health — including Korean phrasings like "중복 코드 찾아줘",
@@ -66,21 +66,38 @@ The scanner counts name references across all scanned text files. That
 means dynamic uses are invisible to it — and you must say so instead of
 pretending certainty:
 
-- `dead_candidates` means "no reference found in the scanned files",
+- `dead_candidates` means "no reference found in the scanned CODE files",
   never "safe to delete". Check each candidate's `decorated` flag:
   decorated Python functions are usually route handlers or hooks that
   frameworks call by registration, not by name — do not suggest deleting
   those; at most mention they *look* unreferenced.
+- Doc mentions don't rescue: a name that appears only in `.md`/`.css`
+  files stays a dead candidate, with those files listed in
+  `doc_mentions`. If the user deletes the code, remind them to fix the
+  listed docs in the same turn (docs-keeper contract).
 - Names built dynamically (`getattr`, string keys, template strings,
   event names in HTML attributes outside scanned files) will not show up
   as references. When recommending deletion, always phrase it as "the
   scan found no references in N files — worth double-checking X before
   removing".
-- `duplicate_functions` matches identical logic (same AST, name
-  ignored). These are strong evidence — safe to present as real
-  duplicates.
+- `duplicate_functions` matches identical logic (same AST with function
+  name AND local variable names normalized away). These are strong
+  evidence — safe to present as real duplicates.
+- `near_duplicate_functions` are pairs ≥90% similar after the same
+  normalization — the typical AI failure of re-implementing something
+  "almost the same". WEAKER evidence: read both functions before
+  claiming duplication; present as "비슷한 구현 의심 — 두 함수를 같이
+  보세요", never as a verdict.
+- JS/TS symbol extraction is regex-based (no parser): class methods and
+  exotic declaration forms may be missed. Say so when a TS-heavy repo
+  question depends on completeness.
 - For absence answers, quote the scan range from the JSON:
   "backend/frontend의 N개 파일을 스캔했는데 없었어요" — not "없어요".
+
+Before presenting any dead/duplicate/collision finding, screen it against
+`references/false-positive-index.md` — known ways this scanner gets
+fooled, each with the softer phrasing to use. Translate matches into
+plain Korean reasons; don't cite FP ids unless asked for proof.
 
 Full field-by-field JSON guide: read `references/report-format.md` when
 you need to interpret a field not covered above.
@@ -98,4 +115,6 @@ Expand raw JSON only when the user asks for proof or detail.
 - about to state a count without a scan in this session
 - about to say "없어요/no such function" without naming the scan range
 - about to recommend deleting a `decorated` candidate
+- about to present a finding without screening it against
+  `references/false-positive-index.md`
 - reusing a stale `report.json` after the code has changed this session

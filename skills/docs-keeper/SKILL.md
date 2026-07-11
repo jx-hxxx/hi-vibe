@@ -5,9 +5,13 @@ description: >-
   (lean project map), per-folder MODULE.md (detailed design), handover.md
   (session-to-session context log), CHANGELOG.md (substantive change
   history, Keep a Changelog). Use for /vibe-check:init, :handover, :log,
-  :welcome, and whenever the user asks to 문서 정리, 인수인계 기록,
-  체인지로그 작성, CLAUDE.md 갱신, "이 폴더 문서 만들어줘", or after a
-  structural change that must be reflected in docs.
+  :recall, :welcome, and whenever the user asks to 문서 정리, 인수인계
+  기록, 체인지로그 작성, CLAUDE.md 갱신, "이 폴더 문서 만들어줘", or after
+  a structural change that must be reflected in docs. Also use (mode:
+  recall) when the user asks about PAST decisions or work — "예전에 왜
+  이렇게 했지?", "저번에 뭐까지 했더라", "이거 언제 바꿨지", "왜 이
+  방식으로 결정했었지", why did we choose X — search the handover/archive/
+  CHANGELOG records instead of guessing from memory.
 ---
 
 # docs-keeper
@@ -94,12 +98,31 @@ Rotation: if the file has more than 20 entries, move the older half to
    prefixed `YYYY-MM-DD HH:MM` (run `date`, never guess).
 4. Do not renumber or edit released sections.
 
+## Mode: recall
+
+"예전에 왜/뭐까지/언제" 질문에 기억이 아니라 **기록**으로 답한다.
+
+1. 검색 대상: `handover.md`, `handover-archive.md`, `CHANGELOG.md`
+   (구조 질문이면 해당 폴더 `MODULE.md`도).
+2. 질문에서 검색어 2~4개를 뽑는다 — 한국어·영어·코드 명칭 변형을
+   섞어서 (예: 시세 → 주가, price, quote, 폴링). Grep으로 찾고, 안
+   걸리면 다른 변형으로 2~3회 재시도한다.
+3. 걸린 위치는 그 **항목 전체**(해당 `## ` 섹션)를 읽는다 — 한 줄만
+   보고 답하지 않는다. 여러 기록이 얽히면 시간순으로 재구성한다.
+4. 답변에는 출처 필수: 날짜와 파일 ("2026-05-12 handover 기록에 따르면
+   …"). 기록에 없는 부분을 상상으로 잇지 않는다.
+5. 못 찾으면 못 찾았다고 말하되, 어느 파일을 어떤 검색어로 뒤졌는지
+   함께 말한다 (repo-xray의 부재 계약과 동일). 그 후 "기억나는 대로
+   추정"을 덧붙일 땐 추정 라벨을 명확히 붙인다.
+6. 기록이 현재 코드와 어긋나 보이면 그 사실도 알린다 — 기록은 그
+   시점의 사실이지 현재의 보증이 아니다.
+
 ## Mode: welcome
 
 Explain in kind, plain Korean (짧게!): the 4 documents table above, the
 command map (init → 평소엔 pre-write/post-write → 세션 끝 handover →
-변경 후 log → 가끔 audit/guards), and that hooks auto-record handover
-before every compact. If CLAUDE.md or handover.md is missing here,
+변경 후 log → 과거가 궁금하면 recall → 가끔 audit/guards/doctor), and
+that hooks auto-record handover before every compact. If CLAUDE.md or handover.md is missing here,
 offer `/vibe-check:init`.
 
 ## Doc-sync contract (applies everywhere)

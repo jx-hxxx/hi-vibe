@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""repo-xray: evidence-based structure analyzer for Python + JavaScript repos.
+"""repo-xray: evidence-based structure analyzer for Python + JS/TS repos.
 
 Usage:
   python3 audit.py scan [--root <repo>]          full analysis -> .repo-xray/report.json
@@ -24,24 +24,50 @@ EXCLUDE_DIRS = {
     ".mypy_cache", ".pytest_cache", "site-packages",
 }
 PY_EXT = {".py"}
-JS_EXT = {".js", ".mjs", ".cjs"}
+JS_EXT = {".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx", ".mts", ".cts"}
 TEXT_EXT = PY_EXT | JS_EXT | {".html", ".htm", ".css", ".json", ".md", ".yml", ".yaml", ".toml"}
+# Prose/style files. A mention here is documentation, not a call site — it
+# must never rescue a symbol from dead candidacy (otherwise the MODULE.md /
+# CHANGELOG.md this plugin mandates would mask dead code forever).
+DOC_EXT = {".md", ".css"}
 
 WORD_RE = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*")
 
-# JS declarations: function foo(...), const/let/var foo = function / (…) => / async …
+# JS/TS declarations: function foo(...), const/let/var foo[: Type] =
+# function / (…)[: Ret] => / async …  (regex heuristic, not a parser)
 JS_DECL_RE = re.compile(
     r"""(?:^|[^.\w$])
         (?:
             function\s+(?P<fn>[A-Za-z_$][\w$]*)
-          | (?:const|let|var)\s+(?P<var>[A-Za-z_$][\w$]*)\s*=\s*
-                (?:async\s+)?(?:function\b|\([^)\n]*\)\s*=>|[A-Za-z_$][\w$]*\s*=>)
+          | (?:const|let|var)\s+(?P<var>[A-Za-z_$][\w$]*)
+                (?:\s*:\s*[^=\n]+?)?\s*=\s*
+                (?:async\s+)?
+                (?:function\b|\([^)\n]*\)\s*(?::\s*[^=\n]*?)?\s*=>|[A-Za-z_$][\w$]*\s*=>)
+        )""",
+    re.VERBOSE,
+)
+
+# TS/JS type-level declarations: class Foo, interface Foo, enum Foo, type Foo =
+JS_TYPE_RE = re.compile(
+    r"""(?:^|[^.\w$])
+        (?:
+            (?:abstract\s+)?class\s+(?P<cls>[A-Za-z_$][\w$]*)
+          | (?:interface|enum)\s+(?P<iface>[A-Za-z_$][\w$]*)
+          | type\s+(?P<alias>[A-Za-z_$][\w$]*)\s*=
         )""",
     re.VERBOSE,
 )
 
 # Python names that are referenced implicitly; never report as dead
 PY_IMPLICIT = {"main"}
+
+# Test files: unittest/pytest discover symbols by naming convention, not by
+# reference — their "unreferenced" classes/functions are alive by design
+TEST_FILE_RE = re.compile(r"(^|[/\\])(test_[^/\\]*|[^/\\]*_test)\.(py|js|mjs|cjs|jsx|ts|tsx|mts|cts)$|(^|[/\\])conftest\.py$|(^|[/\\])[^/\\]*\.(test|spec)\.(js|jsx|ts|tsx)$")
+
+
+def is_test_file(relpath):
+    return bool(TEST_FILE_RE.search(relpath))
 
 
 def is_minified(path):
@@ -66,7 +92,9 @@ def collect_files(root):
             text_files.append(path)
             if ext in PY_EXT:
                 py_files.append(path)
-            elif ext in JS_EXT:
+            elif ext in JS_EXT and not fn.endswith(".d.ts"):
+                # .d.ts are ambient declarations (often generated) — count
+                # them as reference text but don't extract symbols from them
                 js_files.append(path)
     return py_files, js_files, text_files
 
@@ -94,11 +122,114 @@ def build_word_index(root, text_files):
     return per_file, total
 
 
+def is_doc_file(relpath):
+    return os.path.splitext(relpath)[1].lower() in DOC_EXT
+
+
+def code_counts(per_file):
+    """Token counts from code-capable files only (doc files excluded)."""
+    total = Counter()
+    for f, c in per_file.items():
+        if not is_doc_file(f):
+            total.update(c)
+    return total
+
+
 # ---------- Python analysis ----------
+
+def _bound_names(fn):
+    """Names bound locally inside a function: args, assignment/for/with
+    targets, comprehension vars, except aliases, imports, inner defs."""
+    bound = set()
+    for node in ast.walk(fn):
+        if isinstance(node, ast.arg):
+            bound.add(node.arg)
+        elif isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
+            bound.add(node.id)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            bound.add(node.name)
+        elif isinstance(node, ast.alias):
+            bound.add(node.asname or node.name.split(".")[0])
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and node is not fn:
+            bound.add(node.name)
+    return bound
+
+
+def normalized_dump(fn_node):
+    """AST dump with function name, decorators, docstring stripped and every
+    locally-bound name replaced by a positional placeholder. Two functions
+    that differ only in naming produce the same dump; near-identical logic
+    produces highly similar dumps. Global/imported call targets keep their
+    real names, so calling a *different* helper still distinguishes them."""
+    n = copy.deepcopy(fn_node)
+    n.name = "_"
+    n.decorator_list = []
+    body = list(n.body)
+    if body and isinstance(body[0], ast.Expr) and isinstance(getattr(body[0], "value", None), ast.Constant) \
+            and isinstance(body[0].value.value, str):
+        body = body[1:] or [ast.Pass()]
+    n.body = body
+    bound = _bound_names(n)
+    mapping = {}
+
+    def canon(name):
+        if name not in mapping:
+            mapping[name] = "v{}".format(len(mapping))
+        return mapping[name]
+
+    for node in ast.walk(n):
+        if isinstance(node, ast.Name) and node.id in bound:
+            node.id = canon(node.id)
+        elif isinstance(node, ast.arg) and node.arg in bound:
+            node.arg = canon(node.arg)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) \
+                and node is not n and node.name in bound:
+            node.name = canon(node.name)
+        elif isinstance(node, ast.ExceptHandler) and node.name and node.name in bound:
+            node.name = canon(node.name)
+        elif isinstance(node, ast.alias) and node.asname and node.asname in bound:
+            node.asname = canon(node.asname)
+    return ast.dump(n)
+
+
+def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20000):
+    """Pairs of functions whose normalized ASTs are >= threshold similar but
+    not identical — the typical AI failure: a 90%-same reimplementation.
+    Weaker evidence than exact duplicates; the reader must open both."""
+    entries = sorted(
+        (e for e in norm_entries if e["meta"]["length"] >= min_length),
+        key=lambda e: len(e["dump"]),
+    )
+    results, pairs, truncated = [], 0, False
+    for i, a in enumerate(entries):
+        for b in entries[i + 1:]:
+            if len(b["dump"]) > len(a["dump"]) * 1.25:
+                break  # sorted by size; the rest only get longer
+            if a["dump"] == b["dump"]:
+                continue  # exact duplicate, reported elsewhere
+            pairs += 1
+            if pairs > max_pairs:
+                truncated = True
+                break
+            sm = difflib.SequenceMatcher(None, a["dump"], b["dump"])
+            if sm.real_quick_ratio() < threshold or sm.quick_ratio() < threshold:
+                continue
+            ratio = sm.ratio()
+            if ratio >= threshold:
+                results.append({
+                    "similarity": round(ratio, 3),
+                    "functions": [a["meta"], b["meta"]],
+                })
+        if truncated:
+            break
+    results.sort(key=lambda r: -r["similarity"])
+    return results[:20], truncated
+
 
 def analyze_python(root, py_files):
     symbols = []   # {name, file, line, end_line, kind, decorated, is_method, length}
     dup_index = defaultdict(list)
+    norm_entries = []
     parse_errors = []
 
     for path in py_files:
@@ -129,23 +260,25 @@ def analyze_python(root, py_files):
                     "decorated": decorated,
                     "length": length,
                 })
-                # duplicate detection: same AST shape ignoring the name
+                # duplicate detection: same AST shape ignoring the function
+                # name AND local variable names (normalized dump)
                 if kind != "class" and length >= 4:
-                    n2 = copy.deepcopy(node)
-                    n2.name = "_"
-                    n2.decorator_list = []
-                    key = hashlib.md5(ast.dump(n2).encode()).hexdigest()
-                    dup_index[key].append({
+                    dump = normalized_dump(node)
+                    meta = {
                         "name": node.name, "file": rel(root, path),
                         "line": node.lineno, "length": length,
-                    })
+                    }
+                    key = hashlib.md5(dump.encode()).hexdigest()
+                    dup_index[key].append(meta)
+                    norm_entries.append({"meta": meta, "dump": dump})
 
     duplicates = [
         {"functions": group, "length": group[0]["length"]}
         for group in dup_index.values() if len(group) > 1
     ]
     duplicates.sort(key=lambda g: -g["length"])
-    return symbols, duplicates, parse_errors
+    near_dups, near_truncated = find_near_duplicates(norm_entries)
+    return symbols, duplicates, near_dups, near_truncated, parse_errors
 
 
 # ---------- JS analysis ----------
@@ -156,12 +289,19 @@ def analyze_js(root, js_files):
     for path in js_files:
         src = read_text(path)
         for i, line in enumerate(src.splitlines(), 1):
-            for m in JS_DECL_RE.finditer(line):
-                name = m.group("fn") or m.group("var")
+            decls = [
+                (m.group("fn") or m.group("var"), "js-function")
+                for m in JS_DECL_RE.finditer(line)
+            ] + [
+                (m.group("cls") or m.group("iface") or m.group("alias"),
+                 "js-class" if m.group("cls") else "ts-type")
+                for m in JS_TYPE_RE.finditer(line)
+            ]
+            for name, kind in decls:
                 if not name:
                     continue
                 top_level = not line[:1].isspace()
-                entry = {"name": name, "file": rel(root, path), "line": i, "kind": "js-function"}
+                entry = {"name": name, "file": rel(root, path), "line": i, "kind": kind}
                 symbols.append(entry)
                 if top_level:  # indented = local scope, collisions there are normal
                     defs_by_name[name].append(entry)
@@ -177,10 +317,13 @@ def analyze_js(root, js_files):
 
 # ---------- dead-code candidates ----------
 
-def find_dead(symbols, per_file, total_counts, def_counts):
-    """A symbol is a dead candidate when its name appears nowhere except its
-    own definitions. Name-based — dynamic uses (getattr, string routes,
-    templates) are invisible, so these are CANDIDATES, not verdicts."""
+def find_dead(symbols, per_file, code_totals, def_counts):
+    """A symbol is a dead candidate when its name appears nowhere in CODE
+    files except its own definitions. Mentions in doc files (.md/.css) are
+    reported separately as `doc_mentions` and never rescue a candidate —
+    docs describe code, they don't call it. Name-based — dynamic uses
+    (getattr, string routes, templates) are invisible, so these are
+    CANDIDATES, not verdicts."""
     dead = []
     for s in symbols:
         name = s["name"]
@@ -188,10 +331,16 @@ def find_dead(symbols, per_file, total_counts, def_counts):
             continue
         if s.get("kind") == "method":
             continue  # methods are called via self/instance; too noisy for name counting
-        refs = total_counts.get(name, 0) - def_counts.get(name, 0)
+        if is_test_file(s["file"]):
+            continue  # test runners invoke these by naming convention
+        refs = code_totals.get(name, 0) - def_counts.get(name, 0)
         if refs <= 0:
-            ref_files = [f for f, c in per_file.items() if c.get(name)]
-            dead.append({**s, "refs_found": max(refs, 0), "appears_in": ref_files})
+            ref_files = [f for f, c in per_file.items() if c.get(name) and not is_doc_file(f)]
+            doc_files = [f for f, c in per_file.items() if c.get(name) and is_doc_file(f)]
+            dead.append({
+                **s, "refs_found": max(refs, 0),
+                "appears_in": ref_files, "doc_mentions": doc_files,
+            })
     return dead
 
 
@@ -219,14 +368,15 @@ def oversized_report(root, text_files, symbols):
 
 def cmd_scan(root):
     py_files, js_files, text_files = collect_files(root)
-    per_file, total_counts = build_word_index(root, text_files)
+    per_file, _total_counts = build_word_index(root, text_files)
+    code_totals = code_counts(per_file)
 
-    py_symbols, duplicates, parse_errors = analyze_python(root, py_files)
+    py_symbols, duplicates, near_dups, near_truncated, parse_errors = analyze_python(root, py_files)
     js_symbols, collisions = analyze_js(root, js_files)
 
     all_symbols = py_symbols + js_symbols
     def_counts = Counter(s["name"] for s in all_symbols)
-    dead_all = find_dead(all_symbols, per_file, total_counts, def_counts)
+    dead_all = find_dead(all_symbols, per_file, code_totals, def_counts)
     # decorated = usually framework-registered (routes/hooks): report separately
     dead = [d for d in dead_all if not d.get("decorated")]
     decorated_unref = [d for d in dead_all if d.get("decorated")]
@@ -240,11 +390,17 @@ def cmd_scan(root):
                 "python": len(py_files), "js": len(js_files), "all_text": len(text_files),
             },
             "excluded_dirs": sorted(EXCLUDE_DIRS),
-            "note": "reference counting is name-based; dynamic uses (getattr, string routes, HTML templates outside scanned files) are not visible",
+            "note": (
+                "reference counting is name-based; dynamic uses (getattr, string "
+                "routes, HTML templates outside scanned files) are not visible. "
+                "doc files (.md/.css) never count as references — see doc_mentions."
+            ),
+            "near_duplicate_scan_truncated": near_truncated,
         },
         "dead_candidates": sorted(dead, key=lambda s: (s["file"], s["line"])),
         "decorated_unreferenced": sorted(decorated_unref, key=lambda s: (s["file"], s["line"])),
         "duplicate_functions": duplicates,
+        "near_duplicate_functions": near_dups,
         "js_name_collisions": collisions,
         "oversized_files": big_files,
         "oversized_functions": big_functions,
@@ -258,10 +414,10 @@ def cmd_scan(root):
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 
-    print(f"scanned: {len(py_files)} py / {len(js_files)} js / {len(text_files)} text files")
+    print(f"scanned: {len(py_files)} py / {len(js_files)} js+ts / {len(text_files)} text files")
     print(f"dead candidates: {len(dead)} (+{len(decorated_unref)} decorated)  "
-          f"duplicates: {len(duplicates)}  js collisions: {len(collisions)}  "
-          f"oversized files: {len(big_files)}")
+          f"duplicates: {len(duplicates)}  near-duplicates: {len(near_dups)}  "
+          f"js collisions: {len(collisions)}  oversized files: {len(big_files)}")
     print(f"report: {out_path}")
     return 0
 
@@ -279,7 +435,7 @@ def cmd_find(root, query):
         if len(hits) >= 80:
             break
 
-    py_symbols, _, _ = analyze_python(root, py_files)
+    py_symbols, _, _, _, _ = analyze_python(root, py_files)
     js_symbols, _ = analyze_js(root, js_files)
     names = sorted({s["name"] for s in py_symbols + js_symbols})
     similar = difflib.get_close_matches(query, names, n=8, cutoff=0.6)
