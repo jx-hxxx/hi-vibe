@@ -171,13 +171,28 @@ Hooks load at session start. Restart Claude Code. Use `/hooks` to see load statu
 Since hooks fail silently by design, this command is the only reliable check.
 
 **Q. Do hooks run in other projects too?**
-No. They only run in a project that has `handover.md` (= where you ran `init`);
-elsewhere they quietly do nothing.
+No. They only run in a project that has a `.hi-vibe/` folder (= where you ran
+`init`); elsewhere they quietly do nothing.
 
 **Q. Won't handover.md grow forever?**
 Past 20 entries, the older half auto-moves to `handover-archive.md`. Those
 memories aren't lost — `/hi-vibe:recall` (or just asking "why did we do this
 before?") searches the archive too and answers with date + source.
+
+**Q. A guards red light (lint warning / CI failure) is showing, but it's not
+actually a problem. How do I dismiss it?**
+**Telling the AI "it's fine" won't clear it** — the linter re-judges from the
+config and code every run; it has no memory of "the user said it's OK." So the
+exception has to live **in the code** to stick:
+- **Just that one line:** ruff → `# noqa: <rule>`, eslint →
+  `// eslint-disable-next-line <rule>`
+- **The rule doesn't fit this project at all:** turn it off in the config file
+  (`[tool.ruff]` in `pyproject.toml`, etc.) — applies project-wide
+- **A hi-vibe error-swallow / secret detection:** add a
+  `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line
+This is deliberate — if one word could silence it, the next session's AI would
+forget and the rule would erode. Leaving the exception in the code keeps it
+durable, and your teammates can see "this is an intentional exception" too.
 
 **Q. What gets created in my project?**
 **Committed to GitHub**: `CLAUDE.md` / `MODULE.md` / `CHANGELOG.md` (project docs).
