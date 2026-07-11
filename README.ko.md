@@ -145,10 +145,16 @@ Claude Code 안에서 아래 세 줄을 차례로 실행하세요.
 
 ## 업데이트 (새 버전 나왔을 때)
 
-설치는 그 시점 버전을 컴퓨터에 복사해둬요. 그래서 새 버전이 나와도
-자동으로 안 바뀌고, 아래 **순서대로** 세 단계를 거쳐야 최신을 받아요.
-**①②는 별개예요** — 목록만 갱신하고 플러그인 교체를 안 하면 옛 버전
-그대로예요 (제일 헷갈리는 지점!).
+**✅ 제일 편한 방법 — auto-update를 한 번만 켜두세요:**
+
+`/plugin` → **Marketplaces** 탭 → `hi-vibe-marketplace` → **Enable
+auto-update**. 이러면 새 버전이 나올 때마다 **켤 때 자동으로 받아와요.**
+지현님은 `/reload-plugins`(또는 그냥 Claude Code 재시작)만 하면 적용돼요 —
+아래 명령어를 손으로 칠 필요가 없어요.
+
+**수동 (auto-update를 안 켰다면)** — **순서대로** 세 단계. **①②는 별개예요**
+— 목록만 갱신하고 플러그인 교체를 안 하면 옛 버전 그대로예요(제일 헷갈리는
+지점!).
 
 ```
 /plugin marketplace update hi-vibe-marketplace   ← ① 최신 목록 갱신
@@ -157,8 +163,6 @@ Claude Code 안에서 아래 세 줄을 차례로 실행하세요.
 ```
 
 - 확인: `/plugin` → Installed 탭에서 **Version**이 올라갔는지 보기
-- 매번 손이 귀찮으면: `/plugin` → Marketplaces → **Enable auto-update**를
-  켜두면 다음 시작 때 알아서 최신으로 (단, 적용은 `/reload-plugins`)
 
 ## FAQ
 

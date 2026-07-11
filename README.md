@@ -149,10 +149,16 @@ type commands in order — **just talk normally:**
 
 ## Updating (when a new version ships)
 
-Install copies the version-at-that-moment to your machine. So new versions do
-**not** apply automatically — you go through three steps **in order**. **Steps
-①②are separate** — refreshing the list without swapping the plugin leaves you
-on the old version (the most confusing part!).
+**✅ Easiest — turn on auto-update once, then forget it:**
+
+`/plugin` → **Marketplaces** tab → `hi-vibe-marketplace` → **Enable
+auto-update**. After that, new versions are fetched automatically on every
+start. You only run `/reload-plugins` (or just restart Claude Code) to apply
+them — no need to type anything below.
+
+**Manual (if auto-update is off)** — three steps **in order**. ①② are
+separate: refreshing the list without swapping the plugin leaves you on the
+old version (the most confusing part!).
 
 ```
 /plugin marketplace update hi-vibe-marketplace   ← ① refresh the latest list
@@ -161,8 +167,6 @@ on the old version (the most confusing part!).
 ```
 
 - Verify: `/plugin` → Installed tab → check the **Version** bumped
-- To skip the manual steps: `/plugin` → Marketplaces → **Enable auto-update**
-  updates on next start (still `/reload-plugins` to apply in-session)
 
 ## FAQ
 
