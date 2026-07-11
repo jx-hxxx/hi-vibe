@@ -130,27 +130,30 @@ Rotation: if the file has more than 20 entries, move the older half to
 
 ## Mode: welcome
 
-**Keep it SHORT — a greeting, not a manual.** A wall of text (the full
-docs table, every command, hook internals) overwhelms a first-time user
-and defeats the point. Do NOT dump those. Just, in the **user's
-language** (Korean if they speak Korean, English if English), a few
-lines:
+**Keep it SHORT — a greeting, not a manual.** No docs table, no full
+command list, no hook internals. Just a few lines, in the **user's
+language** (Korean if they speak Korean, English if English):
 
 1. A warm one-line 👋 greeting (Korean "👋 안녕하세요, hi-vibe예요!" /
    English "👋 Hi, I'm hi-vibe!").
-2. One line on what hi-vibe is — a **vibe-coding seatbelt**: keeps the
-   repo clean (memory, discipline, machine guards) while you code with AI.
-3. The **one** thing to do now — e.g. Korean "새 프로젝트면
-   `/hi-vibe:init` 한 번, 그 다음엔 평소처럼 코딩하면 나머진 알아서
-   돌아가요" / English "run `/hi-vibe:init` once in a new project, then
-   just code — the rest runs on its own."
-4. For anything more, point to the README:
-   **https://github.com/jx-hxxx/hi-vibe** — "자세한 건 여기 README를
-   읽어보세요" / "see the README there for details."
+2. One line on what hi-vibe is — a **vibe-coding seatbelt** that keeps
+   the repo clean while you code with AI.
+3. **Check `handover.md` (lowercase) in the current project** and say the
+   right one:
+   - **MISSING** → hi-vibe is NOT set up here yet. Say clearly, e.g.
+     "이 프로젝트에서 hi-vibe를 쓰려면 먼저 `/hi-vibe:init`을 입력해
+     주세요." Do NOT be fooled by a `CLAUDE.md` or an uppercase
+     `HANDOVER.md` into thinking it's ready — the hooks key on the
+     lowercase `handover.md`, so if that exact file is absent, init is
+     still needed.
+   - **EXISTS** → say they can just code normally; it's already on.
+4. **Always paste the GitHub URL as a real link** and tell them to read
+   the README there — never just say "the plugin README":
+   "자세한 건 https://github.com/jx-hxxx/hi-vibe 의 README.md를
+   읽어보세요." / "For details, read the README at
+   https://github.com/jx-hxxx/hi-vibe".
 
-If this project has no CLAUDE.md or handover.md, offer to run
-`/hi-vibe:init`. That's the whole welcome — do not expand it into
-tables or command lists.
+That's the whole welcome — a few lines, nothing more.
 
 ## Doc-sync contract (applies everywhere)
 

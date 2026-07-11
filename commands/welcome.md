@@ -7,9 +7,10 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/docs-keeper/SKILL.md`.
 Mode: `welcome`
 Arguments: $ARGUMENTS
 
-Follow that mode exactly — **keep it short**: a 👋 greeting, one line on
-what hi-vibe is, the one action (`/hi-vibe:init` in a new project, then
-just code), and a README link for details — all in the **user's
-language**. Do NOT enumerate the docs table, the full command list, or
-hook internals (that overwhelms). If the current project has no CLAUDE.md
-or handover.md yet, offer to run `/hi-vibe:init`.
+Follow that mode exactly — **keep it short**, in the **user's language**:
+a 👋 greeting, one line on what hi-vibe is, then two must-haves:
+(1) if `handover.md` (lowercase) is absent in this project, tell the user
+to run `/hi-vibe:init` (don't be fooled by CLAUDE.md or uppercase
+HANDOVER.md); (2) **paste the real GitHub URL**
+https://github.com/jx-hxxx/hi-vibe and ask them to read its README.md for
+details. Do NOT dump the docs table, full command list, or hook internals.
