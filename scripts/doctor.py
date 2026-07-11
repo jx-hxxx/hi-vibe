@@ -131,8 +131,10 @@ def check_scanner(python3):
 
 def check_project(root):
     if not os.path.isfile(os.path.join(root, "handover.md")):
-        add("WARN", "이 프로젝트", f"{root} 는 아직 init 전 — 훅이 여기서는 비활성. "
-            "/hi-vibe:init 으로 설치하세요.")
+        add("WARN", "이 프로젝트", "아직 init 안 함(정상 상태). 여기서 hi-vibe "
+            "자동 기능(에러/비밀키 감지·자동 handover)을 쓸 거면 → 지금 "
+            "/hi-vibe:init 실행하세요(기존 파일은 안 덮어씀). 이 폴더에서 "
+            "hi-vibe를 안 쓸 거면 이 줄은 그냥 무시하면 됩니다.")
         return
     docs = [d for d in ("CLAUDE.md", "CHANGELOG.md") if not os.path.isfile(os.path.join(root, d))]
     gi = os.path.join(root, ".gitignore")
@@ -149,7 +151,10 @@ def check_project(root):
             detail.append("문서 누락: " + ", ".join(docs))
         if missing_gi:
             detail.append(".gitignore에 없음: " + ", ".join(missing_gi))
-        add("WARN", "이 프로젝트", "; ".join(detail) + " — /hi-vibe:init --audit 로 점검")
+        add("WARN", "이 프로젝트", "; ".join(detail) + " → 다음 단계: 지금 "
+            "/hi-vibe:init 실행(없는 것만 채우고 기존 파일은 안 건드림). "
+            "단, CHANGELOG를 이미 다른 방식(예: handover에 버전 로그)으로 "
+            "관리 중이면 그 항목은 무시해도 됩니다.")
 
 
 def main():

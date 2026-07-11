@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-11
+
+### Changed
+- doctor "이 프로젝트" 경고 메시지 명확화 — "init 하라는 건지 말라는 건지" 애매하던 문구를 **다음 단계 명시**(지금 /hi-vibe:init, 기존 파일 안 건드림) + **무시해도 되는 경우 명시**(CHANGELOG를 이미 handover 등으로 관리 중이면)로 개선. 실사용자가 겪은 혼란을 반영.
+
 ### Added
 - README: claude-hud(상태줄) 함께 쓰기 추천 — 컨텍스트 % 보며 관리 → 컴팩트 시 handover 자동 기록과 궁합. 업데이트 3단계 안내 섹션(marketplace update → plugin update → reload, ①②가 별개임 강조).
 
