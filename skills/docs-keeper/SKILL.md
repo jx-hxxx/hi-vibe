@@ -57,15 +57,21 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
      folder, pre-filling 주요 파일 from a directory listing and leaving
      설계 sections as short TODO prompts for the user.
    - handover.md + CHANGELOG.md from templates.
-4. Ensure `.hi-vibe/`, `.repo-xray/`, `handover.md`,
+4. **Create the `.hi-vibe/` marker directory** — this is what turns the
+   hooks ON for this project (the gate). Write `.hi-vibe/initialized`
+   with a one-line note (date + "hi-vibe initialized"), which also
+   creates the dir. **The gate is `.hi-vibe/`, NOT handover.md** — a user
+   may already have their own `handover.md`, so we must not key on it
+   (that would misfire and could let a hook overwrite their file). Do not
+   consider init complete until `.hi-vibe/` exists.
+5. Ensure `.hi-vibe/`, `.repo-xray/`, `handover.md`,
    `handover-archive.md`, and `handover.md.lock` (the transient write-lock
    file for concurrent sessions) are in `.gitignore`. The two dirs are caches;
    `handover*` is a personal session log kept local (not shared to
    GitHub). The other three docs — CLAUDE.md / MODULE.md / CHANGELOG.md —
-   ARE committed. Note: the hooks' project gate keys on `handover.md`
-   *existing on disk*, so gitignoring it does not disable the hooks.
-5. Tell the user the hooks are now active for this project (they gate on
-   handover.md existing) and what will happen automatically.
+   ARE committed.
+6. Tell the user the hooks are now active for this project (they gate on
+   the `.hi-vibe/` directory existing) and what will happen automatically.
 
 ## Mode: handover
 
@@ -138,14 +144,14 @@ language** (Korean if they speak Korean, English if English):
    English "👋 Hi, I'm hi-vibe!").
 2. One line on what hi-vibe is — a **vibe-coding seatbelt** that keeps
    the repo clean while you code with AI.
-3. **Check `handover.md` (lowercase) in the current project** and say the
-   right one:
-   - **MISSING** → hi-vibe is NOT set up here yet. Say clearly, e.g.
-     "이 프로젝트에서 hi-vibe를 쓰려면 먼저 `/hi-vibe:init`을 입력해
-     주세요." Do NOT be fooled by a `CLAUDE.md` or an uppercase
-     `HANDOVER.md` into thinking it's ready — the hooks key on the
-     lowercase `handover.md`, so if that exact file is absent, init is
-     still needed.
+3. **Check whether the `.hi-vibe/` directory exists in the current
+   project** (that is hi-vibe's init marker) and say the right one:
+   - **MISSING (`.hi-vibe/` absent)** → hi-vibe is NOT set up here yet.
+     Say clearly, e.g. "이 프로젝트에서 hi-vibe를 쓰려면 먼저
+     `/hi-vibe:init`을 입력해 주세요." Do NOT be fooled by an existing
+     `CLAUDE.md` or `handover.md` (the user may already have their own
+     for other reasons) — the marker is `.hi-vibe/`, so if that directory
+     is absent, init is still needed.
    - **EXISTS** → say they can just code normally; it's already on.
 4. **Always paste the GitHub URL as a real link** and tell them to read
    the README there — never just say "the plugin README":

@@ -70,6 +70,7 @@ def check_plugin_files():
 def check_hooks_live(python3):
     """임시 init 프로젝트를 만들어 훅 4종을 끝까지 실제로 돌려본다."""
     with tempfile.TemporaryDirectory(prefix="vibe-doctor-") as tmp:
+        os.makedirs(os.path.join(tmp, ".hi-vibe"), exist_ok=True)  # init 마커(gate)
         with open(os.path.join(tmp, "handover.md"), "w", encoding="utf-8") as f:
             f.write("# Handover — 세션 인수인계\n\n## 2026-01-01 00:00 (manual)\n\n- 한 일: doctor 자가진단\n")
 
@@ -130,7 +131,7 @@ def check_scanner(python3):
 
 
 def check_project(root):
-    if not os.path.isfile(os.path.join(root, "handover.md")):
+    if not os.path.isdir(os.path.join(root, ".hi-vibe")):
         add("WARN", "이 프로젝트", "아직 init 안 함(정상 상태). 여기서 hi-vibe "
             "자동 기능(에러/비밀키 감지·자동 handover)을 쓸 거면 → 지금 "
             "/hi-vibe:init 실행하세요(기존 파일은 안 덮어씀). 이 폴더에서 "

@@ -19,8 +19,12 @@ def read_payload():
 
 
 def project_gate(cwd):
-    """hi-vibe가 init된 프로젝트에서만 동작 (handover.md 존재 여부)."""
-    return bool(cwd) and os.path.isfile(os.path.join(cwd, "handover.md"))
+    """hi-vibe가 init된 프로젝트에서만 동작한다. handover.md는 흔한
+    파일명이라 사용자가 자기 목적으로 이미 가질 수 있으므로, 그 존재로
+    판단하면 오판(+ 남의 handover.md 오염) 위험이 있다. 대신 hi-vibe
+    전용 마커 `.hi-vibe/` 디렉토리로 판단한다 — init이 만들며, 사용자가
+    우연히 가질 확률이 거의 없다."""
+    return bool(cwd) and os.path.isdir(os.path.join(cwd, ".hi-vibe"))
 
 
 def emit(event_name, additional_context=None, system_message=None):

@@ -23,10 +23,11 @@ import stop_nudge
 
 
 class TempProject(unittest.TestCase):
-    """handover.md가 있는(= init된) 임시 프로젝트."""
+    """hi-vibe가 init된(= .hi-vibe/ 마커 존재) 임시 프로젝트."""
 
     def setUp(self):
         self.root = tempfile.mkdtemp(prefix="vibe-hook-test-")
+        os.makedirs(os.path.join(self.root, ".hi-vibe"), exist_ok=True)  # init 마커(gate)
         self.handover = os.path.join(self.root, "handover.md")
         with open(self.handover, "w", encoding="utf-8") as f:
             f.write("# Handover — 세션 인수인계\n")
@@ -41,9 +42,21 @@ class TempProject(unittest.TestCase):
 
 class CommonTest(TempProject):
     def test_project_gate(self):
-        self.assertTrue(_common.project_gate(self.root))
+        self.assertTrue(_common.project_gate(self.root))  # .hi-vibe/ 있음
         self.assertFalse(_common.project_gate(tempfile.gettempdir()))
         self.assertFalse(_common.project_gate(""))
+
+    def test_gate_ignores_user_own_handover(self):
+        """사용자가 자기 목적으로 handover.md만 갖고 있고 .hi-vibe/가 없으면
+        gate는 OFF여야 한다 — 남의 handover.md를 hi-vibe 것으로 오판·오염
+        하지 않도록. (이번 수정의 핵심)"""
+        other = tempfile.mkdtemp(prefix="user-own-")
+        try:
+            with open(os.path.join(other, "handover.md"), "w", encoding="utf-8") as f:
+                f.write("# 내 개인 인수인계 메모\n")
+            self.assertFalse(_common.project_gate(other))  # handover.md만으론 gate 안 켜짐
+        finally:
+            shutil.rmtree(other, ignore_errors=True)
 
     def test_prepend_keeps_header_and_orders_newest_first(self):
         _common.prepend_entry(self.handover, "## 2026-01-01 00:00\n\n- old")

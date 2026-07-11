@@ -5,6 +5,12 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-11
+
+### Changed
+- **init 마커를 `handover.md` → `.hi-vibe/` 디렉토리로 (동작 변경).** `handover.md`는 흔한 파일명이라 사용자가 자기 목적으로 이미 만들어 쓸 수 있는데, 그걸 gate로 삼으면 (1) welcome·doctor가 "이미 init됨"으로 **오판**하고 (2) PreCompact 훅이 **남의 handover.md에 기록을 끼워넣어 오염**시킬 수 있었다. 이제 hi-vibe 전용 `.hi-vibe/` 디렉토리 존재로 판단한다(init이 `.hi-vibe/initialized`를 생성). project_gate·doctor·welcome 전부 이 마커 기준. "사용자 handover.md만으론 gate가 안 켜진다" 회귀 테스트 추가(48개).
+  - **마이그레이션**: 기존에 init했지만 `.hi-vibe/`가 없는 프로젝트는 `/hi-vibe:init`을 한 번 재실행하면 마커가 생겨 훅이 다시 켜진다(기존 문서는 안 덮어씀).
+
 ## [0.3.6] - 2026-07-11
 
 ### Changed
