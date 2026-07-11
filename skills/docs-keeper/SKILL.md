@@ -26,7 +26,12 @@ You maintain four documents. Each has one job — never blur them:
 | `CHANGELOG.md` | 결과 (무엇이 바뀌었나) | 실질 변경 직후 |
 
 Templates: `templates/*.tpl` in this skill's directory.
-All user-facing prose you write into these docs is Korean.
+All user-facing prose you write into these docs follows the **user's
+conversation language** — write in Korean if the user talks to you in
+Korean, English if in English, and so on. Match the language they are
+actually using with you; do not default to any single language. (An
+existing doc's language wins: if the project's docs are already in one
+language, keep writing in that one for consistency.)
 
 ## Token budget (hard rule)
 
@@ -125,9 +130,10 @@ Rotation: if the file has more than 20 entries, move the older half to
 
 ## Mode: welcome
 
-Open with a warm one-line greeting that starts with 👋 (e.g.
-"👋 안녕하세요, hi-vibe예요!"). Then explain in kind, plain Korean
-(짧게!): the 4 documents table above, the command map (init → 평소엔
+Open with a warm one-line greeting that starts with 👋, in the user's
+language (Korean "👋 안녕하세요, hi-vibe예요!" / English "👋 Hi, I'm
+hi-vibe!"). Then explain — **in the user's language**, kindly and
+briefly: the 4 documents table above, the command map (init → 평소엔
 pre-write/post-write → 세션 끝 handover → 변경 후 log → 과거가 궁금하면
 recall → 가끔 audit/guards/doctor), and that hooks auto-record handover
 before every compact. If CLAUDE.md or handover.md is missing here,

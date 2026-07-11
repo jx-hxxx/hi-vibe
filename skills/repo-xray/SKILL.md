@@ -100,7 +100,8 @@ pretending certainty:
 Before presenting any dead/duplicate/collision finding, screen it against
 `references/false-positive-index.md` — known ways this scanner gets
 fooled, each with the softer phrasing to use. Translate matches into
-plain Korean reasons; don't cite FP ids unless asked for proof.
+plain-language reasons **in the user's language**; don't cite FP ids
+unless asked for proof.
 
 Full field-by-field JSON guide: read `references/report-format.md` when
 you need to interpret a field not covered above.
