@@ -1,5 +1,5 @@
 ---
-description: "CHANGELOG.md에 변경 기록 추가 (Keep a Changelog, 실질 변경만)"
+description: "Append a change entry to CHANGELOG.md (Keep a Changelog, substantive changes only)"
 argument-hint: "[변경 요약]"
 ---
 

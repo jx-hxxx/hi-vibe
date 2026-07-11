@@ -1,5 +1,5 @@
 ---
-description: "세션 인수인계 기록을 handover.md에 추가 (다음 세션이 맥락을 잇도록)"
+description: "Append a session-handover entry to handover.md (so the next session keeps context)"
 ---
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/docs-keeper/SKILL.md`.

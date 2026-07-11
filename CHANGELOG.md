@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-07-11
+
+### Changed
+- 명령어 10종의 `description`을 영문화 — Claude Code 명령어 목록·자동완성에 뜨는 한 줄 설명이 한국어 고정이라, 영어 사용자에게도 한국어로만 보이던 문제(스킬 description은 이미 영문). About·README·plugin.json 영문 국제화와 일치. (스킬의 한국어 트리거 문구는 한국어 사용자 발동용이라 유지)
+
 ## [0.4.0] - 2026-07-11
 
 ### Changed

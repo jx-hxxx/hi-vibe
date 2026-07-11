@@ -1,5 +1,5 @@
 ---
-description: "설치 자가진단 — 훅·스캐너가 실제로 작동하는지 실행으로 확인 (침묵 실패 탐지)"
+description: "Install self-diagnosis — actually runs the hooks & scanner to confirm they work (catches silent failure)"
 argument-hint: "[--root <project>]"
 ---
 

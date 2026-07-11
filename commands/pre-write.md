@@ -1,5 +1,5 @@
 ---
-description: "코드 작성 전 재사용 게이트 — 이미 있는지 먼저 확인하고 만들 위치를 정한다"
+description: "Pre-write reuse gate — check if it already exists first, then decide where it goes"
 argument-hint: "[만들려는 것 설명]"
 ---
 

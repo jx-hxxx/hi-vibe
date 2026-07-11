@@ -1,5 +1,5 @@
 ---
-description: "프로젝트 문서 시스템 설치/점검 (CLAUDE.md, MODULE.md, handover.md, CHANGELOG.md)"
+description: "Install/check the project doc system (CLAUDE.md, MODULE.md, handover.md, CHANGELOG.md)"
 argument-hint: "[--audit]"
 ---
 

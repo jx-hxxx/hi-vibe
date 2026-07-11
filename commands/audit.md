@@ -1,5 +1,5 @@
 ---
-description: "저장소 구조 전체 스캔 — 중복/미사용 후보/비대 파일을 증거 기반으로"
+description: "Full repo structure scan — duplicates / unused candidates / oversized files, evidence-based"
 argument-hint: "[--root <repo>]"
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: "언어 감지 후 린트/타입/순환의존 가드 설치 — 반드시 물어보고 설치, 기존 설정과 병합"
+description: "Detect language, then install lint/type/cycle guards — always asks first, merges with existing config"
 argument-hint: "[--ci]"
 ---
 

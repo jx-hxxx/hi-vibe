@@ -1,5 +1,5 @@
 ---
-description: "코드 작성 후 리뷰 체크리스트 + 문서 동기화 검사 (--deep: 깨끗한 눈의 설계 리뷰 추가)"
+description: "Post-write review checklist + doc sync (--deep: adds a clean-eyes design review)"
 argument-hint: "[--deep]"
 ---
 

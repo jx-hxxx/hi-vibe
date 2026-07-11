@@ -1,5 +1,5 @@
 ---
-description: "hi-vibe 첫 안내. 뭘 써야 할지 모를 때 여기부터."
+description: "hi-vibe first guide — start here when unsure what to use."
 ---
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/docs-keeper/SKILL.md`.
