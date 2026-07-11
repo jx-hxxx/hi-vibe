@@ -5,6 +5,9 @@
 
 ## [Unreleased]
 
+### Added
+- README: claude-hud(상태줄) 함께 쓰기 추천 — 컨텍스트 % 보며 관리 → 컴팩트 시 handover 자동 기록과 궁합. 업데이트 3단계 안내 섹션(marketplace update → plugin update → reload, ①②가 별개임 강조).
+
 ## [0.3.0] - 2026-07-11
 
 ### Added
