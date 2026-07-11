@@ -166,7 +166,7 @@ def main():
     check_project(root)
 
     icon = {"OK": "✅", "WARN": "⚠️", "FAIL": "❌"}
-    print("hi-vibe doctor 결과")
+    print("👋 hi-vibe doctor 결과")
     print("=" * 40)
     for status, label, detail in results:
         line = f"{icon[status]} {label}"

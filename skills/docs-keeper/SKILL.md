@@ -119,10 +119,12 @@ Rotation: if the file has more than 20 entries, move the older half to
 
 ## Mode: welcome
 
-Explain in kind, plain Korean (짧게!): the 4 documents table above, the
-command map (init → 평소엔 pre-write/post-write → 세션 끝 handover →
-변경 후 log → 과거가 궁금하면 recall → 가끔 audit/guards/doctor), and
-that hooks auto-record handover before every compact. If CLAUDE.md or handover.md is missing here,
+Open with a warm one-line greeting that starts with 👋 (e.g.
+"👋 안녕하세요, hi-vibe예요!"). Then explain in kind, plain Korean
+(짧게!): the 4 documents table above, the command map (init → 평소엔
+pre-write/post-write → 세션 끝 handover → 변경 후 log → 과거가 궁금하면
+recall → 가끔 audit/guards/doctor), and that hooks auto-record handover
+before every compact. If CLAUDE.md or handover.md is missing here,
 offer `/hi-vibe:init`.
 
 ## Doc-sync contract (applies everywhere)

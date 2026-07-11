@@ -34,7 +34,8 @@ def main(payload):
         _common.emit("SessionStart", additional_context=ctx[:1500])
     elif source in ("startup", "resume"):
         entry = _common.latest_entry(handover, max_chars=400)
-        parts = [CHARTER]
+        parts = ["이 세션은 hi-vibe가 켜져 있습니다. 사용자에게 첫 응답을 "
+                 "👋로 가볍게 인사하며 시작하세요.", CHARTER]
         if entry:
             head = "\n".join(entry.splitlines()[:4])
             parts.append("직전 인수인계(handover.md 최신 항목):\n" + head)

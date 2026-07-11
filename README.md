@@ -1,4 +1,8 @@
-# ✅ hi-vibe
+# 👋 hi-vibe
+
+[![hi-vibe tests](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml/badge.svg)](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+![python: 3.8+](https://img.shields.io/badge/python-3.8%2B-green.svg)
 
 > **바이브코딩 안전벨트.** AI랑 신나게 코딩하되, 저장소는 깨끗하게.
 

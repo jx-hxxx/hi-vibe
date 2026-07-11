@@ -5,6 +5,9 @@
 
 ## [Unreleased]
 
+### Changed
+- 브랜딩: 👋를 인사·시작·환영 맥락에 도입 (README/문서 제목, doctor 출력 헤더, welcome 인사, 세션 시작 시 AI 인사). 경고 메시지엔 톤 유지 위해 미적용. README에 CI(GitHub Actions)·MIT·Python 배지 추가.
+
 ## [0.2.0] - 2026-07-10
 
 ### Added
