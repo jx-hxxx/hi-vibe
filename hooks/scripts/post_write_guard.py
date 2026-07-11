@@ -2,9 +2,9 @@
 기계적으로 감지해 Claude에게 알린다 — 규율의 기계 층.
 
 1. 에러 삼킴 패턴 (root-cause-first): 빈 except/catch.
-   의도된 삼킴은 그 줄에 `vibe-check: allow-swallow` 주석.
+   의도된 삼킴은 그 줄에 `hi-vibe: allow-swallow` 주석.
 2. 하드코딩된 비밀키: API 키/토큰이 코드·설정 파일에 박히는 것.
-   테스트용 가짜 키는 그 줄에 `vibe-check: allow-secret` 주석.
+   테스트용 가짜 키는 그 줄에 `hi-vibe: allow-secret` 주석.
    (.env* 파일은 키의 올바른 위치이므로 검사하지 않는다.)
 
 경고만 한다: 도구 실행을 막지도, 호스트를 깨지도 않는다 (항상 exit 0).
@@ -110,12 +110,12 @@ def main(payload):
         if len(new_hits) > len(old_hits):
             labels = ", ".join(sorted({label for label, _ in new_hits}))
             messages.append(
-                f"vibe-check 감지: 방금 `{os.path.basename(fp)}`에 에러 삼킴 패턴이 "
+                f"hi-vibe 감지: 방금 `{os.path.basename(fp)}`에 에러 삼킴 패턴이 "
                 f"추가됐다 — {labels}. root-cause-first 계약: 증상을 가리는 코드는 "
                 "수정이 아니다. 원인을 먼저 확인하고, (1) 삼키지 말고 전파하거나 "
                 "(2) fallback 3조건(요구사항에 명시된 우아한 저하 + 외부적·예상 "
                 "가능한 실패 + 실패가 로그/화면으로 드러남)을 채워라. 정말 의도된 "
-                "삼킴이면 그 줄에 `vibe-check: allow-swallow` 주석을 남기고 이유를 "
+                "삼킴이면 그 줄에 `hi-vibe: allow-swallow` 주석을 남기고 이유를 "
                 "사용자에게 설명하라."
             )
 
@@ -127,14 +127,14 @@ def main(payload):
         if len(new_sec) > len(old_sec):
             labels = ", ".join(sorted({label for label, _ in new_sec}))
             messages.append(
-                f"vibe-check 감지: 방금 `{os.path.basename(fp)}`에 실제 비밀키로 보이는 "
+                f"hi-vibe 감지: 방금 `{os.path.basename(fp)}`에 실제 비밀키로 보이는 "
                 f"문자열이 들어갔다 — {labels}. 코드/설정에 박힌 키는 git 이력에 영구히 "
                 "남고, 공개 저장소면 봇이 몇 분 안에 수집해 과금 폭탄으로 이어진다. "
                 "지금 즉시: (1) 키를 .env로 옮기고 코드는 환경변수로 읽게 바꿔라 "
                 "(.env가 .gitignore에 있는지 확인). (2) 이미 커밋/푸시된 키라면 코드에서 "
                 "지우는 것으로는 부족하다 — 해당 서비스에서 키를 폐기·재발급(rotate)해야 "
                 "한다고 사용자에게 알려라. 테스트용 가짜 키라면 그 줄에 "
-                "`vibe-check: allow-secret` 주석을 남겨라."
+                "`hi-vibe: allow-secret` 주석을 남겨라."
             )
 
     if messages:

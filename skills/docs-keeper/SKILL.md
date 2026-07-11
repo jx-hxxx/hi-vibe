@@ -1,10 +1,10 @@
 ---
 name: docs-keeper
 description: >-
-  Maintains the four living documents of a vibe-check project: CLAUDE.md
+  Maintains the four living documents of a hi-vibe project: CLAUDE.md
   (lean project map), per-folder MODULE.md (detailed design), handover.md
   (session-to-session context log), CHANGELOG.md (substantive change
-  history, Keep a Changelog). Use for /vibe-check:init, :handover, :log,
+  history, Keep a Changelog). Use for /hi-vibe:init, :handover, :log,
   :recall, :welcome, and whenever the user asks to 문서 정리, 인수인계
   기록, 체인지로그 작성, CLAUDE.md 갱신, "이 폴더 문서 만들어줘", or after
   a structural change that must be reflected in docs. Also use (mode:
@@ -52,7 +52,7 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
      folder, pre-filling 주요 파일 from a directory listing and leaving
      설계 sections as short TODO prompts for the user.
    - handover.md + CHANGELOG.md from templates.
-4. Ensure `.vibe-check/` and `.repo-xray/` are in `.gitignore`.
+4. Ensure `.hi-vibe/` and `.repo-xray/` are in `.gitignore`.
 5. Tell the user the hooks are now active for this project (they gate on
    handover.md existing) and what will happen automatically.
 
@@ -123,7 +123,7 @@ Explain in kind, plain Korean (짧게!): the 4 documents table above, the
 command map (init → 평소엔 pre-write/post-write → 세션 끝 handover →
 변경 후 log → 과거가 궁금하면 recall → 가끔 audit/guards/doctor), and
 that hooks auto-record handover before every compact. If CLAUDE.md or handover.md is missing here,
-offer `/vibe-check:init`.
+offer `/hi-vibe:init`.
 
 ## Doc-sync contract (applies everywhere)
 

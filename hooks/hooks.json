@@ -1,5 +1,5 @@
 {
-  "description": "vibe-check: compact 직전 handover 자동 기록, 세션 시작 컨텍스트 주입, 에러 삼킴 감지, CHANGELOG 알림",
+  "description": "hi-vibe: compact 직전 handover 자동 기록, 세션 시작 컨텍스트 주입, 에러 삼킴 감지, CHANGELOG 알림",
   "hooks": {
     "PostToolUse": [
       {

@@ -1,4 +1,4 @@
-"""vibe-check 훅 공용 유틸. stdlib만 사용.
+"""hi-vibe 훅 공용 유틸. stdlib만 사용.
 
 훅은 조언자다: 어떤 실패도 호스트(Claude Code)를 막으면 안 되므로
 run()이 모든 예외를 삼키고 exit 0 한다. 넓은 except는 원칙적으로
@@ -18,7 +18,7 @@ def read_payload():
 
 
 def project_gate(cwd):
-    """vibe-check가 init된 프로젝트에서만 동작 (handover.md 존재 여부)."""
+    """hi-vibe가 init된 프로젝트에서만 동작 (handover.md 존재 여부)."""
     return bool(cwd) and os.path.isfile(os.path.join(cwd, "handover.md"))
 
 

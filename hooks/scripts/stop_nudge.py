@@ -16,7 +16,7 @@ def main(payload):
     if not _common.project_gate(cwd):
         return
     sid = str(payload.get("session_id", "unknown"))
-    flag_dir = os.path.join(cwd, ".vibe-check", "state")
+    flag_dir = os.path.join(cwd, ".hi-vibe", "state")
     flag = os.path.join(flag_dir, f"{sid}.nudged")
     if os.path.isfile(flag):
         return
@@ -36,8 +36,8 @@ def main(payload):
     _common.emit(
         "Stop",
         system_message=(
-            "vibe-check: 이번 세션에 코드 변경이 있었는데 CHANGELOG.md 기록이 "
-            "없어요. 실질적인 변경이었다면 /vibe-check:log 로 남겨두세요. "
+            "hi-vibe: 이번 세션에 코드 변경이 있었는데 CHANGELOG.md 기록이 "
+            "없어요. 실질적인 변경이었다면 /hi-vibe:log 로 남겨두세요. "
             "(사소한 수정이면 무시해도 됩니다 — 이 알림은 세션당 1회)"
         ),
     )

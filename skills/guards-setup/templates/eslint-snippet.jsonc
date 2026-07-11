@@ -1,4 +1,4 @@
-// vibe-check: eslint 설정(flat config의 rules 블록)에 병합할 규칙
+// hi-vibe: eslint 설정(flat config의 rules 블록)에 병합할 규칙
 // 과중첩·갓펑션을 린트가 거부하게 한다 (d-3)
 {
   "rules": {

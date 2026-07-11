@@ -1,7 +1,7 @@
 ---
 name: guards-setup
 description: >-
-  Machine-enforced quality guards installer. Use for /vibe-check:guards
+  Machine-enforced quality guards installer. Use for /hi-vibe:guards
   or when the user asks to 린트 설정, 타입 체크 강제, 순환의존 검사,
   CI 세팅, eslint/ruff/mypy 설정, complexity limit. Detects project
   language(s) and installs lint/type/cycle guards and optional CI —

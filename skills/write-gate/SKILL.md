@@ -63,7 +63,7 @@ description: >-
    금지 (grounded-answers 계약).
 10. **문서 동기화 (필수)**: 파일 추가·이동·이름변경 또는 폴더 책임
     변화가 있었으면 → 해당 `MODULE.md` + `CLAUDE.md` 폴더 지도를 같은
-    턴에 갱신. 실질 변경이면 → CHANGELOG 항목 (`/vibe-check:log`).
+    턴에 갱신. 실질 변경이면 → CHANGELOG 항목 (`/hi-vibe:log`).
 
 마지막 두 줄은 반드시 이 두 상태로 끝낸다:
 "실행 검증: <무엇을 어떻게 실행해 확인했나>" 또는 "실행 검증 안 됨 — <이유>"

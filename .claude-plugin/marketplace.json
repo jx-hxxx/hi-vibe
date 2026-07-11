@@ -1,12 +1,12 @@
 {
-  "name": "vibe-check-marketplace",
+  "name": "hi-vibe-marketplace",
   "owner": {
     "name": "jx-hxxx"
   },
-  "description": "vibe-check 공식 마켓플레이스 — 바이브코딩 안전벨트 플러그인",
+  "description": "hi-vibe 공식 마켓플레이스 — 바이브코딩 안전벨트 플러그인",
   "plugins": [
     {
-      "name": "vibe-check",
+      "name": "hi-vibe",
       "source": "./",
       "description": "바이브코딩 안전벨트: 문서 자동화 + AI 코딩 규율 + 기계 강제. 한국어 우선."
     }

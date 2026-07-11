@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────
-# vibe-check 격주 구조 감사
+# hi-vibe 격주 구조 감사
 # ──────────────────────────────────────────────────────────────
 # 매월 1일·15일에 CI에서 Claude Code가 저장소 구조를 감사하고
 # 결과를 GitHub 이슈로 올립니다. 직전 감사(audit/* 태그) 이후
@@ -12,7 +12,7 @@
 #   2. Settings > Actions > General > Workflow permissions를
 #      "Read and write permissions"로 설정
 # ──────────────────────────────────────────────────────────────
-name: vibe-check biweekly audit
+name: hi-vibe biweekly audit
 
 on:
   schedule:
@@ -73,10 +73,10 @@ jobs:
           node-version: '22'
       - name: Claude Code 설치
         run: npm install -g @anthropic-ai/claude-code
-      - name: vibe-check 플러그인 설치
+      - name: hi-vibe 플러그인 설치
         run: |
-          claude plugin marketplace add jx-hxxx/vibe-check
-          claude plugin install vibe-check@vibe-check-marketplace
+          claude plugin marketplace add jx-hxxx/hi-vibe
+          claude plugin install hi-vibe@hi-vibe-marketplace
       - name: 토큰 확인
         run: |
           if [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
@@ -91,7 +91,7 @@ jobs:
             --permission-mode acceptEdits \
             --max-turns 40 \
             -p "
-          /vibe-check:audit 를 실행해 저장소 전체를 스캔한 뒤,
+          /hi-vibe:audit 를 실행해 저장소 전체를 스캔한 뒤,
           write-gate post-write 체크리스트 관점(중복/죽은 코드 후보/
           비대 파일/순환 의존/문서 동기화)으로 구조 감사 보고서를
           작성해 저장소 루트의 STRUCTURE_AUDIT.md 에 저장하세요.
@@ -109,5 +109,5 @@ jobs:
           DATE=$(date +%Y-%m-%d)
           git tag "audit/$DATE-$(date +%H%M)" && git push origin --tags
           gh issue create \
-            --title "vibe-check 구조 감사: $DATE" \
+            --title "hi-vibe 구조 감사: $DATE" \
             --body-file STRUCTURE_AUDIT.md

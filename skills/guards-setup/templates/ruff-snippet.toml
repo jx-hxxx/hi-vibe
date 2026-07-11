@@ -1,4 +1,4 @@
-# vibe-check: pyproject.toml에 병합할 ruff 설정
+# hi-vibe: pyproject.toml에 병합할 ruff 설정
 # 갓펑션·과중첩·인자 폭발을 린트가 거부하게 한다 (d-3)
 
 [tool.ruff]

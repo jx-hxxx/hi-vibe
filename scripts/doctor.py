@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""vibe-check doctor: 안전벨트가 진짜 매여 있는지 자가진단.
+"""hi-vibe doctor: 안전벨트가 진짜 매여 있는지 자가진단.
 
 훅은 어떤 실패에도 호스트를 깨지 않도록 침묵하게 설계되어 있다.
 그 대가로 "조용히 꺼진 상태"가 생길 수 있는데, 그걸 이 스크립트가
@@ -74,7 +74,7 @@ def check_hooks_live(python3):
             f.write("# Handover — 세션 인수인계\n\n## 2026-01-01 00:00 (manual)\n\n- 한 일: doctor 자가진단\n")
 
         p = run_hook(python3, "session_start.py", {"cwd": tmp, "source": "startup"}, tmp)
-        if p.returncode == 0 and "vibe-check" in p.stdout:
+        if p.returncode == 0 and "hi-vibe" in p.stdout:
             add("OK", "SessionStart 훅", "컨텍스트 주입 확인")
         else:
             add("FAIL", "SessionStart 훅", f"exit {p.returncode}, stderr: {p.stderr.strip()[:200]}")
@@ -132,7 +132,7 @@ def check_scanner(python3):
 def check_project(root):
     if not os.path.isfile(os.path.join(root, "handover.md")):
         add("WARN", "이 프로젝트", f"{root} 는 아직 init 전 — 훅이 여기서는 비활성. "
-            "/vibe-check:init 으로 설치하세요.")
+            "/hi-vibe:init 으로 설치하세요.")
         return
     docs = [d for d in ("CLAUDE.md", "CHANGELOG.md") if not os.path.isfile(os.path.join(root, d))]
     gi = os.path.join(root, ".gitignore")
@@ -140,7 +140,7 @@ def check_project(root):
     if os.path.isfile(gi):
         with open(gi, encoding="utf-8", errors="replace") as f:
             gi_text = f.read()
-    missing_gi = [d for d in (".vibe-check", ".repo-xray") if d not in gi_text]
+    missing_gi = [d for d in (".hi-vibe", ".repo-xray") if d not in gi_text]
     if not docs and not missing_gi:
         add("OK", "이 프로젝트", "init 완료 (문서 + .gitignore) — 훅 활성")
     else:
@@ -149,11 +149,11 @@ def check_project(root):
             detail.append("문서 누락: " + ", ".join(docs))
         if missing_gi:
             detail.append(".gitignore에 없음: " + ", ".join(missing_gi))
-        add("WARN", "이 프로젝트", "; ".join(detail) + " — /vibe-check:init --audit 로 점검")
+        add("WARN", "이 프로젝트", "; ".join(detail) + " — /hi-vibe:init --audit 로 점검")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="vibe-check self-diagnosis")
+    parser = argparse.ArgumentParser(description="hi-vibe self-diagnosis")
     parser.add_argument("--root", default=".")
     args = parser.parse_args()
     root = os.path.abspath(args.root)
@@ -166,7 +166,7 @@ def main():
     check_project(root)
 
     icon = {"OK": "✅", "WARN": "⚠️", "FAIL": "❌"}
-    print("vibe-check doctor 결과")
+    print("hi-vibe doctor 결과")
     print("=" * 40)
     for status, label, detail in results:
         line = f"{icon[status]} {label}"

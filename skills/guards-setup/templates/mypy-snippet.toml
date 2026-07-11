@@ -1,4 +1,4 @@
-# vibe-check: pyproject.toml에 병합할 mypy 설정 (d-1: 타입 strict)
+# hi-vibe: pyproject.toml에 병합할 mypy 설정 (d-1: 타입 strict)
 # 입문자 프로젝트에는 단계 적용을 제안: 먼저 아래 3개만 켜고,
 # 익숙해지면 strict = true로 승격.
 

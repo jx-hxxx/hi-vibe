@@ -74,7 +74,7 @@ Structure inspired by lumin-repo-lens (MIT) — the families are our own.
 ## Living-document rule
 
 When a finding is confirmed to be a false positive NOT covered above:
-tell the user plainly, and — if you are working in the vibe-check plugin
+tell the user plainly, and — if you are working in the hi-vibe plugin
 repo itself — add a family here AND a regression test in `tests/`
 (that is how FP-02 was born: the plugin's self-scan flagged its own test
 classes). A false positive that gets fixed silently will return.

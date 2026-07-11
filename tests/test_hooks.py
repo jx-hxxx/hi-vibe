@@ -176,7 +176,7 @@ class PostWriteGuardTest(TempProject):
     def test_allow_swallow_marker_skipped(self):
         out = self.run_guard("Write", {
             "file_path": "/p/svc.py",
-            "content": "try:\n    fetch()\nexcept KeyError:\n    pass  # vibe-check: allow-swallow — 캐시 미스는 무해\n",
+            "content": "try:\n    fetch()\nexcept KeyError:\n    pass  # hi-vibe: allow-swallow — 캐시 미스는 무해\n",
         })
         self.assertEqual(out, "")
 
@@ -291,7 +291,7 @@ class SecretGuardTest(TempProject):
     def test_allow_secret_marker_skipped(self):
         out = self.run_guard("Write", {
             "file_path": "/p/test_client.py",
-            "content": f'FAKE = "{self.FAKE_ANTHROPIC}"  # vibe-check: allow-secret 테스트용\n',
+            "content": f'FAKE = "{self.FAKE_ANTHROPIC}"  # hi-vibe: allow-secret 테스트용\n',
         })
         self.assertEqual(out, "")
 

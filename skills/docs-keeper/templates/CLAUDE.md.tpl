@@ -16,7 +16,7 @@
 - `{folder}/` — {한 줄 설명} → 상세: `{folder}/MODULE.md`
 
 ## 문서 규칙
-이 프로젝트는 vibe-check 문서 시스템을 씁니다. 구조가 바뀌면 해당
+이 프로젝트는 hi-vibe 문서 시스템을 씁니다. 구조가 바뀌면 해당
 `MODULE.md`와 위 폴더 지도를 같은 턴에 갱신하세요. 세션 맥락은
 `handover.md`, 실질 변경 이력은 `CHANGELOG.md`에 기록합니다.
 CLAUDE.md는 120줄을 넘기지 않습니다 — 상세는 항상 MODULE.md로.

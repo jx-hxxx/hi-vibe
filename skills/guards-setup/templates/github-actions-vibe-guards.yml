@@ -1,4 +1,4 @@
-# vibe-check guards: push/PR마다 기계 게이트 실행 (d-2, d-3)
+# hi-vibe guards: push/PR마다 기계 게이트 실행 (d-2, d-3)
 # 설치 시 프로젝트 언어에 맞는 job만 남길 것.
 name: vibe-guards
 

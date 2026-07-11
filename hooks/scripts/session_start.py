@@ -1,5 +1,5 @@
 """SessionStart: 세션이 시작되거나 compact 직후에 가장 최근 handover
-항목과 vibe-check 규율 한 줄을 컨텍스트로 주입한다. 주입량은 작게
+항목과 hi-vibe 규율 한 줄을 컨텍스트로 주입한다. 주입량은 작게
 유지한다 (프롬프트 비대화 방지).
 """
 import os
@@ -10,9 +10,9 @@ import _common
 
 
 CHARTER = (
-    "vibe-check 규율: 에러는 fallback으로 가리지 말고 원인부터. "
+    "hi-vibe 규율: 에러는 fallback으로 가리지 말고 원인부터. "
     "근거 없는 수치 단정 금지. 새 함수를 만들기 전에 기존 것부터 검색"
-    "(/vibe-check:pre-write). 구조가 바뀌면 MODULE.md와 CLAUDE.md 지도 동기화."
+    "(/hi-vibe:pre-write). 구조가 바뀌면 MODULE.md와 CLAUDE.md 지도 동기화."
 )
 
 

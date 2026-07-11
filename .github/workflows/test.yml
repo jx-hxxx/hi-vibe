@@ -1,4 +1,4 @@
-name: vibe-check tests
+name: hi-vibe tests
 
 on:
   push:
