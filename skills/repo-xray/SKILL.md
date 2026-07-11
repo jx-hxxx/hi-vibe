@@ -20,7 +20,8 @@ that evidence into short, kind, actionable advice. The reader may be new
 to coding — plain words, no tool jargon, at most three suggestions at a
 time unless they ask for a full report.
 
-## Core Contract
+<HARD-GATE>
+## Core Contract — the line that must not blur
 
 ```
 NO STRUCTURAL CLAIM WITHOUT RUNNING THE SCRIPT
@@ -31,7 +32,9 @@ A DEAD "CANDIDATE" IS NOT A VERDICT
 If you have not run the script in this session, do not state counts
 ("unused functions: 12") or absence ("that function doesn't exist").
 Run it first, read the JSON, then make the smallest true claim the
-evidence supports.
+evidence supports. Cross this line and the tool becomes a confident
+guesser — exactly the failure it exists to prevent.
+</HARD-GATE>
 
 ## Commands
 
