@@ -6,7 +6,7 @@
 
 > 🇰🇷 **한국어로 읽으시려면 → [README.ko.md](./README.ko.md)** &nbsp;·&nbsp; 🇬🇧 English continues below.
 
-> **A seatbelt for vibe-coding.** Ship fast with AI — keep the repo clean.
+> **Floor it with AI — hi-vibe is your seatbelt.**
 
 Vibe-coding is convenient, but AI-written code keeps repeating the same problems:
 
