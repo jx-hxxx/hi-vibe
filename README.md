@@ -20,21 +20,34 @@
 
 ## 설치
 
+Claude Code 안에서 아래 세 줄을 차례로 실행하세요.
+
 ```
-/plugin marketplace add jx-hxxx/hi-vibe
-/plugin install hi-vibe@hi-vibe-marketplace
+/plugin marketplace add jx-hxxx/hi-vibe        ← 1) 마켓플레이스 등록
+/plugin install hi-vibe@hi-vibe-marketplace    ← 2) 플러그인 설치
+/reload-plugins                                ← 3) 설치 후 적용 (필수!)
 ```
+
+> **3번 `/reload-plugins`를 꼭 실행하세요.** 설치만 하면 명령어·훅이
+> 아직 안 켜져요. 이 줄을 쳐야 이번 세션에서 바로 활성화됩니다
+> (Claude Code 전체 재시작은 필요 없어요).
 
 > 요구사항: Python 3.8+ (`python3` 명령이 있어야 훅이 동작해요).
 > Windows에서 `python3`가 없다면 `python` 별칭을 만들어 주세요.
 
 ## 첫 사용
 
+설치·적용이 끝나면 순서대로:
+
 ```
 /hi-vibe:welcome   ← 뭐부터 할지 모르겠으면 여기
 /hi-vibe:doctor    ← 설치 직후 1회: 훅이 진짜 작동하는지 실행으로 확인
-/hi-vibe:init      ← 프로젝트에 문서 시스템 설치 (1회)
+/hi-vibe:init      ← 새 프로젝트에서 1회: 문서 시스템 설치 + 훅 활성화
 ```
+
+`init`은 **프로젝트(폴더)마다 한 번씩** 실행해요 — hi-vibe를 쓰려는 그
+앱 폴더 안에서요. 마켓플레이스 등록·설치·적용(위 3줄)은 컴퓨터에서
+딱 한 번만 하면 됩니다.
 
 > 훅은 어떤 경우에도 Claude Code를 방해하지 않도록 "조용히 실패"하게
 > 설계돼 있어요. 그 대가로 python3가 없으면 **티 안 나게 꺼진 상태**가
