@@ -74,6 +74,12 @@ pretending certainty:
   decorated Python functions are usually route handlers or hooks that
   frameworks call by registration, not by name — do not suggest deleting
   those; at most mention they *look* unreferenced.
+- **Check each candidate's `looks_wip` flag FIRST.** A `looks_wip: true`
+  symbol is unfinished (pass/`...`/NotImplementedError/TODO) — its zero
+  references mean "not wired up YET", not "dead". **Never suggest deleting
+  it**; ask if it's still under development. This is the "죽은 코드 vs 아직
+  안 만든 코드" distinction (FP-07) — the scan can't tell them apart by
+  references, so this flag is the guard.
 - Doc mentions don't rescue: a name that appears only in `.md`/`.css`
   files stays a dead candidate, with those files listed in
   `doc_mentions`. If the user deletes the code, remind them to fix the

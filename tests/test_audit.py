@@ -31,6 +31,14 @@ def totally_dead_fn(x):
     return x * 2
 
 
+def wip_not_implemented():
+    raise NotImplementedError  # 아직 구현 전
+
+
+def wip_todo():
+    pass  # TODO: 여기 채우기
+
+
 def calc_fee_a(amount, rate):
     """수수료 계산."""
     if amount <= 0:
@@ -178,6 +186,16 @@ class ScanTest(unittest.TestCase):
 
     def test_dead_candidate_found(self):
         self.assertIn("totally_dead_fn", self.dead_names())
+
+    def test_wip_functions_flagged_not_dead_looking(self):
+        """미완성(NotImplementedError/pass+TODO) 함수는 참조 0이라 dead
+        후보에 잡히더라도 looks_wip=True로 표시돼야 한다 — '죽은 코드'가
+        아니라 '아직 안 만든 것'일 수 있으므로 삭제 제안 전 조심하게."""
+        by_name = {d["name"]: d for d in self.report["dead_candidates"]}
+        self.assertTrue(by_name["wip_not_implemented"]["looks_wip"])
+        self.assertTrue(by_name["wip_todo"]["looks_wip"])
+        # 진짜 본문이 있는 dead는 WIP 아님
+        self.assertFalse(by_name["totally_dead_fn"]["looks_wip"])
 
     def test_used_symbol_not_dead(self):
         self.assertNotIn("used_helper", self.dead_names())

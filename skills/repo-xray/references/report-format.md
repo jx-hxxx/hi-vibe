@@ -33,6 +33,12 @@ definitions. Decorated ones are moved out into `decorated_unreferenced`.
 - `doc_mentions` — `.md`/`.css` files that mention the name. These do
   NOT count as references; if the code is deleted, these docs must be
   fixed in the same turn.
+- `looks_wip` (Python only) — `true` when the symbol looks unfinished
+  (pass-only / `...` / `raise NotImplementedError` / empty body / a
+  TODO·FIXME·WIP·XXX comment in its scope). Zero references then likely
+  means "not wired up yet", not "dead". NEVER recommend deleting a
+  `looks_wip` symbol — ask if it's still under development (FP-07). JS/TS
+  symbols don't carry this flag (regex scanner has no body).
 - Names starting with `_` and `main` are skipped by design, and so is
   everything in test files (`test_*.py`, `*_test.py`, `conftest.py`,
   `*.test.ts` …) — unittest/pytest/jest invoke those by naming

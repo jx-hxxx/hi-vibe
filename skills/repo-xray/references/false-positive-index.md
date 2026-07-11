@@ -21,6 +21,7 @@ Structure inspired by lumin-repo-lens (MIT) — the families are our own.
 | 스캔 안 되는 파일(.vue/.svelte/.j2/.ipynb 등)에서만 사용 | FP-04 |
 | 라이브러리/패키지의 공개 API (외부 소비자용) | FP-05 |
 | CLI 스크립트 / 배포 설정이 문자열 조립으로 참조 | FP-06 |
+| 미완성 함수 (pass·`...`·NotImplementedError·TODO, `looks_wip`) | FP-07 |
 | 테스트끼리 90% 유사 (near-duplicate) | FP-D1 |
 | 짧은 보일러플레이트끼리 유사 (thin wrapper, 마이그레이션) | FP-D2 |
 | ESM 모듈 간 같은 함수 이름 (js_name_collisions) | FP-C1 |
@@ -54,6 +55,15 @@ Structure inspired by lumin-repo-lens (MIT) — the families are our own.
   `"handler": "app.main:serve"` usually still yields a token match (strings
   are tokenized), but split or templated paths do not. Check `appears_in`
   for config files before concluding.
+- **FP-07 — work-in-progress (미완성).** A symbol the scanner marks with
+  `"looks_wip": true` is unfinished — `pass`-only body, `...`, `raise
+  NotImplementedError`, empty body, or a TODO/FIXME/WIP comment in its
+  scope. Its zero references mean it **hasn't been wired up YET**, not that
+  it's dead. **NEVER suggest deleting a `looks_wip` symbol.** At most say
+  "이건 아직 미완성(개발 중)으로 보여요 — 나중에 쓰실 거면 그대로 두세요"
+  and ask before doing anything. This is the difference between "죽은 코드"
+  and "아직 안 만든 코드" — the scan can't tell them apart by references
+  alone, so the WIP flag is the guard.
 
 ## Duplicate / near-duplicate families
 

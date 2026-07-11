@@ -56,9 +56,20 @@ description: >-
   → 저장소 Settings > Secrets에 `CLAUDE_CODE_OAUTH_TOKEN` 등록
   ② Settings > Actions > Workflow permissions를 "Read and write"로.
 
+## unused/dead 정리 주의 (미완성 코드 보호)
+
+린트는 기본적으로 **검사만** 한다 — 코드를 자동으로 지우지 않는다. `--fix`
+자동 수정도 보통 안 쓰는 import·지역 변수 수준이지, 함수 정의를 지우지
+않는다. 그래도 lint의 unused나 audit의 dead 결과를 보고 코드를 **정리·삭제
+하려 할 때는**, 먼저 그게 **미완성(WIP)** 코드인지 확인한다 — `pass`/`...`/
+`NotImplementedError`/빈 본문/TODO·FIXME 주석. 미완성이면 "안 쓰는 것"이
+아니라 "아직 안 만든 것"이므로 **지우지 말고 사용자에게 물어라**. 삭제는
+언제나 사용자 확인 후 (repo-xray `looks_wip` 플래그·FP-07 참고).
+
 ## Red Flags
 
 - 사용자 확인 없이 설정 파일을 쓰는 것
 - 기존 설정 값을 스니펫 값으로 덮는 것
 - 도구를 실행해보지 않고 "설정 완료"라고 보고하는 것
 - 위반이 많다고 임계값을 올려서 통과시키는 것 (root-cause-first 위반)
+- lint unused / audit dead를 보고 **미완성 코드를 확인 없이 지우는 것**

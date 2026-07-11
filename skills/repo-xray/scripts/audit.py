@@ -233,6 +233,35 @@ def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20
     return results[:20], truncated
 
 
+def _looks_wip(node, src_lines):
+    """함수/클래스가 '아직 안 만든(WIP)'으로 보이나 — 그렇다면 참조가 0이어도
+    '죽은 코드'가 아니라 '개발 중이라 아직 안 쓰이는 것'일 수 있으므로 삭제
+    후보로 다룰 때 조심해야 한다. 신호: docstring만/빈 본문, 본문이 `pass`
+    하나 또는 `...` 하나, `raise NotImplementedError`, 또는 함수 범위에
+    TODO/FIXME/WIP/XXX 주석."""
+    body = list(node.body)
+    if body and isinstance(body[0], ast.Expr) and isinstance(getattr(body[0], "value", None), ast.Constant) \
+            and isinstance(body[0].value.value, str):
+        body = body[1:]  # docstring 제외
+    if not body:
+        return True
+    if len(body) == 1:
+        only = body[0]
+        if isinstance(only, ast.Pass):
+            return True
+        if isinstance(only, ast.Expr) and isinstance(getattr(only, "value", None), ast.Constant) \
+                and only.value.value is ...:
+            return True
+    for n in ast.walk(node):
+        if isinstance(n, ast.Raise) and n.exc is not None:
+            exc = n.exc.func if isinstance(n.exc, ast.Call) else n.exc
+            if isinstance(exc, ast.Name) and exc.id in ("NotImplementedError", "NotImplemented"):
+                return True
+    end = getattr(node, "end_lineno", node.lineno)
+    scope = "\n".join(src_lines[node.lineno - 1:end])
+    return bool(re.search(r"#.*\b(TODO|FIXME|WIP|XXX)\b", scope, re.I))
+
+
 def analyze_python(root, py_files):
     symbols = []   # {name, file, line, end_line, kind, decorated, is_method, length}
     dup_index = defaultdict(list)
@@ -241,6 +270,7 @@ def analyze_python(root, py_files):
 
     for path in py_files:
         src = read_text(path)
+        src_lines = src.splitlines()
         try:
             tree = ast.parse(src)
         except SyntaxError as e:
@@ -266,6 +296,7 @@ def analyze_python(root, py_files):
                     "kind": kind,
                     "decorated": decorated,
                     "length": length,
+                    "looks_wip": _looks_wip(node, src_lines),
                 })
                 # duplicate detection: same AST shape ignoring the function
                 # name AND local variable names (normalized dump)

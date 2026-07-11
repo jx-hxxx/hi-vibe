@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-12
+
+### Added
+- **미완성(WIP) 코드 감지** — 스캐너가 함수/메서드의 본문을 보고 "아직 안 만든 것"을 `looks_wip` 플래그로 표시한다. 감지 신호: `pass`만 있는 본문, `...`, `raise NotImplementedError`, 빈 본문, 스코프 안 TODO·FIXME·WIP·XXX 주석. 참조가 0이라 dead 후보로 잡히더라도 이 플래그가 켜져 있으면 "죽은 코드"가 아니라 "아직 안 만든 코드"이므로 삭제 제안 대상에서 뺀다. (audit.py `_looks_wip`, 파이썬 한정 — JS/TS는 정규식 스캐너라 본문이 없음.)
+
+### Why
+- audit은 제안에서 멈추지만 **guards가 미완성 코드를 "안 쓰는 코드"로 간주해 정리하면** 개발 중이던 코드가 사라진다. 스캔은 참조만으로 "죽은 코드 vs 아직 안 만든 코드"를 구분할 수 없어서, 본문 신호를 보는 이 플래그가 유일한 가드다.
+
+### Changed
+- repo-xray SKILL·report-format: dead 후보 볼 때 `looks_wip`부터 확인하도록 지침 추가.
+- false-positive-index: **FP-07 (work-in-progress)** 계열 신설 — `looks_wip` 심볼은 절대 삭제 제안하지 않고 "아직 미완성으로 보여요, 나중에 쓰실 거면 그대로 두세요"로 안내.
+- guards-setup SKILL: 린트는 기본 검사만 하고 `--fix`도 import·지역변수 수준이지 함수 정의를 지우지 않음을 명시. lint unused / audit dead를 보고 정리할 때 미완성 여부를 먼저 확인하고 삭제는 사용자 확인 후로 못박음 (Red Flags에 항목 추가).
+
 ## [0.4.2] - 2026-07-11
 
 ### Changed
