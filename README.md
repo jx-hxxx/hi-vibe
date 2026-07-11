@@ -32,8 +32,16 @@ Claude Code 안에서 아래 세 줄을 차례로 실행하세요.
 > 아직 안 켜져요. 이 줄을 쳐야 이번 세션에서 바로 활성화됩니다
 > (Claude Code 전체 재시작은 필요 없어요).
 
-> 요구사항: Python 3.8+ (`python3` 명령이 있어야 훅이 동작해요).
+> **필수 요구사항**: Python 3.8+ (`python3` 명령이 있어야 훅이 동작해요).
 > Windows에서 `python3`가 없다면 `python` 별칭을 만들어 주세요.
+
+> **(선택) context7 MCP — 있으면 더 정확해져요.** 코드가 외부
+> 라이브러리 API를 쓸 때, `pre-write`가 AI의 오래된 기억 대신 **최신
+> 공식 문서**를 자동 조회해서 "옛날 방식 코드"를 막아줘요. **필수는
+> 아니에요** — 없으면 자동으로 웹 검색으로 대체하고, 그마저 안 되면
+> "추정입니다"라고 밝혀요. 깔고 싶다면(무료 API 키 필요) 공식 안내를
+> 따르세요 → https://context7.com · Claude Code 예시:
+> `claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp --api-key <발급받은_키>`
 
 ## 첫 사용
 
