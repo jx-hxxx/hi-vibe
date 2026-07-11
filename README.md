@@ -144,7 +144,8 @@ type commands in order — **just talk normally:**
 > **⚡ auto** = fires on its own from natural language ("make me…" / "done")
 > or hooks (e.g. compaction). The command is just a button for when you want
 > to be explicit.
-> **🖐 manual** = you run it when needed (install / setup / diagnosis).
+>
+> **🖐 manual** = you run the command yourself when needed (install / setup / diagnosis).
 
 ## Updating (when a new version ships)
 
