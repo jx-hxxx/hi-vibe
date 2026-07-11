@@ -144,14 +144,16 @@ language** (Korean if they speak Korean, English if English):
    English "👋 Hi, I'm hi-vibe!").
 2. One line on what hi-vibe is — a **vibe-coding seatbelt** that keeps
    the repo clean while you code with AI.
-3. **Check whether the `.hi-vibe/` directory exists in the current
-   project** (that is hi-vibe's init marker) and say the right one:
-   - **MISSING (`.hi-vibe/` absent)** → hi-vibe is NOT set up here yet.
-     Say clearly, e.g. "이 프로젝트에서 hi-vibe를 쓰려면 먼저
-     `/hi-vibe:init`을 입력해 주세요." Do NOT be fooled by an existing
-     `CLAUDE.md` or `handover.md` (the user may already have their own
-     for other reasons) — the marker is `.hi-vibe/`, so if that directory
-     is absent, init is still needed.
+3. **Check whether the `.hi-vibe/` directory exists** — this is YOUR
+   internal init check; do NOT lecture the user about the marker or the
+   logic behind it.
+   - **MISSING** → tell them in ONE short, plain sentence, in their
+     language: "이 프로젝트엔 아직 hi-vibe가 설정 안 됐어요 —
+     `/hi-vibe:init`을 한 번 돌려주세요." Nothing more — no "the marker
+     is `.hi-vibe/`", no "CLAUDE.md/handover.md don't count". (Internally:
+     an existing `CLAUDE.md` or the user's own `handover.md` does NOT mean
+     initialized; only `.hi-vibe/` does — but the user never needs to hear
+     this reasoning.)
    - **EXISTS** → say they can just code normally; it's already on.
 4. **Always paste the GitHub URL as a real link** and tell them to read
    the README there — never just say "the plugin README":
