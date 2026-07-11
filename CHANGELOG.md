@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-07-11
+
+### Changed
+- plugin.json·marketplace.json의 `description`을 영문화 — Claude Code의 Installed·Discover 화면에 뜨는 소개글이 기존 한국어 고정이라, 영어 사용자에게도 한국어로만 보이던 문제. About·README 영문 국제화와 일치시킴.
+
 ## [0.3.4] - 2026-07-11
 
 ### Changed
