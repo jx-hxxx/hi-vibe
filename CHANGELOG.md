@@ -8,7 +8,7 @@
 ## [0.3.6] - 2026-07-11
 
 ### Changed
-- welcome에 두 가지 필수 못박음: ① GitHub URL을 **실제 링크로** 붙이고 README.md를 읽어보라고 안내(기존엔 "플러그인 README"라고만 뭉뚱그려 링크가 없었음). ② 현재 프로젝트에 (소문자)가 없으면 "먼저 /hi-vibe:init 입력"을 명확히 요청 — CLAUDE.md나 대문자 HANDOVER.md에 속아 "이미 됐다"고 오판하지 않도록.
+- welcome에 두 가지 필수 못박음: ① GitHub URL을 **실제 링크로** 붙이고 README.md를 읽어보라고 안내(기존엔 "플러그인 README"라고만 뭉뚱그려 링크가 없었음). ② 현재 프로젝트에 `handover.md`(소문자)가 없으면 "먼저 /hi-vibe:init 입력"을 명확히 요청 — CLAUDE.md나 대문자 HANDOVER.md에 속아 "이미 됐다"고 오판하지 않도록.
 
 ## [0.3.5] - 2026-07-11
 
