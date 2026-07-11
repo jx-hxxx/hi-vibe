@@ -149,7 +149,7 @@ Claude Code 안에서 아래 세 줄을 차례로 실행하세요.
 
 `/plugin` → **Marketplaces** 탭 → `hi-vibe-marketplace` → **Enable
 auto-update**. 이러면 새 버전이 나올 때마다 **켤 때 자동으로 받아와요.**
-지현님은 `/reload-plugins`(또는 그냥 Claude Code 재시작)만 하면 적용돼요 —
+그다음엔 `/reload-plugins`(또는 그냥 Claude Code 재시작)만 하면 적용돼요 —
 아래 명령어를 손으로 칠 필요가 없어요.
 
 **수동 (auto-update를 안 켰다면)** — **순서대로** 세 단계. **①②는 별개예요**
