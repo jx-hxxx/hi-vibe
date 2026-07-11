@@ -4,179 +4,186 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 ![python: 3.8+](https://img.shields.io/badge/python-3.8%2B-green.svg)
 
-> **바이브코딩 안전벨트.** AI랑 신나게 코딩하되, 저장소는 깨끗하게.
+> 🇰🇷 **한국어로 읽으시려면 → [README.ko.md](./README.ko.md)** &nbsp;·&nbsp; 🇬🇧 English continues below.
 
-바이브코딩은 편리하지만, AI가 만든 코드에는 반복되는 문제가 있어요:
+> **A seatbelt for vibe-coding.** Ship fast with AI — keep the repo clean.
 
-- 😵 세션이 바뀌면 기억을 잃고 **있던 함수를 또 만들어요**
-- 🩹 에러가 나면 원인 대신 **fallback으로 임시방편 땜빵**을 해요 (그래서 버그가 조용히 숨어요)
-- 🤷 헷갈리는 결정을 **묻지도 않고 마음대로** 진행해요
-- 📊 확인도 안 한 수치를 **공식 스펙처럼** 말해요
-- 🗿 한 파일에 다 몰아넣고, 문서는 코드와 **따로 놀아요**
+Vibe-coding is convenient, but AI-written code keeps repeating the same problems:
 
-`hi-vibe`는 이 문제들을 **문서 자동화 + AI 규율 + 기계 강제** 세 겹으로 막습니다.
+- 😵 Loses memory across sessions and **re-creates functions that already exist**
+- 🩹 On errors, **band-aids with fallbacks** instead of finding the cause (so bugs hide silently)
+- 🤷 Makes ambiguous decisions **on its own, without asking**
+- 📊 States unverified numbers **as if they were official specs**
+- 🗿 Dumps everything into one file, and **docs drift away from the code**
+
+`hi-vibe` blocks all of these with three layers: **doc automation + AI discipline + machine enforcement.**
 
 ---
 
-## 설치
+## Install
 
-Claude Code 안에서 아래 세 줄을 차례로 실행하세요.
+Run these three lines in order, inside Claude Code:
 
 ```
-/plugin marketplace add jx-hxxx/hi-vibe        ← 1) 마켓플레이스 등록
-/plugin install hi-vibe@hi-vibe-marketplace    ← 2) 플러그인 설치
-/reload-plugins                                ← 3) 설치 후 적용 (필수!)
+/plugin marketplace add jx-hxxx/hi-vibe        ← 1) register the marketplace
+/plugin install hi-vibe@hi-vibe-marketplace    ← 2) install the plugin
+/reload-plugins                                ← 3) apply it (required!)
 ```
 
-> **3번 `/reload-plugins`를 꼭 실행하세요.** 설치만 하면 명령어·훅이
-> 아직 안 켜져요. 이 줄을 쳐야 이번 세션에서 바로 활성화됩니다
-> (Claude Code 전체 재시작은 필요 없어요).
+> **Don't skip step 3, `/reload-plugins`.** Installing alone does NOT turn on
+> the commands and hooks yet — this line activates them in the current session
+> (no full Claude Code restart needed).
 
-> **필수 요구사항**: Python 3.8+ (`python3` 명령이 있어야 훅이 동작해요).
-> Windows에서 `python3`가 없다면 `python` 별칭을 만들어 주세요.
+> **Requirement**: Python 3.8+ (the hooks need a `python3` command).
+> On Windows without `python3`, create a `python` alias.
 
-> **(선택) context7 MCP — 있으면 더 정확해져요.** 코드가 외부
-> 라이브러리 API를 쓸 때, `pre-write`가 AI의 오래된 기억 대신 **최신
-> 공식 문서**를 자동 조회해서 "옛날 방식 코드"를 막아줘요. **필수는
-> 아니에요** — 없으면 자동으로 웹 검색으로 대체하고, 그마저 안 되면
-> "추정입니다"라고 밝혀요. 깔고 싶다면(무료 API 키 필요) 공식 안내를
-> 따르세요 → https://context7.com · Claude Code 예시:
-> `claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp --api-key <발급받은_키>`
+> **(Optional) context7 MCP — more accurate when present.** When your code
+> touches an external library's API, `pre-write` fetches the **latest official
+> docs** instead of relying on the AI's stale memory, preventing outdated code.
+> **Not required** — without it, hi-vibe falls back to web search, and if that
+> fails too, labels the answer as an estimate. To install it (free API key
+> needed) follow the official guide → https://context7.com · Claude Code:
+> `claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp --api-key <your_key>`
 
-> **(선택) claude-hud — 컨텍스트를 눈으로 보며 관리하고 싶다면.**
-> 상태줄에 **남은 컨텍스트·토큰**을 실시간으로 보여줘요. hi-vibe와 궁합이
-> 좋아요 — 컨텍스트가 얼마 남았는지 보다가 여유 있을 때 `/compact` 하면,
-> 그 직전에 hi-vibe가 handover를 자동 기록하거든요("컨텍스트 짧게 유지 +
-> 핸드오버 자주"가 눈으로 관리돼요). 설치:
+> **(Optional) claude-hud — if you want to watch your context usage.** It shows
+> **remaining context / tokens** live in the status line. It pairs well with
+> hi-vibe: watch how much context is left, and when there's room run `/compact`
+> — hi-vibe auto-records handover right before that (so "keep context short +
+> handover often" becomes visible). Install:
 > ```
 > /plugin marketplace add jarrodwatts/claude-hud
 > /plugin install claude-hud@claude-hud
 > /reload-plugins
 > ```
-> 설치 후 `/claude-hud:setup`으로 상태줄을 켜세요.
+> Then run `/claude-hud:setup` to enable the status line.
 
-## 첫 사용
+## First run
 
-설치·적용이 끝나면 순서대로:
+Once installed and applied, in order:
 
 ```
-/hi-vibe:welcome   ← 뭐부터 할지 모르겠으면 여기
-/hi-vibe:doctor    ← 설치 직후 1회: 훅이 진짜 작동하는지 실행으로 확인
-/hi-vibe:init      ← 새 프로젝트에서 1회: 문서 시스템 설치 + 훅 활성화
+/hi-vibe:welcome   ← start here if you're not sure what to do
+/hi-vibe:doctor    ← once after install: actually runs the hooks to verify they work
+/hi-vibe:init      ← once per new project: installs the doc system + activates hooks
 ```
 
-`init`은 **프로젝트(폴더)마다 한 번씩** 실행해요 — hi-vibe를 쓰려는 그
-앱 폴더 안에서요. 마켓플레이스 등록·설치·적용(위 3줄)은 컴퓨터에서
-딱 한 번만 하면 됩니다.
+Run `init` **once per project (folder)** — inside the app folder where you want
+to use hi-vibe. The marketplace/install/apply steps (the three lines above) are
+done just once on your machine.
 
-> 훅은 어떤 경우에도 Claude Code를 방해하지 않도록 "조용히 실패"하게
-> 설계돼 있어요. 그 대가로 python3가 없으면 **티 안 나게 꺼진 상태**가
-> 될 수 있는데, `doctor`가 훅 4종과 스캐너를 실제로 돌려서 확인해 줍니다.
+> Hooks are designed to **"fail silently"** so they never block Claude Code.
+> The trade-off: if `python3` is missing they can be **silently off** — which is
+> exactly why `doctor` runs the 4 hooks and the scanner for real to confirm.
 
-`init`을 하면 이 4개 문서가 생기고, 훅이 이 프로젝트에서 활성화돼요:
+Running `init` creates these 4 documents and activates the hooks for this project:
 
-| 문서 | 역할 |
+| Document | Role |
 |---|---|
-| `CLAUDE.md` | 프로젝트 지도 — 개요·요구사항·폴더 지도 (얇게 유지) |
-| `폴더/MODULE.md` | 각 폴더의 상세 설계 — 기능, 모델, 주의사항 |
-| `handover.md` | 세션 인수인계 — 다음 세션이 맥락을 잃지 않게 |
-| `CHANGELOG.md` | 실질 변경 이력 — 무엇이 언제 바뀌었나 |
+| `CLAUDE.md` | Project map — overview, requirements, folder map (keep it lean) |
+| `<folder>/MODULE.md` | Per-folder design — features, models, gotchas |
+| `handover.md` | Session handover — so the next session doesn't lose context |
+| `CHANGELOG.md` | Substantive change history — what changed, and when |
 
-## 가끔, 필요할 때만 (선택)
+## Occasionally, only when needed (optional)
 
 ```
-/hi-vibe:audit          ← 이미 코드가 많은 프로젝트: 중복·갓파일 진단
-/hi-vibe:guards --ci    ← 린트(코드 자동 검사기)로 품질을 기계가 강제하게
+/hi-vibe:audit          ← for repos with lots of existing code: find duplicates / god-files
+/hi-vibe:guards --ci    ← install a linter (auto code checker) to machine-enforce quality
 ```
 
-- **`audit`** — 추측하지 않아요. 스캐너가 뽑은 JSON 증거로만 말하고,
-  "없다"고 할 땐 스캔 범위를 함께 말해요. Python + JS/TS(`.ts`/`.tsx`/`.jsx`
-  포함)를 스캔하고, 똑같은 중복만이 아니라 **"90% 비슷하게 또 만든"** 함수
-  쌍(AI의 단골 실수)도 찾아내요.
-- **`guards`** — 린트(코드 자동 검사기)를 **물어보고** 설치해요(기존 설정은
-  안 건드림). `--ci`를 붙이면 GitHub에서도 자동 검문(CI)하게 돼요.
+- **`audit`** — never guesses. It speaks only from the scanner's JSON evidence,
+  and when saying "not found" it states the scan range. Scans Python + JS/TS
+  (`.ts`/`.tsx`/`.jsx` included), and catches not just exact duplicates but
+  also **"reimplemented ~90% the same"** function pairs (a classic AI mistake).
+- **`guards`** — installs a linter (auto code checker) **after asking** (never
+  overwrites existing config). Add `--ci` to also enforce it on GitHub (CI).
 
-## init한 뒤엔 전부 자동이에요
+## After `init`, everything is automatic
 
-위 "첫 사용"에서 **`init`을 한 프로젝트**에서는, 아래가 전부 알아서
-돌아가요 (훅과 문서 자동화는 `init`으로 켜지거든요). 명령어를 순서대로
-칠 필요 없어요 — **평소처럼 말하면 됩니다:**
+In a project where you ran **`init`** (from "First run" above), everything below
+runs on its own (hooks and doc automation are switched on by `init`). No need to
+type commands in order — **just talk normally:**
 
-| 이럴 때 | 자동으로 |
+| When you… | …this happens automatically |
 |---|---|
-| "이 함수 만들어줘" | **pre-write** — 이미 있는지 먼저 검색 (중복 재구현 방지) |
-| "다 했어 / 리뷰해줘" | **post-write** — 품질 체크리스트 + 문서 동기화 |
-| "설계도 봐줘" | **post-write --deep** — 코드를 쓴 기억 없는 깨끗한 AI가 과잉 설계·불필요한 기능 잡기 |
-| 코드 쓰는 순간 | 에러 삼킴·비밀키 하드코딩 **즉시 감지** |
-| 컴팩트할 때마다 | **handover** 자동 기록 (맥락 보존) |
-| 실질 변경하면 | **CHANGELOG** 자동 기록 |
-| 세션 시작/압축 직후 | 최근 인수인계 + 규율 자동 주입 |
+| "make me this function" | **pre-write** — searches first for an existing one (prevents duplicate reimplementation) |
+| "done / review it" | **post-write** — quality checklist + doc sync |
+| "review the design" | **post-write --deep** — a clean-context AI (no memory of writing it) catches over-engineering / unneeded features |
+| the moment code is written | **instant detection** of error-swallowing / hardcoded secrets |
+| every compaction | **handover** auto-recorded (context preserved) |
+| on a substantive change | **CHANGELOG** auto-recorded |
+| session start / after compaction | latest handover + discipline auto-injected |
 
-> 명령어(`/hi-vibe:pre-write` 등)는 "확실하게 하고 싶을 때 누르는 버튼"일 뿐이에요. 대부분 자연어에 알아서 발동해요.
-> 감지된 에러 삼킴·비밀키가 **의도된 것**이면 그 줄에 `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` 주석을 달면 통과돼요.
+> The commands (`/hi-vibe:pre-write` etc.) are just "buttons for when you want to
+> be explicit". Most of it fires on natural language.
+> If a detected error-swallow / secret is **intentional**, add a
+> `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line to pass.
 
-> **(선택) 컨텍스트를 일찍 자동 정리하고 싶다면** — Claude Code 기본
-> auto-compact는 컨텍스트가 거의 다 찼을 때 발동해요. `~/.claude/settings.json`의
-> `env`에 `"CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "30"`을 넣으면 30%에서 미리
-> 자동 컴팩트가 돌고, **그때 위 handover 자동 기록도 같이 실행**돼요.
-> 단, 이 환경변수는 **모델·환경에 따라 효과가 제한**될 수 있어요(공식 문서
-> 기준). 켠 뒤 실제로 30%에서 도는지 한 번 확인하세요.
+> **(Optional) to auto-compact earlier** — Claude Code's built-in auto-compact
+> fires when context is nearly full. Add `"CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "30"`
+> to the `env` in `~/.claude/settings.json` to auto-compact at 30% instead — and
+> the handover auto-record above runs at that moment too. Note: this env var's
+> effect **varies by model/environment** (per the official docs); after enabling,
+> check that it actually fires at 30%.
 
-## 명령어 한눈에
+## Commands at a glance
 
-| 명령 | 언제 |
+| Command | When |
 |---|---|
-| `/hi-vibe:welcome` | 처음, 또는 뭐 쓸지 모를 때 |
-| `/hi-vibe:doctor` | 설치 직후, 또는 훅이 도는지 의심될 때 |
-| `/hi-vibe:init` | 프로젝트마다 1회 (문서 시스템 설치) |
-| `/hi-vibe:pre-write` | 새 함수/파일 만들기 **전** |
-| `/hi-vibe:post-write` | 코드 작성 **후** 리뷰 (`--deep` = 남의 눈 설계 리뷰) |
-| `/hi-vibe:handover` | 세션 마무리 인수인계 |
-| `/hi-vibe:log` | 실질 변경 CHANGELOG 기록 |
-| `/hi-vibe:recall` | "예전에 왜 이렇게 했지?" — 기록에서 검색 |
-| `/hi-vibe:audit` | 전체 구조 점검 |
-| `/hi-vibe:guards` | 린트(코드 자동 검사기) 설치 — 안 좋은 코드를 기계가 막음 |
+| `/hi-vibe:welcome` | first time, or when unsure what to use |
+| `/hi-vibe:doctor` | right after install, or when unsure hooks are running |
+| `/hi-vibe:init` | once per project (installs the doc system) |
+| `/hi-vibe:pre-write` | **before** creating a new function/file |
+| `/hi-vibe:post-write` | **after** writing code (`--deep` = clean-eyes design review) |
+| `/hi-vibe:handover` | session-end handover |
+| `/hi-vibe:log` | record a substantive change in CHANGELOG |
+| `/hi-vibe:recall` | "why did we do it this way before?" — search the records |
+| `/hi-vibe:audit` | full structure checkup |
+| `/hi-vibe:guards` | install a linter (auto code checker) — machine blocks bad code |
 
-## 업데이트 (새 버전 나왔을 때)
+## Updating (when a new version ships)
 
-설치는 그 시점 버전을 컴퓨터에 복사해둬요. 그래서 새 버전이 나와도
-자동으로 안 바뀌고, 아래 **순서대로** 세 단계를 거쳐야 최신을 받아요.
-**①②는 별개예요** — 목록만 갱신하고 플러그인 교체를 안 하면 옛 버전
-그대로예요 (제일 헷갈리는 지점!).
+Install copies the version-at-that-moment to your machine. So new versions do
+**not** apply automatically — you go through three steps **in order**. **Steps
+①②are separate** — refreshing the list without swapping the plugin leaves you
+on the old version (the most confusing part!).
 
 ```
-/plugin marketplace update hi-vibe-marketplace   ← ① 최신 목록 갱신
-/plugin update hi-vibe@hi-vibe-marketplace       ← ② 플러그인 교체
-/reload-plugins                                  ← ③ 지금 세션에 적용
+/plugin marketplace update hi-vibe-marketplace   ← ① refresh the latest list
+/plugin update hi-vibe@hi-vibe-marketplace       ← ② swap in the new plugin
+/reload-plugins                                  ← ③ apply to the current session
 ```
 
-- 확인: `/plugin` → Installed 탭에서 **Version**이 올라갔는지 보기
-- 매번 손이 귀찮으면: `/plugin` → Marketplaces → **Enable auto-update**를
-  켜두면 다음 시작 때 알아서 최신으로 (단, 적용은 `/reload-plugins`)
+- Verify: `/plugin` → Installed tab → check the **Version** bumped
+- To skip the manual steps: `/plugin` → Marketplaces → **Enable auto-update**
+  updates on next start (still `/reload-plugins` to apply in-session)
 
 ## FAQ
 
-**Q. 훅 설정을 바꿨는데 반영이 안 돼요.**
-훅은 세션 시작 시 로드돼요. Claude Code를 재시작하세요. `/hooks`로 로드 상태를 볼 수 있어요.
+**Q. I changed hook settings but nothing happened.**
+Hooks load at session start. Restart Claude Code. Use `/hooks` to see load status.
 
-**Q. 훅이 진짜 돌고 있는지 어떻게 알아요?**
-`/hi-vibe:doctor` — 훅 4종과 스캐너를 실제로 실행해서 ✅/❌로 보여줘요.
-훅은 실패해도 조용히 넘어가도록 설계돼 있어서, 이 명령이 유일한 확인 수단이에요.
+**Q. How do I know hooks are actually running?**
+`/hi-vibe:doctor` — it actually runs the 4 hooks and the scanner and shows ✅/❌.
+Since hooks fail silently by design, this command is the only reliable check.
 
-**Q. 다른 프로젝트에서도 훅이 동작하나요?**
-아니요. `handover.md`가 있는(= `init`을 한) 프로젝트에서만 동작하고, 나머지에선 조용히 아무것도 안 해요.
+**Q. Do hooks run in other projects too?**
+No. They only run in a project that has `handover.md` (= where you ran `init`);
+elsewhere they quietly do nothing.
 
-**Q. handover.md가 무한정 커지지 않나요?**
-20개 항목이 넘으면 오래된 절반이 `handover-archive.md`로 자동 이동돼요.
-옮겨진 기억도 사라지는 게 아니에요 — `/hi-vibe:recall`(또는 그냥
-"예전에 왜 이렇게 했지?"라고 질문)이 아카이브까지 뒤져서 날짜·출처와
-함께 답해줘요.
+**Q. Won't handover.md grow forever?**
+Past 20 entries, the older half auto-moves to `handover-archive.md`. Those
+memories aren't lost — `/hi-vibe:recall` (or just asking "why did we do this
+before?") searches the archive too and answers with date + source.
 
-**Q. 프로젝트에 뭐가 생기나요?**
-**GitHub에 올라가는 것**: `CLAUDE.md` / `MODULE.md` / `CHANGELOG.md` (프로젝트 문서).
-**안 올라가는 것**: `handover.md`·`handover-archive.md`(개인 세션 로그), `.hi-vibe/`(훅 상태), `.repo-xray/`(스캔 캐시). 이것들은 `init`이 `.gitignore`에 자동 추가해요. (handover를 팀과 공유하고 싶으면 `.gitignore`에서 그 줄만 빼면 돼요.)
+**Q. What gets created in my project?**
+**Committed to GitHub**: `CLAUDE.md` / `MODULE.md` / `CHANGELOG.md` (project docs).
+**Not committed**: `handover.md` · `handover-archive.md` (personal session log),
+`.hi-vibe/` (hook state), `.repo-xray/` (scan cache). `init` adds these to
+`.gitignore` automatically. (To share handover with a team, just remove that line
+from `.gitignore`.)
 
-## 크레딧 / 라이선스
+## Credits / License
 
-- 설계 영감: [lumin-repo-lens](https://github.com/annyeong844/lumin-repo-lens) (MIT) — 증거 기반 규율("스캔 없이 주장 금지")의 원형
-- 라이선스: [MIT](./LICENSE)
+- Design inspiration: [lumin-repo-lens](https://github.com/annyeong844/lumin-repo-lens) (MIT) — the prototype of evidence-based discipline ("no claim without a scan")
+- License: [MIT](./LICENSE)
