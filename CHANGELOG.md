@@ -5,14 +5,17 @@
 
 ## [Unreleased]
 
+### Added
+- README에 context7 MCP **선택** 설치 안내: `pre-write`가 외부 라이브러리 API를 다룰 때 최신 공식 문서를 자동 조회(무료 API 키 필요). 필수 아님 — 없으면 WebFetch 폴백.
+
 ### Changed
+- **플러그인 이름 변경: vibe-check → hi-vibe.** 동명의 MCP 서버 2종(PV-Bhat, kesslerio)과의 검색·발견 충돌 회피. 명령어(`/hi-vibe:*`), 마켓/플러그인명, 상태 디렉토리(`.hi-vibe/`), 마커 주석, GitHub 저장소명까지 전량 통일. GitHub이 구 주소를 자동 리다이렉트.
+- **설치 절차에 `/reload-plugins` 추가** (3단계): `/plugin install`만으로는 명령어·훅이 활성화되지 않음 — 공식 문서 확인. 없으면 설치해도 안 켜지던 문제.
 - 프롬프트 기법 벤치마킹 (plan-driven-app-development의 프롬프트 설계에서 기법만 차용): ① **HARD-GATE** — root-cause-first와 repo-xray의 절대 계약을 `<HARD-GATE>` 태그로 격리하고 "이 선을 넘으면 도구가 무의미해진다"는 위반 결과를 명시(준수율 강화). ② **자기 점검 루프** — write-gate post-write는 ⚠️를 보고로 끝내지 말고 고쳐서 ✅될 때까지 반복하도록, fresh-eyes는 출력 전 4단계 자기 검열(근거 없는 항목 폐기)을 거치도록. grounded-answers는 판단 뉘앙스 보존을 위해 의도적으로 미적용.
+- 브랜딩: 👋를 인사·시작·환영 맥락에 도입 (README/문서 제목, doctor 출력 헤더, welcome 인사, 세션 시작 시 AI 인사). 경고 메시지엔 톤 유지 위해 미적용. README에 CI(GitHub Actions)·MIT·Python 배지 추가.
 
 ### Fixed
-- repo-xray 유사 중복 탐지가 파일 스캔 순서에 의존하던 비결정성 버그 (CI Linux에서만 실패, 로컬 macOS 통과). 원인: `difflib.SequenceMatcher`의 autojunk 휴리스틱이 두 번째 인자 기준이라 `ratio(a,b) ≠ ratio(b,a)`였고, `os.walk`의 OS별 파일 순서로 인자 순서가 뒤바뀌면 유사도가 0.997↔0.706으로 요동쳐 탐지 여부가 갈림. `autojunk=False`로 대칭성 확보 + 정렬 키를 `(길이, 파일, 줄번호)`로 완전 결정화. 순서 독립성 회귀 테스트 추가(44개).
-
-### Changed
-- 브랜딩: 👋를 인사·시작·환영 맥락에 도입 (README/문서 제목, doctor 출력 헤더, welcome 인사, 세션 시작 시 AI 인사). 경고 메시지엔 톤 유지 위해 미적용. README에 CI(GitHub Actions)·MIT·Python 배지 추가.
+- repo-xray 유사 중복 탐지가 파일 스캔 순서에 의존하던 비결정성 버그 (CI Linux에서만 실패, 로컬 macOS 통과). 원인: `difflib.SequenceMatcher`의 autojunk 휴리스틱이 두 번째 인자 기준이라 `ratio(a,b) ≠ ratio(b,a)`였고, `os.walk`의 OS별 파일 순서로 인자 순서가 뒤바뀌면 유사도가 0.997↔0.706으로 요동쳐 탐지 여부가 갈림. `autojunk=False`로 대칭성 확보 + 정렬 키를 `(길이, 파일, 줄번호)`로 완전 결정화. 순서 독립성 회귀 테스트 추가(테스트 44개).
 
 ## [0.2.0] - 2026-07-10
 
