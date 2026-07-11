@@ -52,8 +52,9 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
      folder, pre-filling 주요 파일 from a directory listing and leaving
      설계 sections as short TODO prompts for the user.
    - handover.md + CHANGELOG.md from templates.
-4. Ensure `.hi-vibe/`, `.repo-xray/`, `handover.md`, and
-   `handover-archive.md` are in `.gitignore`. The two dirs are caches;
+4. Ensure `.hi-vibe/`, `.repo-xray/`, `handover.md`,
+   `handover-archive.md`, and `handover.md.lock` (the transient write-lock
+   file for concurrent sessions) are in `.gitignore`. The two dirs are caches;
    `handover*` is a personal session log kept local (not shared to
    GitHub). The other three docs — CLAUDE.md / MODULE.md / CHANGELOG.md —
    ARE committed. Note: the hooks' project gate keys on `handover.md`

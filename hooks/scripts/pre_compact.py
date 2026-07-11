@@ -35,8 +35,9 @@ def main(payload):
     lines += ["", f"⚠️ 자동 생성({trigger} compact) — 세션이 이어지면 이 항목을 다듬어 주세요."]
 
     handover = os.path.join(cwd, "handover.md")
-    _common.prepend_entry(handover, "\n".join(lines))
-    _common.rotate(handover)
+    with _common.file_lock(handover):
+        _common.prepend_entry(handover, "\n".join(lines))
+        _common.rotate(handover)
 
 
 if __name__ == "__main__":

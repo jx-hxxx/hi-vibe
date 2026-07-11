@@ -313,5 +313,49 @@ class SecretGuardTest(TempProject):
         self.assertIn("비밀키", out)
 
 
+# --- 파일 잠금 동시성 (멀티 터미널 handover 유실 방지) ---
+# multiprocessing 자식이 top-level에서 찾을 수 있도록 모듈 레벨에 둔다.
+_HOOKS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                          "hooks", "scripts")
+
+
+def _locked_prepend(args):
+    """다른 프로세스에서 file_lock 하에 handover 항목 하나를 추가한다."""
+    root, idx = args
+    if _HOOKS_DIR not in sys.path:
+        sys.path.insert(0, _HOOKS_DIR)
+    import _common as c
+    hp = os.path.join(root, "handover.md")
+    with c.file_lock(hp):
+        c.prepend_entry(hp, f"## entry-{idx}\n\n- body{idx}")
+
+
+class FileLockTest(TempProject):
+    def test_lock_basic_enter_exit(self):
+        """정상 진입/종료 + 락 파일 생성 + 락 하 기록 정상."""
+        with _common.file_lock(self.handover):
+            _common.prepend_entry(self.handover, "## x\n\n- y")
+        self.assertTrue(os.path.isfile(self.handover + ".lock"))
+        self.assertIn("## x", self.read_handover())
+
+    def test_lock_best_effort_on_bad_path(self):
+        """락 파일을 못 만드는 경로여도 예외 없이 yield 되어야(best-effort)."""
+        ran = []
+        with _common.file_lock("/nonexistent-dir-xyz/handover.md"):
+            ran.append(True)
+        self.assertEqual(ran, [True])
+
+    def test_concurrent_writes_no_loss(self):
+        """여러 프로세스가 동시에 같은 handover에 써도 항목이 유실되지 않는다.
+        락이 없으면 read-modify-write race로 일부 항목이 사라진다."""
+        import multiprocessing
+        n = 16
+        with multiprocessing.Pool(4) as pool:
+            pool.map(_locked_prepend, [(self.root, i) for i in range(n)])
+        text = self.read_handover()
+        missing = [i for i in range(n) if f"entry-{i}" not in text]
+        self.assertEqual(missing, [], f"유실된 항목: {missing}")
+
+
 if __name__ == "__main__":
     unittest.main()

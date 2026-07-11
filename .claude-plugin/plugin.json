@@ -1,6 +1,6 @@
 {
   "name": "hi-vibe",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "바이브코딩 안전벨트: 문서 자동화(CLAUDE.md/MODULE.md/handover/CHANGELOG) + AI 코딩 규율(근본원인 우선, 근거 없는 단정 금지) + 기계 강제(ruff/eslint/순환의존).",
   "author": {
     "name": "jx-hxxx"

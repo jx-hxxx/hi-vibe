@@ -5,6 +5,7 @@ run()이 모든 예외를 삼키고 exit 0 한다. 넓은 except는 원칙적으
 금지(root-cause-first)지만, "호스트를 절대 깨지 않는다"가 더 상위
 계약인 유일한 지점이 여기다.
 """
+import contextlib
 import json
 import os
 import sys
@@ -143,6 +144,33 @@ def latest_entry(handover_path, max_chars=1200):
         return entry.strip()[:max_chars]
     except Exception:
         return ""
+
+
+@contextlib.contextmanager
+def file_lock(target_path):
+    """target_path 쓰기를 프로세스 간 직렬화한다. 여러 세션(터미널)이
+    같은 handover.md에 동시에 기록할 때 read-modify-write race로 항목이
+    유실되는 것을 막는다. Unix는 fcntl.flock, 그 외(Windows 등)는
+    best-effort(락 없이 진행). 락 획득 자체가 실패해도 호스트를 깨지
+    않는다 — 최악이라도 락 없이 쓰는 것뿐이고, 그건 기존 동작과 같다."""
+    lock_f = None
+    try:
+        lock_f = open(target_path + ".lock", "w")
+        try:
+            import fcntl
+            fcntl.flock(lock_f.fileno(), fcntl.LOCK_EX)
+        except Exception:
+            pass  # Windows 등 flock 불가: best-effort로 진행
+    except Exception:
+        lock_f = None
+    try:
+        yield
+    finally:
+        if lock_f is not None:
+            try:
+                lock_f.close()  # close 시 flock 자동 해제
+            except Exception:
+                pass
 
 
 def run(fn):

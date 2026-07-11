@@ -5,7 +5,15 @@
 
 ## [Unreleased]
 
-## [0.3.1] - 2026-07-11
+## [0.3.2] - 2026-07-11
+
+### Added
+- **handover 파일 잠금** (`_common.file_lock`): 여러 터미널(프론트/백엔드 등)이 같은 프로젝트에서 동시에 컴팩트할 때, PreCompact 훅이 handover.md에 동시 기록하며 발생하던 read-modify-write race(항목 유실)를 방지. Unix는 `fcntl.flock`, 그 외는 best-effort(락 실패해도 호스트 안 깨짐). init이 `handover.md.lock`도 gitignore에 추가. 동시 16-프로세스 쓰기 무손실 회귀 테스트 추가.
+
+### Changed
+- **CHANGELOG 자동 기록**: write-gate post-write가 실질 변경 감지 시 `/hi-vibe:log`를 기다리지 않고 그 자리에서 `CHANGELOG.md [Unreleased]`에 직접 기록(date로 실제 시각, 실질 변경만 — 오타·포맷·순수 리팩토링 제외). "왜 이건 손으로 쳐야 해?" 피드백 반영, handover처럼 자동화.
+- **doctor 전달 말투**: 경고를 벽처럼 나열하지 말고 "결론(hi-vibe 정상 여부 + 한 줄 다음 단계) 먼저, 결정 필요한 것만 따로" 하도록 커맨드 지침 개선.
+- **README 재구성**: "평소 흐름"을 ①처음 1회(doctor/init) ②그 다음 자동 ③선택(audit/guards)으로 나눠 "매번 명령어 쳐야 하나?" 오해 제거. 린트·CI 등 개발 용어에 괄호 설명 추가(입문자 대상).
 
 ### Changed
 - doctor "이 프로젝트" 경고 메시지 명확화 — "init 하라는 건지 말라는 건지" 애매하던 문구를 **다음 단계 명시**(지금 /hi-vibe:init, 기존 파일 안 건드림) + **무시해도 되는 경우 명시**(CHANGELOG를 이미 handover 등으로 관리 중이면)로 개선. 실사용자가 겪은 혼란을 반영.
