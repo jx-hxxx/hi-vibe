@@ -196,9 +196,11 @@ def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20
     """Pairs of functions whose normalized ASTs are >= threshold similar but
     not identical — the typical AI failure: a 90%-same reimplementation.
     Weaker evidence than exact duplicates; the reader must open both."""
+    # Sort by dump length, then file/line — a fully deterministic order so
+    # the result never depends on os.walk's OS-specific file ordering.
     entries = sorted(
         (e for e in norm_entries if e["meta"]["length"] >= min_length),
-        key=lambda e: len(e["dump"]),
+        key=lambda e: (len(e["dump"]), e["meta"]["file"], e["meta"]["line"]),
     )
     results, pairs, truncated = [], 0, False
     for i, a in enumerate(entries):
@@ -211,7 +213,12 @@ def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20
             if pairs > max_pairs:
                 truncated = True
                 break
-            sm = difflib.SequenceMatcher(None, a["dump"], b["dump"])
+            # autojunk=False: the default heuristic drops "popular" chars
+            # from the SECOND sequence only, making ratio() asymmetric — so
+            # the score would depend on which function came first in the
+            # scan (an OS-dependent order). Disabling it keeps ratio(a,b)
+            # == ratio(b,a) and the result deterministic.
+            sm = difflib.SequenceMatcher(None, a["dump"], b["dump"], autojunk=False)
             if sm.real_quick_ratio() < threshold or sm.quick_ratio() < threshold:
                 continue
             ratio = sm.ratio()

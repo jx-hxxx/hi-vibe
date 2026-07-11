@@ -213,6 +213,21 @@ class ScanTest(unittest.TestCase):
         self.assertGreaterEqual(nd["similarity"], 0.9)
         self.assertLess(nd["similarity"], 1.0)
 
+    def test_near_duplicate_is_scan_order_independent(self):
+        """near-dup 탐지는 파일 스캔 순서(OS마다 다름)에 의존하면 안 된다.
+        과거 difflib autojunk 비대칭 + os.walk 순서 차이로 CI만 실패했던
+        회귀를 막는다."""
+        py = [os.path.join(self.root, f)
+              for f in ("a.py", "b.py", "routes.py", "test_stuff.py")]
+
+        def pairs_for(order):
+            _, _, near, _, _ = audit.analyze_python(self.root, order)
+            return sorted(tuple(sorted(fn["name"] for fn in nd["functions"]))
+                          for nd in near)
+
+        self.assertEqual(pairs_for(py), pairs_for(list(reversed(py))))
+        self.assertIn(("near_dup_source", "near_dup_variant"), pairs_for(py))
+
     def test_ts_symbols_extracted(self):
         symbols, _ = audit.analyze_js(
             self.root, [os.path.join(self.root, "quotes.ts"),
