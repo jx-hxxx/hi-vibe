@@ -119,13 +119,6 @@ type commands in order — **just talk normally:**
 > If a detected error-swallow / secret is **intentional**, add a
 > `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line to pass.
 
-> **(Optional) to auto-compact earlier** — Claude Code's built-in auto-compact
-> fires when context is nearly full. Add `"CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "30"`
-> to the `env` in `~/.claude/settings.json` to auto-compact at 30% instead — and
-> the handover auto-record above runs at that moment too. Note: this env var's
-> effect **varies by model/environment** (per the official docs); after enabling,
-> check that it actually fires at 30%.
-
 ## Commands at a glance
 
 | Command | When | Fires |
