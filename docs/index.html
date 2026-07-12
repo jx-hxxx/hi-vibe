@@ -49,7 +49,6 @@
   .brandbox { display:flex; align-items:center; gap:10px; }
   .ver { font-family:var(--mono); font-size:11px; color:var(--accent-ink); background:color-mix(in srgb, var(--accent) 15%, transparent); padding:2px 8px; border-radius:20px; letter-spacing:.02em; white-space:nowrap; }
   body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
-  .term pre, .term pre * { word-break:normal; }
   .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
   section { padding:88px 0; border-top:1px solid var(--border); }
   a { color:inherit; }
@@ -73,14 +72,14 @@
   .ghub:hover { border-color:var(--accent); color:var(--accent-ink); }
   @media (max-width:760px){ .bar nav { display:none; } }
 
-  .hero { padding:84px 0 76px; border-top:none; }
+  .hero { padding:84px 0 40px; border-top:none; }
   .hero-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
   @media (max-width:860px){ .hero-grid { grid-template-columns:1fr; gap:40px; } }
   .tag-ko { font-size:clamp(30px,5.2vw,52px); line-height:1.2; font-weight:850; letter-spacing:-.03em; margin:14px 0 0; text-wrap:balance; }
   .tag-ko .amber { color:var(--accent); }
   .tag-en { font-family:var(--mono); font-size:13px; color:var(--faint); letter-spacing:.02em; margin:20px 0 0; }
-  .hero p.say { color:var(--muted); font-size:17.5px; margin:22px 0 0; max-width:530px; }
-  .hero .cta { display:flex; gap:12px; margin-top:30px; flex-wrap:wrap; }
+  .hero p.say { color:var(--muted); font-size:17.5px; margin:16px 0 0; max-width:530px; }
+  .hero .cta { display:flex; gap:12px; margin-top:20px; flex-wrap:wrap; }
   .btn { font-family:var(--mono); font-size:13.5px; text-decoration:none; padding:11px 18px; border-radius:10px; border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
   .btn.primary { background:var(--accent); color:#1a1204; font-weight:700; }
   .btn.primary:hover { filter:brightness(1.06); }
@@ -88,22 +87,6 @@
   .btn.ghost:hover { border-color:var(--accent); color:var(--accent-ink); }
 
   .clcol { display:flex; flex-direction:column; }
-  .cluster { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:20px; box-shadow:0 20px 50px -30px rgba(0,0,0,.45); }
-  .cluster .head { display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--faint); margin-bottom:14px; }
-  .cluster .armed { color:var(--good); display:flex; align-items:center; gap:7px; }
-  .cluster .armed .pulse { width:8px; height:8px; border-radius:50%; background:var(--good); box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 60%, transparent); animation:pulse 2.4s ease-out infinite; }
-  .ind { display:flex; align-items:center; gap:12px; padding:10px 4px; border-top:1px solid var(--border); opacity:0; transform:translateY(6px); animation:arm .5s ease forwards; }
-  .ind .lamp { width:13px; height:13px; border-radius:50%; flex:none; }
-  .ind.m .lamp { background:var(--good); box-shadow:0 0 12px -1px color-mix(in srgb, var(--good) 70%, transparent); }
-  .ind.ai .lamp { background:transparent; border:2px solid var(--ai); box-shadow:none; }
-  .ind .txt { font-size:14px; flex:1; }
-  .ind .kind { font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; padding:3px 8px; border-radius:20px; white-space:nowrap; }
-  .ind.m .kind { color:var(--good); background:var(--good-bg); }
-  .ind.ai .kind { color:var(--ai); border:1px solid var(--border-2); }
-  .cluster-cap { font-family:var(--mono); font-size:12px; color:var(--faint); text-align:center; margin:22px 4px 0; line-height:2.4; }
-
-  @keyframes arm { to { opacity:1; transform:translateY(0); } }
-  @keyframes pulse { 0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);} 70%{box-shadow:0 0 0 9px color-mix(in srgb, var(--good) 0%, transparent);} 100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 0%, transparent);} }
 
   .rows { display:grid; gap:12px; margin-top:34px; }
   .prow { display:flex; gap:16px; align-items:center; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--danger); border-radius:10px; padding:16px 18px; }
@@ -165,17 +148,6 @@
   .fire.man { color:var(--muted); border:1px solid var(--border-2); }
   tbody tr:hover { background:var(--surface); }
 
-  .term { margin-top:30px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
-  .term .top { display:flex; gap:7px; padding:13px 16px; border-bottom:1px solid var(--border); }
-  .term .top i { width:11px; height:11px; border-radius:50%; background:var(--border-2); display:block; }
-  .term pre { margin:0; padding:20px 22px; font-family:var(--mono); font-size:13.5px; line-height:2; overflow-x:auto; color:var(--text); }
-  .term .c { color:var(--faint); }
-  .steps { display:grid; grid-template-columns:repeat(auto-fit, minmax(212px,1fr)); gap:16px; margin-top:24px; }
-  @media (max-width:520px){ .steps { grid-template-columns:1fr; } }
-  .step { border:1px solid var(--border); border-radius:10px; padding:18px; background:var(--surface); }
-  .step .k { font-family:var(--mono); font-size:13px; color:var(--accent-ink); }
-  .step p { margin:8px 0 0; color:var(--muted); font-size:13.5px; }
-
   .living-tag { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px; color:var(--good); background:var(--good-bg); padding:5px 12px; border-radius:20px; margin-bottom:18px; }
   .living-tag .pulse { width:7px; height:7px; border-radius:50%; background:var(--good); }
   .timeline { margin-top:30px; display:grid; gap:14px; }
@@ -197,7 +169,49 @@
   .foot-credit a { font-size:12px; }
 
   a:focus-visible, .btn:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } .ind { animation:none !important; opacity:1; transform:none; } .cluster .armed .pulse, .living-tag .pulse { animation:none !important; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } }
+
+  /* --- grafted: hero micro-proof / trust strip / audit / copy --- */
+  .hero .micro { display:flex; flex-wrap:wrap; gap:8px 18px; margin:20px 0 0; font-family:var(--mono); font-size:12.5px; color:var(--muted); }
+  .hero .micro span { display:inline-flex; align-items:center; }
+  .hero .micro span::before { content:"✓"; color:var(--good); font-weight:700; margin-right:7px; }
+
+  .trust { display:grid; grid-template-columns:repeat(4,1fr); margin:0; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; background:var(--surface); }
+  .trust > div { padding:22px 22px; border-left:1px solid var(--border); }
+  .trust > div:first-child { border-left:none; }
+  .trust b { display:block; font-size:27px; font-weight:800; letter-spacing:-.02em; color:var(--text); line-height:1.1; }
+  .trust span { display:block; margin-top:5px; color:var(--muted); font-size:13px; }
+  @media (max-width:640px){ .trust { grid-template-columns:1fr 1fr; } .trust > div:nth-child(3){ border-left:none; } .trust > div:nth-child(3), .trust > div:nth-child(4){ border-top:1px solid var(--border); } }
+
+  .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:stretch; margin-top:26px; }
+  .audit .promptbox { display:flex; flex-direction:column; align-items:flex-start; }
+  .audit .promptbox pre { align-self:stretch; }
+  .audit .card { border:1px solid var(--border); border-radius:var(--r); padding:24px; background:var(--surface); }
+  .audit .card h3 { margin:0 0 9px; font-size:19px; }
+  .audit .card p { margin:0; color:var(--muted); font-size:14px; }
+  .audit .promptbox { border:1px solid var(--border); border-radius:var(--r); padding:20px; background:var(--surface-2); }
+  .audit .promptbox pre { margin:0 0 16px; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--text); }
+  @media (max-width:760px){ .audit { grid-template-columns:1fr; } }
+
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:pre; border:0; }
+
+  /* hero terminal (always dark, real-terminal look) */
+  .hterm { background:#1b1b1a; color:#f5f5ee; border:1px solid #33332f; border-radius:var(--r); overflow:hidden; box-shadow:0 20px 55px rgba(0,0,0,.20); }
+  .hterm .bar { display:flex; align-items:center; justify-content:space-between; padding:8px 16px; border-bottom:1px solid #33332f; }
+  .hterm .bar .dots { display:flex; gap:7px; }
+  .hterm .bar .dots i { width:11px; height:11px; border-radius:50%; display:block; }
+  .hterm .bar .dots i:nth-child(1){ background:#ff5f57; }
+  .hterm .bar .dots i:nth-child(2){ background:#febc2e; }
+  .hterm .bar .dots i:nth-child(3){ background:#28c840; }
+  .hterm .bar .barright { display:flex; align-items:center; gap:14px; }
+  .hterm .bar .barleft { display:flex; align-items:center; gap:14px; min-width:0; }
+  .hterm .bar .barlabel { font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:#8a8a82; white-space:nowrap; }
+  .hterm .bar .cc { font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; color:#8a8a82; }
+  .hterm .body { padding:15px 20px 17px; }
+  .hterm pre { margin:0; font-family:var(--mono); font-size:13px; line-height:1.7; overflow-x:auto; color:#ffbd4a; white-space:pre; }
+  .hterm pre .c { color:#85857e; }
+  .hterm .cpbtn { flex:none; border:1px solid #4c4c46; border-radius:7px; padding:5px 11px; background:#292927; color:#f7f7f2; font-family:var(--mono); font-size:12px; font-weight:700; cursor:pointer; }
+  .hterm .cpbtn:hover { background:#33332f; }
 </style>
 </head>
 <body>
@@ -206,10 +220,11 @@
   <header class="bar"><div class="wrap">
     <a class="brand" href="#ko" aria-label="맨 위로"><span class="wm-img" aria-hidden="true"></span><span class="wm-alt" aria-hidden="true"><span class="logo" aria-hidden="true"></span><span class="wm">hi-vibe</span></span></a>
     <nav>
+      <a href="#install-ko">설치</a>
       <a href="#problem-ko">문제점</a>
       <a href="#how-ko">작동 방식</a>
       <a href="#features-ko">기능</a>
-      <a href="#install-ko">설치·명령어</a>
+      <a href="#commands-ko">명령어</a>
       <a href="#living-ko">업데이트</a>
     </nav>
     <div class="hdr-right">
@@ -231,18 +246,60 @@
             <a class="btn primary" href="#install-ko">설치하기</a>
             <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">GitHub에서 보기 ↗</a>
           </div>
+          <p class="micro"><span>python3만 있으면 돼요</span><span>핵심 훅은 외부 패키지 0</span><span>기존 설정 안 덮어써요</span></p>
         </div>
-        <div class="clcol">
-          <div class="cluster" aria-hidden="true">
-            <div class="head"><span>지금 지켜보는 중</span><span class="armed"><span class="pulse"></span>켜짐</span></div>
-            <div class="ind m"  style="animation-delay:.15s"><span class="lamp"></span><span class="txt">몰래 숨는 에러·비밀번호 바로 잡기</span><span class="kind">기계</span></div>
-            <div class="ind m"  style="animation-delay:.30s"><span class="lamp"></span><span class="txt">대화 정리되기 전에 진행상황 저장</span><span class="kind">기계</span></div>
-            <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">새로 시작할 때 규칙 다시 챙기기</span><span class="kind">기계</span></div>
-            <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“만들어줘” → 이미 있는지 먼저 찾기</span><span class="kind">AI</span></div>
-            <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“다 했어” → 점검하고 문서도 맞추기</span><span class="kind">AI</span></div>
-            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">숫자·사실은 단정 말고 → 확인하고 답하기</span><span class="kind">AI</span></div>
+        <div class="clcol" id="install-ko">
+          <div class="hterm">
+            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">플러그인 설치하기</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><button class="cpbtn js-copy" type="button" data-target="cmd-ko">명령어 복사</button></span></div>
+            <div class="body">
+              <pre><span class="c"># 목록에 등록</span>
+/plugin marketplace add jx-hxxx/hi-vibe
+<span class="c"># 설치하고 지금 켜기</span>
+/plugin install hi-vibe@hi-vibe-marketplace
+/reload-plugins</pre>
+            </div>
           </div>
-          <p class="cluster-cap">🟢 초록불 = 기계가 확실히 지켜요<br>⚪ 빈 불 = AI가 알아서 해줘요</p>
+          <div class="hterm" style="margin-top:16px">
+            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">설치 다음 · 이 순서로</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><button class="cpbtn js-copy" type="button" data-target="cmd2-ko">명령어 복사</button></span></div>
+            <div class="body">
+              <pre><span class="c"># 잘 깔렸나 확인하고, 이 프로젝트에 켜기 (프로젝트 당 1회성)</span>
+/hi-vibe:doctor
+/hi-vibe:init
+<span class="c"># 코드 검사기 + CI까지 설치 (선택 - 프로젝트 당 1회성)</span>
+/hi-vibe:gate --ci</pre>
+            </div>
+          </div>
+          <pre id="cmd-ko" class="sr-only" aria-hidden="true">/plugin marketplace add jx-hxxx/hi-vibe
+/plugin install hi-vibe@hi-vibe-marketplace
+/reload-plugins</pre>
+          <pre id="cmd2-ko" class="sr-only" aria-hidden="true">/hi-vibe:doctor
+/hi-vibe:init
+/hi-vibe:gate --ci</pre>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust" aria-label="검증 근거">
+      <div><b>75</b><span>자동 회귀 테스트</span></div>
+      <div><b>4종</b><span>실제 생명주기 훅</span></div>
+      <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
+      <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
+    </div>
+
+    <section id="audit-ko">
+      <p class="eyebrow">이 플러그인이 믿을 만한지 궁금하면</p>
+      <h2>저장소를 AI한테 직접 물어보세요.</h2>
+      <p class="lead" style="max-width:none">못미더우시다면 플러그인 설치 전에 한번 검증해보세요.<br>평가 질문을 복사하여 Claude·Codex·Gemini에 그대로 붙여넣어 보세요.</p>
+      <div class="audit">
+        <div class="card">
+          <h3>2분이면 되는 독립 코드 감사</h3>
+          <p>README 요약만 시키지 말고 <b>실제 훅·스캐너·테스트까지</b> 보라는 질문이에요. 장점뿐 아니라 단점이랑 "안 맞는 사람"까지 냉정하게 물어봐요.</p>
+        </div>
+        <div class="promptbox">
+          <pre id="audit-prompt-ko">https://github.com/jx-hxxx/hi-vibe
+
+README 주장만 요약하지 말고 실제 코드랑 테스트까지 확인해줘. 이 플러그인이 바이브 코딩에 얼마나 도움이 되는지, 설계 난이도, 타깃 사용자, 장단점이랑 완성도를 냉정하게 평가해줘.</pre>
+          <button class="btn ghost js-copy" type="button" data-target="audit-prompt-ko">평가 질문 복사</button>
         </div>
       </div>
     </section>
@@ -322,24 +379,6 @@
         🛡️ <b>원하면 (gate)</b> — 복잡도·순환의존 린트. 제일 많이 잡지만 침습적이라 준비됐을 때 1회 설치(필수 아님).</div></div>
     </section>
 
-    <section id="install-ko">
-      <p class="eyebrow">설치 · 30초면 끝</p>
-      <h2>세 줄이면 끝. python3만 있으면 돼요.</h2>
-      <p class="lead">Claude Code 안에서 아래 세 줄을 순서대로 붙여넣으세요.<br>복잡한 설치도, 회원가입도 없어요.</p>
-      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) hi-vibe 목록에 등록</span>
-/plugin marketplace add jx-hxxx/hi-vibe
-<span class="c"># 2) 플러그인 설치</span>
-/plugin install hi-vibe@hi-vibe-marketplace
-<span class="c"># 3) 지금 바로 켜기 (꼭!)</span>
-/reload-plugins</pre></div>
-      <div class="steps">
-        <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
-        <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
-        <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
-        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>쓰려는 프로젝트마다 한 번(선택) — 검사기를 깔면 그 프로젝트는 이후 push마다 자동으로 막아요.</p></div>
-      </div>
-    </section>
-
     <section id="commands-ko">
       <p class="eyebrow">명령어 한눈에</p>
       <h2>대부분 자동. 필요할 때만 직접.</h2>
@@ -396,9 +435,9 @@
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.13.0<small>2026-07-13</small></div><div class="h"><b>repo-xray near-dup이 이제 몇 분이 아니라 몇십 초.</b> <span>함수 쌍마다 O(L²) 유사도 비교를 돌리던 걸 지문(shingle) 선필터로 바꿔, 완전탐색과 '똑같은' 결과를 훨씬 빠르게(측정: 14분→30초, ratio 호출 5750→213). 상위 20개만 보여주던 near-dup 리포트도 총 개수를 함께 알려 정직하게. 그리고 "느리다=고장"이라 단정하고 죽였다 다시 돌리는 실패를 막는 규율을 grounded-answers에 추가 — 실제로 이 규칙을 어긴 사례에서 나온 개선.</span></div></div>
         <div class="rel"><div class="v">v0.12.0<small>2026-07-12</small></div><div class="h"><b>`review --all`이 큰 변경엔 "쪼개서 병렬"을 물어봐요.</b> <span>세션 변경이 크면(파일 여러 개 + 수백 줄) 순차 리뷰는 얕거나 느려요. 이제 규모를 기계가 재서, 크면 "쪼개서 병렬로 볼까요?"라고 묻고 — 예 하면 줄 수 균형이 맞은 그룹으로 나눠 리뷰어를 병렬 소환해요. 작으면 그대로 순차. (항상 병렬 아님 — 토큰·복잡도 방지.)</span></div></div>
         <div class="rel"><div class="v">v0.11.0<small>2026-07-12</small></div><div class="h"><b>"확인 안 하고 단정" 방지를 더 강하게.</b> <span>라이브러리·API뿐 아니라 GitHub·npm 같은 외부 플랫폼의 "왜 이렇게 동작하나/정책 바뀌었나"도 근거 필요한 사실로 명시하고, context7(공식 문서 조회)를 근거 사다리 맨 앞에 못박음. 잡담·트러블슈팅이어도 예외 없음. (실제로 이 규율을 어긴 사례에서 나온 개선.)</span></div></div>
-        <div class="rel"><div class="v">v0.10.0<small>2026-07-12</small></div><div class="h"><b>외국인이 써도 자연스럽게.</b> <span>출력 언어를 사용자가 대화에서 쓰는 언어에 맞춰요 — `review --deep`·`doctor`·세션 알림이 한국어에 고정돼 있던 걸 풀었고, 세션 알림은 한/영 병기로. (스킬 프롬프트는 한국어 그대로 — Claude가 한국어를 완벽히 읽어 실행하니 런타임 손해가 없어요.)</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -424,10 +463,11 @@
   <header class="bar"><div class="wrap">
     <a class="brand" href="#en" aria-label="Back to top"><span class="wm-img" aria-hidden="true"></span><span class="wm-alt" aria-hidden="true"><span class="logo" aria-hidden="true"></span><span class="wm">hi-vibe</span></span></a>
     <nav>
+      <a href="#install-en">Install</a>
       <a href="#problem-en">Problems</a>
       <a href="#how-en">How it works</a>
       <a href="#features-en">Features</a>
-      <a href="#install-en">Install</a>
+      <a href="#commands-en">Commands</a>
       <a href="#living-en">Updates</a>
     </nav>
     <div class="hdr-right">
@@ -449,18 +489,60 @@
             <a class="btn primary" href="#install-en">Install</a>
             <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">View on GitHub ↗</a>
           </div>
+          <p class="micro"><span>Just needs python3</span><span>Core hooks need zero external packages</span><span>Never overwrites your config</span></p>
         </div>
-        <div class="clcol">
-          <div class="cluster" aria-hidden="true">
-            <div class="head"><span>WATCHING NOW</span><span class="armed"><span class="pulse"></span>ARMED</span></div>
-            <div class="ind m"  style="animation-delay:.15s"><span class="lamp"></span><span class="txt">Catch hidden errors &amp; secrets</span><span class="kind">machine</span></div>
-            <div class="ind m"  style="animation-delay:.30s"><span class="lamp"></span><span class="txt">Save progress before the chat resets</span><span class="kind">machine</span></div>
-            <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">Re-arm the rules on a fresh start</span><span class="kind">machine</span></div>
-            <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“Make me X” → search if it exists first</span><span class="kind">AI</span></div>
-            <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“Done” → review &amp; sync the docs</span><span class="kind">AI</span></div>
-            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">Numbers &amp; facts → verify, don’t guess</span><span class="kind">AI</span></div>
+        <div class="clcol" id="install-en">
+          <div class="hterm">
+            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">Install the plugin</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><button class="cpbtn js-copy" type="button" data-target="cmd-en">Copy commands</button></span></div>
+            <div class="body">
+              <pre><span class="c"># register</span>
+/plugin marketplace add jx-hxxx/hi-vibe
+<span class="c"># install &amp; turn on now</span>
+/plugin install hi-vibe@hi-vibe-marketplace
+/reload-plugins</pre>
+            </div>
           </div>
-          <p class="cluster-cap">🟢 Lit = machine-guaranteed<br>⚪ Hollow = AI does it on its own</p>
+          <div class="hterm" style="margin-top:16px">
+            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">After install · in order</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><button class="cpbtn js-copy" type="button" data-target="cmd2-en">Copy commands</button></span></div>
+            <div class="body">
+              <pre><span class="c"># check it's on, then arm this project (once per project)</span>
+/hi-vibe:doctor
+/hi-vibe:init
+<span class="c"># optional: install the code guards + CI (once per project)</span>
+/hi-vibe:gate --ci</pre>
+            </div>
+          </div>
+          <pre id="cmd-en" class="sr-only" aria-hidden="true">/plugin marketplace add jx-hxxx/hi-vibe
+/plugin install hi-vibe@hi-vibe-marketplace
+/reload-plugins</pre>
+          <pre id="cmd2-en" class="sr-only" aria-hidden="true">/hi-vibe:doctor
+/hi-vibe:init
+/hi-vibe:gate --ci</pre>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust" aria-label="Evidence">
+      <div><b>75</b><span>automated regression tests</span></div>
+      <div><b>4</b><span>real lifecycle hooks</span></div>
+      <div><b>opt-in</b><span>only where you run init</span></div>
+      <div><b>MIT</b><span>fully open source</span></div>
+    </div>
+
+    <section id="audit-en">
+      <p class="eyebrow">Not sure this plugin's legit?</p>
+      <h2>Ask your own AI about the code.</h2>
+      <p class="lead" style="max-width:none">Not convinced? Check it before you install.<br>Copy the question and paste it straight into Claude, Codex, or Gemini.</p>
+      <div class="audit">
+        <div class="card">
+          <h3>A 2-minute independent code audit</h3>
+          <p>It asks the AI to inspect the <b>actual hooks, scanner, and tests</b> — not just summarize the README. Pros, cons, and who it's <i>not</i> for.</p>
+        </div>
+        <div class="promptbox">
+          <pre id="audit-prompt-en">https://github.com/jx-hxxx/hi-vibe
+
+Don't just summarize the README — check the actual code and tests. Rate honestly how much this plugin helps with vibe coding, its design complexity, target users, pros and cons, and how finished it is.</pre>
+          <button class="btn ghost js-copy" type="button" data-target="audit-prompt-en">Copy the question</button>
         </div>
       </div>
     </section>
@@ -540,24 +622,6 @@
         🛡️ <b>Opt-in (gate)</b> — lints complexity & circular deps. Catches the most, but it's invasive — install once when ready (not required).</div></div>
     </section>
 
-    <section id="install-en">
-      <p class="eyebrow">Install · 30 seconds</p>
-      <h2>Three lines. All you need is python3.</h2>
-      <p class="lead">Paste these three lines in order inside Claude Code.<br>No heavy setup, no sign-up.</p>
-      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) register hi-vibe</span>
-/plugin marketplace add jx-hxxx/hi-vibe
-<span class="c"># 2) install the plugin</span>
-/plugin install hi-vibe@hi-vibe-marketplace
-<span class="c"># 3) turn it on now (don’t skip!)</span>
-/reload-plugins</pre></div>
-      <div class="steps">
-        <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
-        <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
-        <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
-        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>Once per project (optional) — install it and that repo blocks bad code on every push after.</p></div>
-      </div>
-    </section>
-
     <section id="commands-en">
       <p class="eyebrow">Commands at a glance</p>
       <h2>Mostly automatic. Manual only when you need it.</h2>
@@ -612,9 +676,9 @@
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.13.0<small>2026-07-13</small></div><div class="h"><b>repo-xray near-dup now takes tens of seconds, not minutes.</b> <span>The O(L^2) similarity call that ran on every function pair is now gated by a shingle fingerprint prefilter — identical results to the exhaustive scan, far faster (measured: 14min→30s, ratio() calls 5750→213). The near-dup report, which showed only the top pairs, now also reports the true total so nothing is hidden. And a discipline was added to grounded-answers against the "slow == broken, kill-and-retry" failure — born from a real case of breaking that very rule.</span></div></div>
         <div class="rel"><div class="v">v0.12.0<small>2026-07-12</small></div><div class="h"><b>`review --all` now offers to split large diffs into parallel reviews.</b> <span>When a session's changes are big (many files + hundreds of lines), sequential review goes shallow or slow. The machine now measures the size, and if it's large it asks "split into parallel reviews?" — yes fans out balanced groups to parallel reviewers; small stays sequential. (Not always parallel — avoids token/complexity blowup.)</span></div></div>
         <div class="rel"><div class="v">v0.11.0<small>2026-07-12</small></div><div class="h"><b>Stronger "don't assert without checking".</b> <span>Not just library/API facts — how an external platform (GitHub, npm) currently behaves or why (recent policy changes) now counts as a claim that needs evidence, with context7 (official-docs lookup) pinned as the first source. Applies in casual chat and troubleshooting too. (Came from a real case of breaking this very rule.)</span></div></div>
-        <div class="rel"><div class="v">v0.10.0<small>2026-07-12</small></div><div class="h"><b>Natural for non-Korean users too.</b> <span>Output now follows the language you speak — `review --deep`, `doctor`, and the session nudge no longer force Korean, and the nudge is bilingual. (Skill prompts stay Korean — Claude reads Korean at full fidelity, so there's no runtime cost.)</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -664,6 +728,19 @@
     if (!cur) { cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
     setTheme(cur === 'dark' ? 'light' : 'dark');
   }); }
+  function flashBtn(btn, done){ var o = btn.textContent; btn.textContent = done; setTimeout(function(){ btn.textContent = o; }, 1600); }
+  function legacyCopy(el){ try { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); } catch(e){} }
+  function copyFromTarget(btn){
+    var el = document.getElementById(btn.getAttribute('data-target'));
+    if (!el) { return; }
+    var text = el.textContent.replace(/^\s+|\s+$/g, '');
+    var done = (root.getAttribute('lang') === 'en') ? 'Copied ✓' : '복사됨 ✓';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ flashBtn(btn, done); }, function(){ legacyCopy(el); flashBtn(btn, done); });
+    } else { legacyCopy(el); flashBtn(btn, done); }
+  }
+  var copyBtns = document.querySelectorAll('.js-copy');
+  for (var k=0;k<copyBtns.length;k++){ copyBtns[k].addEventListener('click', function(){ copyFromTarget(this); }); }
 })();
 </script>
 
