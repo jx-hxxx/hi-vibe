@@ -32,7 +32,9 @@ def main(payload):
             "진행 중이던 작업을 이어가세요.\n\n" + entry
         )
         _common.emit("SessionStart", additional_context=ctx[:1500])
-    elif source in ("startup", "resume"):
+    elif source in ("startup", "resume", "clear"):
+        # clear = 컨텍스트를 통째로 비운 직후 → handover 재주입이 가장 필요한
+        # 순간이므로 startup과 동일하게 규율+최신 인수인계를 다시 넣는다.
         entry = _common.latest_entry(handover, max_chars=400)
         parts = ["이 세션은 hi-vibe가 켜져 있습니다. 사용자에게 첫 응답을 "
                  "👋로 가볍게 인사하며 시작하세요.", CHARTER]

@@ -59,6 +59,15 @@ def near_dup_source(items):
             out.append(value)
     total = len(out)
     return out, total
+
+
+def dead_only_in_comment(x):
+    # NOTE: dead_only_in_comment 은 나중에 dead_url("http://x") 처럼 쓸 예정
+    return x
+
+
+def string_ref_target(x):
+    return x + 1
 '''
 
 PY_B = '''\
@@ -89,6 +98,12 @@ def near_dup_variant(items):
             out.append(value)
     total = len(out)
     return out, total
+
+
+def dispatch(name):
+    # 동적 호출: 문자열로 심볼을 부른다 (FP-03) — 문자열은 참조로 세야 한다
+    table = {"string_ref_target": "app.a:string_ref_target"}
+    return table[name]
 
 
 def route_handler():
@@ -199,6 +214,24 @@ class ScanTest(unittest.TestCase):
 
     def test_used_symbol_not_dead(self):
         self.assertNotIn("used_helper", self.dead_names())
+
+    def test_comment_only_mention_does_not_rescue(self):
+        """이름이 자기 주석에만 또 나오는 함수는 여전히 dead 후보여야 한다 —
+        주석은 참조가 아니다. (.md 구제는 막았지만 코드 주석 경로가 뚫려
+        있던 버그: 주석 하나로 죽은 코드가 은폐됐다.)"""
+        self.assertIn("dead_only_in_comment", self.dead_names())
+
+    def test_string_mention_still_rescues(self):
+        """반대로 문자열 속 이름은 참조로 세야 한다 (FP-03 동적 호출) — 주석만
+        지우고 문자열은 보존했는지 확인. b.py의 dispatch 테이블 문자열이
+        string_ref_target를 살려야 한다."""
+        self.assertNotIn("string_ref_target", self.dead_names())
+
+    def test_default_export_not_dead_candidate(self):
+        """`export default function App()`은 임포트 측에서 아무 이름으로나
+        받으므로 이름 참조가 0 — 죽은 코드가 아니다 (FP-08). React 컴포넌트가
+        전부 죽은 후보로 뜨던 오탐을 막는다."""
+        self.assertNotIn("App", self.dead_names())
 
     def test_doc_mention_does_not_rescue(self):
         """MODULE.md에 언급돼도 죽은 후보에서 빠지면 안 된다 (문서 오염 버그)."""

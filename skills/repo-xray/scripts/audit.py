@@ -12,10 +12,12 @@ import ast
 import copy
 import difflib
 import hashlib
+import io
 import json
 import os
 import re
 import sys
+import tokenize
 from collections import Counter, defaultdict
 
 EXCLUDE_DIRS = {
@@ -111,12 +113,101 @@ def rel(root, path):
     return os.path.relpath(path, root)
 
 
+def _strip_py_comments(text):
+    """Blank out `#` comments via the stdlib tokenizer (handles strings,
+    triple-quotes and escapes correctly). Falls back to the raw text on any
+    tokenizer error — never risk dropping a real reference."""
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(text).readline))
+    except (tokenize.TokenError, IndentationError, SyntaxError, ValueError):
+        return text
+    lines = text.splitlines(keepends=True)
+    for tok in toks:
+        if tok.type == tokenize.COMMENT:
+            (sr, sc), (er, ec) = tok.start, tok.end
+            if sr == er and 1 <= sr <= len(lines):  # comments are single-line
+                ln = lines[sr - 1]
+                lines[sr - 1] = ln[:sc] + " " * (ec - sc) + ln[ec:]
+    return "".join(lines)
+
+
+def _strip_c_comments(text):
+    """Remove `//` and `/* */` comments while preserving string/template
+    literals. `//` and `/*` are never valid operators in JS, so outside a
+    string they are unambiguously comments (regex literals starting with
+    `//`/`/*` are invalid). String contents are kept on purpose (FP-03)."""
+    out = []
+    i, n, quote = 0, len(text), None
+    while i < n:
+        ch = text[i]
+        if quote:
+            out.append(ch)
+            if ch == "\\" and i + 1 < n:
+                out.append(text[i + 1]); i += 2; continue
+            if ch == quote:
+                quote = None
+            i += 1; continue
+        two = text[i:i + 2]
+        if two == "//":
+            j = text.find("\n", i)
+            i = n if j == -1 else j; continue
+        if two == "/*":
+            j = text.find("*/", i + 2)
+            i = n if j == -1 else j + 2; continue
+        if ch in ("'", '"', "`"):
+            quote = ch; out.append(ch); i += 1; continue
+        out.append(ch); i += 1
+    return "".join(out)
+
+
+def _strip_hash_comments(text):
+    """Remove `#` comments (YAML/TOML) while preserving quoted strings."""
+    out = []
+    i, n, quote = 0, len(text), None
+    while i < n:
+        ch = text[i]
+        if quote:
+            out.append(ch)
+            if ch == "\\" and i + 1 < n:
+                out.append(text[i + 1]); i += 2; continue
+            if ch == quote:
+                quote = None
+            i += 1; continue
+        if ch == "#":
+            j = text.find("\n", i)
+            i = n if j == -1 else j; continue
+        if ch in ("'", '"'):
+            quote = ch; out.append(ch); i += 1; continue
+        out.append(ch); i += 1
+    return "".join(out)
+
+
+def strip_comments(text, ext):
+    """Drop comment text so a symbol named only inside a comment does not
+    count as a reference (a comment must not rescue a dead candidate — the
+    most common AI residue is exactly a commented-out call or a TODO
+    mention). String literals are deliberately preserved: a name built into
+    a string can be a real dynamic-dispatch reference (FP-03)."""
+    ext = ext.lower()
+    if ext == ".py":
+        return _strip_py_comments(text)
+    if ext in JS_EXT:
+        return _strip_c_comments(text)
+    if ext in (".yml", ".yaml", ".toml"):
+        return _strip_hash_comments(text)
+    if ext in (".html", ".htm"):
+        return re.sub(r"<!--.*?-->", " ", text, flags=re.S)
+    return text  # .json (no comments), .md/.css (prose — excluded from rescue)
+
+
 def build_word_index(root, text_files):
-    """Token counts per file — the evidence base for reference counting."""
+    """Token counts per file — the evidence base for reference counting.
+    Comments are stripped first so they can't rescue a dead candidate."""
     per_file = {}
     total = Counter()
     for path in text_files:
-        c = Counter(WORD_RE.findall(read_text(path)))
+        text = strip_comments(read_text(path), os.path.splitext(path)[1])
+        c = Counter(WORD_RE.findall(text))
         per_file[rel(root, path)] = c
         total.update(c)
     return per_file, total
@@ -327,6 +418,10 @@ def analyze_js(root, js_files):
     for path in js_files:
         src = read_text(path)
         for i, line in enumerate(src.splitlines(), 1):
+            # `export default function App()` is imported under an arbitrary
+            # name by consumers, so its own name has zero references by
+            # design — flag it so find_dead never calls it a dead candidate.
+            is_default = "export default" in line
             decls = [
                 (m.group("fn") or m.group("var"), "js-function")
                 for m in JS_DECL_RE.finditer(line)
@@ -339,7 +434,8 @@ def analyze_js(root, js_files):
                 if not name:
                     continue
                 top_level = not line[:1].isspace()
-                entry = {"name": name, "file": rel(root, path), "line": i, "kind": kind}
+                entry = {"name": name, "file": rel(root, path), "line": i,
+                         "kind": kind, "default_export": is_default}
                 symbols.append(entry)
                 if top_level:  # indented = local scope, collisions there are normal
                     defs_by_name[name].append(entry)
@@ -369,6 +465,8 @@ def find_dead(symbols, per_file, code_totals, def_counts):
             continue
         if s.get("kind") == "method":
             continue  # methods are called via self/instance; too noisy for name counting
+        if s.get("default_export"):
+            continue  # imported under an arbitrary name; name-ref count is meaningless (FP-08)
         if is_test_file(s["file"]):
             continue  # test runners invoke these by naming convention
         refs = code_totals.get(name, 0) - def_counts.get(name, 0)

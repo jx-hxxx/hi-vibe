@@ -104,18 +104,23 @@ In a project where you ran **`init`** (from "First run" above), everything below
 runs on its own (hooks and doc automation are switched on by `init`). No need to
 type commands in order — **just talk normally:**
 
-| When you… | …this happens automatically |
-|---|---|
-| "make me this function" | **pre-write** — searches first for an existing one (prevents duplicate reimplementation) |
-| "done / review it" | **post-write** — quality checklist + doc sync |
-| "review the design" | **post-write --deep** — a clean-context AI (no memory of writing it) catches over-engineering / unneeded features |
-| the moment code is written | **instant detection** of error-swallowing / hardcoded secrets |
-| every compaction | **handover** auto-recorded (context preserved) |
-| on a substantive change | **CHANGELOG** auto-recorded |
-| session start / after compaction | latest handover + discipline auto-injected |
+| When you… | What happens | Kind |
+|---|---|---|
+| the moment code is written | **instant detection** of error-swallowing / hardcoded secrets | ⚙️ machine |
+| every compaction | **handover** auto-recorded (context preserved) | ⚙️ machine |
+| session start / compact / clear | latest handover + discipline auto-injected | ⚙️ machine |
+| substantive change, at session end | reminder if **CHANGELOG** wasn't updated (once/session) | ⚙️ machine |
+| "make me this function" | **pre-write** — searches first for an existing one (prevents duplicate reimplementation) | 🤖 AI |
+| "done / review it" | **post-write** — quality checklist + doc sync | 🤖 AI |
+| "review the design" | **post-write --deep** — a clean-context AI catches over-engineering | 🤖 AI |
 
-> The commands (`/hi-vibe:pre-write` etc.) are just "buttons for when you want to
-> be explicit". Most of it fires on natural language.
+> **⚙️ machine** = a Python hook **guarantees** it — it runs regardless of the
+> AI's mood.
+> **🤖 AI** = a skill instruction that **the AI fires on its own** (reacting to
+> natural language like "make me…" / "done"). Powerful, but not a 100%
+> guarantee — the AI can skip it. To force it, run the command
+> (`/hi-vibe:pre-write` etc.) yourself. Think of the commands as the manual
+> lock for when the AI missed the automatic one.
 > If a detected error-swallow / secret is **intentional**, add a
 > `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line to pass.
 

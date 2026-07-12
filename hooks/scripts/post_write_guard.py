@@ -47,9 +47,23 @@ SECRET_PATTERNS = [
     ("하드코딩된 시크릿 할당", re.compile(
         r"""(?i)\b(?:api[_-]?key|secret|token|password|passwd)["']?\s*[:=]\s*["'][A-Za-z0-9+/_\-]{16,}["']""")),
 ]
-# 자리표시자/환경변수 참조가 있는 줄은 진짜 키가 아니다
+# 자리표시자/환경변수 참조가 있는 줄은 진짜 키가 아니다.
+# `<...>`는 `<YOUR_KEY>` 같은 자리표시자만 억제한다 — 예전엔 맨 `<` 하나라
+# JSX(`<div>`)나 비교(`a < b`)가 섞인 줄의 *진짜* 키까지 삼켰다. `xxxx`도
+# 자리표시자 신호로 4자 이상만(진짜 키에 우연히 든 "xxx" 오억제 방지).
 SECRET_FALSE_ALARM_RE = re.compile(
-    r"(?i)your|example|dummy|placeholder|changeme|xxx|<|\$\{|process\.env|os\.environ|getenv")
+    r"(?i)your|example|dummy|placeholder|changeme|xxxx|<[A-Za-z0-9_.\-]{1,40}>"
+    r"|\$\{|process\.env|os\.environ|getenv")
+
+
+def _match_region(text, m):
+    """매치가 걸친 줄 전체 (매치 시작 줄머리 ~ 끝 줄 끝). allow 주석은 보통
+    매치 밖(닫는 `}` 뒤나 except 줄)에 달리므로, m.group(0)이 아니라 이
+    영역에서 마커를 찾아야 한다 — JS `catch(e){} // allow-swallow`의 주석은
+    `}` 매치 밖이라 group(0)엔 안 잡혔다 (과거 버그)."""
+    start = text.rfind("\n", 0, m.start()) + 1
+    end = text.find("\n", m.end())
+    return text[start: end if end != -1 else len(text)]
 
 
 def find_swallows(text, path):
@@ -60,7 +74,7 @@ def find_swallows(text, path):
     found = []
     for label, rx in patterns:
         for m in rx.finditer(text):
-            if ALLOW_MARK in m.group(0):
+            if ALLOW_MARK in _match_region(text, m):
                 continue
             found.append((label, text[:m.start()].count("\n") + 1))
     return found

@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.join(
 import _common
 import post_write_guard
 import pre_compact
+import session_start
 import stop_nudge
 
 
@@ -163,6 +164,54 @@ class StopNudgeTest(TempProject):
         transcript = self.make_transcript(["/p/README.md"])
         self.assertEqual(self.run_nudge(transcript, sid="s3"), "")
 
+    def test_flag_dir_pruned_when_over_cap(self):
+        """세션당 1개씩 쌓이는 .nudged 플래그가 상한을 넘으면 오래된 것부터
+        정리돼야 한다 (무한 누적 방지)."""
+        flag_dir = os.path.join(self.root, ".hi-vibe", "state")
+        os.makedirs(flag_dir, exist_ok=True)
+        for i in range(stop_nudge.MAX_FLAGS + 5):
+            with open(os.path.join(flag_dir, f"old{i}.nudged"), "w") as f:
+                f.write("nudged\n")
+        transcript = self.make_transcript(["/p/core.py"])
+        self.run_nudge(transcript, sid="fresh-session")  # 새 플래그 1개 추가 + 정리
+        remaining = [f for f in os.listdir(flag_dir) if f.endswith(".nudged")]
+        self.assertLessEqual(len(remaining), stop_nudge.MAX_FLAGS)
+
+
+class SessionStartTest(TempProject):
+    """SessionStart 주입 — 훅 4종 중 유일하게 미테스트였던 것."""
+
+    def run_start(self, source):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            session_start.main({"cwd": self.root, "source": source})
+        return buf.getvalue()
+
+    def test_startup_injects_charter(self):
+        out = self.run_start("startup")
+        self.assertIn("hi-vibe 규율", out)
+
+    def test_clear_injects_charter_like_startup(self):
+        """/clear 직후는 컨텍스트가 통째로 사라진 순간 — 규율 재주입이 가장
+        필요한데 예전엔 matcher에 clear가 없어 훅이 안 돌았다 (회귀 버그)."""
+        out = self.run_start("clear")
+        self.assertIn("hi-vibe 규율", out)
+
+    def test_compact_injects_handover_entry(self):
+        _common.prepend_entry(self.handover, "## 2026-01-02 00:00\n\n- 직전 작업 맥락")
+        out = self.run_start("compact")
+        self.assertIn("직전 작업 맥락", out)
+
+    def test_gate_blocks_uninitialized_project(self):
+        other = tempfile.mkdtemp(prefix="vibe-noinit-ss-")
+        try:
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                session_start.main({"cwd": other, "source": "startup"})
+            self.assertEqual(buf.getvalue(), "")
+        finally:
+            shutil.rmtree(other, ignore_errors=True)
+
 
 class PostWriteGuardTest(TempProject):
     def run_guard(self, tool, tool_input):
@@ -190,6 +239,23 @@ class PostWriteGuardTest(TempProject):
         out = self.run_guard("Write", {
             "file_path": "/p/svc.py",
             "content": "try:\n    fetch()\nexcept KeyError:\n    pass  # hi-vibe: allow-swallow — 캐시 미스는 무해\n",
+        })
+        self.assertEqual(out, "")
+
+    def test_js_allow_swallow_marker_skipped(self):
+        """JS/TS의 allow-swallow 주석은 매치(`}`) 밖에 달리므로, 매치가 아니라
+        그 줄 전체에서 마커를 찾아야 한다 — 안 그러면 플러그인이 직접 안내한
+        해결법(`catch(e){} // allow-swallow`)이 JS에서 안 먹혔다 (회귀 버그)."""
+        out = self.run_guard("Write", {
+            "file_path": "/p/app.ts",
+            "content": "try { go(); } catch (e) {} // hi-vibe: allow-swallow — 무해\n",
+        })
+        self.assertEqual(out, "")
+
+    def test_js_promise_catch_allow_marker_skipped(self):
+        out = self.run_guard("Write", {
+            "file_path": "/p/app.js",
+            "content": "fetchData().catch(() => {}); // hi-vibe: allow-swallow\n",
         })
         self.assertEqual(out, "")
 
@@ -292,6 +358,23 @@ class SecretGuardTest(TempProject):
             "content": 'api_key = "YOUR_API_KEY_GOES_HERE_123"\n',
         })
         self.assertEqual(out, "")
+
+    def test_angle_bracket_placeholder_not_flagged(self):
+        """`<YOUR_KEY>` 류 자리표시자는 계속 억제돼야 한다."""
+        out = self.run_guard("Write", {
+            "file_path": "/p/settings.py",
+            "content": 'token = "<REPLACE_WITH_YOUR_TOKEN>"\n',
+        })
+        self.assertEqual(out, "")
+
+    def test_real_key_on_jsx_line_still_flagged(self):
+        """JSX(`<div>`)나 비교(`a < b`)가 섞인 줄이라도 진짜 키는 잡아야 한다 —
+        예전엔 맨 `<` 하나가 오탐 억제라서 진짜 키를 삼켰다 (회귀 버그)."""
+        out = self.run_guard("Write", {
+            "file_path": "/p/App.tsx",
+            "content": f'const el = <div data-key="{self.FAKE_ANTHROPIC}" />;\n',
+        })
+        self.assertIn("비밀키", out)
 
     def test_env_var_read_not_flagged(self):
         out = self.run_guard("Write", {

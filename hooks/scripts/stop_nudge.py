@@ -9,6 +9,21 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _common
 
 DOC_SUFFIXES = (".md", ".txt", ".rst")
+MAX_FLAGS = 200  # 세션당 1개씩 쌓이는 .nudged 플래그의 상한
+
+
+def _prune_flags(flag_dir):
+    """오래된 .nudged 플래그를 상한 이하로 정리 (무한 누적 방지)."""
+    try:
+        flags = [os.path.join(flag_dir, f) for f in os.listdir(flag_dir)
+                 if f.endswith(".nudged")]
+        if len(flags) <= MAX_FLAGS:
+            return
+        flags.sort(key=os.path.getmtime)  # 오래된 것부터
+        for old in flags[:len(flags) - MAX_FLAGS]:
+            os.remove(old)
+    except OSError:
+        pass  # best-effort 청소 — 실패해도 훅 동작에 영향 없음
 
 
 def main(payload):
@@ -33,6 +48,7 @@ def main(payload):
     os.makedirs(flag_dir, exist_ok=True)
     with open(flag, "w", encoding="utf-8") as f:
         f.write("nudged\n")
+    _prune_flags(flag_dir)
     _common.emit(
         "Stop",
         system_message=(

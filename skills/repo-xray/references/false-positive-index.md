@@ -22,6 +22,7 @@ Structure inspired by lumin-repo-lens (MIT) — the families are our own.
 | 라이브러리/패키지의 공개 API (외부 소비자용) | FP-05 |
 | CLI 스크립트 / 배포 설정이 문자열 조립으로 참조 | FP-06 |
 | 미완성 함수 (pass·`...`·NotImplementedError·TODO, `looks_wip`) | FP-07 |
+| `export default` 함수/컴포넌트 (React 페이지 등, `default_export`) | FP-08 |
 | 테스트끼리 90% 유사 (near-duplicate) | FP-D1 |
 | 짧은 보일러플레이트끼리 유사 (thin wrapper, 마이그레이션) | FP-D2 |
 | ESM 모듈 간 같은 함수 이름 (js_name_collisions) | FP-C1 |
@@ -64,6 +65,15 @@ Structure inspired by lumin-repo-lens (MIT) — the families are our own.
   and ask before doing anything. This is the difference between "죽은 코드"
   and "아직 안 만든 코드" — the scan can't tell them apart by references
   alone, so the WIP flag is the guard.
+
+- **FP-08 — default exports.** `export default function App() {}` (and
+  `export default class`) are imported by consumers under any name they
+  choose, so the symbol's own name has zero references *by design* — the
+  classic React page/component. The scanner flags these `default_export`
+  and already excludes them from dead candidates (since v0.6.0); NEVER call
+  a default export dead. If one still surfaces (e.g. a `const App = …`
+  defined on one line and `export default App` on another that the scan
+  missed), treat a component-looking name the same way.
 
 ## Duplicate / near-duplicate families
 
