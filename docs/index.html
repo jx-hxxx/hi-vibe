@@ -211,7 +211,6 @@
         <div>
           <p class="eyebrow">AI 코딩 안전벨트 · Claude Code에 설치</p>
           <h1 class="tag-ko">AI랑 <span class="amber">과속</span>해도,<br>안전벨트는 <span class="amber">hi-vibe</span>가.</h1>
-          <p class="tag-en">Floor it with AI — hi-vibe is your seatbelt.</p>
           <p class="say">AI한테 코딩 시키면 자꾸 나는 실수들 —<br>있던 걸 또 만들고, 에러를 대충 덮고, 설명이 낡고…<br>hi-vibe가 옆에서 대신 지켜봐 줘요.<br>어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
           <div class="cta">
             <a class="btn primary" href="#install-ko">설치하기</a>
@@ -279,7 +278,7 @@
         <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">근거 없는 단정 금지</span><span class="ftag"><b>규율</b> · ⚡ 자동</span></div><p class="fdesc">"아마 이럴 거예요"를 사실처럼 말하지 않게 해요.<br>수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 공식 문서</b>까지 자동 조회)</p></div></div>
         <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">남의 눈 설계 리뷰</span><span class="ftag"><b>post-write --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요.<br>체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
         <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b> · ⚡ 자동</span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요.<br>"예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p></div></div>
-        <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요.<br>프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드… 이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
+        <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요.<br>프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드…<br>이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
         <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>audit</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요.<br>전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
         <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>guards --ci</b> · 🖐 직접</span></div><p class="fdesc">린트(ruff·eslint)·타입 검사·순환 의존 검사를 설치하고, 원하면 GitHub Actions로 push마다 검문해요.<br>복잡도·순환 위반은 <b>빌드 실패</b>로 막아요. 기존 설정은 안 덮고 물어보고 설치.</p></div></div>
         <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b> · 🖐 직접</span></div><p class="fdesc">훅은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요.<br>doctor가 훅 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p></div></div>
@@ -289,7 +288,7 @@
     <section id="honest-ko">
       <p class="eyebrow">정직함이 곧 기능이에요</p>
       <h2>여기까진 기계, 여기부턴 AI.</h2>
-      <p class="lead">”전부 자동!”이라고 뭉뚱그리지 않아요. <b>기계가 확실히</b> 하는 것과 <b>AI가 알아서</b> 하는 것을 나눠서 보여줘요.<br>불이 켜져 있으면 기계가 보장, 테두리만 있으면 AI에게 맡긴 거예요.</p>
+      <p class="lead" style="max-width:none">”전부 자동!”이라고 뭉뚱그리지 않아요. <b>기계가 확실히</b> 하는 것과 <b>AI가 알아서</b> 하는 것을 나눠서 보여줘요.<br>불이 켜져 있으면 기계가 보장, 테두리만 있으면 AI에게 맡긴 거예요.</p>
       <div class="panel">
         <div class="prow-h m"><span class="lamp2"></span><span class="what">위험한 코드(숨는 에러·비밀번호)를 그 자리에서 잡기<small>코드 저장하는 순간</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
         <div class="prow-h m"><span class="lamp2"></span><span class="what">대화가 정리되기 전에 진행상황 저장<small>대화가 길어질 때</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
@@ -394,7 +393,6 @@
         <div>
           <p class="eyebrow">AI-coding seatbelt · A Claude Code plugin</p>
           <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br><span class="amber">hi-vibe</span> is your seatbelt.</h1>
-          <p class="tag-en">The vibe-coding seatbelt for Claude Code.</p>
           <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, lets docs go stale… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
           <div class="cta">
             <a class="btn primary" href="#install-en">Install</a>
