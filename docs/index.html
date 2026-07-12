@@ -362,6 +362,23 @@
       <div class="honest-note"><span>🔁</span><div><b>check와 gate는 리듬이 반대예요.</b><br>
         <code>check</code>는 <b>내가 돌리는 진단</b> — 구조가 궁금할 때마다 몇 번이든 반복해요.<br>
         <code>gate --ci</code>는 <b>프로젝트마다 한 번 깔면 끝인 관문</b> — 설치는 1회, 이후 push마다 GitHub이 자동 검문(다시 칠 필요 없어요).</div></div>
+
+      <h3 style="margin-top:44px">뒤에서 뭐가 도나 — 스킬(엔진) ↔ 명령어(버튼)</h3>
+      <p class="lead" style="max-width:none">쉬운 명령어는 <b>버튼</b>일 뿐, 실제 일은 뒤의 <b>스킬(엔진)</b>이 해요.<br>같은 엔진을 명령어로도, "평소 말"로도, AI가 알아서도 불러요.</p>
+      <div class="tbl"><div class="tscroll"><table>
+        <thead><tr><th>스킬 (엔진)</th><th>이걸로 불러요</th><th>하는 일</th></tr></thead>
+        <tbody>
+          <tr><td><code>repo-xray</code></td><td><code>check</code></td><td>구조 스캔 — 중복·죽은 코드·큰 파일</td></tr>
+          <tr><td><code>write-gate</code></td><td><code>find</code> · <code>review</code></td><td>코드 작성 전·후 게이트</td></tr>
+          <tr><td><code>docs-keeper</code></td><td><code>handover</code> · <code>log</code> · <code>recall</code> · <code>init</code> · <code>welcome</code></td><td>문서 자동화 + 첫 안내</td></tr>
+          <tr><td><code>guards-setup</code></td><td><code>gate</code></td><td>린트·CI 관문 설치</td></tr>
+          <tr><td><code>grounded-answers</code></td><td>(자동) “얼마야 · 지원돼?” 등</td><td>확인 안 하고 단정하는 것 방지</td></tr>
+          <tr><td><code>root-cause-first</code></td><td>(자동) 버그·에러 고칠 때</td><td>땜빵 대신 근본 원인</td></tr>
+        </tbody>
+      </table></div></div>
+      <div class="honest-note"><span>🔌</span><div><b>스킬은 Claude Code가 <code>/이름</code>으로도 자동 노출해요.</b><br>
+        내가 만든 건 <code>check</code>·<code>find</code> 같은 <b>쉬운 명령어 10개</b>. 여기에 Claude Code가 <b>스킬 6개를 각각 <code>/repo-xray</code>처럼</b> 슬래시로 자동으로 열어둬요 — 그래서 같은 엔진(repo-xray)을 <b>①<code>check</code> 명령어 ②<code>/repo-xray</code> 슬래시 ③“중복 찾아줘”라고 말하면 AI가 <code>Skill()</code>로</b> — 셋 다로 부를 수 있어요. <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표라, 명령어든 스킬이든 다 그 밑에 붙어요.<br>
+        참고: <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌리는 진단 명령이에요.</div></div>
     </section>
 
     <section id="living-ko">
@@ -552,6 +569,23 @@
       <div class="honest-note"><span>🔁</span><div><b>check and gate have opposite rhythms.</b><br>
         <code>check</code> is <b>a diagnostic you run</b> — repeat it whenever you're curious about structure.<br>
         <code>gate --ci</code> is <b>a guard you install once per project</b> — after that GitHub checks every push automatically, no need to re-run it.</div></div>
+
+      <h3 style="margin-top:44px">What runs underneath — skills (engines) ↔ commands (buttons)</h3>
+      <p class="lead" style="max-width:none">The friendly commands are just <b>buttons</b>; the real work is done by the <b>skill (engine)</b> behind each one.<br>The same engine can be called by a command, by plain talk, or by the AI itself.</p>
+      <div class="tbl"><div class="tscroll"><table>
+        <thead><tr><th>Skill (engine)</th><th>Called by</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>repo-xray</code></td><td><code>check</code></td><td>Structure scan — duplicates, dead code, big files</td></tr>
+          <tr><td><code>write-gate</code></td><td><code>find</code> · <code>review</code></td><td>Pre- and post-write gates</td></tr>
+          <tr><td><code>docs-keeper</code></td><td><code>handover</code> · <code>log</code> · <code>recall</code> · <code>init</code> · <code>welcome</code></td><td>Doc automation + onboarding</td></tr>
+          <tr><td><code>guards-setup</code></td><td><code>gate</code></td><td>Install lint/CI guards</td></tr>
+          <tr><td><code>grounded-answers</code></td><td>(auto) “how much? · supported?”</td><td>Stops asserting facts without checking</td></tr>
+          <tr><td><code>root-cause-first</code></td><td>(auto) when fixing a bug/error</td><td>Root cause, not a band-aid</td></tr>
+        </tbody>
+      </table></div></div>
+      <div class="honest-note"><span>🔌</span><div><b>Claude Code also exposes each skill as <code>/name</code>.</b><br>
+        I wrote the <b>10 friendly commands</b> (<code>check</code>, <code>find</code>…). On top of that, Claude Code auto-opens <b>each of the 6 skills as a slash like <code>/repo-xray</code></b> — so the same engine (repo-xray) can be reached <b>①via the <code>check</code> command ②via the <code>/repo-xray</code> slash ③by saying “find duplicates” so the AI loads it with <code>Skill()</code></b>. The <code>hi-vibe:</code> prefix just means “belongs to this plugin”, so commands and skills both sit under it.<br>
+        Note: <code>doctor</code> is a diagnostic that runs the hooks/scanner directly, with no skill.</div></div>
     </section>
 
     <section id="living-en">

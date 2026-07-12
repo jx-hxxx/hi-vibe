@@ -168,6 +168,26 @@ type commands in order — **just talk normally:**
 >
 > **🖐 manual** = you run the command yourself when needed (install / setup / diagnosis).
 
+### What runs underneath — skills (engines) ↔ commands (buttons)
+
+The friendly commands are **buttons**; the real work is done by the **skill (engine)** behind each:
+
+| Skill (engine) | Called by | What it does |
+|---|---|---|
+| `repo-xray` | `check` | Structure scan — duplicates, dead code, big files |
+| `write-gate` | `find` · `review` | Pre- and post-write gates |
+| `docs-keeper` | `handover` · `log` · `recall` · `init` · `welcome` | Doc automation + onboarding |
+| `guards-setup` | `gate` | Install lint/CI guards |
+| `grounded-answers` | (auto) "how much? · supported?" | Stops asserting facts without checking |
+| `root-cause-first` | (auto) when fixing a bug/error | Root cause, not a band-aid |
+
+> **Claude Code also exposes each skill as `/name`.** I wrote the 10 friendly commands
+> (`check`, `find`…); on top of that, Claude Code auto-opens the 6 skills as slashes like
+> `/repo-xray`. So the same engine can be reached **① via the `check` command ② via the
+> `/repo-xray` slash ③ by saying "find duplicates" so the AI loads it with `Skill()`**.
+> The `hi-vibe:` prefix just means "belongs to this plugin" (shared by commands and skills).
+> Only `doctor` runs the hooks/scanner directly, with no skill.
+
 ## Updating (when a new version ships)
 
 **✅ Easiest — turn on auto-update once, then forget it:**
