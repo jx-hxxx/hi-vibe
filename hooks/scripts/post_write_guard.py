@@ -125,12 +125,12 @@ def main(payload):
             labels = ", ".join(sorted({label for label, _ in new_hits}))
             messages.append(
                 f"hi-vibe 감지: 방금 `{os.path.basename(fp)}`에 에러 삼킴 패턴이 "
-                f"추가됐다 — {labels}. root-cause-first 계약: 증상을 가리는 코드는 "
-                "수정이 아니다. 원인을 먼저 확인하고, (1) 삼키지 말고 전파하거나 "
-                "(2) fallback 3조건(요구사항에 명시된 우아한 저하 + 외부적·예상 "
-                "가능한 실패 + 실패가 로그/화면으로 드러남)을 채워라. 정말 의도된 "
-                "삼킴이면 그 줄에 `hi-vibe: allow-swallow` 주석을 남기고 이유를 "
-                "사용자에게 설명하라."
+                f"추가됐다 — {labels}. 사용자에게 **한 줄로** 짚어라(길게 설명하지 "
+                "말 것): '에러를 삼키면 버그가 조용히 숨어요 — 원인부터 볼까요?' 정도. "
+                "왜 위험한지 더 자세한 설명은 **사용자가 물어볼 때만** 하라 "
+                "(root-cause-first 계약: 삼키지 말고 전파하거나 fallback 3조건을 "
+                "채운다). 정말 의도된 삼킴이면 그 줄에 `hi-vibe: allow-swallow` "
+                "주석으로 통과."
             )
 
     if fp.endswith(SECRET_EXT) and not os.path.basename(fp).startswith(".env"):
@@ -142,12 +142,12 @@ def main(payload):
             labels = ", ".join(sorted({label for label, _ in new_sec}))
             messages.append(
                 f"hi-vibe 감지: 방금 `{os.path.basename(fp)}`에 실제 비밀키로 보이는 "
-                f"문자열이 들어갔다 — {labels}. 코드/설정에 박힌 키는 git 이력에 영구히 "
-                "남고, 공개 저장소면 봇이 몇 분 안에 수집해 과금 폭탄으로 이어진다. "
-                "지금 즉시: (1) 키를 .env로 옮기고 코드는 환경변수로 읽게 바꿔라 "
-                "(.env가 .gitignore에 있는지 확인). (2) 이미 커밋/푸시된 키라면 코드에서 "
-                "지우는 것으로는 부족하다 — 해당 서비스에서 키를 폐기·재발급(rotate)해야 "
-                "한다고 사용자에게 알려라. 테스트용 가짜 키라면 그 줄에 "
+                f"문자열이 들어갔다 — {labels}. 이건 드물지만 치명적이라 **왜 위험한지 "
+                "한 줄은 항상** 알려라: 코드에 박힌 키는 git 이력에 영구히 남고, 공개 "
+                "저장소면 봇이 몇 분 안에 수집해 악용한다. 지금 즉시: (1) 키를 .env로 "
+                "옮기고 코드는 환경변수로 읽게 바꿔라 (.env가 .gitignore에 있는지 확인). "
+                "(2) 이미 커밋/푸시된 키라면 지우는 것으로는 부족하다 — 서비스에서 키를 "
+                "폐기·재발급(rotate)해야 한다고 알려라. 테스트용 가짜 키라면 그 줄에 "
                 "`hi-vibe: allow-secret` 주석을 남겨라."
             )
 

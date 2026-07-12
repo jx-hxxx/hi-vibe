@@ -191,6 +191,11 @@ class SessionStartTest(TempProject):
         out = self.run_start("startup")
         self.assertIn("hi-vibe 규율", out)
 
+    def test_startup_injects_context_tip(self):
+        """세션 시작에 컨텍스트 관리 팁(/compact 권유)이 한 줄 주입돼야 한다 (#4)."""
+        out = self.run_start("startup")
+        self.assertIn("/compact", out)
+
     def test_clear_injects_charter_like_startup(self):
         """/clear 직후는 컨텍스트가 통째로 사라진 순간 — 규율 재주입이 가장
         필요한데 예전엔 matcher에 clear가 없어 훅이 안 돌았다 (회귀 버그)."""
@@ -227,6 +232,15 @@ class PostWriteGuardTest(TempProject):
             "content": "try:\n    fetch()\nexcept:\n    pass\n",
         })
         self.assertIn("에러 삼킴", out)
+
+    def test_swallow_warning_is_on_demand(self):
+        """에러 삼킴 경고는 짧게 짚고, '왜'는 사용자가 물어볼 때만 (#3 온디맨드)."""
+        out = self.run_guard("Write", {
+            "file_path": "/p/svc.py",
+            "content": "try:\n    fetch()\nexcept:\n    pass\n",
+        })
+        self.assertIn("한 줄로", out)
+        self.assertIn("물어볼 때만", out)
 
     def test_write_with_broad_except_pass_flagged(self):
         out = self.run_guard("Write", {
@@ -330,6 +344,14 @@ class SecretGuardTest(TempProject):
             "content": f'client = Client(key="{self.FAKE_ANTHROPIC}")\n',
         })
         self.assertIn("비밀키", out)
+
+    def test_secret_warning_always_explains_why(self):
+        """비밀키 경고는 '왜 위험한지' 한 줄을 항상 포함해야 한다 (#3)."""
+        out = self.run_guard("Write", {
+            "file_path": "/p/svc.py",
+            "content": f'key = "{self.FAKE_ANTHROPIC}"\n',
+        })
+        self.assertIn("왜 위험한지", out)
 
     def test_aws_key_in_config_json_flagged(self):
         out = self.run_guard("Write", {

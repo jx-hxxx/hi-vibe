@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-12
+<!-- show:ko **경고에 "왜 위험한지" 교육 추가.** 비밀키는 위험한 이유를 항상 한 줄로 알려주고, 잦은 에러 삼킴은 짧게 짚되 자세한 설명은 물어볼 때만. 세션 시작엔 컨텍스트 관리 팁 한 줄. -->
+<!-- show:en **Warnings now teach the "why".** Secrets always get a one-line reason; the frequent error-swallow stays terse and explains only when asked. Sessions open with a one-line context-management tip. -->
+
+### Added
+- **경고 교육 (혼합)** — 위험 코드 경고에 "왜 위험한지"를 상황에 맞게 붙인다. **비밀키**(드물고 치명적)는 왜 위험한지 한 줄을 **항상** 알리고, **에러 삼킴**(잦음)은 짧게 짚되 자세한 이유는 **사용자가 물어볼 때만**. 잔소리 없이 배우게 하는 게 목적.
+- **컨텍스트 관리 팁** — 세션 시작 규율 주입에 "컨텍스트가 길어지면 /compact 권유 (직전에 handover 자동 기록)" 한 줄 추가. 자체 상태줄은 claude-hud와 중복이라 넣지 않음.
+
+### Changed
+- `post_write_guard`의 에러 삼킴 메시지: 장황한 처방 → 짧은 알림 + 온디맨드 설명으로.
+
+### Tests
+- +3 (온디맨드 삼킴 경고 / 항상-이유 비밀키 경고 / 컨텍스트 팁 주입). 61→64.
+
 ## [0.6.0] - 2026-07-12
 <!-- show:ko **숨어있던 버그들 수정 + 검사 정확도 개선.** 실제로 써보다 발견한 것들을 고치고, 아직 만드는 중인 코드나 화면 컴포넌트를 "안 쓰는 코드"로 오해하지 않게 다듬었어요. -->
 <!-- show:en **Squashed hidden bugs + sharper detection.** Fixed things found in real use, and stopped mistaking work-in-progress code or UI components for "dead code". -->
