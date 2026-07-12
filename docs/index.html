@@ -382,8 +382,11 @@
           <tr><td><code>root-cause-first</code></td><td>(자동) 버그·에러 고칠 때</td><td>땜빵 대신 근본 원인</td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><span>🔌</span><div><b>스킬은 Claude Code가 <code>/이름</code>으로도 자동 노출해요.</b><br>
-        내가 만든 건 <code>check</code>·<code>find</code> 같은 <b>쉬운 명령어 10개</b>. 여기에 Claude Code가 <b>스킬 6개를 각각 <code>/repo-xray</code>처럼</b> 슬래시로 자동으로 열어둬요 — 그래서 같은 엔진(repo-xray)을 <b>①<code>check</code> 명령어 ②<code>/repo-xray</code> 슬래시 ③“중복 찾아줘”라고 말하면 AI가 <code>Skill()</code>로</b> — 셋 다로 부를 수 있어요. <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표라, 명령어든 스킬이든 다 그 밑에 붙어요.<br>
+      <div class="honest-note"><span>🔌</span><div><b>스킬은 Claude Code가 <code>/스킬이름</code> 슬래시로도 자동 노출해요.</b><br>
+        hi-vibe가 제공하는 건 <code>check</code>·<code>find</code> 같은 <b>쉬운 명령어 10개</b>예요.<br>
+        여기에 Claude Code가 <b>스킬 6개를 각각 <code>/repo-xray</code>처럼</b> 슬래시로 자동으로 열어둬요.<br>
+        그래서 같은 엔진(repo-xray)을 세 갈래로 부를 수 있어요 — <b>① <code>check</code> 명령어 · ② <code>/repo-xray</code> 슬래시 · ③ “중복 찾아줘”라고 말하면 AI가 <code>Skill()</code>로.</b><br>
+        <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표라, 명령어든 스킬이든 다 그 밑에 붙어요.<br>
         참고: <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌리는 진단 명령이에요.</div></div>
     </section>
 
@@ -595,8 +598,11 @@
           <tr><td><code>root-cause-first</code></td><td>(auto) when fixing a bug/error</td><td>Root cause, not a band-aid</td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><span>🔌</span><div><b>Claude Code also exposes each skill as <code>/name</code>.</b><br>
-        I wrote the <b>10 friendly commands</b> (<code>check</code>, <code>find</code>…). On top of that, Claude Code auto-opens <b>each of the 6 skills as a slash like <code>/repo-xray</code></b> — so the same engine (repo-xray) can be reached <b>①via the <code>check</code> command ②via the <code>/repo-xray</code> slash ③by saying “find duplicates” so the AI loads it with <code>Skill()</code></b>. The <code>hi-vibe:</code> prefix just means “belongs to this plugin”, so commands and skills both sit under it.<br>
+      <div class="honest-note"><span>🔌</span><div><b>Claude Code also exposes each skill as a <code>/skill-name</code> slash.</b><br>
+        hi-vibe ships <b>10 friendly commands</b> (<code>check</code>, <code>find</code>…).<br>
+        On top of that, Claude Code auto-opens <b>each of the 6 skills as a slash like <code>/repo-xray</code></b>.<br>
+        So the same engine (repo-xray) can be reached three ways — <b>① the <code>check</code> command · ② the <code>/repo-xray</code> slash · ③ saying “find duplicates” so the AI loads it with <code>Skill()</code>.</b><br>
+        The <code>hi-vibe:</code> prefix just means “belongs to this plugin”, so commands and skills both sit under it.<br>
         Note: <code>doctor</code> is a diagnostic that runs the hooks/scanner directly, with no skill.</div></div>
     </section>
 

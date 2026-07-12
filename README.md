@@ -199,9 +199,9 @@ The friendly commands are **buttons**; the real work is done by the **skill (eng
 | `grounded-answers` | (auto) "how much? · supported?" | Stops asserting facts without checking |
 | `root-cause-first` | (auto) when fixing a bug/error | Root cause, not a band-aid |
 
-> **Claude Code also exposes each skill as `/name`.** I wrote the 10 friendly commands
-> (`check`, `find`…); on top of that, Claude Code auto-opens the 6 skills as slashes like
-> `/repo-xray`. So the same engine can be reached **① via the `check` command ② via the
+> **Claude Code also exposes each skill as a `/skill-name` slash.** hi-vibe ships the 10
+> friendly commands (`check`, `find`…); on top of that, Claude Code auto-opens the 6 skills
+> as slashes like `/repo-xray`. So the same engine can be reached **① via the `check` command ② via the
 > `/repo-xray` slash ③ by saying "find duplicates" so the AI loads it with `Skill()`**.
 > The `hi-vibe:` prefix just means "belongs to this plugin" (shared by commands and skills).
 > Only `doctor` runs the hooks/scanner directly, with no skill.
