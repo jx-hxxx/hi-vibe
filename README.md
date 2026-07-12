@@ -88,12 +88,12 @@ Running `init` creates these 4 documents and activates the hooks for this projec
 
 ```
 /hi-vibe:check          ← structure checkup (repeat anytime): find duplicates / god-files
-/hi-vibe:gate --ci      ← install a quality gate (once → auto-checks every push after)
+/hi-vibe:gate --ci      ← install a quality gate (once per project → auto after)
 ```
 
 These two have **opposite rhythms** — `check` is **a diagnostic you run** (as
-often as you like), `gate` is **a guard you install once** and it enforces
-itself from then on.
+often as you like, within a project), `gate` is **a guard you install once per
+project** and it enforces itself from then on.
 
 - **`check`** — never guesses. It speaks only from the scanner's JSON evidence,
   and when saying "not found" it states the scan range. Scans Python + JS/TS
@@ -104,9 +104,9 @@ itself from then on.
 - **`gate`** — installs the code checkers **after asking** (never overwrites your
   config). Plain `gate` sets them up **locally** (your editor flags issues); add
   `--ci` to also **gate every push on GitHub** — violations fail the build, so bad
-  code can't land. **Install once and you're done** — after `--ci`, GitHub checks
-  every push automatically; you never re-run the command (only re-run it to change
-  the rules).
+  code can't land. **Install once per project and you're done** — after `--ci`,
+  that repo's GitHub checks every push automatically; you never re-run the command
+  (only re-run it to change the rules).
 
 ## After `init`, everything is automatic
 
@@ -135,14 +135,15 @@ type commands in order — **just talk normally:**
 > If a detected error-swallow / secret is **intentional**, add a
 > `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line to pass.
 
-> **The three reviews (scope × depth).** One `review`, used with options. Plain
-> `review` checks **the one change you just made** against the quality checklist.
-> `review --all` checks **everything changed this session**, feature by feature
-> (files already reviewed and unchanged are skipped automatically — great after
-> building several things, then "review everything"). `review --deep` summons a
-> **clean pair of eyes** (fresh-eyes) for the design calls a checklist can't
-> make — over-engineering, hidden coupling. `--all` is "how wide", `--deep` is
-> "how deep" — independent, so `review --all --deep` works too.
+> **The three reviews.** One `review`, used with options. Plain `review` checks
+> **the one feature you just made**; `review --all` checks **everything changed
+> this session** at once (files already reviewed and unchanged are skipped —
+> great after building several things, then "review everything"). `review --deep`
+> **spawns a fresh Claude (a separate agent) that never wrote this code** — so
+> with no bias, it uses clean eyes (fresh-eyes) to catch over-engineering and
+> hidden coupling the author can't see. `--all` is **how wide** (one→all),
+> `--deep` is **who reviews** (the author→a fresh Claude) — different axes, so
+> `review --all --deep` works too.
 
 ## Commands at a glance
 

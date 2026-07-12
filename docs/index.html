@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="hi-vibe — 바이브코딩 안전벨트. AI 코딩 실수를 문서 자동화·AI 규율·기계 강제로 막는 Claude Code 플러그인.">
 <title>hi-vibe — AI 코딩 안전벨트</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/favicon.png">
 <style>
   :root {
     --bg:#f4f5f8; --surface:#ffffff; --surface-2:#eef0f4; --border:#e0e3ea; --border-2:#cfd4de;
@@ -287,7 +289,7 @@
         <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">중복 재구현 방지</span><span class="ftag"><b>find</b> · ⚡ 자동</span></div><p class="fdesc">새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요.<br>AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b> — 추측이 아니라 근거로.</p></div></div>
         <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">에러 땜빵 금지</span><span class="ftag"><b>즉시 감지</b> · ⚡ 자동</span></div><p class="fdesc">에러를 fallback으로 덮는 대신 <b>원인부터</b> 보게 해요.<br>에러를 몰래 삼키는 코드(빈 catch, <code>except: pass</code>)를 쓰는 순간 감지해서 알려줘요. 정말 의도한 거면 주석 한 줄로 통과.</p></div></div>
         <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">근거 없는 단정 금지</span><span class="ftag"><b>규율</b> · ⚡ 자동</span></div><p class="fdesc">"아마 이럴 거예요"를 사실처럼 말하지 않게 해요.<br>수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 공식 문서</b>까지 자동 조회)</p></div></div>
-        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">남의 눈 설계 리뷰</span><span class="ftag"><b>review --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요.<br>체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
+        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">딴 클로드가 설계 재검토</span><span class="ftag"><b>review --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 짠 기억이 <b>전혀 없는 딴 클로드(별도 에이전트)</b>를 새로 불러와 방금 짠 걸 봐요 — 짠 적이 없으니 편견 없이.<br>체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
         <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b> · ⚡ 자동</span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요.<br>"예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p></div></div>
         <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요.<br>프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드…<br>이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
         <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>check</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요.<br>전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
@@ -326,7 +328,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
-        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>원할 때 한 번 — 검사기를 설치하면 이후 push마다 기계가 자동으로 막아요.</p></div>
+        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>쓰려는 프로젝트마다 한 번(선택) — 검사기를 깔면 그 프로젝트는 이후 push마다 자동으로 막아요.</p></div>
       </div>
     </section>
 
@@ -341,16 +343,16 @@
           <tr><td><code>/hi-vibe:doctor</code></td><td>설치 직후, 잘 켜졌나 확인</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:init</code></td><td>새 프로젝트마다 한 번, 켜기</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:check</code></td><td>중복·너무 큰 파일 훑어보기 (언제든 반복)</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치 (1회 설치 → 자동)</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치 (프로젝트마다 1회 → 자동)</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:find</code></td><td>“이 기능 만들어줘” 할 때 (있는지 먼저 검색)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:review</code></td><td>“다 했어 / 리뷰해줘” 할 때 (작성 후 리뷰 · <code>--all</code> 세션 전체 · <code>--deep</code> 남의 눈)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>“다 했어 / 리뷰해줘” 할 때 (작성 후 리뷰 · <code>--all</code> 세션 전체 · <code>--deep</code> 딴 클로드가 재검토)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:handover</code></td><td>세션 끝 — 어디까지 했는지 진행상황 넘기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:log</code></td><td>코드가 바뀐 걸 CHANGELOG(변경 이력)에 남기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:recall</code></td><td>“예전에 왜 이렇게 했지?”</td><td><span class="fire auto">⚡ 자동</span></td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><span>🔍</span><div><b>review는 하나에 옵션 두 개.</b><br><code>review</code>는 방금 만든 변경 하나를, <code>review --all</code>은 세션에서 바뀐 것 전체를 기능별로 한 번에(이미 봤고 안 바뀐 건 자동 skip — 여러 개 몰아 만든 뒤 “전체 리뷰해줘”에 좋아요), <code>review --deep</code>은 깨끗한 눈(fresh-eyes)이 과잉설계·숨은 결합을 봐요. <code>--all</code>은 “얼마나 넓게”, <code>--deep</code>은 “얼마나 깊이” — 독립이라 <code>review --all --deep</code>도 돼요.</div></div>
-      <div class="honest-note"><span>🔁</span><div><b>check와 gate는 리듬이 반대예요.</b><br><code>check</code>는 <b>내가 돌리는 진단</b>(구조가 궁금할 때마다 몇 번이든 반복), <code>gate --ci</code>는 <b>한 번 깔면 끝인 관문</b>(설치는 1회, 이후 push마다 GitHub이 자동 검문 — 다시 칠 필요 없어요).</div></div>
+      <div class="honest-note"><span>🔍</span><div><b>review는 하나에 옵션 두 개.</b><br><code>review</code>는 방금 만든 기능 하나를, <code>review --all</code>은 세션에서 바뀐 기능 전체를 한 번에 검증해요(이미 봤고 안 바뀐 건 자동 skip — 여러 개 몰아 만든 뒤 “전체 리뷰해줘”에 좋아요). <code>review --deep</code>은 <b>코드를 짠 기억이 없는 딴 클로드(별도 에이전트)를 새로 불러와요</b> — 짠 적이 없어서 편견 없이, 깨끗한 눈(fresh-eyes)으로 과잉설계·숨은 결합을 봐요(짠 본인은 못 보는 것). <code>--all</code>은 <b>얼마나 넓게</b>(하나→전체), <code>--deep</code>은 <b>누가 보나</b>(짠 클로드→딴 클로드) — 다른 축이라 <code>review --all --deep</code>도 돼요.</div></div>
+      <div class="honest-note"><span>🔁</span><div><b>check와 gate는 리듬이 반대예요.</b><br><code>check</code>는 <b>내가 돌리는 진단</b>(구조가 궁금할 때마다 몇 번이든 반복), <code>gate --ci</code>는 <b>프로젝트마다 한 번 깔면 끝인 관문</b>(그 프로젝트에 설치는 1회, 이후 push마다 GitHub이 자동 검문 — 다시 칠 필요 없어요).</div></div>
     </section>
 
     <section id="living-ko">
@@ -472,7 +474,7 @@
         <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">No duplicate reimplementation</span><span class="ftag"><b>find</b> · ⚡ auto</span></div><p class="fdesc">Before you make a new function or file, it searches whether one already exists — so the AI stops rebuilding what it made last session. When there's none, it says "not found across N scanned files" — <b>evidence, not a guess.</b></p></div></div>
         <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">No band-aid error handling</span><span class="ftag"><b>instant detect</b> · ⚡ auto</span></div><p class="fdesc">Instead of burying an error under a fallback, it makes you look at the <b>cause</b>. Code that silently swallows errors (empty catch, <code>except: pass</code>) is flagged the moment you write it. Genuinely intentional? One comment lets it pass.</p></div></div>
         <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">No unfounded claims</span><span class="ftag"><b>discipline</b> · ⚡ auto</span></div><p class="fdesc">It won't state "probably X" as fact. Numbers and APIs get verified before answering — or labeled "estimate" when they can't be. (With context7 connected, it even pulls the <b>latest official docs</b>.)</p></div></div>
-        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">Fresh-eyes design review</span><span class="ftag"><b>review --deep</b> · ⚡ auto</span></div><p class="fdesc">A clean-context AI with <b>zero memory</b> of writing the code reviews what you just wrote. It catches the judgment calls a checklist can't — over-engineering, needless features, hidden coupling — with a plain "this looks like too much."</p></div></div>
+        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">Fresh-eyes design review</span><span class="ftag"><b>review --deep</b> · ⚡ auto</span></div><p class="fdesc">A <b>fresh Claude (a separate agent)</b> with zero memory of writing the code reviews what you just wrote — so with no bias. It catches the judgment calls a checklist can't — over-engineering, needless features, hidden coupling — with a plain "this looks like too much."</p></div></div>
         <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">Memory, handover &amp; recall</span><span class="ftag"><b>handover · recall</b> · ⚡ auto</span></div><p class="fdesc">Auto-records your progress every time the chat is compacted, and re-injects the latest handover when a new chat starts. Ask "why did we do it this way?" and it digs the records for the <b>date and reason</b>. (Auto-archives past 20 entries; safe across multiple terminals.)</p></div></div>
         <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">No false positives</span><span class="ftag"><b>discipline · scanner</b> · ⚡ auto</span></div><p class="fdesc">It won't wrongly call live code "dead." Framework-registered functions, tests, <code>export default</code> components, work-in-progress code… are kept off the dead list by a <b>false-positive index</b> — and every new false positive gets pinned down with a rule and a test.</p></div></div>
         <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">Structure checkup</span><span class="ftag"><b>check</b> · 🖐 manual</span></div><p class="fdesc">Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. Everything comes from scanner evidence — and it tells work-in-progress apart before suggesting a delete.</p></div></div>
@@ -511,7 +513,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
-        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>Once, when you want — install it and the machine blocks bad code on every push after.</p></div>
+        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>Once per project (optional) — install it and that repo blocks bad code on every push after.</p></div>
       </div>
     </section>
 
@@ -526,16 +528,16 @@
           <tr><td><code>/hi-vibe:doctor</code></td><td>Right after install — is it on?</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:init</code></td><td>Once per project — turn it on</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:check</code></td><td>Scan for duplicates &amp; huge files (repeat anytime)</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:gate</code></td><td>Install the code checker (install once → auto)</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>Install the code checker (once per project → auto)</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:find</code></td><td>When you say “make me X” (searches first)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
-          <tr><td><code>/hi-vibe:review</code></td><td>When you say “done” (reviews after · <code>--all</code> whole session · <code>--deep</code> clean eyes)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>When you say “done” (reviews after · <code>--all</code> whole session · <code>--deep</code> a fresh Claude re-reviews)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:handover</code></td><td>End of session — hand off where you left off</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:log</code></td><td>Record what changed in the CHANGELOG</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:recall</code></td><td>“Why did we do it this way?”</td><td><span class="fire auto">⚡ Auto</span></td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><span>🔍</span><div><b>One review, two options.</b><br><code>review</code> checks the one change you just made; <code>review --all</code> checks everything changed this session, feature by feature (already-reviewed, unchanged files are skipped — great after building several things, then “review everything”); <code>review --deep</code> brings clean eyes (fresh-eyes) for over-engineering and hidden coupling. <code>--all</code> is “how wide”, <code>--deep</code> is “how deep” — independent, so <code>review --all --deep</code> works too.</div></div>
-      <div class="honest-note"><span>🔁</span><div><b>check and gate have opposite rhythms.</b><br><code>check</code> is <b>a diagnostic you run</b> (repeat it whenever you're curious about structure); <code>gate --ci</code> is <b>a guard you install once</b> — after that GitHub checks every push automatically, no need to re-run it.</div></div>
+      <div class="honest-note"><span>🔍</span><div><b>One review, two options.</b><br><code>review</code> checks the one feature you just made; <code>review --all</code> checks every feature changed this session at once (already-reviewed, unchanged files are skipped — great after building several things, then “review everything”). <code>review --deep</code> <b>spawns a fresh Claude (a separate agent) that never wrote this code</b> — so with no bias, it uses clean eyes (fresh-eyes) to catch over-engineering and hidden coupling the author can’t see. <code>--all</code> is <b>how wide</b> (one→all), <code>--deep</code> is <b>who reviews</b> (the author→a fresh Claude) — different axes, so <code>review --all --deep</code> works too.</div></div>
+      <div class="honest-note"><span>🔁</span><div><b>check and gate have opposite rhythms.</b><br><code>check</code> is <b>a diagnostic you run</b> (repeat it whenever you're curious about structure); <code>gate --ci</code> is <b>a guard you install once per project</b> — after that GitHub checks every push automatically, no need to re-run it.</div></div>
     </section>
 
     <section id="living-en">
