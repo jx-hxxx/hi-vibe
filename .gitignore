@@ -13,3 +13,4 @@ hi-vibe-평가-및-개선-기록.md
 # 로고 후보 등 로컬 작업용 이미지 (배포/커밋 제외 — enable-auto-update.png는 README용이라 유지)
 docs/images/logo*.png
 !docs/images/logo0.png
+docs/images/image.png
