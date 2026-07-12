@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="hi-vibe — 바이브코딩 안전벨트. AI 코딩 실수를 문서 자동화·AI 규율·기계 강제로 막는 Claude Code 플러그인.">
+<title>hi-vibe — AI 코딩 안전벨트</title>
+<style>
+  :root {
+    --bg:#f4f5f8; --surface:#ffffff; --surface-2:#eef0f4; --border:#e0e3ea; --border-2:#cfd4de;
+    --text:#171b24; --muted:#5c6474; --faint:#8a91a1;
+    --accent:#d98a00; --accent-ink:#8a5800;
+    --good:#14a06a; --good-bg:rgba(20,160,106,.10);
+    --ai:#7a8393; --danger:#cf3b3f; --danger-bg:rgba(207,59,63,.08);
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Mono", "Roboto Mono", Consolas, monospace;
+    --sans: system-ui, -apple-system, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", Roboto, sans-serif;
+    --maxw:1080px; --r:14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#0f1219; --surface:#161b24; --surface-2:#1d2430; --border:#262d3a; --border-2:#333c4c;
+      --text:#e9ecf3; --muted:#9aa3b4; --faint:#6b7486;
+      --accent:#f4b324; --accent-ink:#f6c655;
+      --good:#35d18c; --good-bg:rgba(53,209,140,.12);
+      --ai:#8892a3; --danger:#e5646a; --danger-bg:rgba(229,100,106,.11);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#0f1219; --surface:#161b24; --surface-2:#1d2430; --border:#262d3a; --border-2:#333c4c;
+    --text:#e9ecf3; --muted:#9aa3b4; --faint:#6b7486;
+    --accent:#f4b324; --accent-ink:#f6c655;
+    --good:#35d18c; --good-bg:rgba(53,209,140,.12);
+    --ai:#8892a3; --danger:#e5646a; --danger-bg:rgba(229,100,106,.11);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+  section { padding:88px 0; border-top:1px solid var(--border); }
+  a { color:inherit; }
+
+  .eyebrow { font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); margin:0 0 18px; display:flex; align-items:center; gap:10px; }
+  .eyebrow::before { content:""; width:22px; height:1px; background:var(--border-2); }
+  h2 { font-size:clamp(26px,3.4vw,38px); line-height:1.15; letter-spacing:-.02em; font-weight:800; margin:0 0 16px; text-wrap:balance; }
+  .lead { color:var(--muted); font-size:17px; max-width:60ch; margin:0; }
+
+  header.bar { position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+  .bar .wrap { display:flex; align-items:center; justify-content:space-between; height:60px; gap:16px; }
+  .brand { display:flex; align-items:center; gap:9px; font-weight:800; letter-spacing:-.01em; font-size:17px; }
+  .brand .dot { width:11px; height:11px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .bar nav { display:flex; align-items:center; gap:22px; font-family:var(--mono); font-size:13px; margin-left:auto; }
+  .bar nav a { color:var(--muted); text-decoration:none; }
+  .bar nav a:hover { color:var(--text); }
+  .hdr-right { display:flex; align-items:center; gap:9px; }
+  .ctl { font-family:var(--mono); font-size:12.5px; height:32px; padding:0 11px; border-radius:8px; border:1px solid var(--border-2); background:transparent; color:var(--text); cursor:pointer; display:inline-flex; align-items:center; }
+  .ctl:hover { border-color:var(--accent); color:var(--accent-ink); }
+  .ghub { font-family:var(--mono); font-size:13px; text-decoration:none; color:var(--text); border:1px solid var(--border-2); border-radius:8px; padding:6px 12px; white-space:nowrap; }
+  .ghub:hover { border-color:var(--accent); color:var(--accent-ink); }
+  @media (max-width:760px){ .bar nav { display:none; } }
+
+  .hero { padding:84px 0 76px; border-top:none; }
+  .hero-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center; }
+  @media (max-width:860px){ .hero-grid { grid-template-columns:1fr; gap:40px; } }
+  .tag-ko { font-size:clamp(30px,5.2vw,52px); line-height:1.08; font-weight:850; letter-spacing:-.03em; margin:14px 0 0; text-wrap:balance; }
+  .tag-ko .amber { color:var(--accent); }
+  .tag-en { font-family:var(--mono); font-size:13px; color:var(--faint); letter-spacing:.02em; margin:20px 0 0; }
+  .hero p.say { color:var(--muted); font-size:17.5px; margin:22px 0 0; max-width:46ch; }
+  .hero .cta { display:flex; gap:12px; margin-top:30px; flex-wrap:wrap; }
+  .btn { font-family:var(--mono); font-size:13.5px; text-decoration:none; padding:11px 18px; border-radius:10px; border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+  .btn.primary { background:var(--accent); color:#1a1204; font-weight:700; }
+  .btn.primary:hover { filter:brightness(1.06); }
+  .btn.ghost { border-color:var(--border-2); color:var(--text); }
+  .btn.ghost:hover { border-color:var(--accent); color:var(--accent-ink); }
+
+  .clcol { display:flex; flex-direction:column; }
+  .cluster { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:20px; box-shadow:0 20px 50px -30px rgba(0,0,0,.45); }
+  .cluster .head { display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--faint); margin-bottom:14px; }
+  .cluster .armed { color:var(--good); display:flex; align-items:center; gap:7px; }
+  .cluster .armed .pulse { width:8px; height:8px; border-radius:50%; background:var(--good); box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 60%, transparent); animation:pulse 2.4s ease-out infinite; }
+  .ind { display:flex; align-items:center; gap:12px; padding:10px 4px; border-top:1px solid var(--border); opacity:0; transform:translateY(6px); animation:arm .5s ease forwards; }
+  .ind .lamp { width:13px; height:13px; border-radius:50%; flex:none; }
+  .ind.m .lamp { background:var(--good); box-shadow:0 0 12px -1px color-mix(in srgb, var(--good) 70%, transparent); }
+  .ind.ai .lamp { background:transparent; border:2px solid var(--ai); box-shadow:none; }
+  .ind .txt { font-size:14px; flex:1; }
+  .ind .kind { font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; padding:3px 8px; border-radius:20px; white-space:nowrap; }
+  .ind.m .kind { color:var(--good); background:var(--good-bg); }
+  .ind.ai .kind { color:var(--ai); border:1px solid var(--border-2); }
+  .cluster-cap { font-family:var(--mono); font-size:12px; color:var(--faint); text-align:center; margin:14px 4px 0; line-height:1.8; }
+
+  @keyframes arm { to { opacity:1; transform:translateY(0); } }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);} 70%{box-shadow:0 0 0 9px color-mix(in srgb, var(--good) 0%, transparent);} 100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 0%, transparent);} }
+
+  .rows { display:grid; gap:12px; margin-top:34px; }
+  .prow { display:flex; gap:16px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--danger); border-radius:10px; padding:16px 18px; }
+  .prow .warn { font-family:var(--mono); font-size:12px; color:var(--danger); background:var(--danger-bg); border-radius:6px; padding:3px 8px; flex:none; margin-top:2px; white-space:nowrap; }
+  .prow b { font-weight:700; }
+  .prow span { color:var(--muted); }
+
+  .layers { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:36px; }
+  @media (max-width:780px){ .layers { grid-template-columns:1fr; } }
+  .layer { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:24px; }
+  .layer .n { font-family:var(--mono); font-size:12px; color:var(--accent); letter-spacing:.06em; }
+  .layer h3 { font-size:19px; margin:10px 0 8px; letter-spacing:-.01em; }
+  .layer p { color:var(--muted); font-size:14.5px; margin:0; }
+
+  .panel { margin-top:36px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .panel .prow-h { display:grid; grid-template-columns:44px 1fr 132px; align-items:center; gap:12px; padding:15px 20px; border-top:1px solid var(--border); }
+  .panel .prow-h:first-child { border-top:none; }
+  .panel .lamp2 { width:15px; height:15px; border-radius:50%; justify-self:center; }
+  .prow-h.m .lamp2 { background:var(--good); box-shadow:0 0 13px -1px color-mix(in srgb, var(--good) 70%, transparent); }
+  .prow-h.ai .lamp2 { background:transparent; border:2px solid var(--ai); }
+  .prow-h .what { font-size:14.5px; }
+  .prow-h .what small { display:block; color:var(--faint); font-size:12px; font-family:var(--mono); margin-top:2px; }
+  .badge { font-family:var(--mono); font-size:11px; letter-spacing:.02em; text-align:center; padding:6px 0; border-radius:8px; white-space:nowrap; }
+  .badge.m { color:var(--good); background:var(--good-bg); }
+  .badge.ai { color:var(--ai); border:1px solid var(--border-2); }
+  .honest-note { display:flex; gap:12px; margin-top:20px; padding:16px 18px; border:1px dashed var(--border-2); border-radius:10px; color:var(--muted); font-size:14.5px; }
+  .honest-note b { color:var(--text); }
+  .honest-note code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); }
+
+  .tbl { margin-top:34px; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .tscroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; min-width:520px; }
+  th, td { text-align:left; padding:13px 18px; border-top:1px solid var(--border); font-size:14px; }
+  th { font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); background:var(--surface-2); border-top:none; }
+  td code { font-family:var(--mono); font-size:13px; color:var(--accent-ink); }
+  td .fire { font-family:var(--mono); font-size:11.5px; padding:3px 8px; border-radius:20px; }
+  .fire.auto { color:var(--good); background:var(--good-bg); }
+  .fire.man { color:var(--muted); border:1px solid var(--border-2); }
+  tbody tr:hover { background:var(--surface); }
+
+  .term { margin-top:30px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .term .top { display:flex; gap:7px; padding:13px 16px; border-bottom:1px solid var(--border); }
+  .term .top i { width:11px; height:11px; border-radius:50%; background:var(--border-2); display:block; }
+  .term pre { margin:0; padding:20px 22px; font-family:var(--mono); font-size:13.5px; line-height:2; overflow-x:auto; color:var(--text); }
+  .term .c { color:var(--faint); }
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
+  @media (max-width:780px){ .steps { grid-template-columns:1fr; } }
+  .step { border:1px solid var(--border); border-radius:10px; padding:18px; background:var(--surface); }
+  .step .k { font-family:var(--mono); font-size:13px; color:var(--accent-ink); }
+  .step p { margin:8px 0 0; color:var(--muted); font-size:13.5px; }
+
+  .living-tag { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px; color:var(--good); background:var(--good-bg); padding:5px 12px; border-radius:20px; margin-bottom:18px; }
+  .living-tag .pulse { width:7px; height:7px; border-radius:50%; background:var(--good); }
+  .timeline { margin-top:30px; display:grid; gap:14px; }
+  .rel { display:grid; grid-template-columns:96px 1fr; gap:18px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; }
+  @media (max-width:640px){ .rel { grid-template-columns:1fr; gap:6px; } }
+  .rel .v { font-family:var(--mono); font-size:14px; font-weight:700; color:var(--accent-ink); }
+  .rel .v small { display:block; color:var(--faint); font-weight:400; font-size:11.5px; margin-top:3px; }
+  .rel .h { font-size:14.5px; }
+  .rel .h b { font-weight:700; }
+  .rel .h span { color:var(--muted); }
+  .foot-note { font-family:var(--mono); font-size:12px; color:var(--faint); margin-top:22px; line-height:1.7; }
+
+  footer { border-top:1px solid var(--border); padding:48px 0 64px; }
+  .foot { display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:flex-start; }
+  .foot .muted { color:var(--muted); font-size:13.5px; max-width:46ch; }
+  .foot a { color:var(--accent-ink); text-decoration:none; font-family:var(--mono); font-size:13px; }
+  .foot a:hover { text-decoration:underline; }
+
+  a:focus-visible, .btn:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
+  @media (prefers-reduced-motion: reduce) { .ind { animation:none !important; opacity:1; transform:none; } .cluster .armed .pulse, .living-tag .pulse { animation:none !important; } }
+</style>
+</head>
+<body>
+<!-- ================= KOREAN ================= -->
+<div class="page" id="ko">
+  <header class="bar"><div class="wrap">
+    <div class="brand"><span class="dot"></span>hi-vibe</div>
+    <nav>
+      <a href="#problem-ko">이런 실수</a>
+      <a href="#how-ko">어떻게 막나</a>
+      <a href="#honest-ko">정직함</a>
+      <a href="#install-ko">설치</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="ctl js-theme" type="button" aria-label="라이트/다크 전환">◐</button>
+      <button class="ctl js-lang" type="button">EN</button>
+      <a class="ghub" href="https://github.com/jx-hxxx/hi-vibe">GitHub ↗</a>
+    </div>
+  </div></header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">AI 코딩 안전벨트 · Claude Code에 설치</p>
+          <h1 class="tag-ko">AI랑 <span class="amber">과속</span>해도,<br>안전벨트는 hi-vibe가.</h1>
+          <p class="tag-en">Floor it with AI — hi-vibe is your seatbelt.</p>
+          <p class="say">AI한테 코딩 시키면 자꾸 나는 실수들 — 있던 걸 또 만들고, 에러를 대충 덮고, 설명이 낡고… hi-vibe가 옆에서 대신 지켜봐 줘요. 어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
+          <div class="cta">
+            <a class="btn primary" href="#install-ko">설치하기</a>
+            <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">GitHub에서 보기 ↗</a>
+          </div>
+        </div>
+        <div class="clcol">
+          <div class="cluster" aria-hidden="true">
+            <div class="head"><span>지금 지켜보는 중</span><span class="armed"><span class="pulse"></span>켜짐</span></div>
+            <div class="ind m"  style="animation-delay:.15s"><span class="lamp"></span><span class="txt">몰래 숨는 에러·비밀번호 바로 잡기</span><span class="kind">기계</span></div>
+            <div class="ind m"  style="animation-delay:.30s"><span class="lamp"></span><span class="txt">대화 정리되기 전에 진행상황 저장</span><span class="kind">기계</span></div>
+            <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">새로 시작할 때 규칙 다시 챙기기</span><span class="kind">기계</span></div>
+            <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“만들어줘” → 이미 있는지 먼저 찾기</span><span class="kind">AI</span></div>
+            <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“다 했어” → 점검하고 문서도 맞추기</span><span class="kind">AI</span></div>
+          </div>
+          <p class="cluster-cap">🟢 초록불 = 기계가 확실히 지켜요 · ⚪ 빈 불 = AI가 알아서 해줘요</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem-ko">
+      <p class="eyebrow">이런 실수, 막아줘요</p>
+      <h2>AI가 짠 코드는 같은 실수를 반복해요.</h2>
+      <p class="lead">편할수록 조용히 쌓이는 문제들. hi-vibe가 하나씩 잡아줘요.</p>
+      <div class="rows">
+        <div class="prow"><span class="warn">또 만들기</span><div><b>있던 걸 또 만들어요.</b> <span>대화가 새로 시작되면 앞에 만든 걸 잊고 똑같은 걸 다시 짜요.</span></div></div>
+        <div class="prow"><span class="warn">대충 덮기</span><div><b>에러를 대충 덮어요.</b> <span>원인을 안 고치고 임시로 가려서, 버그가 조용히 숨어요.</span></div></div>
+        <div class="prow"><span class="warn">맘대로</span><div><b>헷갈리는 걸 안 물어봐요.</b> <span>애매한 선택을 그냥 자기 마음대로 정해버려요.</span></div></div>
+        <div class="prow"><span class="warn">지어내기</span><div><b>확인도 안 하고 단정해요.</b> <span>근거 없는 숫자를 사실인 것처럼 말해요.</span></div></div>
+        <div class="prow"><span class="warn">설명 안 맞음</span><div><b>설명이 코드랑 따로 놀아요.</b> <span>코드는 바뀌었는데 설명은 옛날 그대로 남아요.</span></div></div>
+      </div>
+    </section>
+
+    <section id="how-ko">
+      <p class="eyebrow">어떻게 막나 · 세 겹으로</p>
+      <h2>말이 아니라 구조로 막아요.</h2>
+      <p class="lead">안전벨트를 세 겹으로 짜요. 위는 부드럽게 챙겨주고, 아래로 갈수록 기계가 확실히 막아요.</p>
+      <div class="layers">
+        <div class="layer"><span class="n">첫째 겹</span><h3>기억을 대신 적어둬요</h3><p>무슨 프로젝트인지, 어디까지 했는지, 뭐가 바뀌었는지를 자동으로 적어둬요. 그래서 대화가 새로 시작돼도 앞 내용을 까먹지 않아요.</p></div>
+        <div class="layer"><span class="n">둘째 겹</span><h3>AI한테 규칙을 심어요</h3><p>“만들기 전에 있는지 먼저 찾아봐”, “에러는 원인부터 봐”, “확인 안 한 건 단정하지 마” 같은 규칙을 AI한테 미리 심어서, 스스로 지키게 해요.</p></div>
+        <div class="layer"><span class="n">셋째 겹</span><h3>기계가 직접 막아요</h3><p>코드를 자동으로 검사하는 도구가 위험한 코드를 그 자리에서 잡아요. 원하면 GitHub에 올릴 때 아예 통과 못 하게 막을 수도 있어요.</p></div>
+      </div>
+    </section>
+
+    <section id="honest-ko">
+      <p class="eyebrow">정직함이 곧 기능이에요</p>
+      <h2>여기까진 기계, 여기부턴 AI.</h2>
+      <p class="lead">“전부 자동!”이라고 뭉뚱그리지 않아요. <b>기계가 확실히</b> 하는 것과 <b>AI가 알아서</b> 하는 것을 나눠서 보여줘요 — 불이 켜져 있으면 기계가 보장, 테두리만 있으면 AI에게 맡긴 거예요.</p>
+      <div class="panel">
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">위험한 코드(숨는 에러·비밀번호)를 그 자리에서 잡기<small>코드 저장하는 순간</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">대화가 정리되기 전에 진행상황 저장<small>대화가 길어질 때</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">새로 시작할 때 규칙 다시 챙겨주기<small>새 대화 시작할 때</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">뭔가 바꿨는데 기록 안 하면 알려주기<small>대화 끝날 때</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
+        <div class="prow-h ai"><span class="lamp2"></span><span class="what">“만들어줘” 하면 이미 있는지 먼저 찾기<small>새로 만들기 전</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
+        <div class="prow-h ai"><span class="lamp2"></span><span class="what">“다 했어” 하면 점검하고 문서도 맞추기<small>다 만든 후</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
+        <div class="prow-h ai"><span class="lamp2"></span><span class="what">“검토해줘” 하면 다른 눈으로 과한 설계 잡기<small>설계 살펴볼 때</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
+      </div>
+      <div class="honest-note"><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b> AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:pre-write</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
+    </section>
+
+    <section id="commands-ko">
+      <p class="eyebrow">명령어 한눈에</p>
+      <h2>대부분 자동. 필요할 때만 직접.</h2>
+      <p class="lead">⚡ 자동은 평소처럼 말하면 알아서 걸리고, 🖐 직접은 설치·점검처럼 내가 필요할 때 눌러요.</p>
+      <div class="tbl"><div class="tscroll"><table>
+        <thead><tr><th>명령어</th><th>언제 쓰나</th><th>발동</th></tr></thead>
+        <tbody>
+          <tr><td><code>/hi-vibe:welcome</code></td><td>처음이라 뭐부터 할지 모를 때</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:doctor</code></td><td>설치 직후, 잘 켜졌나 확인</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:init</code></td><td>새 프로젝트마다 한 번, 켜기</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:pre-write</code></td><td>새로 만들기 전, 있는지 찾기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:post-write</code></td><td>다 만든 후 점검 (검토도 가능)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:audit</code></td><td>중복·너무 큰 파일 훑어보기</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:guards</code></td><td>코드 자동 검사기 설치</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:recall</code></td><td>“예전에 왜 이렇게 했지?”</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+        </tbody>
+      </table></div></div>
+    </section>
+
+    <section id="install-ko">
+      <p class="eyebrow">설치 · 30초면 끝</p>
+      <h2>세 줄이면 끝. python3만 있으면 돼요.</h2>
+      <p class="lead">Claude Code 안에서 아래 세 줄을 순서대로 붙여넣으세요. 복잡한 설치도, 회원가입도 없어요.</p>
+      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) hi-vibe 목록에 등록</span>
+/plugin marketplace add jx-hxxx/hi-vibe
+<span class="c"># 2) 플러그인 설치</span>
+/plugin install hi-vibe@hi-vibe-marketplace
+<span class="c"># 3) 지금 바로 켜기 (꼭!)</span>
+/reload-plugins</pre></div>
+      <div class="steps">
+        <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
+        <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
+        <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
+      </div>
+    </section>
+
+    <section id="living-ko">
+      <span class="living-tag"><span class="pulse"></span>이 목록은 자동으로 채워져요</span>
+      <h2>이 페이지가 안 낡는다는 게, 증거예요.</h2>
+      <p class="lead">“설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 — 새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
+      <div class="timeline">
+        <div class="rel"><div class="v">v0.6.0<small>2026-07-12</small></div><div class="h"><b>숨어있던 버그들 수정 + 검사 정확도 개선.</b> <span>실제로 써보다 발견한 것들을 고치고, 아직 만드는 중인 코드나 화면 컴포넌트를 “안 쓰는 코드”로 오해하지 않게 다듬었어요.</span></div></div>
+        <div class="rel"><div class="v">v0.5.1<small>2026-07-12</small></div><div class="h"><b>설치 화면을 입문자가 알아보기 쉽게.</b> <span>추천 표시를 넣고, 어려운 용어 대신 쉬운 말로 바꿨어요.</span></div></div>
+        <div class="rel"><div class="v">v0.5.0<small>2026-07-12</small></div><div class="h"><b>아직 만드는 중인 코드 보호.</b> <span>개발 중이라 비워둔 코드를 “안 쓰는 코드”로 오해해서 지우지 않도록.</span></div></div>
+      </div>
+      <p class="foot-note">* 지금은 손으로 채웠지만, 나중엔 이 목록이 기록에서 자동으로 갱신될 자리예요.</p>
+    </section>
+  </main>
+
+  <footer><div class="wrap foot">
+    <div>
+      <div class="brand" style="margin-bottom:10px"><span class="dot"></span>hi-vibe</div>
+      <p class="muted">AI랑 과속해도, 안전벨트는 hi-vibe가. AI 코딩을 위한 Claude Code 안전벨트 플러그인.</p>
+    </div>
+    <div style="display:flex; gap:26px; flex-wrap:wrap">
+      <a href="https://github.com/jx-hxxx/hi-vibe">GitHub ↗</a>
+      <a href="https://github.com/jx-hxxx/hi-vibe/blob/main/CHANGELOG.md">업데이트 기록 ↗</a>
+      <a href="https://github.com/jx-hxxx/hi-vibe/blob/main/LICENSE">MIT License</a>
+    </div>
+  </div></footer>
+</div>
+
+<!-- ================= ENGLISH ================= -->
+<div class="page" id="en" hidden>
+  <header class="bar"><div class="wrap">
+    <div class="brand"><span class="dot"></span>hi-vibe</div>
+    <nav>
+      <a href="#problem-en">Mistakes</a>
+      <a href="#how-en">How</a>
+      <a href="#honest-en">Honesty</a>
+      <a href="#install-en">Install</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="ctl js-theme" type="button" aria-label="Toggle light/dark">◐</button>
+      <button class="ctl js-lang" type="button">한국어</button>
+      <a class="ghub" href="https://github.com/jx-hxxx/hi-vibe">GitHub ↗</a>
+    </div>
+  </div></header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">AI-coding seatbelt · A Claude Code plugin</p>
+          <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br>hi-vibe is your seatbelt.</h1>
+          <p class="tag-en">AI랑 과속해도, 안전벨트는 hi-vibe가.</p>
+          <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, lets docs go stale… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
+          <div class="cta">
+            <a class="btn primary" href="#install-en">Install</a>
+            <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">View on GitHub ↗</a>
+          </div>
+        </div>
+        <div class="clcol">
+          <div class="cluster" aria-hidden="true">
+            <div class="head"><span>WATCHING NOW</span><span class="armed"><span class="pulse"></span>ARMED</span></div>
+            <div class="ind m"  style="animation-delay:.15s"><span class="lamp"></span><span class="txt">Catch hidden errors &amp; secrets on the spot</span><span class="kind">machine</span></div>
+            <div class="ind m"  style="animation-delay:.30s"><span class="lamp"></span><span class="txt">Save your progress before the chat resets</span><span class="kind">machine</span></div>
+            <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">Re-arm the rules on a fresh start</span><span class="kind">machine</span></div>
+            <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“Make me X” → search if it exists first</span><span class="kind">AI</span></div>
+            <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“Done” → review &amp; sync the docs</span><span class="kind">AI</span></div>
+          </div>
+          <p class="cluster-cap">🟢 Lit = machine-guaranteed · ⚪ Hollow = AI does it on its own</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem-en">
+      <p class="eyebrow">What it catches</p>
+      <h2>AI-written code repeats the same mistakes.</h2>
+      <p class="lead">The more convenient it is, the more quietly these pile up. hi-vibe catches them one by one.</p>
+      <div class="rows">
+        <div class="prow"><span class="warn">Rebuilds</span><div><b>Rebuilds what already exists.</b> <span>On a fresh chat it forgets what it made and writes the same thing again.</span></div></div>
+        <div class="prow"><span class="warn">Papers over</span><div><b>Papers over errors.</b> <span>It hides the symptom instead of fixing the cause, so bugs stay hidden.</span></div></div>
+        <div class="prow"><span class="warn">Decides alone</span><div><b>Won’t ask when unsure.</b> <span>It just makes ambiguous calls on its own.</span></div></div>
+        <div class="prow"><span class="warn">Makes it up</span><div><b>States guesses as fact.</b> <span>It presents unverified numbers as if they were official specs.</span></div></div>
+        <div class="prow"><span class="warn">Docs drift</span><div><b>Docs stop matching the code.</b> <span>The code changed; the explanation stayed the same.</span></div></div>
+      </div>
+    </section>
+
+    <section id="how-en">
+      <p class="eyebrow">How · three layers</p>
+      <h2>Blocked by structure, not by asking nicely.</h2>
+      <p class="lead">The seatbelt is woven in three layers — gentle up top, machine-enforced at the bottom.</p>
+      <div class="layers">
+        <div class="layer"><span class="n">Layer one</span><h3>Remembers for you</h3><p>It auto-records what the project is, how far you got, and what changed — so a fresh chat never loses the thread.</p></div>
+        <div class="layer"><span class="n">Layer two</span><h3>Teaches the AI the rules</h3><p>Rules like “search before you build”, “fix the cause, not the symptom”, “don’t state guesses as fact” are planted into the AI so it polices itself.</p></div>
+        <div class="layer"><span class="n">Layer three</span><h3>The machine blocks it</h3><p>A code checker catches risky code on the spot — and if you want, it can fail the build before it ever reaches GitHub.</p></div>
+      </div>
+    </section>
+
+    <section id="honest-en">
+      <p class="eyebrow">Honesty is the feature</p>
+      <h2>Machine up to here, AI beyond.</h2>
+      <p class="lead">We don’t hand-wave “it’s all automatic.” We separate what the <b>machine guarantees</b> from what the <b>AI does on its own</b> — a lit lamp means guaranteed, a hollow one means it’s up to the AI.</p>
+      <div class="panel">
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">Catch risky code (hidden errors &amp; secrets) on the spot<small>the moment you save code</small></span><span class="badge m">⚙ Guaranteed</span></div>
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">Save your progress before the chat gets compacted<small>when the chat runs long</small></span><span class="badge m">⚙ Guaranteed</span></div>
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">Re-arm the rules on a fresh start<small>when a new chat begins</small></span><span class="badge m">⚙ Guaranteed</span></div>
+        <div class="prow-h m"><span class="lamp2"></span><span class="what">Nudge you if you changed something but didn’t log it<small>when the chat ends</small></span><span class="badge m">⚙ Guaranteed</span></div>
+        <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Make me X” → search if it exists first<small>before making something new</small></span><span class="badge ai">🤖 AI does it</span></div>
+        <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Done” → review &amp; sync the docs<small>after it’s built</small></span><span class="badge ai">🤖 AI does it</span></div>
+        <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Review this” → fresh eyes catch over-engineering<small>when reviewing a design</small></span><span class="badge ai">🤖 AI does it</span></div>
+      </div>
+      <div class="honest-note"><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b> The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:pre-write</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
+    </section>
+
+    <section id="commands-en">
+      <p class="eyebrow">Commands at a glance</p>
+      <h2>Mostly automatic. Manual only when you need it.</h2>
+      <p class="lead">⚡ Auto fires on its own when you talk normally; 🖐 Manual is for setup and checkups when you want them.</p>
+      <div class="tbl"><div class="tscroll"><table>
+        <thead><tr><th>Command</th><th>When</th><th>Fires</th></tr></thead>
+        <tbody>
+          <tr><td><code>/hi-vibe:welcome</code></td><td>First time, unsure where to start</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:doctor</code></td><td>Right after install — is it on?</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:init</code></td><td>Once per project — turn it on</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:pre-write</code></td><td>Before making something new</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:post-write</code></td><td>After it’s built (review too)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:audit</code></td><td>Scan for duplicates &amp; huge files</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:guards</code></td><td>Install the code checker</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:recall</code></td><td>“Why did we do it this way?”</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+        </tbody>
+      </table></div></div>
+    </section>
+
+    <section id="install-en">
+      <p class="eyebrow">Install · 30 seconds</p>
+      <h2>Three lines. All you need is python3.</h2>
+      <p class="lead">Paste these three lines in order inside Claude Code. No heavy setup, no sign-up.</p>
+      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) register hi-vibe</span>
+/plugin marketplace add jx-hxxx/hi-vibe
+<span class="c"># 2) install the plugin</span>
+/plugin install hi-vibe@hi-vibe-marketplace
+<span class="c"># 3) turn it on now (don’t skip!)</span>
+/reload-plugins</pre></div>
+      <div class="steps">
+        <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
+        <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
+        <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
+      </div>
+    </section>
+
+    <section id="living-en">
+      <span class="living-tag"><span class="pulse"></span>This list fills itself in</span>
+      <h2>This page not going stale is the proof.</h2>
+      <p class="lead">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself — every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
+      <div class="timeline">
+        <div class="rel"><div class="v">v0.6.0<small>2026-07-12</small></div><div class="h"><b>Squashed hidden bugs + sharper detection.</b> <span>Fixed things found in real use, and stopped mistaking work-in-progress code or UI components for “dead code”.</span></div></div>
+        <div class="rel"><div class="v">v0.5.1<small>2026-07-12</small></div><div class="h"><b>Made the install screen beginner-friendly.</b> <span>Added recommendations and swapped jargon for plain words.</span></div></div>
+        <div class="rel"><div class="v">v0.5.0<small>2026-07-12</small></div><div class="h"><b>Protects work-in-progress code.</b> <span>So code left blank mid-build isn’t mistaken for “unused” and deleted.</span></div></div>
+      </div>
+      <p class="foot-note">* Hand-filled for now, but this is where the list will auto-refresh from the record later.</p>
+    </section>
+  </main>
+
+  <footer><div class="wrap foot">
+    <div>
+      <div class="brand" style="margin-bottom:10px"><span class="dot"></span>hi-vibe</div>
+      <p class="muted">Floor it with AI — hi-vibe is your seatbelt. A Claude Code seatbelt plugin for AI coding.</p>
+    </div>
+    <div style="display:flex; gap:26px; flex-wrap:wrap">
+      <a href="https://github.com/jx-hxxx/hi-vibe">GitHub ↗</a>
+      <a href="https://github.com/jx-hxxx/hi-vibe/blob/main/CHANGELOG.md">Changelog ↗</a>
+      <a href="https://github.com/jx-hxxx/hi-vibe/blob/main/LICENSE">MIT License</a>
+    </div>
+  </div></footer>
+</div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  function setLang(l){
+    document.getElementById('ko').hidden = (l !== 'ko');
+    document.getElementById('en').hidden = (l !== 'en');
+    root.setAttribute('lang', l);
+    document.title = (l === 'en') ? 'hi-vibe — the AI-coding seatbelt' : 'hi-vibe — AI 코딩 안전벨트';
+    var labels = document.querySelectorAll('.js-lang');
+    for (var i=0;i<labels.length;i++){ labels[i].textContent = (l === 'en') ? '한국어' : 'EN'; }
+    try { localStorage.setItem('hv-lang', l); } catch(e){}
+  }
+  function setTheme(t){
+    if (t) { root.setAttribute('data-theme', t); } else { root.removeAttribute('data-theme'); }
+    try { localStorage.setItem('hv-theme', t || ''); } catch(e){}
+  }
+  var savedLang = null; try { savedLang = localStorage.getItem('hv-lang'); } catch(e){}
+  if (!savedLang) { savedLang = ((navigator.language||'').toLowerCase().indexOf('ko') === 0) ? 'ko' : 'en'; }
+  setLang(savedLang);
+  var savedTheme = null; try { savedTheme = localStorage.getItem('hv-theme'); } catch(e){}
+  if (savedTheme) { setTheme(savedTheme); }
+  var langBtns = document.querySelectorAll('.js-lang');
+  for (var i=0;i<langBtns.length;i++){ langBtns[i].addEventListener('click', function(){ setLang(root.getAttribute('lang') === 'ko' ? 'en' : 'ko'); }); }
+  var themeBtns = document.querySelectorAll('.js-theme');
+  for (var j=0;j<themeBtns.length;j++){ themeBtns[j].addEventListener('click', function(){
+    var cur = root.getAttribute('data-theme');
+    if (!cur) { cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+  }); }
+})();
+</script>
+
+</body>
+</html>
