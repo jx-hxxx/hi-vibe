@@ -87,18 +87,26 @@ Running `init` creates these 4 documents and activates the hooks for this projec
 ## Occasionally, only when needed (optional)
 
 ```
-/hi-vibe:check          ← for repos with lots of existing code: find duplicates / god-files
-/hi-vibe:gate --ci    ← install a linter (auto code checker) to machine-enforce quality
+/hi-vibe:check          ← structure checkup (repeat anytime): find duplicates / god-files
+/hi-vibe:gate --ci      ← install a quality gate (once → auto-checks every push after)
 ```
+
+These two have **opposite rhythms** — `check` is **a diagnostic you run** (as
+often as you like), `gate` is **a guard you install once** and it enforces
+itself from then on.
 
 - **`check`** — never guesses. It speaks only from the scanner's JSON evidence,
   and when saying "not found" it states the scan range. Scans Python + JS/TS
   (`.ts`/`.tsx`/`.jsx` included), and catches not just exact duplicates but
   also **"reimplemented ~90% the same"** function pairs (a classic AI mistake).
+  **Run it as many times as you want** — it's the on-demand diagnostic you
+  fire whenever code piles up.
 - **`gate`** — installs the code checkers **after asking** (never overwrites your
   config). Plain `gate` sets them up **locally** (your editor flags issues); add
   `--ci` to also **gate every push on GitHub** — violations fail the build, so bad
-  code can't land.
+  code can't land. **Install once and you're done** — after `--ci`, GitHub checks
+  every push automatically; you never re-run the command (only re-run it to change
+  the rules).
 
 ## After `init`, everything is automatic
 
@@ -114,6 +122,7 @@ type commands in order — **just talk normally:**
 | substantive change, at session end | reminder if **CHANGELOG** wasn't updated (once/session) | ⚙️ machine |
 | "make me this feature" | **find** — searches first for an existing one (prevents duplicate reimplementation) | 🤖 AI |
 | "done / review it" | **review** — quality checklist + doc sync | 🤖 AI |
+| "review everything" | **review --all** — the whole session at once, feature by feature (skips already-reviewed) | 🤖 AI |
 | "review the design" | **review --deep** — a clean-context AI catches over-engineering | 🤖 AI |
 
 > **⚙️ machine** = a Python hook **guarantees** it — it runs regardless of the
@@ -126,6 +135,15 @@ type commands in order — **just talk normally:**
 > If a detected error-swallow / secret is **intentional**, add a
 > `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line to pass.
 
+> **The three reviews (scope × depth).** One `review`, used with options. Plain
+> `review` checks **the one change you just made** against the quality checklist.
+> `review --all` checks **everything changed this session**, feature by feature
+> (files already reviewed and unchanged are skipped automatically — great after
+> building several things, then "review everything"). `review --deep` summons a
+> **clean pair of eyes** (fresh-eyes) for the design calls a checklist can't
+> make — over-engineering, hidden coupling. `--all` is "how wide", `--deep` is
+> "how deep" — independent, so `review --all --deep` works too.
+
 ## Commands at a glance
 
 | Command | When | Fires |
@@ -134,12 +152,12 @@ type commands in order — **just talk normally:**
 | `/hi-vibe:doctor` | right after install, or when unsure hooks are running | 🖐 manual |
 | `/hi-vibe:init` | once per project (installs the doc system) | 🖐 manual |
 | `/hi-vibe:find` | when you say **"make me this feature"** — searches before creating | ⚡ auto |
-| `/hi-vibe:review` | when you say **"done / review it"** — checklist + doc sync | ⚡ auto |
+| `/hi-vibe:review` | when you say **"done / review it"** — checklist + doc sync (`--all` whole session · `--deep` clean eyes) | ⚡ auto |
 | `/hi-vibe:handover` | session-end handover | ⚡ auto |
 | `/hi-vibe:log` | record a substantive change in CHANGELOG | ⚡ auto |
 | `/hi-vibe:recall` | "why did we do it this way before?" — search the records | ⚡ auto |
-| `/hi-vibe:check` | full structure checkup | 🖐 manual |
-| `/hi-vibe:gate` | install a linter (auto code checker) — machine blocks bad code | 🖐 manual |
+| `/hi-vibe:check` | full structure checkup — **repeat anytime** | 🖐 manual |
+| `/hi-vibe:gate` | install a linter (auto code checker) — machine blocks bad code (**install once → auto**) | 🖐 manual |
 
 > **⚡ auto** = fires on its own from natural language ("make me…" / "done")
 > or hooks (e.g. compaction). The command is just a button for when you want

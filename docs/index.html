@@ -326,7 +326,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
-        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>원할 때 — 코드 자동 검사기를 설치해 나쁜 코드를 기계가 막게.</p></div>
+        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>원할 때 한 번 — 검사기를 설치하면 이후 push마다 기계가 자동으로 막아요.</p></div>
       </div>
     </section>
 
@@ -340,15 +340,17 @@
           <tr><td><code>/hi-vibe:welcome</code></td><td>처음이라 뭐부터 할지 모를 때</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:doctor</code></td><td>설치 직후, 잘 켜졌나 확인</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:init</code></td><td>새 프로젝트마다 한 번, 켜기</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:check</code></td><td>중복·너무 큰 파일 훑어보기</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:check</code></td><td>중복·너무 큰 파일 훑어보기 (언제든 반복)</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치 (1회 설치 → 자동)</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:find</code></td><td>“이 기능 만들어줘” 할 때 (있는지 먼저 검색)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:review</code></td><td>“다 했어 / 리뷰해줘” 할 때 (작성 후 리뷰)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>“다 했어 / 리뷰해줘” 할 때 (작성 후 리뷰 · <code>--all</code> 세션 전체 · <code>--deep</code> 남의 눈)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:handover</code></td><td>세션 끝 — 어디까지 했는지 진행상황 넘기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:log</code></td><td>코드가 바뀐 걸 CHANGELOG(변경 이력)에 남기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:recall</code></td><td>“예전에 왜 이렇게 했지?”</td><td><span class="fire auto">⚡ 자동</span></td></tr>
         </tbody>
       </table></div></div>
+      <div class="honest-note"><span>🔍</span><div><b>review는 하나에 옵션 두 개.</b><br><code>review</code>는 방금 만든 변경 하나를, <code>review --all</code>은 세션에서 바뀐 것 전체를 기능별로 한 번에(이미 봤고 안 바뀐 건 자동 skip — 여러 개 몰아 만든 뒤 “전체 리뷰해줘”에 좋아요), <code>review --deep</code>은 깨끗한 눈(fresh-eyes)이 과잉설계·숨은 결합을 봐요. <code>--all</code>은 “얼마나 넓게”, <code>--deep</code>은 “얼마나 깊이” — 독립이라 <code>review --all --deep</code>도 돼요.</div></div>
+      <div class="honest-note"><span>🔁</span><div><b>check와 gate는 리듬이 반대예요.</b><br><code>check</code>는 <b>내가 돌리는 진단</b>(구조가 궁금할 때마다 몇 번이든 반복), <code>gate --ci</code>는 <b>한 번 깔면 끝인 관문</b>(설치는 1회, 이후 push마다 GitHub이 자동 검문 — 다시 칠 필요 없어요).</div></div>
     </section>
 
     <section id="living-ko">
@@ -509,7 +511,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
-        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>When you want — install the code checker so the machine blocks bad code.</p></div>
+        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>Once, when you want — install it and the machine blocks bad code on every push after.</p></div>
       </div>
     </section>
 
@@ -523,15 +525,17 @@
           <tr><td><code>/hi-vibe:welcome</code></td><td>First time, unsure where to start</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:doctor</code></td><td>Right after install — is it on?</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:init</code></td><td>Once per project — turn it on</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:check</code></td><td>Scan for duplicates &amp; huge files</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:gate</code></td><td>Install the code checker</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:check</code></td><td>Scan for duplicates &amp; huge files (repeat anytime)</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>Install the code checker (install once → auto)</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:find</code></td><td>When you say “make me X” (searches first)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
-          <tr><td><code>/hi-vibe:review</code></td><td>When you say “done” (reviews after)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>When you say “done” (reviews after · <code>--all</code> whole session · <code>--deep</code> clean eyes)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:handover</code></td><td>End of session — hand off where you left off</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:log</code></td><td>Record what changed in the CHANGELOG</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:recall</code></td><td>“Why did we do it this way?”</td><td><span class="fire auto">⚡ Auto</span></td></tr>
         </tbody>
       </table></div></div>
+      <div class="honest-note"><span>🔍</span><div><b>One review, two options.</b><br><code>review</code> checks the one change you just made; <code>review --all</code> checks everything changed this session, feature by feature (already-reviewed, unchanged files are skipped — great after building several things, then “review everything”); <code>review --deep</code> brings clean eyes (fresh-eyes) for over-engineering and hidden coupling. <code>--all</code> is “how wide”, <code>--deep</code> is “how deep” — independent, so <code>review --all --deep</code> works too.</div></div>
+      <div class="honest-note"><span>🔁</span><div><b>check and gate have opposite rhythms.</b><br><code>check</code> is <b>a diagnostic you run</b> (repeat it whenever you're curious about structure); <code>gate --ci</code> is <b>a guard you install once</b> — after that GitHub checks every push automatically, no need to re-run it.</div></div>
     </section>
 
     <section id="living-en">
