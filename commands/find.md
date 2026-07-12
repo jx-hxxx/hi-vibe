@@ -5,7 +5,7 @@ argument-hint: "[만들려는 것 설명]"
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/write-gate/SKILL.md`.
 
-Mode: `pre-write`
+Mode: `find`
 Arguments: $ARGUMENTS
 
 Follow that mode exactly.

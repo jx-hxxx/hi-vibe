@@ -1,7 +1,7 @@
 ---
 name: write-gate
 description: >-
-  Pre-write and post-write gates for code changes. Pre-write: before
+  Pre-write and review gates for code changes. Pre-write: before
   creating any new function, helper, type, or file — 만들어줘, 추가해줘,
   구현해줘, 새 파일, 리팩토링, new helper/component. Post-write: after
   finishing a change — 다 했어, 리뷰해줘, 검토, review my change.
@@ -11,7 +11,7 @@ description: >-
 
 # write-gate
 
-## Mode: pre-write (코드 작성 전)
+## Mode: find (코드 작성 전)
 
 새 function/helper/type/파일을 만들기 전에, 순서대로:
 
@@ -37,7 +37,7 @@ description: >-
 판정은 셋 중 하나: **재사용** (기존 것 그대로) / **확장** (기존 것
 수정) / **신규** (근거: 스캔 범위 내 없음).
 
-## Mode: post-write (코드 작성 후)
+## Mode: review (코드 작성 후)
 
 각 항목을 ✅/⚠️로 보고한다. ⚠️는 이유와 수정 방법을 붙인다.
 비례 원칙: 이번 변경과 무관한 항목은 "해당 없음" 한 마디로 통과시켜라
@@ -82,7 +82,7 @@ description: >-
 "실행 검증: <무엇을 어떻게 실행해 확인했나>" 또는 "실행 검증 안 됨 — <이유>"
 "문서 갱신함: <목록 (CHANGELOG 자동 기록 포함)>" 또는 "문서 영향 없음 — <이유>"
 
-## Mode: post-write --deep (남의 눈 리뷰)
+## Mode: review --deep (남의 눈 리뷰)
 
 `--deep`이 있거나 사용자가 "남의 눈으로/설계도 봐줘"라고 하면, 위
 체크리스트를 마친 뒤 **fresh-eyes 에이전트**를 Agent 도구로 소환한다.

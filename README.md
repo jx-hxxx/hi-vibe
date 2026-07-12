@@ -38,7 +38,7 @@ Run these three lines in order, inside Claude Code:
 > On Windows without `python3`, create a `python` alias.
 
 > **(Optional) context7 MCP — more accurate when present.** When your code
-> touches an external library's API, `pre-write` fetches the **latest official
+> touches an external library's API, `find` fetches the **latest official
 > docs** instead of relying on the AI's stale memory, preventing outdated code.
 > **Not required** — without it, hi-vibe falls back to web search, and if that
 > fails too, labels the answer as an estimate. To install it (free API key
@@ -87,16 +87,18 @@ Running `init` creates these 4 documents and activates the hooks for this projec
 ## Occasionally, only when needed (optional)
 
 ```
-/hi-vibe:audit          ← for repos with lots of existing code: find duplicates / god-files
-/hi-vibe:guards --ci    ← install a linter (auto code checker) to machine-enforce quality
+/hi-vibe:check          ← for repos with lots of existing code: find duplicates / god-files
+/hi-vibe:gate --ci    ← install a linter (auto code checker) to machine-enforce quality
 ```
 
-- **`audit`** — never guesses. It speaks only from the scanner's JSON evidence,
+- **`check`** — never guesses. It speaks only from the scanner's JSON evidence,
   and when saying "not found" it states the scan range. Scans Python + JS/TS
   (`.ts`/`.tsx`/`.jsx` included), and catches not just exact duplicates but
   also **"reimplemented ~90% the same"** function pairs (a classic AI mistake).
-- **`guards`** — installs a linter (auto code checker) **after asking** (never
-  overwrites existing config). Add `--ci` to also enforce it on GitHub (CI).
+- **`gate`** — installs the code checkers **after asking** (never overwrites your
+  config). Plain `gate` sets them up **locally** (your editor flags issues); add
+  `--ci` to also **gate every push on GitHub** — violations fail the build, so bad
+  code can't land.
 
 ## After `init`, everything is automatic
 
@@ -110,16 +112,16 @@ type commands in order — **just talk normally:**
 | every compaction | **handover** auto-recorded (context preserved) | ⚙️ machine |
 | session start / compact / clear | latest handover + discipline auto-injected | ⚙️ machine |
 | substantive change, at session end | reminder if **CHANGELOG** wasn't updated (once/session) | ⚙️ machine |
-| "make me this function" | **pre-write** — searches first for an existing one (prevents duplicate reimplementation) | 🤖 AI |
-| "done / review it" | **post-write** — quality checklist + doc sync | 🤖 AI |
-| "review the design" | **post-write --deep** — a clean-context AI catches over-engineering | 🤖 AI |
+| "make me this function" | **find** — searches first for an existing one (prevents duplicate reimplementation) | 🤖 AI |
+| "done / review it" | **review** — quality checklist + doc sync | 🤖 AI |
+| "review the design" | **review --deep** — a clean-context AI catches over-engineering | 🤖 AI |
 
 > **⚙️ machine** = a Python hook **guarantees** it — it runs regardless of the
 > AI's mood.
 > **🤖 AI** = a skill instruction that **the AI fires on its own** (reacting to
 > natural language like "make me…" / "done"). Powerful, but not a 100%
 > guarantee — the AI can skip it. To force it, run the command
-> (`/hi-vibe:pre-write` etc.) yourself. Think of the commands as the manual
+> (`/hi-vibe:find` etc.) yourself. Think of the commands as the manual
 > lock for when the AI missed the automatic one.
 > If a detected error-swallow / secret is **intentional**, add a
 > `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line to pass.
@@ -131,13 +133,13 @@ type commands in order — **just talk normally:**
 | `/hi-vibe:welcome` | first time, or when unsure what to use | 🖐 manual |
 | `/hi-vibe:doctor` | right after install, or when unsure hooks are running | 🖐 manual |
 | `/hi-vibe:init` | once per project (installs the doc system) | 🖐 manual |
-| `/hi-vibe:pre-write` | **before** creating a new function/file | ⚡ auto |
-| `/hi-vibe:post-write` | **after** writing code (`--deep` = clean-eyes design review) | ⚡ auto |
+| `/hi-vibe:find` | when you say **"make me this function"** — searches before creating | ⚡ auto |
+| `/hi-vibe:review` | when you say **"done / review it"** — reviews after (`--deep` = clean-eyes) | ⚡ auto |
 | `/hi-vibe:handover` | session-end handover | ⚡ auto |
 | `/hi-vibe:log` | record a substantive change in CHANGELOG | ⚡ auto |
 | `/hi-vibe:recall` | "why did we do it this way before?" — search the records | ⚡ auto |
-| `/hi-vibe:audit` | full structure checkup | 🖐 manual |
-| `/hi-vibe:guards` | install a linter (auto code checker) — machine blocks bad code | 🖐 manual |
+| `/hi-vibe:check` | full structure checkup | 🖐 manual |
+| `/hi-vibe:gate` | install a linter (auto code checker) — machine blocks bad code | 🖐 manual |
 
 > **⚡ auto** = fires on its own from natural language ("make me…" / "done")
 > or hooks (e.g. compaction). The command is just a button for when you want
@@ -188,7 +190,7 @@ Past 20 entries, the older half auto-moves to `handover-archive.md`. Those
 memories aren't lost — `/hi-vibe:recall` (or just asking "why did we do this
 before?") searches the archive too and answers with date + source.
 
-**Q. A guards red light (lint warning / CI failure) is showing, but it's not
+**Q. A gate red light (lint warning / CI failure) is showing, but it's not
 actually a problem. How do I dismiss it?**
 **Telling the AI "it's fine" won't clear it** — the linter re-judges from the
 config and code every run; it has no memory of "the user said it's OK." So the

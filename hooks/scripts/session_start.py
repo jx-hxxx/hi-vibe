@@ -12,7 +12,7 @@ import _common
 CHARTER = (
     "hi-vibe 규율: 에러는 fallback으로 가리지 말고 원인부터. "
     "근거 없는 수치 단정 금지. 새 함수를 만들기 전에 기존 것부터 검색"
-    "(/hi-vibe:pre-write). 구조가 바뀌면 MODULE.md와 CLAUDE.md 지도 동기화. "
+    "(/hi-vibe:find). 구조가 바뀌면 MODULE.md와 CLAUDE.md 지도 동기화. "
     "컨텍스트가 길어지면 여유 있을 때 사용자에게 /compact를 권하라 — 직전에 "
     "handover가 자동 기록되니 맥락이 안 끊긴다."
 )

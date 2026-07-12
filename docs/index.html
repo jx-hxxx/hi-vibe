@@ -284,14 +284,14 @@
       </div>
 
       <div class="featlist">
-        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">중복 재구현 방지</span><span class="ftag"><b>pre-write</b> · ⚡ 자동</span></div><p class="fdesc">새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요.<br>AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b> — 추측이 아니라 근거로.</p></div></div>
+        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">중복 재구현 방지</span><span class="ftag"><b>find</b> · ⚡ 자동</span></div><p class="fdesc">새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요.<br>AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b> — 추측이 아니라 근거로.</p></div></div>
         <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">에러 땜빵 금지</span><span class="ftag"><b>즉시 감지</b> · ⚡ 자동</span></div><p class="fdesc">에러를 fallback으로 덮는 대신 <b>원인부터</b> 보게 해요.<br>에러를 몰래 삼키는 코드(빈 catch, <code>except: pass</code>)를 쓰는 순간 감지해서 알려줘요. 정말 의도한 거면 주석 한 줄로 통과.</p></div></div>
         <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">근거 없는 단정 금지</span><span class="ftag"><b>규율</b> · ⚡ 자동</span></div><p class="fdesc">"아마 이럴 거예요"를 사실처럼 말하지 않게 해요.<br>수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 공식 문서</b>까지 자동 조회)</p></div></div>
-        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">남의 눈 설계 리뷰</span><span class="ftag"><b>post-write --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요.<br>체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
+        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">남의 눈 설계 리뷰</span><span class="ftag"><b>review --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요.<br>체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
         <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b> · ⚡ 자동</span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요.<br>"예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p></div></div>
         <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요.<br>프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드…<br>이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
-        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>audit</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요.<br>전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
-        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>guards --ci</b> · 🖐 직접</span></div><p class="fdesc">린트(ruff·eslint)·타입 검사·순환 의존 검사를 설치하고, 원하면 GitHub Actions로 push마다 검문해요.<br>복잡도·순환 위반은 <b>빌드 실패</b>로 막아요. 기존 설정은 안 덮고 물어보고 설치.</p></div></div>
+        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>check</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요.<br>전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
+        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate --ci</b> · 🖐 직접</span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환 의존)를 설치 — 에디터가 빨간 줄로 표시해줘요. <code>gate --ci</code>면 GitHub에도 관문을 세워 push마다 검문, 복잡도·순환 위반은 <b>빌드 실패</b>로 막아요.<br>기존 설정은 안 덮고 물어보고 설치.</p></div></div>
         <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b> · 🖐 직접</span></div><p class="fdesc">훅은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요.<br>doctor가 훅 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p></div></div>
       </div>
     </section>
@@ -309,7 +309,7 @@
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“다 했어” 하면 점검하고 문서도 맞추기<small>다 만든 후</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“검토해줘” 하면 다른 눈으로 과한 설계 잡기<small>설계 살펴볼 때</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
       </div>
-      <div class="honest-note"><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:pre-write</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
+      <div class="honest-note"><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:find</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
     </section>
 
     <section id="install-ko">
@@ -326,7 +326,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
-        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>원할 때 — 코드 자동 검사기를 설치해 나쁜 코드를 기계가 막게.</p></div>
+        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>원할 때 — 코드 자동 검사기를 설치해 나쁜 코드를 기계가 막게.</p></div>
       </div>
     </section>
 
@@ -340,10 +340,10 @@
           <tr><td><code>/hi-vibe:welcome</code></td><td>처음이라 뭐부터 할지 모를 때</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:doctor</code></td><td>설치 직후, 잘 켜졌나 확인</td><td><span class="fire man">🖐 직접</span></td></tr>
           <tr><td><code>/hi-vibe:init</code></td><td>새 프로젝트마다 한 번, 켜기</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:audit</code></td><td>중복·너무 큰 파일 훑어보기</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:guards</code></td><td>코드 자동 검사기 설치</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:pre-write</code></td><td>새로 만들기 전, 있는지 찾기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:post-write</code></td><td>다 만든 후 점검 (검토도 가능)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:check</code></td><td>중복·너무 큰 파일 훑어보기</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치</td><td><span class="fire man">🖐 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:find</code></td><td>“이 함수 만들어줘” 할 때 (있는지 먼저 검색)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>“다 했어 / 리뷰해줘” 할 때 (작성 후 리뷰)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:handover</code></td><td>세션 끝 — 어디까지 했는지 진행상황 넘기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:log</code></td><td>코드가 바뀐 걸 CHANGELOG(변경 이력)에 남기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
           <tr><td><code>/hi-vibe:recall</code></td><td>“예전에 왜 이렇게 했지?”</td><td><span class="fire auto">⚡ 자동</span></td></tr>
@@ -357,9 +357,9 @@
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.8.0<small>2026-07-12</small></div><div class="h"><b>명령어 이름을 쉬운 동사로.</b> <span>pre-write→find, post-write→review, audit→check, guards→gate. 자동 명령어엔 "이 함수 만들어줘" 같은 트리거 예시를 표에 넣고, gate는 로컬/--ci 차이를 쉽게 설명.</span></div></div>
         <div class="rel"><div class="v">v0.7.0<small>2026-07-12</small></div><div class="h"><b>경고에 "왜 위험한지" 교육 추가.</b> <span>비밀키는 위험한 이유를 항상 한 줄로 알려주고, 잦은 에러 삼킴은 짧게 짚되 자세한 설명은 물어볼 때만. 세션 시작엔 컨텍스트 관리 팁 한 줄.</span></div></div>
         <div class="rel"><div class="v">v0.6.0<small>2026-07-12</small></div><div class="h"><b>숨어있던 버그들 수정 + 검사 정확도 개선.</b> <span>실제로 써보다 발견한 것들을 고치고, 아직 만드는 중인 코드나 화면 컴포넌트를 "안 쓰는 코드"로 오해하지 않게 다듬었어요.</span></div></div>
-        <div class="rel"><div class="v">v0.5.1<small>2026-07-12</small></div><div class="h"><b>설치 화면을 입문자가 알아보기 쉽게.</b> <span>추천 표시를 넣고, 어려운 용어 대신 쉬운 말로 바꿨어요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -467,14 +467,14 @@
       </div>
 
       <div class="featlist">
-        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">No duplicate reimplementation</span><span class="ftag"><b>pre-write</b> · ⚡ auto</span></div><p class="fdesc">Before you make a new function or file, it searches whether one already exists — so the AI stops rebuilding what it made last session. When there's none, it says "not found across N scanned files" — <b>evidence, not a guess.</b></p></div></div>
+        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">No duplicate reimplementation</span><span class="ftag"><b>find</b> · ⚡ auto</span></div><p class="fdesc">Before you make a new function or file, it searches whether one already exists — so the AI stops rebuilding what it made last session. When there's none, it says "not found across N scanned files" — <b>evidence, not a guess.</b></p></div></div>
         <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">No band-aid error handling</span><span class="ftag"><b>instant detect</b> · ⚡ auto</span></div><p class="fdesc">Instead of burying an error under a fallback, it makes you look at the <b>cause</b>. Code that silently swallows errors (empty catch, <code>except: pass</code>) is flagged the moment you write it. Genuinely intentional? One comment lets it pass.</p></div></div>
         <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">No unfounded claims</span><span class="ftag"><b>discipline</b> · ⚡ auto</span></div><p class="fdesc">It won't state "probably X" as fact. Numbers and APIs get verified before answering — or labeled "estimate" when they can't be. (With context7 connected, it even pulls the <b>latest official docs</b>.)</p></div></div>
-        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">Fresh-eyes design review</span><span class="ftag"><b>post-write --deep</b> · ⚡ auto</span></div><p class="fdesc">A clean-context AI with <b>zero memory</b> of writing the code reviews what you just wrote. It catches the judgment calls a checklist can't — over-engineering, needless features, hidden coupling — with a plain "this looks like too much."</p></div></div>
+        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">Fresh-eyes design review</span><span class="ftag"><b>review --deep</b> · ⚡ auto</span></div><p class="fdesc">A clean-context AI with <b>zero memory</b> of writing the code reviews what you just wrote. It catches the judgment calls a checklist can't — over-engineering, needless features, hidden coupling — with a plain "this looks like too much."</p></div></div>
         <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">Memory, handover &amp; recall</span><span class="ftag"><b>handover · recall</b> · ⚡ auto</span></div><p class="fdesc">Auto-records your progress every time the chat is compacted, and re-injects the latest handover when a new chat starts. Ask "why did we do it this way?" and it digs the records for the <b>date and reason</b>. (Auto-archives past 20 entries; safe across multiple terminals.)</p></div></div>
         <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">No false positives</span><span class="ftag"><b>discipline · scanner</b> · ⚡ auto</span></div><p class="fdesc">It won't wrongly call live code "dead." Framework-registered functions, tests, <code>export default</code> components, work-in-progress code… are kept off the dead list by a <b>false-positive index</b> — and every new false positive gets pinned down with a rule and a test.</p></div></div>
-        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">Structure checkup</span><span class="ftag"><b>audit</b> · 🖐 manual</span></div><p class="fdesc">Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. Everything comes from scanner evidence — and it tells work-in-progress apart before suggesting a delete.</p></div></div>
-        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>guards --ci</b> · 🖐 manual</span></div><p class="fdesc">Installs lint (ruff·eslint), type checks, and circular-dependency checks, and can gate every push via GitHub Actions. Complexity and cycle violations <b>fail the build</b>. It never overwrites your config — it asks first.</p></div></div>
+        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">Structure checkup</span><span class="ftag"><b>check</b> · 🖐 manual</span></div><p class="fdesc">Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. Everything comes from scanner evidence — and it tells work-in-progress apart before suggesting a delete.</p></div></div>
+        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>gate --ci</b> · 🖐 manual</span></div><p class="fdesc"><code>gate</code> installs the checkers (ruff·eslint, types, circular deps) locally — your editor flags them. <code>gate --ci</code> also gates every push on GitHub: violations <b>fail the build</b>, so bad code can't land.<br>It never overwrites your config — it asks first.</p></div></div>
         <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">Self-diagnosis</span><span class="ftag"><b>doctor</b> · 🖐 manual</span></div><p class="fdesc">Hooks are built to <b>fail silently</b> so they never block Claude Code — which means a missing python3 could turn them off unnoticed. doctor actually runs all 4 hooks and the scanner and shows ✅/❌ so you know they really work.</p></div></div>
       </div>
     </section>
@@ -492,7 +492,7 @@
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Done” → review &amp; sync the docs<small>after it’s built</small></span><span class="badge ai">🤖 AI does it</span></div>
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Review this” → fresh eyes catch over-engineering<small>when reviewing a design</small></span><span class="badge ai">🤖 AI does it</span></div>
       </div>
-      <div class="honest-note"><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:pre-write</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
+      <div class="honest-note"><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:find</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
     </section>
 
     <section id="install-en">
@@ -509,7 +509,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
-        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>When you want — install the code checker so the machine blocks bad code.</p></div>
+        <div class="step"><span class="k">/hi-vibe:gate --ci</span><p>When you want — install the code checker so the machine blocks bad code.</p></div>
       </div>
     </section>
 
@@ -523,10 +523,10 @@
           <tr><td><code>/hi-vibe:welcome</code></td><td>First time, unsure where to start</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:doctor</code></td><td>Right after install — is it on?</td><td><span class="fire man">🖐 Manual</span></td></tr>
           <tr><td><code>/hi-vibe:init</code></td><td>Once per project — turn it on</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:audit</code></td><td>Scan for duplicates &amp; huge files</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:guards</code></td><td>Install the code checker</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:pre-write</code></td><td>Before making something new</td><td><span class="fire auto">⚡ Auto</span></td></tr>
-          <tr><td><code>/hi-vibe:post-write</code></td><td>After it’s built (review too)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:check</code></td><td>Scan for duplicates &amp; huge files</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>Install the code checker</td><td><span class="fire man">🖐 Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:find</code></td><td>When you say “make me X” (searches first)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>When you say “done” (reviews after)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:handover</code></td><td>End of session — hand off where you left off</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:log</code></td><td>Record what changed in the CHANGELOG</td><td><span class="fire auto">⚡ Auto</span></td></tr>
           <tr><td><code>/hi-vibe:recall</code></td><td>“Why did we do it this way?”</td><td><span class="fire auto">⚡ Auto</span></td></tr>
@@ -540,9 +540,9 @@
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.8.0<small>2026-07-12</small></div><div class="h"><b>Commands renamed to plain verbs.</b> <span>pre-write→find, post-write→review, audit→check, guards→gate. Auto commands now show a trigger example, and gate explains local vs --ci clearly.</span></div></div>
         <div class="rel"><div class="v">v0.7.0<small>2026-07-12</small></div><div class="h"><b>Warnings now teach the "why".</b> <span>Secrets always get a one-line reason; the frequent error-swallow stays terse and explains only when asked. Sessions open with a one-line context-management tip.</span></div></div>
         <div class="rel"><div class="v">v0.6.0<small>2026-07-12</small></div><div class="h"><b>Squashed hidden bugs + sharper detection.</b> <span>Fixed things found in real use, and stopped mistaking work-in-progress code or UI components for "dead code".</span></div></div>
-        <div class="rel"><div class="v">v0.5.1<small>2026-07-12</small></div><div class="h"><b>Made the install screen beginner-friendly.</b> <span>Added recommendations and swapped jargon for plain words.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

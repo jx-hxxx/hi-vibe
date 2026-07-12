@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-12
+<!-- show:ko **명령어 이름을 쉬운 동사로.** pre-write→find, post-write→review, audit→check, guards→gate. 자동 명령어엔 "이 함수 만들어줘" 같은 트리거 예시를 표에 넣고, gate는 로컬/--ci 차이를 쉽게 설명. -->
+<!-- show:en **Commands renamed to plain verbs.** pre-write→find, post-write→review, audit→check, guards→gate. Auto commands now show a trigger example, and gate explains local vs --ci clearly. -->
+
+### Changed
+- **명령어 이름 변경 (BREAKING)** — `pre-write`→**`find`**, `post-write`→**`review`**, `audit`→**`check`**, `guards`→**`gate`**. pre-write/post-write는 lumin-repo-lens와 겹치고 관례도 아니라, 전반을 "쉬운 동사"로 통일해 입문자 친화성을 높임. 내부 스캐너(`audit.py`)·스킬(`guards-setup`)은 그대로 유지.
+- **명령어 표에 트리거 예시 추가** — 자동 명령어가 어떤 말에 발동되는지 표시. 예: `find` = "이 함수 만들어줘" 할 때, `review` = "다 했어 / 리뷰해줘" 할 때.
+- **gate 설명 쉽게** — `gate`(로컬에 검사기 설치, 에디터가 표시) vs `gate --ci`(GitHub에도 관문 — 위반이면 빌드 실패, 통과 못 하면 못 올림)를 README·쇼케이스에 명확히.
+
 ## [0.7.0] - 2026-07-12
 <!-- show:ko **경고에 "왜 위험한지" 교육 추가.** 비밀키는 위험한 이유를 항상 한 줄로 알려주고, 잦은 에러 삼킴은 짧게 짚되 자세한 설명은 물어볼 때만. 세션 시작엔 컨텍스트 관리 팁 한 줄. -->
 <!-- show:en **Warnings now teach the "why".** Secrets always get a one-line reason; the frequent error-swallow stays terse and explains only when asked. Sessions open with a one-line context-management tip. -->

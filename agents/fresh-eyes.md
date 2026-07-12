@@ -5,7 +5,7 @@ description: >-
   changes with zero memory of writing them — catches over-engineering,
   scope creep, simpler alternatives, and hidden coupling: the judgment
   calls that regex hooks and checklists cannot make. Use for
-  /hi-vibe:post-write --deep, or when the user says 남의 눈으로 봐줘,
+  /hi-vibe:review --deep, or when the user says 남의 눈으로 봐줘,
   설계 검토해줘, 과한 것 같은데 봐줘, second opinion. Not for typo-level
   edits, style nits, or bug hunting (tests and the checklist own those).
 tools: Read, Grep, Glob, Bash

@@ -5,8 +5,8 @@ argument-hint: "[--deep]"
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/write-gate/SKILL.md`.
 
-Mode: `post-write` (if `--deep` is in $ARGUMENTS, also run the
-`post-write --deep` mode afterwards: spawn the fresh-eyes agent)
+Mode: `review` (if `--deep` is in $ARGUMENTS, also run the
+`review --deep` mode afterwards: spawn the fresh-eyes agent)
 Arguments: $ARGUMENTS
 
 Follow that mode exactly.
