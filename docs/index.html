@@ -36,6 +36,7 @@
   html { scroll-behavior:smooth; scroll-padding-top:72px; }
   * { box-sizing: border-box; }
   a.brand { text-decoration:none; cursor:pointer; }
+  .brand .logo { flex:none; }
   body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
   .term pre, .term pre * { word-break:normal; }
   .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
@@ -190,7 +191,7 @@
 <!-- ================= KOREAN ================= -->
 <div class="page" id="ko">
   <header class="bar"><div class="wrap">
-    <a class="brand" href="#ko" aria-label="맨 위로"><span class="dot"></span>hi-vibe</a>
+    <a class="brand" href="#ko" aria-label="맨 위로"><svg class="logo" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1.5" y="3" width="21" height="18" rx="5.5" fill="var(--accent)" opacity="0.16"/><path d="M6.8 8.8l3.6 3.2-3.6 3.2" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.7 15.4h4.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>hi-vibe</a>
     <nav>
       <a href="#problem-ko">이런 실수</a>
       <a href="#how-ko">어떻게 막나</a>
@@ -211,6 +212,7 @@
         <div>
           <p class="eyebrow">AI 코딩 안전벨트 · Claude Code에 설치</p>
           <h1 class="tag-ko">AI랑 <span class="amber">과속</span>해도,<br>안전벨트는 <span class="amber">hi-vibe</span>가.</h1>
+          <p class="tag-en">AI 코딩 실수를 대신 지켜봐 주는 Claude Code 플러그인.</p>
           <p class="say">AI한테 코딩 시키면 자꾸 나는 실수들 —<br>있던 걸 또 만들고, 에러를 대충 덮고, 설명이 낡고…<br>hi-vibe가 옆에서 대신 지켜봐 줘요.<br>어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
           <div class="cta">
             <a class="btn primary" href="#install-ko">설치하기</a>
@@ -301,6 +303,24 @@
       <div class="honest-note"><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:pre-write</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
     </section>
 
+    <section id="install-ko">
+      <p class="eyebrow">설치 · 30초면 끝</p>
+      <h2>세 줄이면 끝. python3만 있으면 돼요.</h2>
+      <p class="lead">Claude Code 안에서 아래 세 줄을 순서대로 붙여넣으세요.<br>복잡한 설치도, 회원가입도 없어요.</p>
+      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) hi-vibe 목록에 등록</span>
+/plugin marketplace add jx-hxxx/hi-vibe
+<span class="c"># 2) 플러그인 설치</span>
+/plugin install hi-vibe@hi-vibe-marketplace
+<span class="c"># 3) 지금 바로 켜기 (꼭!)</span>
+/reload-plugins</pre></div>
+      <div class="steps">
+        <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
+        <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
+        <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
+        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>원할 때 — 코드 자동 검사기를 설치해 나쁜 코드를 기계가 막게.</p></div>
+      </div>
+    </section>
+
     <section id="commands-ko">
       <p class="eyebrow">명령어 한눈에</p>
       <h2>대부분 자동. 필요할 때만 직접.</h2>
@@ -322,24 +342,6 @@
       </table></div></div>
     </section>
 
-    <section id="install-ko">
-      <p class="eyebrow">설치 · 30초면 끝</p>
-      <h2>세 줄이면 끝. python3만 있으면 돼요.</h2>
-      <p class="lead">Claude Code 안에서 아래 세 줄을 순서대로 붙여넣으세요.<br>복잡한 설치도, 회원가입도 없어요.</p>
-      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) hi-vibe 목록에 등록</span>
-/plugin marketplace add jx-hxxx/hi-vibe
-<span class="c"># 2) 플러그인 설치</span>
-/plugin install hi-vibe@hi-vibe-marketplace
-<span class="c"># 3) 지금 바로 켜기 (꼭!)</span>
-/reload-plugins</pre></div>
-      <div class="steps">
-        <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
-        <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
-        <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
-        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>원할 때 — 코드 자동 검사기를 설치해 나쁜 코드를 기계가 막게.</p></div>
-      </div>
-    </section>
-
     <section id="living-ko">
       <span class="living-tag"><span class="pulse"></span>이 목록은 자동으로 채워져요</span>
       <h2>이 페이지가 안 낡는다는 게, 증거예요.</h2>
@@ -357,7 +359,7 @@
 
   <footer><div class="wrap foot">
     <div>
-      <div class="brand" style="margin-bottom:10px"><span class="dot"></span>hi-vibe</div>
+      <div class="brand" style="margin-bottom:10px"><svg class="logo" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1.5" y="3" width="21" height="18" rx="5.5" fill="var(--accent)" opacity="0.16"/><path d="M6.8 8.8l3.6 3.2-3.6 3.2" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.7 15.4h4.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>hi-vibe</div>
       <p class="muted">AI랑 과속해도, 안전벨트는 hi-vibe가.<br>AI 코딩을 위한 Claude Code 안전벨트 플러그인.</p>
       <p class="foot-credit">Made by <a href="https://github.com/jx-hxxx">jx-hxxx</a> · © 2026 · <a href="https://github.com/jx-hxxx/hi-vibe/blob/main/LICENSE">MIT License</a></p>
     </div>
@@ -372,7 +374,7 @@
 <!-- ================= ENGLISH ================= -->
 <div class="page" id="en" hidden>
   <header class="bar"><div class="wrap">
-    <a class="brand" href="#en" aria-label="Back to top"><span class="dot"></span>hi-vibe</a>
+    <a class="brand" href="#en" aria-label="Back to top"><svg class="logo" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1.5" y="3" width="21" height="18" rx="5.5" fill="var(--accent)" opacity="0.16"/><path d="M6.8 8.8l3.6 3.2-3.6 3.2" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.7 15.4h4.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>hi-vibe</a>
     <nav>
       <a href="#problem-en">Mistakes</a>
       <a href="#how-en">How</a>
@@ -393,6 +395,7 @@
         <div>
           <p class="eyebrow">AI-coding seatbelt · A Claude Code plugin</p>
           <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br><span class="amber">hi-vibe</span> is your seatbelt.</h1>
+          <p class="tag-en">The vibe-coding seatbelt for Claude Code.</p>
           <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, lets docs go stale… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
           <div class="cta">
             <a class="btn primary" href="#install-en">Install</a>
@@ -483,6 +486,24 @@
       <div class="honest-note"><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:pre-write</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
     </section>
 
+    <section id="install-en">
+      <p class="eyebrow">Install · 30 seconds</p>
+      <h2>Three lines. All you need is python3.</h2>
+      <p class="lead">Paste these three lines in order inside Claude Code.<br>No heavy setup, no sign-up.</p>
+      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) register hi-vibe</span>
+/plugin marketplace add jx-hxxx/hi-vibe
+<span class="c"># 2) install the plugin</span>
+/plugin install hi-vibe@hi-vibe-marketplace
+<span class="c"># 3) turn it on now (don’t skip!)</span>
+/reload-plugins</pre></div>
+      <div class="steps">
+        <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
+        <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
+        <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
+        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>When you want — install the code checker so the machine blocks bad code.</p></div>
+      </div>
+    </section>
+
     <section id="commands-en">
       <p class="eyebrow">Commands at a glance</p>
       <h2>Mostly automatic. Manual only when you need it.</h2>
@@ -504,24 +525,6 @@
       </table></div></div>
     </section>
 
-    <section id="install-en">
-      <p class="eyebrow">Install · 30 seconds</p>
-      <h2>Three lines. All you need is python3.</h2>
-      <p class="lead">Paste these three lines in order inside Claude Code.<br>No heavy setup, no sign-up.</p>
-      <div class="term"><div class="top"><i></i><i></i><i></i></div><pre><span class="c"># 1) register hi-vibe</span>
-/plugin marketplace add jx-hxxx/hi-vibe
-<span class="c"># 2) install the plugin</span>
-/plugin install hi-vibe@hi-vibe-marketplace
-<span class="c"># 3) turn it on now (don’t skip!)</span>
-/reload-plugins</pre></div>
-      <div class="steps">
-        <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
-        <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
-        <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
-        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>When you want — install the code checker so the machine blocks bad code.</p></div>
-      </div>
-    </section>
-
     <section id="living-en">
       <span class="living-tag"><span class="pulse"></span>This list fills itself in</span>
       <h2>This page not going stale is the proof.</h2>
@@ -539,7 +542,7 @@
 
   <footer><div class="wrap foot">
     <div>
-      <div class="brand" style="margin-bottom:10px"><span class="dot"></span>hi-vibe</div>
+      <div class="brand" style="margin-bottom:10px"><svg class="logo" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1.5" y="3" width="21" height="18" rx="5.5" fill="var(--accent)" opacity="0.16"/><path d="M6.8 8.8l3.6 3.2-3.6 3.2" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.7 15.4h4.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>hi-vibe</div>
       <p class="muted">Floor it with AI — hi-vibe is your seatbelt.<br>A Claude Code seatbelt plugin for AI coding.</p>
       <p class="foot-credit">Made by <a href="https://github.com/jx-hxxx">jx-hxxx</a> · © 2026 · <a href="https://github.com/jx-hxxx/hi-vibe/blob/main/LICENSE">MIT License</a></p>
     </div>
