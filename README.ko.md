@@ -1,4 +1,4 @@
-<img src="docs/images/hi-vibe.png" alt="hi-vibe" height="40"> &nbsp;👋
+<h1><img src="docs/images/hi-vibe.png" alt="hi-vibe" height="34"> &nbsp;👋</h1>
 
 [![hi-vibe tests](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml/badge.svg)](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
