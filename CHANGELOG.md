@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-07-12
+<!-- show:ko **"확인 안 하고 단정" 방지를 더 강하게.** 라이브러리·API뿐 아니라 GitHub·npm 같은 외부 플랫폼의 "왜 이렇게 동작하나/정책 바뀌었나"도 근거 필요한 사실로 명시하고, context7(공식 문서 조회)를 근거 사다리 맨 앞에 못박음. 잡담·트러블슈팅이어도 예외 없음. (실제로 이 규율을 어긴 사례에서 나온 개선.) -->
+<!-- show:en **Stronger "don't assert without checking".** Not just library/API facts — how an external platform (GitHub, npm) currently behaves or why (recent policy changes) now counts as a claim that needs evidence, with context7 (official-docs lookup) pinned as the first source. Applies in casual chat and troubleshooting too. (Came from a real case of breaking this very rule.) -->
+
+### Changed
+- **grounded-answers 범위 확장** — "라이브러리/API 동작"에 더해 **외부 플랫폼·서비스의 현재 동작·정책·제약**(예: GitHub·npm·클라우드 콘솔이 "왜 이렇게 동작하나", "정책이 바뀌었나")도 근거가 필요한 사실 주장으로 명시. 훈련 데이터로 단정 금지.
+- **근거 사다리에 context7 명시** — 근거 확보 순서를 ①직접 실행 → ②**context7 MCP(공식 문서 질의)** → ③웹 검색/문서 fetch → ④"추정" 라벨로 구체화. 라이브러리·API·플랫폼 사실은 context7부터 확인하도록 못박음 (전엔 "공식 문서를 읽어라"만 있고 도구를 안 짚었음).
+- **잡담·트러블슈팅에도 적용 명시** — 코딩 작업이 아니어도 사실 주장이면 예외 없음. Red Flags에 "외부 플랫폼 동작을 문서 확인 없이 추측", "context7 있는데 기억으로 답" 추가.
+
 ## [0.10.0] - 2026-07-12
 <!-- show:ko **외국인이 써도 자연스럽게.** 출력 언어를 사용자가 대화에서 쓰는 언어에 맞춰요 — `review --deep`·`doctor`·세션 알림이 한국어에 고정돼 있던 걸 풀었고, 세션 알림은 한/영 병기로. (스킬 프롬프트는 한국어 그대로 — Claude가 한국어를 완벽히 읽어 실행하니 런타임 손해가 없어요.) -->
 <!-- show:en **Natural for non-Korean users too.** Output now follows the language you speak — `review --deep`, `doctor`, and the session nudge no longer force Korean, and the nudge is bilingual. (Skill prompts stay Korean — Claude reads Korean at full fidelity, so there's no runtime cost.) -->

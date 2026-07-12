@@ -4,9 +4,13 @@ description: >-
   Grounding discipline for decisions and factual claims. Use when facing
   an ambiguous decision (여러 해석이 가능한 요청, 요구사항 빠짐, 되돌리기
   어려운 작업), or when about to state numbers, limits, prices, API
-  behavior, or version facts — 얼마야, 제한이 몇이야, 지원돼?, 스펙,
-  공식 문서, pricing, rate limit. Prevents silent unilateral decisions
-  and fabricated authoritative figures.
+  behavior, library/framework usage, version facts, or how an external
+  platform/service currently behaves or why — 얼마야, 제한이 몇이야,
+  지원돼?, 왜 이렇게 동작해?, 정책 바뀌었어?, 스펙, 공식 문서, pricing,
+  rate limit. Check context7 / official docs first; never answer library,
+  API, or platform-behavior facts from memory (training data goes stale).
+  Applies in casual chat and troubleshooting too, not only coding tasks.
+  Prevents silent unilateral decisions and fabricated authoritative figures.
 ---
 
 # grounded-answers
@@ -41,14 +45,28 @@ description: >-
 
 ## Part 2 — 수치·사실 주장의 근거
 
-숫자, 제한, 가격, API 동작, 버전 호환성을 말하려면 둘 중 하나:
+다음을 말하려면 둘 중 하나가 반드시 있어야 한다 — 숫자·제한·가격,
+**라이브러리/프레임워크/API 동작·필드명·파라미터**, 버전 호환성, 그리고
+**외부 플랫폼·서비스의 현재 동작·정책·제약**(예: GitHub·npm·클라우드
+콘솔이 "왜 이렇게 동작하나", "이 기능 지원되나", "최근 정책이 바뀌었나"):
 
 1. **실제 근거 제시**: 공식 문서 URL, 코드 `file:line`, 방금 실행한
    명령의 실측 출력
 2. **추정 라벨링**: "추정입니다 — 근거: ○○" 를 명시
 
-기억(훈련 데이터)으로 답하지 마라. 우선순위는 항상:
-실행/호출해본다 > 공식 문서를 가져와 읽는다 > 추정임을 밝히고 말한다.
+기억(훈련 데이터)으로 답하지 마라. 훈련 데이터는 낡는다 — 특히 외부
+플랫폼의 정책·제한·UI 동작은 조용히 바뀐다. **근거를 구하는 순서:**
+
+1. **직접 실행/호출** — 명령·API를 돌려 실측 출력을 본다
+2. **context7 MCP** (붙어 있으면) — 라이브러리·프레임워크·API·플랫폼
+   공식 문서를 질의한다. **이런 사실은 여기부터 확인한다.**
+3. **웹 검색 / 공식 문서 fetch** — context7에 없으면 공식 문서를 직접 연다
+4. 위가 다 안 되면 → **"추정입니다 — 근거: ○○"** 라고 밝히고 말한다
+
+셋 다 건너뛰고 기억으로 단정하면 안 된다. "이건 원래 이렇게 동작해요",
+"이 기능은 지원돼요/안 돼요"도 전부 근거가 필요한 사실 주장이다 —
+대화가 코딩이 아니라 **잡담·트러블슈팅이어도 예외 없다**. 확인 도구가
+있는데(context7 등) 안 쓰고 추측하는 것이 가장 흔한 실패다.
 
 이 저장소에 대한 구조적 주장(중복, 미사용, 존재 여부)은 repo-xray
 스킬의 계약을 따른다 — 스캔 없이 개수를 말하지 않고, 스캔 범위 없이
@@ -59,3 +77,8 @@ description: >-
 - "아마", "보통", "일반적으로 ~일 겁니다"로 수치를 말하려는 순간
 - 문서를 열어보지 않고 API 파라미터/필드명을 쓰는 순간
 - 사용자가 고르지 않은 옵션을 "당연히 이거겠지"로 확정하는 순간
+- 외부 플랫폼(GitHub·npm 등)이 "왜 이렇게 동작하나"를 문서 확인 없이
+  추측으로 단정하는 순간 — 예: "이 링크가 안 눌리는 건 X 때문"이라고
+  context7/문서 확인 전에 말하는 것. 확인 전엔 전부 "추정"이다.
+- **context7가 붙어 있는데도** 라이브러리·API·플랫폼 질문에 기억으로
+  답하는 순간 — 도구가 있으면 먼저 쓴다.
