@@ -59,12 +59,14 @@ Run these three lines in order, inside Claude Code:
 
 ## First run
 
-Once installed and applied, in order:
+Run the first three in order; the last two are optional, whenever you need them:
 
 ```
-/hi-vibe:welcome   ← start here if you're not sure what to do
-/hi-vibe:doctor    ← once after install: actually runs the hooks to verify they work
-/hi-vibe:init      ← once per new project: installs the doc system + activates hooks
+/hi-vibe:welcome    ← start here if you're not sure what to do
+/hi-vibe:doctor     ← once after install: actually runs the hooks to verify they work
+/hi-vibe:init       ← once per new project: installs the doc system + activates hooks
+/hi-vibe:check      ← (optional) structure checkup: find duplicates / god-files — repeat anytime
+/hi-vibe:gate --ci  ← (optional) install a quality gate: once per project → auto on every push
 ```
 
 Run `init` **once per project (folder)** — inside the app folder where you want
