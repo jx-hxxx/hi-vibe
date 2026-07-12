@@ -112,7 +112,7 @@ type commands in order — **just talk normally:**
 | every compaction | **handover** auto-recorded (context preserved) | ⚙️ machine |
 | session start / compact / clear | latest handover + discipline auto-injected | ⚙️ machine |
 | substantive change, at session end | reminder if **CHANGELOG** wasn't updated (once/session) | ⚙️ machine |
-| "make me this function" | **find** — searches first for an existing one (prevents duplicate reimplementation) | 🤖 AI |
+| "make me this feature" | **find** — searches first for an existing one (prevents duplicate reimplementation) | 🤖 AI |
 | "done / review it" | **review** — quality checklist + doc sync | 🤖 AI |
 | "review the design" | **review --deep** — a clean-context AI catches over-engineering | 🤖 AI |
 
@@ -133,8 +133,8 @@ type commands in order — **just talk normally:**
 | `/hi-vibe:welcome` | first time, or when unsure what to use | 🖐 manual |
 | `/hi-vibe:doctor` | right after install, or when unsure hooks are running | 🖐 manual |
 | `/hi-vibe:init` | once per project (installs the doc system) | 🖐 manual |
-| `/hi-vibe:find` | when you say **"make me this function"** — searches before creating | ⚡ auto |
-| `/hi-vibe:review` | when you say **"done / review it"** — reviews after (`--deep` = clean-eyes) | ⚡ auto |
+| `/hi-vibe:find` | when you say **"make me this feature"** — searches before creating | ⚡ auto |
+| `/hi-vibe:review` | when you say **"done / review it"** — checklist + doc sync | ⚡ auto |
 | `/hi-vibe:handover` | session-end handover | ⚡ auto |
 | `/hi-vibe:log` | record a substantive change in CHANGELOG | ⚡ auto |
 | `/hi-vibe:recall` | "why did we do it this way before?" — search the records | ⚡ auto |
