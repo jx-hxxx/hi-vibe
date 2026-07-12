@@ -104,6 +104,20 @@
   .layer h3 { font-size:19px; margin:10px 0 8px; letter-spacing:-.01em; }
   .layer p { color:var(--muted); font-size:14.5px; margin:0; }
 
+  .docmap { margin-top:34px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .docmap .dm-head { font-family:var(--mono); font-size:12.5px; color:var(--muted); padding:14px 20px; border-bottom:1px solid var(--border); background:var(--surface-2); }
+  .dm-list { list-style:none; margin:0; padding:0; }
+  .dm-list li { display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; padding:14px 20px; border-top:1px solid var(--border); }
+  .dm-list li:first-child { border-top:none; }
+  .dm-list li > code { font-family:var(--mono); font-size:13px; color:var(--accent-ink); min-width:132px; }
+  .dm-list li.sub > code { margin-left:16px; position:relative; }
+  .dm-list li.sub > code::before { content:"└"; position:absolute; left:-14px; color:var(--faint); }
+  .dm-list li span { color:var(--muted); font-size:14px; flex:1; min-width:220px; }
+  .feats { display:grid; grid-template-columns:repeat(auto-fit,minmax(238px,1fr)); gap:16px; margin-top:16px; }
+  .feat { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .feat .ic { font-size:20px; display:block; margin-bottom:9px; }
+  .feat h4 { margin:0 0 6px; font-size:15.5px; letter-spacing:-.01em; }
+  .feat p { margin:0; color:var(--muted); font-size:13.5px; }
   .panel { margin-top:36px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
   .panel .prow-h { display:grid; grid-template-columns:44px 1fr 132px; align-items:center; gap:12px; padding:15px 20px; border-top:1px solid var(--border); }
   .panel .prow-h:first-child { border-top:none; }
@@ -171,6 +185,7 @@
     <nav>
       <a href="#problem-ko">이런 실수</a>
       <a href="#how-ko">어떻게 막나</a>
+      <a href="#features-ko">기능</a>
       <a href="#honest-ko">정직함</a>
       <a href="#install-ko">설치</a>
     </nav>
@@ -230,6 +245,31 @@
         <div class="layer"><span class="n">첫째 겹</span><h3>기억을 대신 적어둬요</h3><p>무슨 프로젝트인지, 어디까지 했는지, 뭐가 바뀌었는지를 자동으로 적어둬요. 그래서 대화가 새로 시작돼도 앞 내용을 까먹지 않아요.</p></div>
         <div class="layer"><span class="n">둘째 겹</span><h3>AI한테 규칙을 심어요</h3><p>“만들기 전에 있는지 먼저 찾아봐”, “에러는 원인부터 봐”, “확인 안 한 건 단정하지 마” 같은 규칙을 AI한테 미리 심어서, 스스로 지키게 해요.</p></div>
         <div class="layer"><span class="n">셋째 겹</span><h3>기계가 직접 막아요</h3><p>코드를 자동으로 검사하는 도구가 위험한 코드를 그 자리에서 잡아요. 원하면 GitHub에 올릴 때 아예 통과 못 하게 막을 수도 있어요.</p></div>
+      </div>
+    </section>
+
+    <section id="features-ko">
+      <p class="eyebrow">기능 하나하나</p>
+      <h2>설치하면, 프로젝트에 이런 게 생겨요.</h2>
+      <p class="lead">추상적인 "좋아져요"가 아니라, 실제로 만들어지고 봐주는 것들이에요. 핵심은 <b>문서를 한 파일에 몰아넣지 않고 여러 곳에 나눠 두고, 코드가 바뀌면 자동으로 따라 갱신</b>한다는 거예요.</p>
+
+      <div class="docmap">
+        <div class="dm-head">📁 내 프로젝트/ — <code>/hi-vibe:init</code> 한 번이면 이 문서 지도가 깔려요</div>
+        <ul class="dm-list">
+          <li><code>CLAUDE.md</code><span>프로젝트 전체 지도 — 개요·요구사항·폴더 구조 (얇게 유지)</span></li>
+          <li class="sub"><code>api/MODULE.md</code><span>폴더마다 하나 — 그 안의 상세 설계·데이터·주의점</span></li>
+          <li class="sub"><code>ui/MODULE.md</code><span>…폴더가 늘면 문서도 폴더 옆에 같이 붙어요</span></li>
+          <li><code>handover.md</code><span>세션 인수인계 — 다음 대화가 맥락 안 잃게. 대화 정리(compact) 때 자동 기록돼요</span></li>
+          <li><code>CHANGELOG.md</code><span>변경 이력 — 뭐가 언제 왜 바뀌었나</span></li>
+        </ul>
+      </div>
+
+      <div class="feats">
+        <div class="feat"><span class="ic">🔍</span><h4>중복·죽은 코드 찾기</h4><p>새로 만들기 전에 이미 있는지 검색하고, 안 쓰는 코드·너무 큰 파일을 짚어줘요. (아직 만드는 중인 코드는 지우지 않게 구분)</p></div>
+        <div class="feat"><span class="ic">🛡️</span><h4>기계 검문 (린트·CI)</h4><p>복잡도·순환 의존을 자동 검사하고, 원하면 GitHub에 올릴 때 나쁜 코드를 아예 막아요.</p></div>
+        <div class="feat"><span class="ic">👀</span><h4>남의 눈 설계 리뷰</h4><p>코드 쓴 기억 없는 깨끗한 AI가 "이거 과한데?" 하고 과잉설계를 잡아줘요.</p></div>
+        <div class="feat"><span class="ic">🚨</span><h4>위험한 코드 즉시 감지</h4><p>에러를 몰래 삼키거나 비밀번호를 코드에 박으면, 쓰는 순간 알려줘요.</p></div>
+        <div class="feat"><span class="ic">🧠</span><h4>과거 결정 검색</h4><p>"예전에 왜 이렇게 했지?" 하면 기록을 뒤져서 날짜·이유까지 답해줘요.</p></div>
       </div>
     </section>
 
@@ -321,6 +361,7 @@
     <nav>
       <a href="#problem-en">Mistakes</a>
       <a href="#how-en">How</a>
+      <a href="#features-en">Features</a>
       <a href="#honest-en">Honesty</a>
       <a href="#install-en">Install</a>
     </nav>
@@ -380,6 +421,31 @@
         <div class="layer"><span class="n">Layer one</span><h3>Remembers for you</h3><p>It auto-records what the project is, how far you got, and what changed — so a fresh chat never loses the thread.</p></div>
         <div class="layer"><span class="n">Layer two</span><h3>Teaches the AI the rules</h3><p>Rules like “search before you build”, “fix the cause, not the symptom”, “don’t state guesses as fact” are planted into the AI so it polices itself.</p></div>
         <div class="layer"><span class="n">Layer three</span><h3>The machine blocks it</h3><p>A code checker catches risky code on the spot — and if you want, it can fail the build before it ever reaches GitHub.</p></div>
+      </div>
+    </section>
+
+    <section id="features-en">
+      <p class="eyebrow">Feature by feature</p>
+      <h2>Install it, and your project gets this.</h2>
+      <p class="lead">Not a vague "things get better" — actual things it creates and watches. The core idea: <b>docs aren't dumped in one file; they're split across the project and auto-updated as the code changes.</b></p>
+
+      <div class="docmap">
+        <div class="dm-head">📁 my-project/ — one <code>/hi-vibe:init</code> lays down this doc map</div>
+        <ul class="dm-list">
+          <li><code>CLAUDE.md</code><span>The whole-project map — overview, requirements, folder layout (kept lean)</span></li>
+          <li class="sub"><code>api/MODULE.md</code><span>One per folder — its detailed design, data, and gotchas</span></li>
+          <li class="sub"><code>ui/MODULE.md</code><span>…more folders, more docs living right next to them</span></li>
+          <li><code>handover.md</code><span>Session handover — so the next chat keeps context. Auto-recorded on compaction</span></li>
+          <li><code>CHANGELOG.md</code><span>Change history — what changed, when, and why</span></li>
+        </ul>
+      </div>
+
+      <div class="feats">
+        <div class="feat"><span class="ic">🔍</span><h4>Find duplicate &amp; dead code</h4><p>Searches for an existing one before making a new one, and flags unused code &amp; oversized files. (Won't delete work-in-progress code.)</p></div>
+        <div class="feat"><span class="ic">🛡️</span><h4>Machine checks (lint · CI)</h4><p>Auto-checks complexity &amp; circular deps, and can block bad code on the way to GitHub.</p></div>
+        <div class="feat"><span class="ic">👀</span><h4>Fresh-eyes design review</h4><p>A clean-context AI with no memory of writing it catches over-engineering.</p></div>
+        <div class="feat"><span class="ic">🚨</span><h4>Instant risky-code detection</h4><p>Swallow an error or hardcode a secret, and it flags it the moment you write it.</p></div>
+        <div class="feat"><span class="ic">🧠</span><h4>Recall past decisions</h4><p>Ask "why did we do it this way?" and it digs the records for the date and the reason.</p></div>
       </div>
     </section>
 
