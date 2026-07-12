@@ -34,7 +34,8 @@
   }
 
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
+  .term pre, .term pre * { word-break:normal; }
   .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
   section { padding:88px 0; border-top:1px solid var(--border); }
   a { color:inherit; }
@@ -91,8 +92,8 @@
   @keyframes pulse { 0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);} 70%{box-shadow:0 0 0 9px color-mix(in srgb, var(--good) 0%, transparent);} 100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--good) 0%, transparent);} }
 
   .rows { display:grid; gap:12px; margin-top:34px; }
-  .prow { display:flex; gap:16px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--danger); border-radius:10px; padding:16px 18px; }
-  .prow .warn { font-family:var(--mono); font-size:12px; color:var(--danger); background:var(--danger-bg); border-radius:6px; padding:3px 8px; flex:none; margin-top:2px; white-space:nowrap; }
+  .prow { display:flex; gap:16px; align-items:center; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--danger); border-radius:10px; padding:16px 18px; }
+  .prow .warn { font-family:var(--mono); font-size:12px; color:var(--danger); background:var(--danger-bg); border-radius:6px; padding:3px 8px; flex:none; white-space:nowrap; }
   .prow b { font-weight:700; }
   .prow span { color:var(--muted); }
 
@@ -134,8 +135,8 @@
   .term .top i { width:11px; height:11px; border-radius:50%; background:var(--border-2); display:block; }
   .term pre { margin:0; padding:20px 22px; font-family:var(--mono); font-size:13.5px; line-height:2; overflow-x:auto; color:var(--text); }
   .term .c { color:var(--faint); }
-  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
-  @media (max-width:780px){ .steps { grid-template-columns:1fr; } }
+  .steps { display:grid; grid-template-columns:repeat(auto-fit, minmax(212px,1fr)); gap:16px; margin-top:24px; }
+  @media (max-width:520px){ .steps { grid-template-columns:1fr; } }
   .step { border:1px solid var(--border); border-radius:10px; padding:18px; background:var(--surface); }
   .step .k { font-family:var(--mono); font-size:13px; color:var(--accent-ink); }
   .step p { margin:8px 0 0; color:var(--muted); font-size:13.5px; }
@@ -201,6 +202,7 @@
             <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">새로 시작할 때 규칙 다시 챙기기</span><span class="kind">기계</span></div>
             <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“만들어줘” → 이미 있는지 먼저 찾기</span><span class="kind">AI</span></div>
             <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“다 했어” → 점검하고 문서도 맞추기</span><span class="kind">AI</span></div>
+            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">“검토해줘” → 다른 눈으로 과한 설계 잡기</span><span class="kind">AI</span></div>
           </div>
           <p class="cluster-cap">🟢 초록불 = 기계가 확실히 지켜요 · ⚪ 빈 불 = AI가 알아서 해줘요</p>
         </div>
@@ -280,6 +282,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>뭐부터 할지 모르겠으면 여기서 시작하세요.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>설치 직후 한 번 — 진짜 잘 켜졌는지 확인해줘요.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>새 프로젝트마다 한 번 — 그 폴더에서 hi-vibe 켜기.</p></div>
+        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>원할 때 — 코드 자동 검사기를 설치해 나쁜 코드를 기계가 막게.</p></div>
       </div>
     </section>
 
@@ -347,6 +350,7 @@
             <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">Re-arm the rules on a fresh start</span><span class="kind">machine</span></div>
             <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“Make me X” → search if it exists first</span><span class="kind">AI</span></div>
             <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“Done” → review &amp; sync the docs</span><span class="kind">AI</span></div>
+            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">“Review this” → catch over-engineering</span><span class="kind">AI</span></div>
           </div>
           <p class="cluster-cap">🟢 Lit = machine-guaranteed · ⚪ Hollow = AI does it on its own</p>
         </div>
@@ -426,6 +430,7 @@
         <div class="step"><span class="k">/hi-vibe:welcome</span><p>Start here if you’re not sure what to do.</p></div>
         <div class="step"><span class="k">/hi-vibe:doctor</span><p>Once after install — confirms it’s really on.</p></div>
         <div class="step"><span class="k">/hi-vibe:init</span><p>Once per project — turns hi-vibe on in that folder.</p></div>
+        <div class="step"><span class="k">/hi-vibe:guards --ci</span><p>When you want — install the code checker so the machine blocks bad code.</p></div>
       </div>
     </section>
 
