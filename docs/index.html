@@ -62,7 +62,7 @@
   .hero { padding:84px 0 76px; border-top:none; }
   .hero-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center; }
   @media (max-width:860px){ .hero-grid { grid-template-columns:1fr; gap:40px; } }
-  .tag-ko { font-size:clamp(30px,5.2vw,52px); line-height:1.08; font-weight:850; letter-spacing:-.03em; margin:14px 0 0; text-wrap:balance; }
+  .tag-ko { font-size:clamp(30px,5.2vw,52px); line-height:1.2; font-weight:850; letter-spacing:-.03em; margin:14px 0 0; text-wrap:balance; }
   .tag-ko .amber { color:var(--accent); }
   .tag-en { font-family:var(--mono); font-size:13px; color:var(--faint); letter-spacing:.02em; margin:20px 0 0; }
   .hero p.say { color:var(--muted); font-size:17.5px; margin:22px 0 0; max-width:46ch; }
@@ -150,7 +150,7 @@
   .rel .v small { display:block; color:var(--faint); font-weight:400; font-size:11.5px; margin-top:3px; }
   .rel .h { font-size:14.5px; }
   .rel .h b { font-weight:700; }
-  .rel .h span { color:var(--muted); }
+  .rel .h span { color:var(--muted); display:block; margin-top:5px; }
   .foot-note { font-family:var(--mono); font-size:12px; color:var(--faint); margin-top:22px; line-height:1.7; }
 
   footer { border-top:1px solid var(--border); padding:48px 0 64px; }
@@ -186,7 +186,7 @@
       <div class="hero-grid">
         <div>
           <p class="eyebrow">AI 코딩 안전벨트 · Claude Code에 설치</p>
-          <h1 class="tag-ko">AI랑 <span class="amber">과속</span>해도,<br>안전벨트는 hi-vibe가.</h1>
+          <h1 class="tag-ko">AI랑 <span class="amber">과속</span>해도,<br>안전벨트는 <span class="amber">hi-vibe</span>가.</h1>
           <p class="tag-en">Floor it with AI — hi-vibe is your seatbelt.</p>
           <p class="say">AI한테 코딩 시키면 자꾸 나는 실수들 — 있던 걸 또 만들고, 에러를 대충 덮고, 설명이 낡고… hi-vibe가 옆에서 대신 지켜봐 줘요. 어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
           <div class="cta">
@@ -202,7 +202,7 @@
             <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">새로 시작할 때 규칙 다시 챙기기</span><span class="kind">기계</span></div>
             <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“만들어줘” → 이미 있는지 먼저 찾기</span><span class="kind">AI</span></div>
             <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“다 했어” → 점검하고 문서도 맞추기</span><span class="kind">AI</span></div>
-            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">“검토해줘” → 다른 눈으로 과한 설계 잡기</span><span class="kind">AI</span></div>
+            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">숫자·사실은 단정 말고 → 확인하고 답하기</span><span class="kind">AI</span></div>
           </div>
           <p class="cluster-cap">🟢 초록불 = 기계가 확실히 지켜요 · ⚪ 빈 불 = AI가 알아서 해줘요</p>
         </div>
@@ -336,7 +336,7 @@
       <div class="hero-grid">
         <div>
           <p class="eyebrow">AI-coding seatbelt · A Claude Code plugin</p>
-          <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br>hi-vibe is your seatbelt.</h1>
+          <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br><span class="amber">hi-vibe</span> is your seatbelt.</h1>
           <p class="tag-en">AI랑 과속해도, 안전벨트는 hi-vibe가.</p>
           <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, lets docs go stale… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
           <div class="cta">
@@ -352,7 +352,7 @@
             <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">Re-arm the rules on a fresh start</span><span class="kind">machine</span></div>
             <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“Make me X” → search if it exists first</span><span class="kind">AI</span></div>
             <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“Done” → review &amp; sync the docs</span><span class="kind">AI</span></div>
-            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">“Review this” → catch over-engineering</span><span class="kind">AI</span></div>
+            <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">Numbers &amp; facts → verify, don’t guess</span><span class="kind">AI</span></div>
           </div>
           <p class="cluster-cap">🟢 Lit = machine-guaranteed · ⚪ Hollow = AI does it on its own</p>
         </div>
