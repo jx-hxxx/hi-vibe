@@ -10,11 +10,11 @@
 
 Vibe-coding is convenient, but AI-written code keeps repeating the same problems:
 
-- 😵 Loses memory across sessions and **re-creates functions that already exist**
-- 🩹 On errors, **band-aids with fallbacks** instead of finding the cause (so bugs hide silently)
-- 🤷 Makes ambiguous decisions **on its own, without asking**
-- 📊 States unverified numbers **as if they were official specs**
-- 🗿 Dumps everything into one file, and **docs drift away from the code**
+- 😵 Loses memory across sessions and **re-builds similar functions, helpers & types** it already made
+- 🩹 On errors, **swallows them in try/except or band-aids with fallbacks/defaults** instead of finding the cause (so bugs hide silently)
+- 🤷 Runs with **ambiguous or under-specified requests** on its own, without asking
+- 📊 States unverified **API limits, pricing & versions** **as if they were official specs**
+- 🗿 **Skips edge cases** and dumps everything into one **"god file"**, and docs drift from the code
 
 `hi-vibe` blocks all of these with three layers: **doc automation + AI discipline + machine enforcement.**
 

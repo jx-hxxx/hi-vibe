@@ -120,6 +120,7 @@
 
   .docmap { margin-top:34px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
   .docmap .dm-head { font-family:var(--mono); font-size:12.5px; color:var(--muted); padding:14px 20px; border-bottom:1px solid var(--border); background:var(--surface-2); }
+  .docmap .dm-head code { color:var(--accent-ink); font-weight:600; }
   .dm-list { list-style:none; margin:0; padding:0; }
   .dm-list li { display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; padding:14px 20px; border-top:1px solid var(--border); }
   .dm-list li:first-child { border-top:none; }
@@ -250,7 +251,7 @@
       <h2>AI가 짠 코드는 같은 실수를 반복해요.</h2>
       <p class="lead">편할수록 조용히 쌓이는 문제들. hi-vibe가 하나씩 잡아줘요.</p>
       <div class="rows">
-        <div class="prow"><span class="warn">또 만들기</span><div><b>있던 걸 또 만들어요.</b> <span>AI는 기억이 세션마다 끊겨서, 이미 만든 <b>함수·헬퍼·타입(자료구조)</b>을 잊고 똑같이 다시 짜요.</span></div></div>
+        <div class="prow"><span class="warn">또 만들기</span><div><b>있던 걸 또 만들어요.</b> <span>AI는 기억이 세션마다 끊겨서, 이미 만든 <b>함수·헬퍼·타입(자료구조)</b>을 잊고 비슷한 걸 또 짜요.</span></div></div>
         <div class="prow"><span class="warn">대충 덮기</span><div><b>에러를 대충 덮어요.</b> <span>원인 대신 <b>try/except로 삼키거나 fallback·기본값</b>으로 임시로 가려서, 버그가 조용히 숨어요.</span></div></div>
         <div class="prow"><span class="warn">맘대로</span><div><b>헷갈리는 걸 안 물어봐요.</b> <span><b>해석이 여러 갈래인 요청·빠진 요구사항</b>을 확인 없이 자기 마음대로 정해버려요.</span></div></div>
         <div class="prow"><span class="warn">지어내기</span><div><b>확인도 안 하고 단정해요.</b> <span><b>API 제한·가격·버전</b> 같은 걸 문서도 안 보고 근거 없는 숫자로 단정해요.</span></div></div>
@@ -279,7 +280,7 @@
         <ul class="dm-list">
           <li><code>CLAUDE.md</code><span>프로젝트 전체 지도 — 개요·요구사항·폴더 구조</span></li>
           <li class="sub"><code>api/MODULE.md</code><span>폴더마다 하나 — 그 안의 상세 설계·데이터·주의점</span></li>
-          <li class="sub"><code>ui/MODULE.md</code><span>…폴더가 늘면 문서도 폴더 옆에 같이 붙어요</span></li>
+          <li class="sub"><code>ui/MODULE.md</code><span>새 폴더가 생기면 여기에도 하나씩 자동으로 붙어요</span></li>
           <li><code>handover.md</code><span>세션 인수인계 — 다음 대화가 맥락 안 잃게. 대화 정리(compact) 때 자동 기록돼요</span></li>
           <li><code>CHANGELOG.md</code><span>변경 이력 — 뭐가 언제 왜 바뀌었나</span></li>
         </ul>
@@ -293,8 +294,8 @@
         <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b> · ⚡ 자동</span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요.<br>"예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p></div></div>
         <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요.<br>프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드…<br>이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
         <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>check</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요.<br>전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
-        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate --ci</b> · 🖐 직접</span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환 의존)를 설치 — 에디터가 빨간 줄로 표시해줘요. <code>gate --ci</code>면 GitHub에도 관문을 세워 push마다 검문, 복잡도·순환 위반은 <b>빌드 실패</b>로 막아요.<br>기존 설정은 안 덮고 물어보고 설치.</p></div></div>
-        <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b> · 🖐 직접</span></div><p class="fdesc">훅은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요.<br>doctor가 훅 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p></div></div>
+        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate --ci</b> · 🖐 직접</span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환 의존)를 설치 — 에디터가 빨간 줄로 표시해줘요.<br><code>gate --ci</code>면 GitHub에도 관문을 세워 push마다 검문, 복잡도·순환 위반은 <b>빌드 실패</b>로 막아요.<br>기존 설정은 안 덮고 물어보고 설치.</p></div></div>
+        <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b> · 🖐 직접</span></div><p class="fdesc">hook은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요.<br>doctor가 hook 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p></div></div>
       </div>
     </section>
 
@@ -440,7 +441,7 @@
       <h2>AI-written code repeats the same mistakes.</h2>
       <p class="lead">The more convenient it is, the more quietly these pile up. hi-vibe catches them one by one.</p>
       <div class="rows">
-        <div class="prow"><span class="warn">Rebuilds</span><div><b>Rebuilds what already exists.</b> <span>Its memory resets each chat, so it forgets the <b>functions, helpers &amp; types</b> it made and writes them again.</span></div></div>
+        <div class="prow"><span class="warn">Rebuilds</span><div><b>Rebuilds what already exists.</b> <span>Its memory resets each chat, so it forgets the <b>functions, helpers &amp; types</b> it made and re-builds similar ones.</span></div></div>
         <div class="prow"><span class="warn">Papers over</span><div><b>Papers over errors.</b> <span>It hides the cause with a <b>try/except or a fallback/default</b> instead of fixing it, so bugs stay hidden.</span></div></div>
         <div class="prow"><span class="warn">Decides alone</span><div><b>Won’t ask when unsure.</b> <span>It makes <b>ambiguous or under-specified</b> calls on its own instead of asking.</span></div></div>
         <div class="prow"><span class="warn">Makes it up</span><div><b>States guesses as fact.</b> <span>It states <b>API limits, pricing, versions</b> as fact without checking the docs.</span></div></div>
@@ -469,7 +470,7 @@
         <ul class="dm-list">
           <li><code>CLAUDE.md</code><span>The whole-project map — overview, requirements, folder layout</span></li>
           <li class="sub"><code>api/MODULE.md</code><span>One per folder — its detailed design, data, and gotchas</span></li>
-          <li class="sub"><code>ui/MODULE.md</code><span>…more folders, more docs living right next to them</span></li>
+          <li class="sub"><code>ui/MODULE.md</code><span>Add a folder and a doc attaches right next to it</span></li>
           <li><code>handover.md</code><span>Session handover — so the next chat keeps context. Auto-recorded on compaction</span></li>
           <li><code>CHANGELOG.md</code><span>Change history — what changed, when, and why</span></li>
         </ul>
@@ -483,7 +484,7 @@
         <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">Memory, handover &amp; recall</span><span class="ftag"><b>handover · recall</b> · ⚡ auto</span></div><p class="fdesc">Auto-records your progress every time the chat is compacted, and re-injects the latest handover when a new chat starts. Ask "why did we do it this way?" and it digs the records for the <b>date and reason</b>. (Auto-archives past 20 entries; safe across multiple terminals.)</p></div></div>
         <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">No false positives</span><span class="ftag"><b>discipline · scanner</b> · ⚡ auto</span></div><p class="fdesc">It won't wrongly call live code "dead." Framework-registered functions, tests, <code>export default</code> components, work-in-progress code… are kept off the dead list by a <b>false-positive index</b> — and every new false positive gets pinned down with a rule and a test.</p></div></div>
         <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">Structure checkup</span><span class="ftag"><b>check</b> · 🖐 manual</span></div><p class="fdesc">Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. Everything comes from scanner evidence — and it tells work-in-progress apart before suggesting a delete.</p></div></div>
-        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>gate --ci</b> · 🖐 manual</span></div><p class="fdesc"><code>gate</code> installs the checkers (ruff·eslint, types, circular deps) locally — your editor flags them. <code>gate --ci</code> also gates every push on GitHub: violations <b>fail the build</b>, so bad code can't land.<br>It never overwrites your config — it asks first.</p></div></div>
+        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>gate --ci</b> · 🖐 manual</span></div><p class="fdesc"><code>gate</code> installs the checkers (ruff·eslint, types, circular deps) locally — your editor flags them.<br><code>gate --ci</code> also gates every push on GitHub: violations <b>fail the build</b>, so bad code can't land.<br>It never overwrites your config — it asks first.</p></div></div>
         <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">Self-diagnosis</span><span class="ftag"><b>doctor</b> · 🖐 manual</span></div><p class="fdesc">Hooks are built to <b>fail silently</b> so they never block Claude Code — which means a missing python3 could turn them off unnoticed. doctor actually runs all 4 hooks and the scanner and shows ✅/❌ so you know they really work.</p></div></div>
       </div>
     </section>
