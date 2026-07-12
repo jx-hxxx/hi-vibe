@@ -53,6 +53,17 @@ python3 <skill-path>/scripts/audit.py find <name> --root <repo>
 (stdlib) — no installs. Suggest adding `.repo-xray/` to `.gitignore`
 once, the first time a scan runs in a repo.
 
+### 실행 시간 — 느린 것 ≠ 멈춘 것
+
+스캔은 저장소 크기에 따라 **수 초에서 수십 초**가 걸린다(함수가 많으면
+near-duplicate 비교가 가장 오래 걸린다). 이건 정상이다. **짧은 타임아웃으로
+끊고 다시 돌리지 마라** — 죽은 줄 알고 재실행하면 프로세스만 겹쳐 쌓여
+머신이 포화되고 오히려 더 느려진다(관측된 실패 모드다). 오래 걸릴 것 같으면
+**한 번만 백그라운드로 돌리고 완료를 기다린 뒤** `report.json`을 읽어라.
+스캔은 끝나면 항상 리포트를 쓰므로, 리포트가 없으면 "아직 도는 중"이지
+"고장"이 아니다. `near_duplicate_scan_truncated: true`가 보이면 near-dup만
+시간 상한에 걸려 일부 생략된 것이고, 나머지 결과는 완전하다.
+
 ## Which command for which question
 
 - "중복 코드 있어?", "정리할 것 알려줘", "구조 어때?", "안 쓰는 코드?"
@@ -96,7 +107,10 @@ pretending certainty:
   normalization — the typical AI failure of re-implementing something
   "almost the same". WEAKER evidence: read both functions before
   claiming duplication; present as "비슷한 구현 의심 — 두 함수를 같이
-  보세요", never as a verdict.
+  보세요", never as a verdict. This list SHOWS only the most-similar few;
+  `near_duplicate_total` is how many were actually found. If
+  `near_duplicate_total` > the shown count, say "상위 N개 (총 M개)" — do
+  not imply the shown pairs are all of them.
 - JS/TS symbol extraction is regex-based (no parser): class methods and
   exotic declaration forms may be missed. Say so when a TS-heavy repo
   question depends on completeness.

@@ -5,6 +5,21 @@
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-07-13
+<!-- show:ko **repo-xray near-dup이 이제 몇 분이 아니라 몇십 초.** 함수 쌍마다 O(L²) 유사도 비교를 돌리던 걸 지문(shingle) 선필터로 바꿔, 완전탐색과 '똑같은' 결과를 훨씬 빠르게(측정: 14분→30초, ratio 호출 5750→213). 상위 20개만 보여주던 near-dup 리포트도 총 개수를 함께 알려 정직하게. 그리고 "느리다=고장"이라 단정하고 죽였다 다시 돌리는 실패를 막는 규율을 grounded-answers에 추가 — 실제로 이 규칙을 어긴 사례에서 나온 개선. -->
+<!-- show:en **repo-xray near-dup now takes tens of seconds, not minutes.** The O(L^2) similarity call that ran on every function pair is now gated by a shingle fingerprint prefilter — identical results to the exhaustive scan, far faster (measured: 14min→30s, ratio() calls 5750→213). The near-dup report, which showed only the top pairs, now also reports the true total so nothing is hidden. And a discipline was added to grounded-answers against the "slow == broken, kill-and-retry" failure — born from a real case of breaking that very rule. -->
+
+### Fixed
+- **repo-xray near-dup 성능 근본 수정** — 함수 쌍마다 O(L²) `difflib.ratio()`를 부르던 게 중간 규모 저장소(수백 함수)에서 수 분~수십 분. 각 함수를 shingle(k=9) k-gram으로 **1회 지문화**하고 Jaccard로 선필터(`jaccard_floor=0.45` — 완전탐색 대비 진짜 near-dup 최소 유사도 0.71에 여유), 통과한 소수만 정확 `ratio()`로 확인. 측정: ratio() 호출 5750→213, 완전탐색과 **결과 동일**(정답 대조: 가짜 0·놓침 0). near-dup에 60초 wall-clock backstop을 둬 어떤 입력에도 폭주 불가(넘으면 `truncated` 표시).
+
+### Changed
+- **near-dup 리포트 정직한 캡** — 탐지(`find_near_duplicates`)는 전체를 반환하고 리포트는 상위 20개만 **표시**하되, `near_duplicate_total`로 실제 총 개수를 노출(요약도 "20 of 24"). 상위 N개로 자르는 것과 조용히 버리는 것을 분리.
+- **grounded-answers: 진단·상태 판단도 근거 필요(Part 3)** — "멈췄다/무한/고장"은 1회 실측 없이 단정 금지, 확인 전 파괴적 재시도(죽이고 재시작·프로세스 겹치기) 금지, 성능은 계측으로 원인 특정 후 수정. (실제로 repo-xray가 느릴 때 이 규율을 어겨 상황을 키운 사례에서 나온 개선.)
+- **repo-xray 실행 시간 안내** — SKILL에 "느린 것≠멈춘 것: 수십 초 걸릴 수 있으니 백그라운드로 기다려라, 타임아웃으로 끊고 재실행 금지" 추가. 큰 함수끼리도 진짜 near-dup이 있어 **size-cap이 아니라** 지문 선필터로 비용을 줄이는 이유도 명시.
+
+### Tests
+- +3 (선필터=완전탐색 등가 / 탐지 비-캡: 21쌍 전부 반환 / 큰 함수 near-dup은 size-cap 금지). 72→75.
+
 ## [0.12.0] - 2026-07-12
 <!-- show:ko **`review --all`이 큰 변경엔 "쪼개서 병렬"을 물어봐요.** 세션 변경이 크면(파일 여러 개 + 수백 줄) 순차 리뷰는 얕거나 느려요. 이제 규모를 기계가 재서, 크면 "쪼개서 병렬로 볼까요?"라고 묻고 — 예 하면 줄 수 균형이 맞은 그룹으로 나눠 리뷰어를 병렬 소환해요. 작으면 그대로 순차. (항상 병렬 아님 — 토큰·복잡도 방지.) -->
 <!-- show:en **`review --all` now offers to split large diffs into parallel reviews.** When a session's changes are big (many files + hundreds of lines), sequential review goes shallow or slow. The machine now measures the size, and if it's large it asks "split into parallel reviews?" — yes fans out balanced groups to parallel reviewers; small stays sequential. (Not always parallel — avoids token/complexity blowup.) -->

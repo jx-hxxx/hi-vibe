@@ -4,6 +4,7 @@
 계약대로 나오는지 확인한다: dead 후보, 문서 언급 분리(doc_mentions),
 변수명만 다른 완전 중복, 90% 유사 중복, TS/TSX 심볼, 데코레이터 분리.
 """
+import ast
 import io
 import json
 import os
@@ -345,6 +346,84 @@ class EmptyRepoTest(unittest.TestCase):
             self.assertEqual(report["near_duplicate_functions"], [])
         finally:
             shutil.rmtree(root, ignore_errors=True)
+
+
+class NearDupPrefilterTest(unittest.TestCase):
+    """near-dup 탐지는 O(L^2) difflib.ratio()를 쌍마다 부르면 중간 규모
+    저장소에서 수 분이 걸린다. 그래서 shingle 지문 Jaccard로 먼저 걸러
+    소수만 ratio()에 넘긴다(성능). 이 최적화의 계약은 하나다:
+    **선필터는 완전탐색이 찾을 near-dup을 절대 떨어뜨리면 안 된다.**
+    jaccard_floor를 너무 높이거나 덤프 길이로 자르면 이 계약이 깨지고
+    스캔이 조용히 near-dup을 놓친다 — 아래 테스트가 그 회귀를 막는다."""
+
+    @staticmethod
+    def _fn(nstmts, tweak=None):
+        lines = ["def f(a):"]
+        for i in range(nstmts):
+            lines.append("    v%d = a + %d" % (i, i))
+        if tweak == "op":            # 연산자 하나만 다름 -> 90%+ 유사(near-dup)
+            lines[2] = "    v1 = a - 1"
+        elif tweak == "extra":       # 문장 하나 추가 -> 크기 살짝 다른 무관 함수
+            lines.append("    v = v0 * 2")
+        lines.append("    return a")
+        return "\n".join(lines)
+
+    @classmethod
+    def _entry(cls, src, line):
+        node = ast.parse(src).body[0]
+        end = getattr(node, "end_lineno", node.lineno)
+        return {"meta": {"name": "f", "file": "t.py", "line": line,
+                         "length": end - node.lineno + 1},
+                "dump": audit.normalized_dump(node)}
+
+    def _corpus(self, sizes):
+        srcs = []
+        for n in sizes:                       # 각 크기마다 near-dup 쌍 하나
+            srcs.append(self._fn(n))
+            srcs.append(self._fn(n, tweak="op"))
+        for n in (7, 22, 85):                 # 크기 다른 무관 함수(잡음)
+            srcs.append(self._fn(n, tweak="extra"))
+        return [self._entry(s, i * 10 + 1) for i, s in enumerate(srcs)]
+
+    @staticmethod
+    def _pairs(results):
+        return sorted(tuple(sorted(f["line"] for f in r["functions"]))
+                      for r in results)
+
+    def test_prefilter_matches_bruteforce(self):
+        # 완전탐색(floor=0, 모든 쌍이 ratio())과 기본 선필터가 '똑같은' near-dup을
+        # 내야 한다. 작은/중간 함수로 충분 — 계약은 크기와 무관하다.
+        entries = self._corpus(sizes=(10, 40))
+        filtered, _ = audit.find_near_duplicates(entries)
+        brute, _ = audit.find_near_duplicates(entries, jaccard_floor=0.0)
+        self.assertTrue(brute, "코퍼스가 near-dup을 만들어야 테스트가 유효하다")
+        self.assertEqual(self._pairs(filtered), self._pairs(brute),
+                         "선필터가 완전탐색과 다른 결과 -> 진짜 near-dup을 놓친 것")
+
+    def test_detection_is_not_capped(self):
+        """탐지(find_near_duplicates)는 전체를 반환해야 한다 — 상위 N개로 자르는
+        것은 리포트 표시 층(cmd_scan)의 책임이다. 그래야 리포트가 near_duplicate_total로
+        '20 of 24'처럼 정직하게 말할 수 있다(조용히 버리지 않음)."""
+        # 같은 뼈대 + 변형마다 다른 문장 1개 => 서로 ~0.95 유사(near-dup) 7개
+        entries = []
+        for k in range(7):
+            lines = ["def f(a):"] + ["    v%d = a + %d" % (i, i) for i in range(20)]
+            lines += ["    u = a * %d" % (k + 2), "    return a"]  # 변형별 상수 1개만 다름
+            entries.append(self._entry("\n".join(lines), k * 100 + 1))
+        results, _ = audit.find_near_duplicates(entries)
+        self.assertEqual(len(results), 21)  # C(7,2)=21쌍 전부, 20에서 안 잘림
+
+    def test_large_near_dups_are_not_size_capped(self):
+        """큰 함수끼리도 진짜 near-dup이 실재하므로(계측: 20k자 near-dup 확인)
+        덤프 길이로 ratio()를 잘라선 안 된다. 큰 near-dup 쌍이 기본 선필터로
+        잡히는지 못박는다."""
+        entries = self._corpus(sizes=(250,))
+        big_lines = {e["meta"]["line"] for e in entries if len(e["dump"]) > 10000}
+        self.assertGreaterEqual(len(big_lines), 2, "덤프 1만자+ 함수가 코퍼스에 있어야 한다")
+        results, _ = audit.find_near_duplicates(entries)
+        found_big = any(all(f["line"] in big_lines for f in r["functions"])
+                        for r in results)
+        self.assertTrue(found_big, "큰 함수 near-dup 쌍이 리포트돼야 한다(size-cap 금지)")
 
 
 if __name__ == "__main__":

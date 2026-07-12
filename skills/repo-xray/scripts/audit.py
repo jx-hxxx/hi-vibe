@@ -17,6 +17,7 @@ import json
 import os
 import re
 import sys
+import time
 import tokenize
 from collections import Counter, defaultdict
 
@@ -283,20 +284,62 @@ def normalized_dump(fn_node):
     return ast.dump(n)
 
 
-def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20000):
+def _shingles(dump, k=9):
+    """Character k-gram set of an AST dump — a cheap O(L) fingerprint computed
+    ONCE per function. The Jaccard overlap of two fingerprints lower-bounds
+    how similar the functions can be, so it prefilters pairs before the exact
+    but O(L^2) difflib ratio(). Dumps shorter than k fingerprint whole."""
+    if len(dump) <= k:
+        return frozenset((dump,))
+    return frozenset(dump[i:i + k] for i in range(len(dump) - k + 1))
+
+
+def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20000,
+                         shingle_k=9, jaccard_floor=0.45, time_budget=60.0):
     """Pairs of functions whose normalized ASTs are >= threshold similar but
     not identical — the typical AI failure: a 90%-same reimplementation.
-    Weaker evidence than exact duplicates; the reader must open both."""
+    Weaker evidence than exact duplicates; the reader must open both.
+
+    The exact score is difflib's `SequenceMatcher.ratio()`, which is O(L^2)
+    per pair — calling it on every size-window pair made a mid-size repo take
+    *minutes* (thousands of ~2.6k-char dumps). So each function is fingerprinted
+    once (`_shingles`, O(L)) and a pair only reaches ratio() if its shingle
+    Jaccard clears `jaccard_floor`. This turns O(pairs * L^2) into
+    O(pairs * shingles) + O(survivors * L^2), where survivors is tiny.
+
+    `jaccard_floor` sits well below `threshold` on purpose: a few scattered
+    edits break several k-grams, so a genuine 0.9-ratio pair can have much
+    lower shingle overlap. It was calibrated against a full unbounded scan
+    (see scripts/tests): across every true near-duplicate the *minimum*
+    observed shingle Jaccard was ~0.71, so 0.45 keeps them all with a wide
+    margin while dropping ~98% of doomed pairs before the expensive check.
+    NOTE — do NOT instead cap by dump length to bound ratio() cost: real
+    near-duplicates exist between large functions too (20k-char dumps in the
+    calibration set), so a size cap silently drops true positives. The
+    fingerprint prefilter is the safe way to cut cost.
+
+    `time_budget` is a wall-clock backstop for pathological inputs only; with
+    the prefilter it should never trip. If it (or max_pairs) does, `truncated`
+    is set so the report says the scan was partial instead of under-reporting."""
     # Sort by dump length, then file/line — a fully deterministic order so
     # the result never depends on os.walk's OS-specific file ordering.
     entries = sorted(
         (e for e in norm_entries if e["meta"]["length"] >= min_length),
         key=lambda e: (len(e["dump"]), e["meta"]["file"], e["meta"]["line"]),
     )
+    fps = [_shingles(e["dump"], shingle_k) for e in entries]
     results, pairs, truncated = [], 0, False
+    start = time.monotonic()
     for i, a in enumerate(entries):
-        for b in entries[i + 1:]:
-            if len(b["dump"]) > len(a["dump"]) * 1.25:
+        # Backstop only — the prefilter keeps each inner pass cheap, so this
+        # never overshoots the budget by more than one function's pairs.
+        if time.monotonic() - start > time_budget:
+            truncated = True
+            break
+        fa, la = fps[i], len(a["dump"])
+        for j in range(i + 1, len(entries)):
+            b = entries[j]
+            if len(b["dump"]) > la * 1.25:
                 break  # sorted by size; the rest only get longer
             if a["dump"] == b["dump"]:
                 continue  # exact duplicate, reported elsewhere
@@ -304,6 +347,13 @@ def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20
             if pairs > max_pairs:
                 truncated = True
                 break
+            # Cheap Jaccard prefilter (O(shingles)) drops the ~99% of pairs
+            # that cannot reach `threshold`, so the O(L^2) ratio() below runs
+            # only on genuine candidates — this is the whole speedup.
+            fb = fps[j]
+            inter = len(fa & fb)
+            if inter == 0 or inter / (len(fa) + len(fb) - inter) < jaccard_floor:
+                continue
             # autojunk=False: the default heuristic drops "popular" chars
             # from the SECOND sequence only, making ratio() asymmetric — so
             # the score would depend on which function came first in the
@@ -320,8 +370,11 @@ def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20
                 })
         if truncated:
             break
+    # Return ALL pairs (most-similar first); the report layer decides how many
+    # to SHOW. Detection and presentation are separate so the report can say
+    # "showing N of M" instead of silently dropping the rest.
     results.sort(key=lambda r: -r["similarity"])
-    return results[:20], truncated
+    return results, truncated
 
 
 def _looks_wip(node, src_lines):
@@ -510,6 +563,14 @@ def cmd_scan(root):
     py_symbols, duplicates, near_dups, near_truncated, parse_errors = analyze_python(root, py_files)
     js_symbols, collisions = analyze_js(root, js_files)
 
+    # near-dup is weak evidence (the reader must open both functions), so the
+    # report SHOWS only the most-similar few — but never hides the rest
+    # silently: near_duplicate_total tells the reader how many were actually
+    # found, so `total > len(shown)` means "there are more, ranked lower".
+    NEAR_DUP_SHOWN = 20
+    near_total = len(near_dups)
+    near_shown = near_dups[:NEAR_DUP_SHOWN]
+
     all_symbols = py_symbols + js_symbols
     def_counts = Counter(s["name"] for s in all_symbols)
     dead_all = find_dead(all_symbols, per_file, code_totals, def_counts)
@@ -536,7 +597,8 @@ def cmd_scan(root):
         "dead_candidates": sorted(dead, key=lambda s: (s["file"], s["line"])),
         "decorated_unreferenced": sorted(decorated_unref, key=lambda s: (s["file"], s["line"])),
         "duplicate_functions": duplicates,
-        "near_duplicate_functions": near_dups,
+        "near_duplicate_functions": near_shown,
+        "near_duplicate_total": near_total,
         "js_name_collisions": collisions,
         "oversized_files": big_files,
         "oversized_functions": big_functions,
@@ -551,8 +613,9 @@ def cmd_scan(root):
         json.dump(report, f, ensure_ascii=False, indent=2)
 
     print(f"scanned: {len(py_files)} py / {len(js_files)} js+ts / {len(text_files)} text files")
+    near_str = str(near_total) if near_total <= NEAR_DUP_SHOWN else f"{NEAR_DUP_SHOWN} of {near_total}"
     print(f"dead candidates: {len(dead)} (+{len(decorated_unref)} decorated)  "
-          f"duplicates: {len(duplicates)}  near-duplicates: {len(near_dups)}  "
+          f"duplicates: {len(duplicates)}  near-duplicates: {near_str}  "
           f"js collisions: {len(collisions)}  oversized files: {len(big_files)}")
     print(f"report: {out_path}")
     return 0
