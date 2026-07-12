@@ -758,7 +758,7 @@ This is not an evaluation meant to praise or criticize — judge fairly, based o
     document.getElementById('ko').hidden = (l !== 'ko');
     document.getElementById('en').hidden = (l !== 'en');
     root.setAttribute('lang', l);
-    document.title = (l === 'en') ? 'hi-vibe — the AI-coding seatbelt' : 'hi-vibe — AI 코딩 안전벨트';
+    document.title = 'hi-vibe';
     var labels = document.querySelectorAll('.js-lang');
     for (var i=0;i<labels.length;i++){ labels[i].textContent = (l === 'en') ? '한국어' : 'EN'; }
     try { localStorage.setItem('hv-lang', l); } catch(e){}
