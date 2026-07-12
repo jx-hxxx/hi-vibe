@@ -226,7 +226,7 @@
           <p class="eyebrow">AI 코딩 안전벨트 · Claude Code에 설치</p>
           <h1 class="tag-ko">AI랑 <span class="amber">과속</span>해도,<br>안전벨트는 <span class="amber">hi-vibe</span>가.</h1>
           <p class="tag-en">AI 코딩 실수를 미리 막아 주는 Claude Code 플러그인.</p>
-          <p class="say">AI한테 코딩 시키면 자꾸 나는 실수들 —<br>있던 걸 또 만들고, 에러를 대충 덮고, 설명이 낡고…<br>hi-vibe가 옆에서 대신 지켜봐 줘요.<br>어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
+          <p class="say">AI한테 코딩 시키면 자꾸 나는 실수들 —<br>있던 걸 또 만들고, 에러를 대충 덮고, 설명이 낡고…<br>hi-vibe가 <b>AI가 대충 못 하게</b> 옆에서 잡아 줘요.<br>어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
           <div class="cta">
             <a class="btn primary" href="#install-ko">설치하기</a>
             <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">GitHub에서 보기 ↗</a>
@@ -303,6 +303,8 @@
     <section id="honest-ko">
       <p class="eyebrow">정직함이 곧 기능이에요</p>
       <h2>여기까진 기계가, 여기서부턴 AI가.</h2>
+      <div class="honest-note" style="margin-bottom:24px"><span>⚠️</span><div><b>먼저 — hi-vibe는 "버그 자동 탐지기"가 아니에요.</b><br>
+        코드를 훑어 버그를 찾아주는 도구가 아니라, <b>AI가 대충 못 하게 만드는 안전벨트</b>예요. 버그를 잡는 건 결국 Claude의 추론이고, hi-vibe는 그 추론을 <b>빡세게 하도록 강제하는 규율·문서·기계 장치</b>예요. "자동으로 다 잡아줘요"가 아니라 <b>"안 하던 규율을 강제로 하게 만들어요"</b> — 기대를 여기 맞추면 실망이 없어요.</div></div>
       <p class="lead" style="max-width:none">”전부 자동!”이라고 뭉뚱그리지 않아요. <b>기계가 확실히</b> 하는 것과 <b>AI가 알아서</b> 하는 것을 나눠서 보여줘요.<br>불이 켜져 있으면 기계가 보장, 테두리만 있으면 AI에게 맡긴 거예요.</p>
       <div class="panel">
         <div class="prow-h m"><span class="lamp2"></span><span class="what">위험한 코드(숨는 에러·비밀번호)를 그 자리에서 잡기<small>코드 저장하는 순간</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
@@ -314,6 +316,10 @@
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“검토해줘” 하면 다른 눈으로 과한 설계 잡기<small>설계 살펴볼 때</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
       </div>
       <div class="honest-note"><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:find</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
+      <div class="honest-note"><span>🎚️</span><div><b>켜지는 방식이 3단이에요.</b><br>
+        🔒 <b>깔면 거저 (훅)</b> — <code>init</code>만 하면 위 ⚙️ 4개가 자동. 코드 쓸 때마다 에러 삼킴·비밀키를 기계가 잡아요. <i>진짜 항상 매인 벨트.</i><br>
+        🧭 <b>부르면 (find · review · check)</b> — 말하면 도는 🤖 규율·스캔. 강력하지만 AI가 놓치면 안 걸려요. <i>잔소리하는 코치.</i><br>
+        🛡️ <b>원하면 (gate)</b> — 복잡도·순환의존 린트. 제일 많이 잡지만 침습적이라 준비됐을 때 1회 설치(필수 아님).</div></div>
     </section>
 
     <section id="install-ko">
@@ -512,6 +518,8 @@
     <section id="honest-en">
       <p class="eyebrow">Honesty is the feature</p>
       <h2>Machine up to here, AI beyond.</h2>
+      <div class="honest-note" style="margin-bottom:24px"><span>⚠️</span><div><b>First — hi-vibe is not a "bug detector."</b><br>
+        It doesn't scan your code to find bugs; it's a <b>seatbelt that stops the AI from cutting corners</b>. Catching bugs is still Claude's reasoning — hi-vibe is the <b>discipline, docs, and machinery that force that reasoning to be rigorous</b>. Not "it auto-catches everything" but <b>"it forces the discipline you'd otherwise skip."</b> Set expectations there and you won't be let down.</div></div>
       <p class="lead">We don’t hand-wave “it’s all automatic.” We separate what the <b>machine guarantees</b> from what the <b>AI does on its own</b>.<br>A lit lamp means guaranteed; a hollow one means it’s up to the AI.</p>
       <div class="panel">
         <div class="prow-h m"><span class="lamp2"></span><span class="what">Catch risky code (hidden errors &amp; secrets) on the spot<small>the moment you save code</small></span><span class="badge m">⚙ Guaranteed</span></div>
@@ -523,6 +531,10 @@
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Review this” → fresh eyes catch over-engineering<small>when reviewing a design</small></span><span class="badge ai">🤖 AI does it</span></div>
       </div>
       <div class="honest-note"><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:find</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
+      <div class="honest-note"><span>🎚️</span><div><b>Three tiers, each turned on differently.</b><br>
+        🔒 <b>Free once installed (hooks)</b> — after <code>init</code>, the 4 ⚙️ rows above run automatically; every code write is checked for error-swallowing & secrets. <i>The belt that's actually always on.</i><br>
+        🧭 <b>On demand (find · review · check)</b> — 🤖 discipline & scans that run when you talk. Powerful, but the AI can skip them. <i>A coach nagging beside you.</i><br>
+        🛡️ <b>Opt-in (gate)</b> — lints complexity & circular deps. Catches the most, but it's invasive — install once when ready (not required).</div></div>
     </section>
 
     <section id="install-en">

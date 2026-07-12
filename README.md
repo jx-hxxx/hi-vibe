@@ -18,6 +18,24 @@ Vibe-coding is convenient, but AI-written code keeps repeating the same problems
 
 `hi-vibe` blocks all of these with three layers: **doc automation + AI discipline + machine enforcement.**
 
+> **⚠️ Not a "bug detector."**
+> hi-vibe doesn't scan your code to find bugs — it's a **seatbelt that stops the AI
+> from cutting corners.** Catching bugs is still Claude's reasoning; hi-vibe is the
+> **discipline, docs, and machinery that force that reasoning to be rigorous.**
+> Three tiers, each turned on differently:
+>
+> - 🔒 **Free once installed (hooks)** — after `init`, every code write is checked for
+>   **error-swallowing & hardcoded secrets by the machine**, and handover is saved on
+>   each compaction. *The seatbelt that's actually always on.*
+> - 🧭 **On demand (find · review · check)** — "make me… / done / find duplicates" runs
+>   the discipline checklist and structure scan. Powerful, but **the AI can skip it.**
+>   *A coach nagging beside you — ignore it and it won't catch you.*
+> - 🛡️ **Opt-in (gate)** — lints complexity & circular deps. Catches the most, but it's
+>   **invasive**, so install it once when you're ready (not required).
+>
+> So it's **not "a tool that auto-catches everything" — it's "a device that forces the
+> discipline you'd otherwise skip."** Set expectations there and you won't be let down.
+
 ---
 
 ## Install
