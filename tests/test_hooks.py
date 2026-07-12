@@ -153,6 +153,7 @@ class StopNudgeTest(TempProject):
         transcript = self.make_transcript(["/p/core.py"])
         first = self.run_nudge(transcript)
         self.assertIn("CHANGELOG", first)
+        self.assertIn("review --all", first)  # 전체 리뷰 발견성도 한 번에 안내
         second = self.run_nudge(transcript)  # 같은 세션에선 침묵
         self.assertEqual(second, "")
 

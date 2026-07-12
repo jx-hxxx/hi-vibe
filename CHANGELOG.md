@@ -5,6 +5,21 @@
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-07-12
+<!-- show:ko **여러 기능을 한 번에 리뷰하는 `review --all`.** 한 세션에 기능을 여러 개 만들어도 "전체 리뷰해줘" 한 번으로 다 점검해요. 이미 봤고 그 뒤로 안 바뀐 코드는 자동으로 건너뛰고요. 세션당 1회 알림에서 이 기능을 살짝 알려줍니다. -->
+<!-- show:en **New `review --all` reviews a whole session at once.** Build several features, then review them all with one command. Code you already reviewed and haven't changed since is skipped automatically. The once-a-session nudge quietly surfaces it. -->
+
+### Added
+- **`review --all` (세션 전체 일괄 리뷰)** — "이번 변경" 하나가 아니라, 세션에서 바뀐 코드 전체를 기능별로 한 번에 점검한다. 한 세션에 기능을 여러 개 만들어도 이 한 번으로 커버.
+- **이미 리뷰한 것 건너뛰기** — 리뷰한 파일의 내용 해시를 `.hi-vibe/reviewed.json`에 저장해, 그 뒤로 안 바뀐 파일은 다음 `review --all`에서 자동으로 건너뛴다. 바뀌면 다시 걸린다. 커밋하면 자연히 범위에서 빠진다.
+- **`review_scope.py` 헬퍼** — "무엇을 볼지·이미 본 것을 건너뛸지"를 코드로 정확히 계산(git diff + 해시 비교). AI가 해시를 세지 않는다 — 기계가 잘하는 건 기계에게.
+
+### Changed
+- **세션당 1회 넛지에 `review --all` 발견성 추가** — 코드 변경이 있었으면 CHANGELOG 안내와 함께 "전체 리뷰해줄까요?"를 딱 한 번 곁들인다. 강제 발동이 아니라, 기능이 있다는 걸 알려주는 것.
+
+### Tests
+- +5 (review_scope: 새 파일 감지 / mark 후 skip / 재수정 시 재등장 / 문서 제외 / 상태 파일 기록). 64→69.
+
 ## [0.8.0] - 2026-07-12
 <!-- show:ko **명령어 이름을 쉬운 동사로.** pre-write→find, post-write→review, audit→check, guards→gate. 자동 명령어엔 "이 함수 만들어줘" 같은 트리거 예시를 표에 넣고, gate는 로컬/--ci 차이를 쉽게 설명. -->
 <!-- show:en **Commands renamed to plain verbs.** pre-write→find, post-write→review, audit→check, guards→gate. Auto commands now show a trigger example, and gate explains local vs --ci clearly. -->
