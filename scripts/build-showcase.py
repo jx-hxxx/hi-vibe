@@ -87,6 +87,11 @@ def main():
     page = open(PAGE, encoding="utf-8").read()
     for lang in ("ko", "en"):
         page = replace_between(page, lang, rels(items, lang))
+    # header version badge — the latest released version, kept in sync
+    if items:
+        ver = "v" + items[0]["ver"]
+        page = re.sub(r"<!--VER-->.*?<!--/VER-->",
+                      lambda _m: "<!--VER-->{}<!--/VER-->".format(ver), page)
     open(PAGE, "w", encoding="utf-8").write(page)
     ko = min(MAX_ITEMS, sum(1 for i in items if i["ko"]))
     en = min(MAX_ITEMS, sum(1 for i in items if i["en"]))
