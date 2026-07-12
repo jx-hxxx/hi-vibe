@@ -154,6 +154,10 @@ auto-update**. After that, new versions are fetched automatically on every
 start. You only run `/reload-plugins` (or just restart Claude Code) to apply
 them — no need to type anything below.
 
+<p align="center">
+  <img src="docs/images/enable-auto-update.png" alt="/plugin → Marketplaces tab → hi-vibe-marketplace → Enable auto-update" width="640">
+</p>
+
 **Manual (if auto-update is off)** — three steps **in order**. ①② are
 separate: refreshing the list without swapping the plugin leaves you on the
 old version (the most confusing part!).
