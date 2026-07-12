@@ -1,4 +1,4 @@
-<h1><img src="docs/images/hi-vibe.png" alt="hi-vibe" height="34"> &nbsp;hi-vibe</h1>
+<h1><img src="docs/images/hi-vibe.png" alt="hi-vibe" height="34"> &nbsp;👋</h1>
 
 [![hi-vibe tests](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml/badge.svg)](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
@@ -25,6 +25,11 @@ workflow.
 > It's a set of working disciplines plus automatic safeguards that make the AI
 > search for evidence, leave records, and verify — at the moments it tends to
 > gloss over.
+
+> **The primary language is Python.** The hooks, scanner, and tests are designed
+> and validated around Python first. JS/TS (`.js`·`.jsx`·`.ts`·`.tsx`) is also
+> supported via scanning, `gate`, and symbol lookup, but with narrower coverage
+> and shallower validation than Python.
 
 <details>
 <summary><strong>Table of contents</strong></summary>
@@ -470,9 +475,28 @@ Paste the question and repo link below into Claude, Codex, or Gemini.
 ```text
 https://github.com/jx-hxxx/hi-vibe
 
-Don't just summarize the README — check the actual code and tests. Rate honestly
-how much this plugin helps with vibe coding, its design complexity, target users,
-pros and cons, and how finished it is.
+Don't just summarize the README — inspect the actual hooks, scanner, skills, and tests on the current main branch to evaluate this Claude Code plugin.
+If possible, run the tests yourself and report the results. For anything you couldn't verify directly, say so instead of guessing.
+
+hi-vibe does not claim to be a professional static analyzer that catches every bug, or an enterprise quality platform.
+It's a "seatbelt" plugin that backfills the habits vibe coders on personal / small projects with Claude Code tend to skip: searching for existing code, root-cause debugging, session handover, doc sync, and verification.
+
+Judge it mainly on how well it implements the scope the README actually promises.
+Conversely, clearly dock points where the real implementation is weaker than the README claims.
+
+Evaluate the following, and give scores with reasons for any deductions:
+1. Help for vibe coding
+2. Product / technical design difficulty
+3. Core target vs. who it fits less
+4. Strengths and weaknesses
+5. Test / automation reliability
+6. Current maturity
+
+- Install value for the core target: /10
+- Current maturity as a dev tool: /10
+- Overall: /10
+
+This is not an evaluation meant to praise or criticize — judge fairly, based on the actual implementation.
 ```
 
 ---
