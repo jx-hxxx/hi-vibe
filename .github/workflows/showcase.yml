@@ -1,0 +1,33 @@
+name: build-showcase
+
+# Regenerate the showcase timeline (docs/index.html) from CHANGELOG.md so the
+# promo page never goes stale by hand — hi-vibe dogfooding its own doc-sync.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'CHANGELOG.md'
+      - 'scripts/build-showcase.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build showcase timeline from CHANGELOG
+        run: python3 scripts/build-showcase.py
+      - name: Commit the regenerated page (only if it changed)
+        run: |
+          if git diff --quiet -- docs/index.html; then
+            echo "docs/index.html unchanged — nothing to commit."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add docs/index.html
+            git commit -m "docs: auto-build showcase timeline from CHANGELOG [skip ci]"
+            git push
+          fi

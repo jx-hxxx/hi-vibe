@@ -6,6 +6,8 @@
 ## [Unreleased]
 
 ## [0.6.0] - 2026-07-12
+<!-- show:ko **숨어있던 버그들 수정 + 검사 정확도 개선.** 실제로 써보다 발견한 것들을 고치고, 아직 만드는 중인 코드나 화면 컴포넌트를 "안 쓰는 코드"로 오해하지 않게 다듬었어요. -->
+<!-- show:en **Squashed hidden bugs + sharper detection.** Fixed things found in real use, and stopped mistaking work-in-progress code or UI components for "dead code". -->
 
 깨끗한 눈(fresh-eyes) 자가 리뷰에서 나온 재현 버그와 커버리지 구멍을 정리. 모두 기계층(파이썬 코드) 수정이라 상주 컨텍스트·프롬프트 길이에는 영향 없음.
 
@@ -24,11 +26,15 @@
 - README(한/영) "init한 뒤엔 전부 자동" 표를 **⚙️ 기계(훅이 보장) vs 🤖 AI(발동, 100% 보장 아님)** 로 정직하게 구분 — 프롬프트 의존을 "자동"으로 뭉뚱그려 안전벨트가 다 채워진 것처럼 오해시키던 부분을 바로잡음.
 
 ## [0.5.1] - 2026-07-12
+<!-- show:ko **설치 화면을 입문자가 알아보기 쉽게.** 추천 표시를 넣고, 어려운 용어 대신 쉬운 말로 바꿨어요. -->
+<!-- show:en **Made the install screen beginner-friendly.** Added recommendations and swapped jargon for plain words. -->
 
 ### Changed
 - **guards 선택 화면을 입문자 친화적으로** — 가드 선택지가 (1) 추천 표시가 없어 4개 다 켜야 하는 것처럼 보였고 (2) `complexity≤10`·`max-depth`·`dpdm`·`exit 1`·`OAuth` 같은 전문용어라 입문자가 못 알아들었다. guards-setup SKILL에 지침 추가: 쉬운 말로 "이게 나한테 뭘 해주는지"를 먼저 쓰고 규칙값은 괄호로, 로컬 2종(복잡도 린트+순환 의존)에 "(추천)"을 붙여 맨 앞에, CI는 GitHub 리모트 있을 때만 추천, 격주 감사는 "(고급)"+토큰 설정 필요 명시, "다 켜라"고 밀지 않기.
 
 ## [0.5.0] - 2026-07-12
+<!-- show:ko **아직 만드는 중인 코드 보호.** 개발 중이라 비워둔 코드를 "안 쓰는 코드"로 오해해서 지우지 않도록. -->
+<!-- show:en **Protects work-in-progress code.** So code left blank mid-build isn't mistaken for "unused" and deleted. -->
 
 ### Added
 - **미완성(WIP) 코드 감지** — 스캐너가 함수/메서드의 본문을 보고 "아직 안 만든 것"을 `looks_wip` 플래그로 표시한다. 감지 신호: `pass`만 있는 본문, `...`, `raise NotImplementedError`, 빈 본문, 스코프 안 TODO·FIXME·WIP·XXX 주석. 참조가 0이라 dead 후보로 잡히더라도 이 플래그가 켜져 있으면 "죽은 코드"가 아니라 "아직 안 만든 코드"이므로 삭제 제안 대상에서 뺀다. (audit.py `_looks_wip`, 파이썬 한정 — JS/TS는 정규식 스캐너라 본문이 없음.)
