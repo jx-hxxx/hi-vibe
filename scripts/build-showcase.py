@@ -52,6 +52,7 @@ def parse_changelog(text):
 def render_body(raw):
     """Escape, then turn a leading **bold** into <b>bold</b> + <span>rest</span>."""
     esc = html.escape(raw, quote=False)
+    esc = esc.replace("&lt;br&gt;", "<br>")  # 저자가 넣은 <br>만 실제 줄바꿈으로 (나머지는 이스케이프 유지)
     m = re.match(r"\*\*(.+?)\*\*\s*(.*)$", esc)
     if not m:
         return "<span>{}</span>".format(esc)

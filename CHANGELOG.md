@@ -6,7 +6,7 @@
 ## [Unreleased]
 
 ## [0.9.0] - 2026-07-12
-<!-- show:ko **여러 기능을 한 번에 리뷰하는 `review --all`.** 한 세션에 기능을 여러 개 만들어도 "전체 리뷰해줘" 한 번으로 다 점검해요. 이미 봤고 그 뒤로 안 바뀐 코드는 자동으로 건너뛰고요. 세션당 1회 알림에서 이 기능을 살짝 알려줍니다. -->
+<!-- show:ko **여러 기능을 한 번에 리뷰하는 `review --all`.** 한 세션에 기능을 여러 개 만들어도 "전체 리뷰해줘" 한 번으로 다 점검해요.<br>이미 봤고 그 뒤로 안 바뀐 코드는 자동으로 건너뛰고요. 세션당 1회 알림에서 이 기능을 살짝 알려줍니다. -->
 <!-- show:en **New `review --all` reviews a whole session at once.** Build several features, then review them all with one command. Code you already reviewed and haven't changed since is skipped automatically. The once-a-session nudge quietly surfaces it. -->
 
 ### Added
@@ -21,7 +21,7 @@
 - +5 (review_scope: 새 파일 감지 / mark 후 skip / 재수정 시 재등장 / 문서 제외 / 상태 파일 기록). 64→69.
 
 ## [0.8.0] - 2026-07-12
-<!-- show:ko **명령어 이름을 쉬운 동사로.** pre-write→find, post-write→review, audit→check, guards→gate. 자동 명령어엔 "이 함수 만들어줘" 같은 트리거 예시를 표에 넣고, gate는 로컬/--ci 차이를 쉽게 설명. -->
+<!-- show:ko **명령어 이름을 쉬운 동사로.** pre-write→find, post-write→review, audit→check, guards→gate.<br>자동 명령어엔 "이 함수 만들어줘" 같은 트리거 예시를 표에 넣고, gate는 로컬/--ci 차이를 쉽게 설명. -->
 <!-- show:en **Commands renamed to plain verbs.** pre-write→find, post-write→review, audit→check, guards→gate. Auto commands now show a trigger example, and gate explains local vs --ci clearly. -->
 
 ### Changed
