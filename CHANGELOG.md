@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-07-12
+<!-- show:ko **`review --all`이 큰 변경엔 "쪼개서 병렬"을 물어봐요.** 세션 변경이 크면(파일 여러 개 + 수백 줄) 순차 리뷰는 얕거나 느려요. 이제 규모를 기계가 재서, 크면 "쪼개서 병렬로 볼까요?"라고 묻고 — 예 하면 줄 수 균형이 맞은 그룹으로 나눠 리뷰어를 병렬 소환해요. 작으면 그대로 순차. (항상 병렬 아님 — 토큰·복잡도 방지.) -->
+<!-- show:en **`review --all` now offers to split large diffs into parallel reviews.** When a session's changes are big (many files + hundreds of lines), sequential review goes shallow or slow. The machine now measures the size, and if it's large it asks "split into parallel reviews?" — yes fans out balanced groups to parallel reviewers; small stays sequential. (Not always parallel — avoids token/complexity blowup.) -->
+
+### Added
+- **`review --all` 대용량 병렬 옵션** — 세션 변경이 크면 순차 리뷰가 얕아지는 문제. 이제 `review_scope.py list`가 `sizes`(파일별 변경 줄 수)·`total_changed_lines`·`file_count`를 함께 주고, 규모가 크면 스킬이 **AskUserQuestion으로 "순차 vs 병렬"을 묻는다**. 병렬 선택 시 `review_scope.py chunk <N>`이 줄 수 기준 **균형 잡힌 파일 그룹 N개**를 만들고, 각 그룹마다 리뷰어를 병렬 소환해 결과를 통합.
+- **임계값은 코드에 박지 않음** — 기계는 규모(숫자)만 주고, 병렬 여부 판단은 AI+사용자에게. (하드코딩 가드레일 금지 원칙.)
+
+### Tests
+- +3 (list의 sizes/total 보고 / chunk의 줄 수 균형 분할 / 파일 수보다 많은 버킷 요청 시 빈 버킷 없음). 69→72.
+
 ## [0.11.0] - 2026-07-12
 <!-- show:ko **"확인 안 하고 단정" 방지를 더 강하게.** 라이브러리·API뿐 아니라 GitHub·npm 같은 외부 플랫폼의 "왜 이렇게 동작하나/정책 바뀌었나"도 근거 필요한 사실로 명시하고, context7(공식 문서 조회)를 근거 사다리 맨 앞에 못박음. 잡담·트러블슈팅이어도 예외 없음. (실제로 이 규율을 어긴 사례에서 나온 개선.) -->
 <!-- show:en **Stronger "don't assert without checking".** Not just library/API facts — how an external platform (GitHub, npm) currently behaves or why (recent policy changes) now counts as a claim that needs evidence, with context7 (official-docs lookup) pinned as the first source. Applies in casual chat and troubleshooting too. (Came from a real case of breaking this very rule.) -->

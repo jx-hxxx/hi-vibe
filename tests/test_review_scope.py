@@ -83,6 +83,38 @@ class ReviewScopeTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(
             os.path.join(self.root, ".hi-vibe", "reviewed.json")))
 
+    def test_list_reports_sizes_and_total(self):
+        _write(self.root, "big.py", "\n".join("x%d=%d" % (i, i) for i in range(40)))
+        _write(self.root, "small.py", "def a():\n    return 1\n")
+        out = _list(self.root)
+        self.assertEqual(out["file_count"], 2)
+        self.assertGreater(out["sizes"]["big.py"], out["sizes"]["small.py"])
+        self.assertEqual(out["total_changed_lines"],
+                         sum(out["sizes"].values()))
+
+    def _chunk(self, n):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            review_scope.cmd_chunk(self.root, n)
+        return json.loads(buf.getvalue())["buckets"]
+
+    def test_chunk_balances_by_line_count(self):
+        _write(self.root, "big.py", "\n".join("x%d=%d" % (i, i) for i in range(60)))
+        _write(self.root, "mid.py", "\n".join("y%d=%d" % (i, i) for i in range(25)))
+        _write(self.root, "small.py", "def a():\n    return 1\n")
+        buckets = self._chunk(2)
+        self.assertEqual(len(buckets), 2)
+        # 모든 파일이 정확히 한 번씩 배치되고, 큰 파일은 홀로 균형을 맞춤
+        placed = sorted(f for b in buckets for f in b["files"])
+        self.assertEqual(placed, ["big.py", "mid.py", "small.py"])
+        loads = sorted(b["lines"] for b in buckets)
+        self.assertLessEqual(loads[1] - loads[0], 60)  # greedy 균형
+
+    def test_chunk_never_exceeds_file_count(self):
+        _write(self.root, "only.py", "def a():\n    return 1\n")
+        buckets = self._chunk(5)  # 파일 1개인데 5버킷 요청
+        self.assertEqual(len(buckets), 1)  # 빈 버킷은 안 나온다
+
 
 if __name__ == "__main__":
     unittest.main()
