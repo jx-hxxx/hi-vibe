@@ -115,14 +115,16 @@
   .dm-list li.sub > code { margin-left:16px; position:relative; }
   .dm-list li.sub > code::before { content:"└"; position:absolute; left:-14px; color:var(--faint); }
   .dm-list li span { color:var(--muted); font-size:14px; flex:1; min-width:220px; }
-  .feats { display:grid; grid-template-columns:repeat(auto-fit,minmax(322px,1fr)); gap:16px; margin-top:16px; }
-  .feat { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px; display:flex; flex-direction:column; }
-  .feat .ic { font-size:20px; display:block; margin-bottom:10px; }
-  .feat h4 { margin:0 0 8px; font-size:16px; letter-spacing:-.01em; }
-  .feat p { margin:0; color:var(--muted); font-size:14px; line-height:1.62; flex:1; }
-  .feat p code { font-family:var(--mono); font-size:.86em; background:var(--surface-2); color:var(--text); padding:1px 6px; border-radius:5px; white-space:nowrap; }
-  .feat .feat-cmd { font-family:var(--mono); font-size:11px; color:var(--faint); margin-top:14px; padding-top:12px; border-top:1px solid var(--border); letter-spacing:.02em; }
-  .feat .feat-cmd b { color:var(--accent-ink); font-weight:400; }
+  .featlist { margin-top:16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+  .frow { display:grid; grid-template-columns:38px 1fr; gap:16px; padding:20px 24px; border-top:1px solid var(--border); }
+  .frow:first-child { border-top:none; }
+  .frow .fic { font-size:20px; line-height:1.35; }
+  .fhead { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:5px; }
+  .fhead .ftitle { font-size:16px; font-weight:700; letter-spacing:-.01em; }
+  .fhead .ftag { font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.02em; }
+  .fhead .ftag b { color:var(--accent-ink); font-weight:400; }
+  .frow .fdesc { margin:0; color:var(--muted); font-size:14px; line-height:1.62; max-width:82ch; }
+  .frow .fdesc code { font-family:var(--mono); font-size:.86em; background:var(--surface-2); color:var(--text); padding:1px 6px; border-radius:5px; white-space:nowrap; }
   .panel { margin-top:36px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
   .panel .prow-h { display:grid; grid-template-columns:44px 1fr 132px; align-items:center; gap:12px; padding:15px 20px; border-top:1px solid var(--border); }
   .panel .prow-h:first-child { border-top:none; }
@@ -134,7 +136,7 @@
   .badge { font-family:var(--mono); font-size:11px; letter-spacing:.02em; text-align:center; padding:6px 0; border-radius:8px; white-space:nowrap; }
   .badge.m { color:var(--good); background:var(--good-bg); }
   .badge.ai { color:var(--ai); border:1px solid var(--border-2); }
-  .honest-note { display:flex; gap:12px; margin-top:20px; padding:16px 18px; border:1px dashed var(--border-2); border-radius:10px; color:var(--muted); font-size:14.5px; }
+  .honest-note { display:flex; gap:12px; margin-top:20px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-size:14.5px; }
   .honest-note b { color:var(--text); }
   .honest-note code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); white-space:nowrap; }
 
@@ -263,7 +265,7 @@
       <div class="docmap">
         <div class="dm-head">📁 내 프로젝트/ — <code>/hi-vibe:init</code> 한 번이면 이 문서 지도가 깔려요</div>
         <ul class="dm-list">
-          <li><code>CLAUDE.md</code><span>프로젝트 전체 지도 — 개요·요구사항·폴더 구조 (얇게 유지)</span></li>
+          <li><code>CLAUDE.md</code><span>프로젝트 전체 지도 — 개요·요구사항·폴더 구조</span></li>
           <li class="sub"><code>api/MODULE.md</code><span>폴더마다 하나 — 그 안의 상세 설계·데이터·주의점</span></li>
           <li class="sub"><code>ui/MODULE.md</code><span>…폴더가 늘면 문서도 폴더 옆에 같이 붙어요</span></li>
           <li><code>handover.md</code><span>세션 인수인계 — 다음 대화가 맥락 안 잃게. 대화 정리(compact) 때 자동 기록돼요</span></li>
@@ -271,16 +273,16 @@
         </ul>
       </div>
 
-      <div class="feats">
-        <div class="feat"><span class="ic">🔍</span><h4>중복 재구현 방지</h4><p>새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요. AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b> — 추측이 아니라 근거로.</p><span class="feat-cmd"><b>pre-write</b> · ⚡ 자동</span></div>
-        <div class="feat"><span class="ic">🩹</span><h4>에러 땜빵 금지</h4><p>에러를 fallback으로 덮는 대신 <b>원인부터</b> 보게 해요. 에러를 몰래 삼키는 코드(빈 catch, <code>except: pass</code>)를 쓰는 순간 감지해서 알려줘요. 정말 의도한 거면 주석 한 줄로 통과.</p><span class="feat-cmd"><b>즉시 감지</b> · ⚡ 자동</span></div>
-        <div class="feat"><span class="ic">📊</span><h4>근거 없는 단정 금지</h4><p>"아마 이럴 거예요"를 사실처럼 말하지 않게 해요. 수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 공식 문서</b>까지 자동 조회)</p><span class="feat-cmd"><b>규율</b> · ⚡ 자동</span></div>
-        <div class="feat"><span class="ic">👀</span><h4>남의 눈 설계 리뷰</h4><p>코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요. 체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p><span class="feat-cmd"><b>post-write --deep</b> · ⚡ 자동</span></div>
-        <div class="feat"><span class="ic">🧠</span><h4>기억·인수인계·검색</h4><p>대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요. "예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p><span class="feat-cmd"><b>handover · recall</b> · ⚡ 자동</span></div>
-        <div class="feat"><span class="ic">🎯</span><h4>오탐 방지</h4><p>"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요. 프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드… 이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p><span class="feat-cmd"><b>규율·스캐너</b> · ⚡ 자동</span></div>
-        <div class="feat"><span class="ic">🔬</span><h4>구조 점검</h4><p>이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요. 전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p><span class="feat-cmd"><b>audit</b> · 🖐 직접</span></div>
-        <div class="feat"><span class="ic">🛡️</span><h4>기계 강제 (린트·CI)</h4><p>린트(ruff·eslint)·타입 검사·순환 의존 검사를 설치하고, 원하면 GitHub Actions로 push마다 검문해요. 복잡도·순환 위반은 <b>빌드 실패</b>로 막아요. 기존 설정은 안 덮고 물어보고 설치.</p><span class="feat-cmd"><b>guards --ci</b> · 🖐 직접</span></div>
-        <div class="feat"><span class="ic">🩺</span><h4>자가진단</h4><p>훅은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요. doctor가 훅 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p><span class="feat-cmd"><b>doctor</b> · 🖐 직접</span></div>
+      <div class="featlist">
+        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">중복 재구현 방지</span><span class="ftag"><b>pre-write</b> · ⚡ 자동</span></div><p class="fdesc">새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요. AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b> — 추측이 아니라 근거로.</p></div></div>
+        <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">에러 땜빵 금지</span><span class="ftag"><b>즉시 감지</b> · ⚡ 자동</span></div><p class="fdesc">에러를 fallback으로 덮는 대신 <b>원인부터</b> 보게 해요. 에러를 몰래 삼키는 코드(빈 catch, <code>except: pass</code>)를 쓰는 순간 감지해서 알려줘요. 정말 의도한 거면 주석 한 줄로 통과.</p></div></div>
+        <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">근거 없는 단정 금지</span><span class="ftag"><b>규율</b> · ⚡ 자동</span></div><p class="fdesc">"아마 이럴 거예요"를 사실처럼 말하지 않게 해요. 수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 공식 문서</b>까지 자동 조회)</p></div></div>
+        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">남의 눈 설계 리뷰</span><span class="ftag"><b>post-write --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요. 체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
+        <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b> · ⚡ 자동</span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요. "예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p></div></div>
+        <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요. 프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드… 이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
+        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>audit</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요. 전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
+        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>guards --ci</b> · 🖐 직접</span></div><p class="fdesc">린트(ruff·eslint)·타입 검사·순환 의존 검사를 설치하고, 원하면 GitHub Actions로 push마다 검문해요. 복잡도·순환 위반은 <b>빌드 실패</b>로 막아요. 기존 설정은 안 덮고 물어보고 설치.</p></div></div>
+        <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b> · 🖐 직접</span></div><p class="fdesc">훅은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요. doctor가 훅 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p></div></div>
       </div>
     </section>
 
@@ -444,7 +446,7 @@
       <div class="docmap">
         <div class="dm-head">📁 my-project/ — one <code>/hi-vibe:init</code> lays down this doc map</div>
         <ul class="dm-list">
-          <li><code>CLAUDE.md</code><span>The whole-project map — overview, requirements, folder layout (kept lean)</span></li>
+          <li><code>CLAUDE.md</code><span>The whole-project map — overview, requirements, folder layout</span></li>
           <li class="sub"><code>api/MODULE.md</code><span>One per folder — its detailed design, data, and gotchas</span></li>
           <li class="sub"><code>ui/MODULE.md</code><span>…more folders, more docs living right next to them</span></li>
           <li><code>handover.md</code><span>Session handover — so the next chat keeps context. Auto-recorded on compaction</span></li>
@@ -452,16 +454,16 @@
         </ul>
       </div>
 
-      <div class="feats">
-        <div class="feat"><span class="ic">🔍</span><h4>No duplicate reimplementation</h4><p>Before you make a new function or file, it searches whether one already exists — so the AI stops rebuilding what it made last session. When there's none, it says "not found across N scanned files" — <b>evidence, not a guess.</b></p><span class="feat-cmd"><b>pre-write</b> · ⚡ auto</span></div>
-        <div class="feat"><span class="ic">🩹</span><h4>No band-aid error handling</h4><p>Instead of burying an error under a fallback, it makes you look at the <b>cause</b>. Code that silently swallows errors (empty catch, <code>except: pass</code>) is flagged the moment you write it. Genuinely intentional? One comment lets it pass.</p><span class="feat-cmd"><b>instant detect</b> · ⚡ auto</span></div>
-        <div class="feat"><span class="ic">📊</span><h4>No unfounded claims</h4><p>It won't state "probably X" as fact. Numbers and APIs get verified before answering — or labeled "estimate" when they can't be. (With context7 connected, it even pulls the <b>latest official docs</b>.)</p><span class="feat-cmd"><b>discipline</b> · ⚡ auto</span></div>
-        <div class="feat"><span class="ic">👀</span><h4>Fresh-eyes design review</h4><p>A clean-context AI with <b>zero memory</b> of writing the code reviews what you just wrote. It catches the judgment calls a checklist can't — over-engineering, needless features, hidden coupling — with a plain "this looks like too much."</p><span class="feat-cmd"><b>post-write --deep</b> · ⚡ auto</span></div>
-        <div class="feat"><span class="ic">🧠</span><h4>Memory, handover &amp; recall</h4><p>Auto-records your progress every time the chat is compacted, and re-injects the latest handover when a new chat starts. Ask "why did we do it this way?" and it digs the records for the <b>date and reason</b>. (Auto-archives past 20 entries; safe across multiple terminals.)</p><span class="feat-cmd"><b>handover · recall</b> · ⚡ auto</span></div>
-        <div class="feat"><span class="ic">🎯</span><h4>No false positives</h4><p>It won't wrongly call live code "dead." Framework-registered functions, tests, <code>export default</code> components, work-in-progress code… are kept off the dead list by a <b>false-positive index</b> — and every new false positive gets pinned down with a rule and a test.</p><span class="feat-cmd"><b>discipline · scanner</b> · ⚡ auto</span></div>
-        <div class="feat"><span class="ic">🔬</span><h4>Structure checkup</h4><p>Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. Everything comes from scanner evidence — and it tells work-in-progress apart before suggesting a delete.</p><span class="feat-cmd"><b>audit</b> · 🖐 manual</span></div>
-        <div class="feat"><span class="ic">🛡️</span><h4>Machine enforcement (lint · CI)</h4><p>Installs lint (ruff·eslint), type checks, and circular-dependency checks, and can gate every push via GitHub Actions. Complexity and cycle violations <b>fail the build</b>. It never overwrites your config — it asks first.</p><span class="feat-cmd"><b>guards --ci</b> · 🖐 manual</span></div>
-        <div class="feat"><span class="ic">🩺</span><h4>Self-diagnosis</h4><p>Hooks are built to <b>fail silently</b> so they never block Claude Code — which means a missing python3 could turn them off unnoticed. doctor actually runs all 4 hooks and the scanner and shows ✅/❌ so you know they really work.</p><span class="feat-cmd"><b>doctor</b> · 🖐 manual</span></div>
+      <div class="featlist">
+        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">No duplicate reimplementation</span><span class="ftag"><b>pre-write</b> · ⚡ auto</span></div><p class="fdesc">Before you make a new function or file, it searches whether one already exists — so the AI stops rebuilding what it made last session. When there's none, it says "not found across N scanned files" — <b>evidence, not a guess.</b></p></div></div>
+        <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">No band-aid error handling</span><span class="ftag"><b>instant detect</b> · ⚡ auto</span></div><p class="fdesc">Instead of burying an error under a fallback, it makes you look at the <b>cause</b>. Code that silently swallows errors (empty catch, <code>except: pass</code>) is flagged the moment you write it. Genuinely intentional? One comment lets it pass.</p></div></div>
+        <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">No unfounded claims</span><span class="ftag"><b>discipline</b> · ⚡ auto</span></div><p class="fdesc">It won't state "probably X" as fact. Numbers and APIs get verified before answering — or labeled "estimate" when they can't be. (With context7 connected, it even pulls the <b>latest official docs</b>.)</p></div></div>
+        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">Fresh-eyes design review</span><span class="ftag"><b>post-write --deep</b> · ⚡ auto</span></div><p class="fdesc">A clean-context AI with <b>zero memory</b> of writing the code reviews what you just wrote. It catches the judgment calls a checklist can't — over-engineering, needless features, hidden coupling — with a plain "this looks like too much."</p></div></div>
+        <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">Memory, handover &amp; recall</span><span class="ftag"><b>handover · recall</b> · ⚡ auto</span></div><p class="fdesc">Auto-records your progress every time the chat is compacted, and re-injects the latest handover when a new chat starts. Ask "why did we do it this way?" and it digs the records for the <b>date and reason</b>. (Auto-archives past 20 entries; safe across multiple terminals.)</p></div></div>
+        <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">No false positives</span><span class="ftag"><b>discipline · scanner</b> · ⚡ auto</span></div><p class="fdesc">It won't wrongly call live code "dead." Framework-registered functions, tests, <code>export default</code> components, work-in-progress code… are kept off the dead list by a <b>false-positive index</b> — and every new false positive gets pinned down with a rule and a test.</p></div></div>
+        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">Structure checkup</span><span class="ftag"><b>audit</b> · 🖐 manual</span></div><p class="fdesc">Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. Everything comes from scanner evidence — and it tells work-in-progress apart before suggesting a delete.</p></div></div>
+        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>guards --ci</b> · 🖐 manual</span></div><p class="fdesc">Installs lint (ruff·eslint), type checks, and circular-dependency checks, and can gate every push via GitHub Actions. Complexity and cycle violations <b>fail the build</b>. It never overwrites your config — it asks first.</p></div></div>
+        <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">Self-diagnosis</span><span class="ftag"><b>doctor</b> · 🖐 manual</span></div><p class="fdesc">Hooks are built to <b>fail silently</b> so they never block Claude Code — which means a missing python3 could turn them off unnoticed. doctor actually runs all 4 hooks and the scanner and shows ✅/❌ so you know they really work.</p></div></div>
       </div>
     </section>
 
