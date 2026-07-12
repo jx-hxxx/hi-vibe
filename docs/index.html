@@ -62,7 +62,7 @@
   @media (max-width:760px){ .bar nav { display:none; } }
 
   .hero { padding:84px 0 76px; border-top:none; }
-  .hero-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center; }
+  .hero-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
   @media (max-width:860px){ .hero-grid { grid-template-columns:1fr; gap:40px; } }
   .tag-ko { font-size:clamp(30px,5.2vw,52px); line-height:1.2; font-weight:850; letter-spacing:-.03em; margin:14px 0 0; text-wrap:balance; }
   .tag-ko .amber { color:var(--accent); }
@@ -123,7 +123,7 @@
   .fhead .ftitle { font-size:16px; font-weight:700; letter-spacing:-.01em; }
   .fhead .ftag { font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.02em; }
   .fhead .ftag b { color:var(--accent-ink); font-weight:400; }
-  .frow .fdesc { margin:0; color:var(--muted); font-size:14px; line-height:1.62; max-width:82ch; }
+  .frow .fdesc { margin:0; color:var(--muted); font-size:14px; line-height:1.62; max-width:none; }
   .frow .fdesc code { font-family:var(--mono); font-size:.86em; background:var(--surface-2); color:var(--text); padding:1px 6px; border-radius:5px; white-space:nowrap; }
   .panel { margin-top:36px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
   .panel .prow-h { display:grid; grid-template-columns:44px 1fr 132px; align-items:center; gap:12px; padding:15px 20px; border-top:1px solid var(--border); }
@@ -228,7 +228,7 @@
             <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“다 했어” → 점검하고 문서도 맞추기</span><span class="kind">AI</span></div>
             <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">숫자·사실은 단정 말고 → 확인하고 답하기</span><span class="kind">AI</span></div>
           </div>
-          <p class="cluster-cap">🟢 초록불 = 기계가 확실히 지켜요 · ⚪ 빈 불 = AI가 알아서 해줘요</p>
+          <p class="cluster-cap">🟢 초록불 = 기계가 확실히 지켜요<br>⚪ 빈 불 = AI가 알아서 해줘요</p>
         </div>
       </div>
     </section>
@@ -274,22 +274,22 @@
       </div>
 
       <div class="featlist">
-        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">중복 재구현 방지</span><span class="ftag"><b>pre-write</b> · ⚡ 자동</span></div><p class="fdesc">새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요. AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b> — 추측이 아니라 근거로.</p></div></div>
-        <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">에러 땜빵 금지</span><span class="ftag"><b>즉시 감지</b> · ⚡ 자동</span></div><p class="fdesc">에러를 fallback으로 덮는 대신 <b>원인부터</b> 보게 해요. 에러를 몰래 삼키는 코드(빈 catch, <code>except: pass</code>)를 쓰는 순간 감지해서 알려줘요. 정말 의도한 거면 주석 한 줄로 통과.</p></div></div>
-        <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">근거 없는 단정 금지</span><span class="ftag"><b>규율</b> · ⚡ 자동</span></div><p class="fdesc">"아마 이럴 거예요"를 사실처럼 말하지 않게 해요. 수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 공식 문서</b>까지 자동 조회)</p></div></div>
-        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">남의 눈 설계 리뷰</span><span class="ftag"><b>post-write --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요. 체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
-        <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b> · ⚡ 자동</span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요. "예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p></div></div>
-        <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요. 프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드… 이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
-        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>audit</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요. 전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
-        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>guards --ci</b> · 🖐 직접</span></div><p class="fdesc">린트(ruff·eslint)·타입 검사·순환 의존 검사를 설치하고, 원하면 GitHub Actions로 push마다 검문해요. 복잡도·순환 위반은 <b>빌드 실패</b>로 막아요. 기존 설정은 안 덮고 물어보고 설치.</p></div></div>
-        <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b> · 🖐 직접</span></div><p class="fdesc">훅은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요. doctor가 훅 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p></div></div>
+        <div class="frow"><span class="fic">🔍</span><div><div class="fhead"><span class="ftitle">중복 재구현 방지</span><span class="ftag"><b>pre-write</b> · ⚡ 자동</span></div><p class="fdesc">새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요.<br>AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b> — 추측이 아니라 근거로.</p></div></div>
+        <div class="frow"><span class="fic">🩹</span><div><div class="fhead"><span class="ftitle">에러 땜빵 금지</span><span class="ftag"><b>즉시 감지</b> · ⚡ 자동</span></div><p class="fdesc">에러를 fallback으로 덮는 대신 <b>원인부터</b> 보게 해요.<br>에러를 몰래 삼키는 코드(빈 catch, <code>except: pass</code>)를 쓰는 순간 감지해서 알려줘요. 정말 의도한 거면 주석 한 줄로 통과.</p></div></div>
+        <div class="frow"><span class="fic">📊</span><div><div class="fhead"><span class="ftitle">근거 없는 단정 금지</span><span class="ftag"><b>규율</b> · ⚡ 자동</span></div><p class="fdesc">"아마 이럴 거예요"를 사실처럼 말하지 않게 해요.<br>수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 공식 문서</b>까지 자동 조회)</p></div></div>
+        <div class="frow"><span class="fic">👀</span><div><div class="fhead"><span class="ftitle">남의 눈 설계 리뷰</span><span class="ftag"><b>post-write --deep</b> · ⚡ 자동</span></div><p class="fdesc">코드를 쓴 기억이 <b>전혀 없는</b> 깨끗한 AI가 방금 짠 걸 봐요.<br>체크리스트가 못 잡는 판단 — 과잉설계·불필요한 기능·숨은 결합 — 을 "이건 좀 과한데?" 하고 짚어줘요.</p></div></div>
+        <div class="frow"><span class="fic">🧠</span><div><div class="fhead"><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b> · ⚡ 자동</span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화 시작하면 최근 인수인계를 다시 넣어줘요.<br>"예전에 왜 이렇게 했지?" 하면 기록을 뒤져 <b>날짜·이유까지</b> 답하고요. (20개 넘으면 자동 보관, 여러 터미널 동시에 써도 안 꼬여요)</p></div></div>
+        <div class="frow"><span class="fic">🎯</span><div><div class="fhead"><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b> · ⚡ 자동</span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요.<br>프레임워크가 이름 없이 부르는 함수, 테스트, <code>export default</code> 컴포넌트, 아직 만드는 중인 코드… 이런 걸 죽은 코드로 오해하지 않게 오탐 사례를 인덱스로 관리하고, 새 오탐이 나오면 규칙·테스트로 박제해요.</p></div></div>
+        <div class="frow"><span class="fic">🔬</span><div><div class="fhead"><span class="ftitle">구조 점검</span><span class="ftag"><b>audit</b> · 🖐 직접</span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해서, 똑같은 중복만이 아니라 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요.<br>전부 스캐너 증거로만 말하고, 지우기 전 "아직 만드는 중"인지 구분해요.</p></div></div>
+        <div class="frow"><span class="fic">🛡️</span><div><div class="fhead"><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>guards --ci</b> · 🖐 직접</span></div><p class="fdesc">린트(ruff·eslint)·타입 검사·순환 의존 검사를 설치하고, 원하면 GitHub Actions로 push마다 검문해요.<br>복잡도·순환 위반은 <b>빌드 실패</b>로 막아요. 기존 설정은 안 덮고 물어보고 설치.</p></div></div>
+        <div class="frow"><span class="fic">🩺</span><div><div class="fhead"><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b> · 🖐 직접</span></div><p class="fdesc">훅은 Claude Code를 방해하지 않으려고 <b>조용히 실패</b>하도록 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요.<br>doctor가 훅 4종과 스캐너를 <b>실제로 돌려서</b> ✅/❌로 진짜 작동하는지 확인해줘요.</p></div></div>
       </div>
     </section>
 
     <section id="honest-ko">
       <p class="eyebrow">정직함이 곧 기능이에요</p>
       <h2>여기까진 기계, 여기부턴 AI.</h2>
-      <p class=”lead”>”전부 자동!”이라고 뭉뚱그리지 않아요. <b>기계가 확실히</b> 하는 것과 <b>AI가 알아서</b> 하는 것을 나눠서 보여줘요.<br>불이 켜져 있으면 기계가 보장, 테두리만 있으면 AI에게 맡긴 거예요.</p>
+      <p class="lead">”전부 자동!”이라고 뭉뚱그리지 않아요. <b>기계가 확실히</b> 하는 것과 <b>AI가 알아서</b> 하는 것을 나눠서 보여줘요.<br>불이 켜져 있으면 기계가 보장, 테두리만 있으면 AI에게 맡긴 거예요.</p>
       <div class="panel">
         <div class="prow-h m"><span class="lamp2"></span><span class="what">위험한 코드(숨는 에러·비밀번호)를 그 자리에서 잡기<small>코드 저장하는 순간</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
         <div class="prow-h m"><span class="lamp2"></span><span class="what">대화가 정리되기 전에 진행상황 저장<small>대화가 길어질 때</small></span><span class="badge m">⚙ 기계가 확실히</span></div>
@@ -299,7 +299,7 @@
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“다 했어” 하면 점검하고 문서도 맞추기<small>다 만든 후</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“검토해줘” 하면 다른 눈으로 과한 설계 잡기<small>설계 살펴볼 때</small></span><span class="badge ai">🤖 AI가 알아서</span></div>
       </div>
-      <div class=”honest-note”><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:pre-write</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
+      <div class="honest-note"><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:pre-write</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
     </section>
 
     <section id="commands-ko">
@@ -342,7 +342,7 @@
     <section id="living-ko">
       <span class="living-tag"><span class="pulse"></span>이 목록은 자동으로 채워져요</span>
       <h2>이 페이지가 안 낡는다는 게, 증거예요.</h2>
-      <p class=”lead” style=”max-width:none”>”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
+      <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
         <div class="rel"><div class="v">v0.6.0<small>2026-07-12</small></div><div class="h"><b>숨어있던 버그들 수정 + 검사 정확도 개선.</b> <span>실제로 써보다 발견한 것들을 고치고, 아직 만드는 중인 코드나 화면 컴포넌트를 "안 쓰는 코드"로 오해하지 않게 다듬었어요.</span></div></div>
@@ -392,7 +392,7 @@
         <div>
           <p class="eyebrow">AI-coding seatbelt · A Claude Code plugin</p>
           <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br><span class="amber">hi-vibe</span> is your seatbelt.</h1>
-          <p class="tag-en">AI랑 과속해도, 안전벨트는 hi-vibe가.</p>
+          <p class="tag-en">The vibe-coding seatbelt for Claude Code.</p>
           <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, lets docs go stale… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
           <div class="cta">
             <a class="btn primary" href="#install-en">Install</a>
@@ -402,14 +402,14 @@
         <div class="clcol">
           <div class="cluster" aria-hidden="true">
             <div class="head"><span>WATCHING NOW</span><span class="armed"><span class="pulse"></span>ARMED</span></div>
-            <div class="ind m"  style="animation-delay:.15s"><span class="lamp"></span><span class="txt">Catch hidden errors &amp; secrets on the spot</span><span class="kind">machine</span></div>
-            <div class="ind m"  style="animation-delay:.30s"><span class="lamp"></span><span class="txt">Save your progress before the chat resets</span><span class="kind">machine</span></div>
+            <div class="ind m"  style="animation-delay:.15s"><span class="lamp"></span><span class="txt">Catch hidden errors &amp; secrets</span><span class="kind">machine</span></div>
+            <div class="ind m"  style="animation-delay:.30s"><span class="lamp"></span><span class="txt">Save progress before the chat resets</span><span class="kind">machine</span></div>
             <div class="ind m"  style="animation-delay:.45s"><span class="lamp"></span><span class="txt">Re-arm the rules on a fresh start</span><span class="kind">machine</span></div>
             <div class="ind ai" style="animation-delay:.62s"><span class="lamp"></span><span class="txt">“Make me X” → search if it exists first</span><span class="kind">AI</span></div>
             <div class="ind ai" style="animation-delay:.76s"><span class="lamp"></span><span class="txt">“Done” → review &amp; sync the docs</span><span class="kind">AI</span></div>
             <div class="ind ai" style="animation-delay:.90s"><span class="lamp"></span><span class="txt">Numbers &amp; facts → verify, don’t guess</span><span class="kind">AI</span></div>
           </div>
-          <p class="cluster-cap">🟢 Lit = machine-guaranteed · ⚪ Hollow = AI does it on its own</p>
+          <p class="cluster-cap">🟢 Lit = machine-guaranteed<br>⚪ Hollow = AI does it on its own</p>
         </div>
       </div>
     </section>
@@ -470,7 +470,7 @@
     <section id="honest-en">
       <p class="eyebrow">Honesty is the feature</p>
       <h2>Machine up to here, AI beyond.</h2>
-      <p class=”lead”>We don’t hand-wave “it’s all automatic.” We separate what the <b>machine guarantees</b> from what the <b>AI does on its own</b>.<br>A lit lamp means guaranteed; a hollow one means it’s up to the AI.</p>
+      <p class="lead">We don’t hand-wave “it’s all automatic.” We separate what the <b>machine guarantees</b> from what the <b>AI does on its own</b>.<br>A lit lamp means guaranteed; a hollow one means it’s up to the AI.</p>
       <div class="panel">
         <div class="prow-h m"><span class="lamp2"></span><span class="what">Catch risky code (hidden errors &amp; secrets) on the spot<small>the moment you save code</small></span><span class="badge m">⚙ Guaranteed</span></div>
         <div class="prow-h m"><span class="lamp2"></span><span class="what">Save your progress before the chat gets compacted<small>when the chat runs long</small></span><span class="badge m">⚙ Guaranteed</span></div>
@@ -480,7 +480,7 @@
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Done” → review &amp; sync the docs<small>after it’s built</small></span><span class="badge ai">🤖 AI does it</span></div>
         <div class="prow-h ai"><span class="lamp2"></span><span class="what">“Review this” → fresh eyes catch over-engineering<small>when reviewing a design</small></span><span class="badge ai">🤖 AI does it</span></div>
       </div>
-      <div class=”honest-note”><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:pre-write</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
+      <div class="honest-note"><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:pre-write</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
     </section>
 
     <section id="commands-en">
@@ -523,7 +523,7 @@
     <section id="living-en">
       <span class="living-tag"><span class="pulse"></span>This list fills itself in</span>
       <h2>This page not going stale is the proof.</h2>
-      <p class=”lead” style=”max-width:none”>We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
+      <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
         <div class="rel"><div class="v">v0.6.0<small>2026-07-12</small></div><div class="h"><b>Squashed hidden bugs + sharper detection.</b> <span>Fixed things found in real use, and stopped mistaking work-in-progress code or UI components for "dead code".</span></div></div>
