@@ -353,9 +353,9 @@
         </tbody>
       </table></div></div>
       <div class="honest-note"><span>🔍</span><div><b>review는 하나에 옵션 두 개.</b><br>
-        <code>review</code>는 <b>방금 만든 기능 하나</b>를, <code>review --all</code>은 <b>세션에서 바뀐 기능 전체</b>를 한 번에 검증해요 (이미 봤고 안 바뀐 건 자동 skip — 여러 개 몰아 만든 뒤 “전체 리뷰해줘”에 좋아요).<br>
-        <code>review --deep</code>은 <b>코드를 짠 기억이 없는 딴 클로드</b>(별도 에이전트)를 새로 불러와, 편견 없이 깨끗한 눈(fresh-eyes)으로 과잉설계·숨은 결합을 봐요 — 짠 본인은 못 보는 것.<br>
-        정리하면 <code>--all</code>은 <b>얼마나 넓게</b>(하나→전체), <code>--deep</code>은 <b>누가 보나</b>(짠 클로드→딴 클로드) — 다른 축이라 <code>review --all --deep</code>도 돼요.</div></div>
+        <code>review</code>는 <b>방금 만든 기능 하나</b>를, <code>review --all</code>은 <b>세션에서 바뀐 기능 전체</b>를 한 번에 검증해요 (안 바뀐 건 자동 skip — 여러 개 몰아 만든 뒤 “전체 리뷰해줘”에 좋아요).<br>
+        <code>review --deep</code>은 <b>코드를 짠 기억이 없는 딴 클로드</b>(별도 에이전트)를 새로 불러와, 편견 없이 깨끗한 눈(fresh-eyes)으로 과잉설계·숨은 결합을 봐요 — 새로운 시각으로 설계를 검증하는 거예요.<br>
+        정리하면 <code>--all</code>은 <b>모든 기능 전체</b>를, <code>--deep</code>은 <b>새로운 클로드</b>가 검증해요. 서로 별개의 축이라 <code>review --all --deep</code>도 사용 가능해요.</div></div>
       <div class="honest-note"><span>🔁</span><div><b>check와 gate는 리듬이 반대예요.</b><br>
         <code>check</code>는 <b>내가 돌리는 진단</b> — 구조가 궁금할 때마다 몇 번이든 반복해요.<br>
         <code>gate --ci</code>는 <b>프로젝트마다 한 번 깔면 끝인 관문</b> — 설치는 1회, 이후 push마다 GitHub이 자동 검문(다시 칠 필요 없어요).</div></div>
