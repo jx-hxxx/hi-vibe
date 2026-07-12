@@ -366,9 +366,9 @@
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.10.0<small>2026-07-12</small></div><div class="h"><b>외국인이 써도 자연스럽게.</b> <span>출력 언어를 사용자가 대화에서 쓰는 언어에 맞춰요 — `review --deep`·`doctor`·세션 알림이 한국어에 고정돼 있던 걸 풀었고, 세션 알림은 한/영 병기로. (스킬 프롬프트는 한국어 그대로 — Claude가 한국어를 완벽히 읽어 실행하니 런타임 손해가 없어요.)</span></div></div>
         <div class="rel"><div class="v">v0.9.0<small>2026-07-12</small></div><div class="h"><b>여러 기능을 한 번에 리뷰하는 `review --all`.</b> <span>한 세션에 기능을 여러 개 만들어도 "전체 리뷰해줘" 한 번으로 다 점검해요.<br>이미 봤고 그 뒤로 안 바뀐 코드는 자동으로 건너뛰고요. 세션당 1회 알림에서 이 기능을 살짝 알려줍니다.</span></div></div>
         <div class="rel"><div class="v">v0.8.0<small>2026-07-12</small></div><div class="h"><b>명령어 이름을 쉬운 동사로.</b> <span>pre-write→find, post-write→review, audit→check, guards→gate.<br>자동 명령어엔 "이 함수 만들어줘" 같은 트리거 예시를 표에 넣고, gate는 로컬/--ci 차이를 쉽게 설명.</span></div></div>
-        <div class="rel"><div class="v">v0.7.0<small>2026-07-12</small></div><div class="h"><b>경고에 "왜 위험한지" 교육 추가.</b> <span>비밀키는 위험한 이유를 항상 한 줄로 알려주고, 잦은 에러 삼킴은 짧게 짚되 자세한 설명은 물어볼 때만. 세션 시작엔 컨텍스트 관리 팁 한 줄.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -556,9 +556,9 @@
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.10.0<small>2026-07-12</small></div><div class="h"><b>Natural for non-Korean users too.</b> <span>Output now follows the language you speak — `review --deep`, `doctor`, and the session nudge no longer force Korean, and the nudge is bilingual. (Skill prompts stay Korean — Claude reads Korean at full fidelity, so there's no runtime cost.)</span></div></div>
         <div class="rel"><div class="v">v0.9.0<small>2026-07-12</small></div><div class="h"><b>New `review --all` reviews a whole session at once.</b> <span>Build several features, then review them all with one command. Code you already reviewed and haven't changed since is skipped automatically. The once-a-session nudge quietly surfaces it.</span></div></div>
         <div class="rel"><div class="v">v0.8.0<small>2026-07-12</small></div><div class="h"><b>Commands renamed to plain verbs.</b> <span>pre-write→find, post-write→review, audit→check, guards→gate. Auto commands now show a trigger example, and gate explains local vs --ci clearly.</span></div></div>
-        <div class="rel"><div class="v">v0.7.0<small>2026-07-12</small></div><div class="h"><b>Warnings now teach the "why".</b> <span>Secrets always get a one-line reason; the frequent error-swallow stays terse and explains only when asked. Sessions open with a one-line context-management tip.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

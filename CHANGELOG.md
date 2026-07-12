@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-07-12
+<!-- show:ko **외국인이 써도 자연스럽게.** 출력 언어를 사용자가 대화에서 쓰는 언어에 맞춰요 — `review --deep`·`doctor`·세션 알림이 한국어에 고정돼 있던 걸 풀었고, 세션 알림은 한/영 병기로. (스킬 프롬프트는 한국어 그대로 — Claude가 한국어를 완벽히 읽어 실행하니 런타임 손해가 없어요.) -->
+<!-- show:en **Natural for non-Korean users too.** Output now follows the language you speak — `review --deep`, `doctor`, and the session nudge no longer force Korean, and the nudge is bilingual. (Skill prompts stay Korean — Claude reads Korean at full fidelity, so there's no runtime cost.) -->
+
+### Changed
+- **언어 적응형 출력** — `write-gate`·`grounded-answers`·`root-cause-first`·`guards-setup` 스킬에 "출력은 사용자가 대화에서 쓰는 언어를 따른다(기존 문서 언어 우선)" 지침 한 줄씩 추가. 프롬프트 본문은 한국어 유지 — Claude가 그대로 실행하므로 번역 불필요.
+- **fresh-eyes(`review --deep`) 출력 언어** — "출력 (한국어)" 고정 → 사용자 언어에 맞춰 라벨까지 번역.
+- **`doctor` 리포트 언어** — "plain Korean" 고정 → 사용자 언어.
+- **세션 알림 한/영 병기** — `stop_nudge`는 사용자에게 직접 보이는(`systemMessage`) 유일한 훅이라, 한국어 + 영어를 함께 표시. (나머지 훅은 `additional_context`라 Claude가 읽고 사용자 언어로 전달 — 이미 문제없음.)
+
+### Tests
+- 세션 알림 테스트에 한/영 병기 검증 추가. 69개 유지.
+
 ## [0.9.0] - 2026-07-12
 <!-- show:ko **여러 기능을 한 번에 리뷰하는 `review --all`.** 한 세션에 기능을 여러 개 만들어도 "전체 리뷰해줘" 한 번으로 다 점검해요.<br>이미 봤고 그 뒤로 안 바뀐 코드는 자동으로 건너뛰고요. 세션당 1회 알림에서 이 기능을 살짝 알려줍니다. -->
 <!-- show:en **New `review --all` reviews a whole session at once.** Build several features, then review them all with one command. Code you already reviewed and haven't changed since is skipped automatically. The once-a-session nudge quietly surfaces it. -->

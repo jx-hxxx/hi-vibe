@@ -53,10 +53,13 @@ def main(payload):
         "Stop",
         system_message=(
             "hi-vibe: 이번 세션에 코드 변경이 있었어요. 실질 변경이면 "
-            "/hi-vibe:log 로 CHANGELOG에 남기고, '전체 리뷰해줘'"
-            "(/hi-vibe:review --all)로 이번 작업 전체 — 기능 여러 개도 "
-            "한꺼번에 — 품질·문서를 점검받을 수 있어요. 이미 본 건 알아서 "
-            "건너뜁니다. (사소한 수정이면 무시해도 돼요 — 이 알림은 세션당 1회)"
+            "/hi-vibe:log 로 CHANGELOG에 남기고, /hi-vibe:review --all "
+            "(\"전체 리뷰해줘\")로 이번 작업 전체를 품질·문서까지 점검받을 수 "
+            "있어요 — 이미 본 건 건너뜁니다. 세션당 1회 · 사소하면 무시 OK.\n"
+            "— You changed code this session. Log it with /hi-vibe:log, and run "
+            "/hi-vibe:review --all to review the whole session at once "
+            "(already-reviewed files are skipped). Once per session; "
+            "ignore if trivial."
         ),
     )
 

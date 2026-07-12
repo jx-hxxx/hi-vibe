@@ -11,8 +11,9 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/doctor.py" --root <project>
 
 (default `--root` = current project; honor `--root` in $ARGUMENTS if given)
 
-Then relay the report to the user in kind, plain Korean. **LEAD WITH THE
-CONCLUSION, not a wall of warnings:**
+Then relay the report to the user in kind, plain language — **in whatever
+language the user is speaking** (Korean if they use Korean, English if English).
+**LEAD WITH THE CONCLUSION, not a wall of warnings:**
 
 1. First line: is hi-vibe ITSELF healthy? (python3 + 훅 4종 + 스캐너가
    ✅면 "hi-vibe는 정상이에요"로 단언). ❌(실패)가 있을 때만 그걸 먼저.

@@ -154,6 +154,7 @@ class StopNudgeTest(TempProject):
         first = self.run_nudge(transcript)
         self.assertIn("CHANGELOG", first)
         self.assertIn("review --all", first)  # 전체 리뷰 발견성도 한 번에 안내
+        self.assertIn("You changed code", first)  # 한/영 병기 (외국인 사용자용)
         second = self.run_nudge(transcript)  # 같은 세션에선 침묵
         self.assertEqual(second, "")
 
