@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="hi-vibe — 바이브코딩 안전벨트. AI 코딩 실수를 문서 자동화·AI 규율·기계 강제로 막는 Claude Code 플러그인.">
-<title>hi-vibe — AI 코딩 안전벨트</title>
+<title>hi-vibe</title>
 <link rel="icon" type="image/png" href="images/favicon.png">
 <link rel="apple-touch-icon" href="images/favicon.png">
 <style>
@@ -250,11 +250,11 @@
       <h2>AI가 짠 코드는 같은 실수를 반복해요.</h2>
       <p class="lead">편할수록 조용히 쌓이는 문제들. hi-vibe가 하나씩 잡아줘요.</p>
       <div class="rows">
-        <div class="prow"><span class="warn">또 만들기</span><div><b>있던 걸 또 만들어요.</b> <span>대화가 새로 시작되면 앞에 만든 걸 잊고 똑같은 걸 다시 짜요.</span></div></div>
-        <div class="prow"><span class="warn">대충 덮기</span><div><b>에러를 대충 덮어요.</b> <span>원인을 안 고치고 임시로 가려서, 버그가 조용히 숨어요.</span></div></div>
-        <div class="prow"><span class="warn">맘대로</span><div><b>헷갈리는 걸 안 물어봐요.</b> <span>애매한 선택을 그냥 자기 마음대로 정해버려요.</span></div></div>
-        <div class="prow"><span class="warn">지어내기</span><div><b>확인도 안 하고 단정해요.</b> <span>근거 없는 숫자를 사실인 것처럼 말해요.</span></div></div>
-        <div class="prow"><span class="warn">설명 안 맞음</span><div><b>설명이 코드랑 따로 놀아요.</b> <span>코드는 바뀌었는데 설명은 옛날 그대로 남아요.</span></div></div>
+        <div class="prow"><span class="warn">또 만들기</span><div><b>있던 걸 또 만들어요.</b> <span>AI는 기억이 세션마다 끊겨서, 이미 만든 <b>함수·헬퍼·타입(자료구조)</b>을 잊고 똑같이 다시 짜요.</span></div></div>
+        <div class="prow"><span class="warn">대충 덮기</span><div><b>에러를 대충 덮어요.</b> <span>원인 대신 <b>try/except로 삼키거나 fallback·기본값</b>으로 임시로 가려서, 버그가 조용히 숨어요.</span></div></div>
+        <div class="prow"><span class="warn">맘대로</span><div><b>헷갈리는 걸 안 물어봐요.</b> <span><b>해석이 여러 갈래인 요청·빠진 요구사항</b>을 확인 없이 자기 마음대로 정해버려요.</span></div></div>
+        <div class="prow"><span class="warn">지어내기</span><div><b>확인도 안 하고 단정해요.</b> <span><b>API 제한·가격·버전</b> 같은 걸 문서도 안 보고 근거 없는 숫자로 단정해요.</span></div></div>
+        <div class="prow"><span class="warn">덩치 키우기</span><div><b>한 파일에 다 몰아넣어요.</b> <span><b>엣지케이스는 건너뛰고</b>, 함수·파일을 계속 키워 손대기 무서운 ‘갓파일’이 돼요.</span></div></div>
       </div>
     </section>
 
@@ -414,7 +414,7 @@
           <p class="eyebrow">AI-coding seatbelt · A Claude Code plugin</p>
           <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br><span class="amber">hi-vibe</span> is your seatbelt.</h1>
           <p class="tag-en">The vibe-coding seatbelt for Claude Code.</p>
-          <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, lets docs go stale… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
+          <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, skips edge cases and piles everything into god-files… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
           <div class="cta">
             <a class="btn primary" href="#install-en">Install</a>
             <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">View on GitHub ↗</a>
@@ -440,11 +440,11 @@
       <h2>AI-written code repeats the same mistakes.</h2>
       <p class="lead">The more convenient it is, the more quietly these pile up. hi-vibe catches them one by one.</p>
       <div class="rows">
-        <div class="prow"><span class="warn">Rebuilds</span><div><b>Rebuilds what already exists.</b> <span>On a fresh chat it forgets what it made and writes the same thing again.</span></div></div>
-        <div class="prow"><span class="warn">Papers over</span><div><b>Papers over errors.</b> <span>It hides the symptom instead of fixing the cause, so bugs stay hidden.</span></div></div>
-        <div class="prow"><span class="warn">Decides alone</span><div><b>Won’t ask when unsure.</b> <span>It just makes ambiguous calls on its own.</span></div></div>
-        <div class="prow"><span class="warn">Makes it up</span><div><b>States guesses as fact.</b> <span>It presents unverified numbers as if they were official specs.</span></div></div>
-        <div class="prow"><span class="warn">Docs drift</span><div><b>Docs stop matching the code.</b> <span>The code changed; the explanation stayed the same.</span></div></div>
+        <div class="prow"><span class="warn">Rebuilds</span><div><b>Rebuilds what already exists.</b> <span>Its memory resets each chat, so it forgets the <b>functions, helpers &amp; types</b> it made and writes them again.</span></div></div>
+        <div class="prow"><span class="warn">Papers over</span><div><b>Papers over errors.</b> <span>It hides the cause with a <b>try/except or a fallback/default</b> instead of fixing it, so bugs stay hidden.</span></div></div>
+        <div class="prow"><span class="warn">Decides alone</span><div><b>Won’t ask when unsure.</b> <span>It makes <b>ambiguous or under-specified</b> calls on its own instead of asking.</span></div></div>
+        <div class="prow"><span class="warn">Makes it up</span><div><b>States guesses as fact.</b> <span>It states <b>API limits, pricing, versions</b> as fact without checking the docs.</span></div></div>
+        <div class="prow"><span class="warn">God files</span><div><b>Everything piles into one file.</b> <span><b>Edge cases get skipped</b> and functions &amp; files keep growing into a scary “god file”.</span></div></div>
       </div>
     </section>
 
