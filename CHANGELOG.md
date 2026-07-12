@@ -5,6 +5,10 @@
 
 ## [Unreleased]
 
+### Docs
+- **README 정비** — `README.ko.md` 목차(TOC)·검증 섹션 정리, `README.md`(EN)를 동일 구조로 정렬, 랜딩과 프롬프트 AI 목록 통일(Claude·Codex·Gemini).
+- **랜딩 감사 섹션** — "직접 물어보기"를 상세 평가 프롬프트로 교체 + 박스 스크롤 처리.
+
 ## [0.13.0] - 2026-07-13
 <!-- show:ko **repo-xray near-dup이 이제 몇 분이 아니라 몇십 초.** 함수 쌍마다 O(L²) 유사도 비교를 돌리던 걸 지문(shingle) 선필터로 바꿔, 완전탐색과 '똑같은' 결과를 훨씬 빠르게(측정: 14분→30초, ratio 호출 5750→213). 상위 20개만 보여주던 near-dup 리포트도 총 개수를 함께 알려 정직하게. 그리고 "느리다=고장"이라 단정하고 죽였다 다시 돌리는 실패를 막는 규율을 grounded-answers에 추가 — 실제로 이 규칙을 어긴 사례에서 나온 개선. -->
 <!-- show:en **repo-xray near-dup now takes tens of seconds, not minutes.** The O(L^2) similarity call that ran on every function pair is now gated by a shingle fingerprint prefilter — identical results to the exhaustive scan, far faster (measured: 14min→30s, ratio() calls 5750→213). The near-dup report, which showed only the top pairs, now also reports the true total so nothing is hidden. And a discipline was added to grounded-answers against the "slow == broken, kill-and-retry" failure — born from a real case of breaking that very rule. -->

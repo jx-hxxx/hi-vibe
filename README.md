@@ -1,277 +1,483 @@
-<h1><img src="docs/images/hi-vibe.png" alt="hi-vibe" height="34"> &nbsp;👋</h1>
+<h1><img src="docs/images/hi-vibe.png" alt="hi-vibe" height="34"> &nbsp;hi-vibe</h1>
 
 [![hi-vibe tests](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml/badge.svg)](https://github.com/jx-hxxx/hi-vibe/actions/workflows/test.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 ![python: 3.8+](https://img.shields.io/badge/python-3.8%2B-green.svg)
 
-> 🇰🇷 **한국어로 읽으시려면 → [README.ko.md](./README.ko.md)** &nbsp;·&nbsp; 🇬🇧 English continues below.
+> 🇰🇷 **한국어로 읽기 → [README.ko.md](./README.ko.md)** · 🇬🇧 English continues below.
 
-> **Floor it with AI — hi-vibe is your seatbelt.**
+> **AI moves fast. Your project doesn't drift.**
 
-Vibe-coding is convenient, but AI-written code keeps repeating the same problems:
+A **vibe-coding seatbelt** that keeps Claude Code from rebuilding code that
+already exists, papering over errors, and forgetting yesterday's decisions.
 
-- 😵 Loses memory across sessions and **re-builds similar functions, helpers & types** it already made
-- 🩹 On errors, **swallows them in try/except or band-aids with fallbacks/defaults** instead of finding the cause (so bugs hide silently)
-- 🤷 Runs with **ambiguous or under-specified requests** on its own, without asking
-- 📊 States unverified **API limits, pricing & versions** **as if they were official specs**
-- 🗿 **Skips edge cases** and dumps everything into one **"god file"**, and docs drift from the code
+- **Before writing** — search for the existing implementation first
+- **While coding** — catch swallowed errors and hardcoded secrets on the spot
+- **Between sessions** — record and restore progress automatically
+- **After finishing** — review the code and sync the docs
 
-`hi-vibe` blocks all of these with three layers: **doc automation + AI discipline + machine enforcement.**
+It's not just a prompt pack. With **4 real Claude Code hooks · 72 regression
+tests · per-project activation · standard-library-only core features**, it puts
+the checks, records, and verification that AI often skips right into your
+workflow.
 
-> **⚠️ Not a "bug detector."**
-> hi-vibe doesn't scan your code to find bugs — it's a **seatbelt that stops the AI
-> from cutting corners.** Catching bugs is still Claude's reasoning; hi-vibe is the
-> **discipline, docs, and machinery that force that reasoning to be rigorous.**
-> Three tiers, each turned on differently:
->
-> - 🔒 **Free once installed (hooks)** — after `init`, every code write is checked for
->   **error-swallowing & hardcoded secrets by the machine**, and handover is saved on
->   each compaction. *The seatbelt that's actually always on.*
-> - 🧭 **On demand (find · review · check)** — "make me… / done / find duplicates" runs
->   the discipline checklist and structure scan. Powerful, but **the AI can skip it.**
->   *A coach nagging beside you — ignore it and it won't catch you.*
-> - 🛡️ **Opt-in (gate)** — lints complexity & circular deps. Catches the most, but it's
->   **invasive**, so install it once when you're ready (not required).
->
-> So it's **not "a tool that auto-catches everything" — it's "a device that forces the
-> discipline you'd otherwise skip."** Set expectations there and you won't be let down.
+> **Read this first:** hi-vibe is not a tool that automatically finds every bug.
+> It's a set of working disciplines plus automatic safeguards that make the AI
+> search for evidence, leave records, and verify — at the moments it tends to
+> gloss over.
+
+<details>
+<summary><strong>Table of contents</strong></summary>
+
+- [1-Minute Install](#1-minute-install)
+- [What changes after install?](#what-changes-after-install)
+- [How is this different from a prompt pack?](#how-is-this-different-from-a-prompt-pack)
+- [Why is it trustworthy?](#why-is-it-trustworthy)
+- [Docs it creates in your project](#docs-it-creates-in-your-project)
+- [Structure check: check](#structure-check-check)
+- [Optional quality gate: gate](#optional-quality-gate-gate)
+- [Verify before and after writing code](#verify-before-and-after-writing-code)
+- [Commands at a glance](#commands-at-a-glance)
+- [Optional integrations](#optional-integrations)
+- [Updates](#updates)
+- [FAQ](#faq)
+- [Verify it yourself](#verify-it-yourself)
+- [Credits and license](#credits-and-license)
+
+</details>
 
 ---
 
-## Install
+## 1-Minute Install
 
-Run these three lines in order, inside Claude Code:
+Run these commands in order inside Claude Code.
 
-```
-/plugin marketplace add jx-hxxx/hi-vibe        ← 1) register the marketplace
-/plugin install hi-vibe@hi-vibe-marketplace    ← 2) install the plugin
-/reload-plugins                                ← 3) apply it (required!)
-```
-
-> **Don't skip step 3, `/reload-plugins`.** Installing alone does NOT turn on
-> the commands and hooks yet — this line activates them in the current session
-> (no full Claude Code restart needed).
-
-> **Requirement**: Python 3.8+ (the hooks need a `python3` command).
-> On Windows without `python3`, create a `python` alias.
-
-> **(Optional) context7 MCP — more accurate when present.** When your code
-> touches an external library's API, `find` fetches the **latest official
-> docs** instead of relying on the AI's stale memory, preventing outdated code.
-> **Not required** — without it, hi-vibe falls back to web search, and if that
-> fails too, labels the answer as an estimate. To install it (free API key
-> needed) follow the official guide → https://context7.com · Claude Code:
-> `claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp --api-key <your_key>`
-
-> **(Optional) claude-hud — if you want to watch your context usage.** It shows
-> **remaining context / tokens** live in the status line. It pairs well with
-> hi-vibe: watch how much context is left, and when there's room run `/compact`
-> — hi-vibe auto-records handover right before that (so "keep context short +
-> handover often" becomes visible). Install:
-> ```
-> /plugin marketplace add jarrodwatts/claude-hud
-> /plugin install claude-hud@claude-hud
-> /reload-plugins
-> ```
-> Then run `/claude-hud:setup` to enable the status line.
-
-## First run
-
-Run the first three in order; the last two are optional, whenever you need them:
-
-```
-/hi-vibe:welcome    ← start here if you're not sure what to do
-/hi-vibe:doctor     ← once after install: actually runs the hooks to verify they work
-/hi-vibe:init       ← once per new project: installs the doc system + activates hooks
-/hi-vibe:check      ← (optional) structure checkup: find duplicates / god-files — repeat anytime
-/hi-vibe:gate --ci  ← (optional) install a quality gate: once per project → auto on every push
+```text
+/plugin marketplace add jx-hxxx/hi-vibe
+/plugin install hi-vibe@hi-vibe-marketplace
+/reload-plugins
 ```
 
-Run `init` **once per project (folder)** — inside the app folder where you want
-to use hi-vibe. The marketplace/install/apply steps (the three lines above) are
-done just once on your machine.
+Once installed, in each project folder where you want to use hi-vibe:
 
-> Hooks are designed to **"fail silently"** so they never block Claude Code.
-> The trade-off: if `python3` is missing they can be **silently off** — which is
-> exactly why `doctor` runs the 4 hooks and the scanner for real to confirm.
-
-Running `init` creates these 4 documents and activates the hooks for this project:
-
-| Document | Role |
-|---|---|
-| `CLAUDE.md` | Project map — overview, requirements, folder map (keep it lean) |
-| `<folder>/MODULE.md` | Per-folder design — features, models, gotchas |
-| `handover.md` | Session handover — so the next session doesn't lose context |
-| `CHANGELOG.md` | Substantive change history — what changed, and when |
-
-## Occasionally, only when needed (optional)
-
-```
-/hi-vibe:check          ← structure checkup (repeat anytime): find duplicates / god-files
-/hi-vibe:gate --ci      ← install a quality gate (once per project → auto after)
+```text
+/hi-vibe:doctor
+/hi-vibe:init
 ```
 
-These two have **opposite rhythms** — `check` is **a diagnostic you run** (as
-often as you like, within a project), `gate` is **a guard you install once per
-project** and it enforces itself from then on.
+That's it. From now on, code with Claude as usual in that project.
 
-- **`check`** — never guesses. It speaks only from the scanner's JSON evidence,
-  and when saying "not found" it states the scan range. Scans Python + JS/TS
-  (`.ts`/`.tsx`/`.jsx` included), and catches not just exact duplicates but
-  also **"reimplemented ~90% the same"** function pairs (a classic AI mistake).
-  **Run it as many times as you want** — it's the on-demand diagnostic you
-  fire whenever code piles up.
-- **`gate`** — installs the code checkers **after asking** (never overwrites your
-  config). Plain `gate` sets them up **locally** (your editor flags issues); add
-  `--ci` to also **gate every push on GitHub** — violations fail the build, so bad
-  code can't land. **Install once per project and you're done** — after `--ci`,
-  that repo's GitHub checks every push automatically; you never re-run the command
-  (only re-run it to change the rules).
+> Be sure to run `/reload-plugins`. Installing the plugin alone does not activate
+> its commands and hooks in the current session.
 
-## After `init`, everything is automatic
+### When do I run what?
 
-In a project where you ran **`init`** (from "First run" above), everything below
-runs on its own (hooks and doc automation are switched on by `init`). No need to
-type commands in order — **just talk normally:**
+| Situation | What to run | How often |
+|---|---|---:|
+| First install on your machine | marketplace → install → reload | Once |
+| Confirm the install worked | `/hi-vibe:doctor` | Right after install, or when something's off |
+| Start using it in a new project | `/hi-vibe:init` | Once per project |
+| Curious about the structure | `/hi-vibe:check` | Whenever you need it |
+| Need a lint / CI gate | `/hi-vibe:gate --ci` | Optional, once per project |
+| Everyday coding | Ask in natural language | Automatic, or a command when needed |
 
-| When you… | What happens | Kind |
+**Requirements:** Python 3.8+ and a `python3` command. On Windows, if there's no
+`python3` command, create a `python` alias.
+
+---
+
+## What changes after install?
+
+| When | What hi-vibe does | Guaranteed by |
 |---|---|---|
-| the moment code is written | **instant detection** of error-swallowing / hardcoded secrets | ⚙️ machine |
-| every compaction | **handover** auto-recorded (context preserved) | ⚙️ machine |
-| session start / compact / clear | latest handover + discipline auto-injected | ⚙️ machine |
-| substantive change, at session end | reminder if **CHANGELOG** wasn't updated (once/session) | ⚙️ machine |
-| "make me this feature" | **find** — searches first for an existing one (prevents duplicate reimplementation) | 🤖 AI |
-| "done / review it" | **review** — quality checklist + doc sync | 🤖 AI |
-| "review everything" | **review --all** — the whole session at once, feature by feature (skips already-reviewed) | 🤖 AI |
-| "review the design" | **review --deep** — a clean-context AI catches over-engineering | 🤖 AI |
+| “Build me this feature” | Searches existing functions / files / types first | 🤖 AI |
+| The moment code is written | Detects new swallowed errors / hardcoded secrets | ⚙️ Machine |
+| When the chat compacts | Auto-records current progress into handover | ⚙️ Machine |
+| Right after session start / compact / clear | Restores recent handover and working discipline | ⚙️ Machine |
+| “I'm done / review it” | Reviews code, edge cases, and doc sync | 🤖 AI |
+| When a session ends after real changes | Reminds you of a missing CHANGELOG entry | ⚙️ Machine |
+| “Why did we do it this way before?” | Searches decision records in handover and archive | 🤖 AI |
 
-> **⚙️ machine** = a Python hook **guarantees** it — it runs regardless of the
-> AI's mood.
-> **🤖 AI** = a skill instruction that **the AI fires on its own** (reacting to
-> natural language like "make me…" / "done"). Powerful, but not a 100%
-> guarantee — the AI can skip it. To force it, run the command
-> (`/hi-vibe:find` etc.) yourself. Think of the commands as the manual
-> lock for when the AI missed the automatic one.
-> If a detected error-swallow / secret is **intentional**, add a
-> `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line to pass.
+**⚙️ Machine** is actually executed by Python hooks. It works regardless of
+whether the AI remembers the instructions.
 
-> **The three reviews.** One `review`, used with options. Plain `review` checks
-> **the one feature you just made**; `review --all` checks **everything changed
-> this session** at once (files already reviewed and unchanged are skipped —
-> great after building several things, then "review everything"). `review --deep`
-> **spawns a fresh Claude (a separate agent) that never wrote this code** — so
-> with no bias, it uses clean eyes (fresh-eyes) to catch over-engineering and
-> hidden coupling the author can't see. `--all` is **how wide** (one→all),
-> `--deep` is **who reviews** (the author→a fresh Claude) — different axes, so
-> `review --all --deep` works too.
+**🤖 AI** is Claude recognizing natural-language intent and running a skill.
+Powerful, but not 100% guaranteed. If you want it for sure, call the command
+directly — e.g. `/hi-vibe:find`, `/hi-vibe:review`.
+
+---
+
+## How is this different from a prompt pack?
+
+Text rules can be forgotten or skipped by the AI. So hi-vibe splits its
+safeguards into three layers.
+
+1. **Docs automation** — records project structure and session context.
+2. **AI discipline** — search before building, debug from the root cause, verify claims.
+3. **Machine enforcement** — hooks and optional lint/CI run regardless of the AI's memory.
+
+```text
+Claude Code events
+├─ PostToolUse ── swallowed-error / secret detection
+├─ PreCompact ─── auto-record handover
+├─ SessionStart ─ restore memory & working discipline
+└─ Stop ───────── CHANGELOG / review reminder
+
+Natural-language requests
+├─ “build it” ─── search existing implementations
+├─ “I'm done” ─── code & doc review
+└─ “why?” ─────── search decision records
+
+Optional machine gate
+└─ gate ────────── lint · type · cyclic deps · CI
+```
+
+### Can't I just use CLAUDE.md or a linter?
+
+Both are good tools, but they cover different ground.
+
+| Approach | What it's good at | What's left uncovered |
+|---|---|---|
+| `CLAUDE.md` | Passing project rules to the AI | No session records, no instant code detection, no CI enforcement |
+| Linter | Mechanically checks fixed code rules | Doesn't know design intent, past decisions, or existing features |
+| hi-vibe | Connects docs · AI discipline · hooks · optional CI | Does not automatically detect every bug |
+
+---
+
+## Why is it trustworthy?
+
+### 72 automated tests
+
+They test handover recording / rotation / concurrent writes, the SessionStart ·
+PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
+Python / JS-TS symbol lookup, identical & near-duplicate functions, review-scope
+caching, and false-positive regressions.
+
+Tests run on GitHub Actions with Python 3.9 and 3.12. (Supported version is
+Python 3.8+; CI validates against 3.9 and 3.12.)
+
+### A doctor that doesn't just check files
+
+Hooks fail silently so they never interrupt Claude Code. The downside: if Python
+is missing or something is misconfigured, a disabled feature can go unnoticed.
+
+Instead of only checking whether files exist, `/hi-vibe:doctor` actually runs the
+4 hooks and the scanner and shows the result as ✅/❌.
+
+### Per-project opt-in
+
+Installing hi-vibe doesn't make it intervene in every repository. Automatic
+features only work in projects where you ran `/hi-vibe:init` and a `.hi-vibe/`
+folder was created. Everywhere else it quietly does nothing.
+
+### False positives managed as test assets
+
+It won't tell you to delete code just because “there's no reference.”
+
+- Framework entry points with decorators
+- Test functions
+- `export default` components
+- Work-in-progress code still under development
+- Symbols referenced by strings and dynamic calls
+
+It distinguishes these false-positive cases, and when a new one is found it's
+captured as a rule and a regression test. “Dead code” in a structure scan is
+treated as a **candidate** to check — never a delete verdict.
+
+### It doesn't overwrite your existing config
+
+The optional `gate` feature first reads your existing eslint · ruff · mypy ·
+import-linter config. It asks you, then merges only the missing settings — it
+never arbitrarily replaces your existing thresholds and rules.
+
+---
+
+## Docs it creates in your project
+
+Running `/hi-vibe:init` installs this documentation system.
+
+| Doc | Role |
+|---|---|
+| `CLAUDE.md` | Whole-project map — overview, requirements, folder structure |
+| `folder/MODULE.md` | That folder's features, models, design, and caveats |
+| `handover.md` | Progress and decisions for the next session |
+| `CHANGELOG.md` | Substantive changes and their reasons |
+
+It doesn't cram everything into one file. `CLAUDE.md` stays a thin overall map,
+and details live in each folder's `MODULE.md`.
+
+### What's committed vs. gitignored
+
+**Committed by default**
+
+- `CLAUDE.md`
+- `MODULE.md`
+- `CHANGELOG.md`
+
+**Added to `.gitignore` by default**
+
+- `handover.md`, `handover-archive.md` — personal session records
+- `.hi-vibe/` — hook and review state
+- `.repo-xray/` — structure-scan cache
+
+If you want to share handover with your team, remove those lines from `.gitignore`.
+
+---
+
+## Structure check: `check`
+
+```text
+/hi-vibe:check
+```
+
+A diagnostic command you run as often as you like once code has piled up.
+
+- Scans Python and JS/TS (`.js`, `.jsx`, `.ts`, `.tsx`) files
+- Finds exactly identical functions
+- Finds function pairs that are ~90% similar in implementation
+- Symbol candidates with no references found
+- Files that grew too large, and structural issues
+- Shows the actual scan scope when it says “not found”
+
+It won't make structural claims without the scanner's JSON output. Near-duplicate
+functions and unreferenced symbols are review leads — not a verdict that they're
+semantically identical or safe to delete.
+
+---
+
+## Optional quality gate: `gate`
+
+```text
+/hi-vibe:gate       # install local checkers
+/hi-vibe:gate --ci  # local + GitHub Actions gate
+```
+
+`check` is a **diagnostic** you run when needed; `gate` is a **standing gate**
+you install once per project.
+
+It checks the project's language and existing config, then lets you pick which
+items you need.
+
+- Python: ruff, mypy, import-linter
+- JS/TS: eslint, TypeScript strict check, cyclic-dependency check
+- GitHub Actions: block the build when checks fail on push and pull requests
+
+It never forces you to turn everything on. For beginners it recommends starting
+with local complexity and cyclic-dependency checks, and leaves strict types and
+CI up to your project's situation.
+
+---
+
+## Verify before and after writing code
+
+### Before building: `find`
+
+```text
+/hi-vibe:find
+```
+
+Before you make a new function / file / type, it searches for an existing
+implementation. The AI can run it automatically when you naturally ask “build me
+this feature,” and you can call the command directly when you want to be sure.
+
+### After writing: `review`
+
+```text
+/hi-vibe:review
+/hi-vibe:review --all
+/hi-vibe:review --deep
+/hi-vibe:review --all --deep
+```
+
+- `review` — review the single feature you just built
+- `review --all` — review everything that changed this session
+- `review --deep` — a separate Claude that didn't write the code does a fresh-eyes review
+- `review --all --deep` — review all changes through a separate Claude's eyes
+
+`--all` skips files already reviewed and unchanged since. If the change is large,
+it measures the file count and changed lines, then asks whether to review
+sequentially or split in parallel.
+
+`--deep` looks for over-engineering, unnecessary features, hidden coupling, and
+excessive abstraction that a checklist alone struggles to catch — in a fresh
+context.
+
+---
 
 ## Commands at a glance
 
-| Command | When | Fires |
+| Command | When to use it | Default trigger |
 |---|---|---|
-| `/hi-vibe:welcome` | first time, or when unsure what to use | 🖐 manual |
-| `/hi-vibe:doctor` | right after install, or when unsure hooks are running | 🖐 manual |
-| `/hi-vibe:init` | once per project (installs the doc system) | 🖐 manual |
-| `/hi-vibe:find` | when you say **"make me this feature"** — searches before creating | ⚡ auto |
-| `/hi-vibe:review` | when you say **"done / review it"** — checklist + doc sync (`--all` whole session · `--deep` clean eyes) | ⚡ auto |
-| `/hi-vibe:handover` | session-end handover | ⚡ auto |
-| `/hi-vibe:log` | record a substantive change in CHANGELOG | ⚡ auto |
-| `/hi-vibe:recall` | "why did we do it this way before?" — search the records | ⚡ auto |
-| `/hi-vibe:check` | full structure checkup — **repeat anytime** | 🖐 manual |
-| `/hi-vibe:gate` | install a linter (auto code checker) — machine blocks bad code (**install once → auto**) | 🖐 manual |
+| `/hi-vibe:welcome` | You're new or unsure what to use | 🖐 Manual |
+| `/hi-vibe:doctor` | Right after install, or when a hook seems off | 🖐 Manual |
+| `/hi-vibe:init` | Activate docs & hooks in a new project | 🖐 Manual |
+| `/hi-vibe:find` | Search existing implementations before a new feature | 🤖 AI / manual |
+| `/hi-vibe:review` | Review code & docs after implementing | 🤖 AI / manual |
+| `/hi-vibe:handover` | Hand off session progress | 🤖 AI / hook |
+| `/hi-vibe:log` | Record substantive changes in CHANGELOG | 🤖 AI |
+| `/hi-vibe:recall` | Search past decisions and reasons | 🤖 AI |
+| `/hi-vibe:check` | Structure check: duplicates, unreferenced candidates, large files | 🖐 Manual |
+| `/hi-vibe:gate` | Install lint · type · cyclic-deps · CI gates | 🖐 Manual |
 
-> **⚡ auto** = fires on its own from natural language ("make me…" / "done")
-> or hooks (e.g. compaction). The command is just a button for when you want
-> to be explicit.
->
-> **🖐 manual** = you run the command yourself when needed (install / setup / diagnosis).
+### Internal skill composition
 
-### What runs underneath — skills (engines) ↔ commands (buttons)
+Commands are easy buttons; the actual work is done by these skills.
 
-The friendly commands are **buttons**; the real work is done by the **skill (engine)** behind each:
-
-| Skill (engine) | Called by | What it does |
+| Skill | Linked commands | Role |
 |---|---|---|
-| `repo-xray` | `check` | Structure scan — duplicates, dead code, big files |
-| `write-gate` | `find` · `review` | Pre- and post-write gates |
-| `docs-keeper` | `handover` · `log` · `recall` · `init` · `welcome` | Doc automation + onboarding |
-| `guards-setup` | `gate` | Install lint/CI guards |
-| `grounded-answers` | (auto) "how much? · supported?" | Stops asserting facts without checking |
-| `root-cause-first` | (auto) when fixing a bug/error | Root cause, not a band-aid |
+| `repo-xray` | `check` | Evidence-based repo structure analysis |
+| `write-gate` | `find`, `review` | Pre- and post-write verification |
+| `docs-keeper` | `init`, `handover`, `log`, `recall`, `welcome` | Docs & session-memory management |
+| `guards-setup` | `gate` | lint · type · cyclic-deps · CI setup |
+| `grounded-answers` | Auto-triggered from natural language | Prevents asserting external API · pricing · versions without checking |
+| `root-cause-first` | Auto-triggered on bug work | Find the root cause before hiding it with a fallback |
 
-> **Claude Code also exposes each skill as a `/skill-name` slash.** hi-vibe ships the 10
-> friendly commands (`check`, `find`…); on top of that, Claude Code auto-opens the 6 skills
-> as slashes like `/repo-xray`. So the same engine can be reached **① via the `check` command ② via the
-> `/repo-xray` slash ③ by saying "find duplicates" so the AI loads it with `Skill()`**.
-> The `hi-vibe:` prefix just means "belongs to this plugin" (shared by commands and skills).
-> Only `doctor` runs the hooks/scanner directly, with no skill.
+---
 
-## Updating (when a new version ships)
+## Optional integrations
 
-**✅ Easiest — turn on auto-update once, then forget it:**
+hi-vibe's core features don't need the tools below. Add them only when you need them.
 
-`/plugin` → **Marketplaces** tab → `hi-vibe-marketplace` → **Enable
-auto-update**. After that, new versions are fetched automatically on every
-start. You only run `/reload-plugins` (or just restart Claude Code) to apply
-them — no need to type anything below.
+<details>
+<summary><strong>context7 MCP — look up the latest official docs</strong></summary>
+
+Helps look up the latest official docs instead of Claude's stale memory when
+using an external library's API. Without context7 it falls back to web search,
+and if it can't secure evidence it's instructed to flag the answer as an estimate.
+
+A free API key is required. See the [context7 official guide](https://context7.com)
+for details.
+
+```text
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp --api-key <your_key>
+```
+
+</details>
+
+<details>
+<summary><strong>claude-hud — show remaining context in the status line</strong></summary>
+
+Shows remaining context and tokens in the status line. Pairs well with hi-vibe:
+when context grows long and you run `/compact`, hi-vibe records handover just
+before it.
+
+```text
+/plugin marketplace add jarrodwatts/claude-hud
+/plugin install claude-hud@claude-hud
+/reload-plugins
+/claude-hud:setup
+```
+
+</details>
+
+---
+
+## Updates
+
+### Auto-update recommended
+
+`/plugin` → **Marketplaces** → `hi-vibe-marketplace` → **Enable auto-update**
+
+New versions download automatically when Claude Code starts. To apply them, run
+`/reload-plugins` or restart Claude Code.
 
 <p align="center">
-  <img src="docs/images/enable-auto-update.png" alt="/plugin → Marketplaces tab → hi-vibe-marketplace → Enable auto-update" width="640">
+  <img src="docs/images/enable-auto-update.png" alt="Enable hi-vibe marketplace auto-update" width="640">
 </p>
 
-**Manual (if auto-update is off)** — three steps **in order**. ①② are
-separate: refreshing the list without swapping the plugin leaves you on the
-old version (the most confusing part!).
+### Manual update
 
-```
-/plugin marketplace update hi-vibe-marketplace   ← ① refresh the latest list
-/plugin update hi-vibe@hi-vibe-marketplace       ← ② swap in the new plugin
-/reload-plugins                                  ← ③ apply to the current session
+```text
+/plugin marketplace update hi-vibe-marketplace
+/plugin update hi-vibe@hi-vibe-marketplace
+/reload-plugins
 ```
 
-- Verify: `/plugin` → Installed tab → check the **Version** bumped
+Updating the marketplace listing and replacing the plugin are separate steps. Run
+the three commands in order, then check `/plugin` → Installed to confirm the
+version bumped.
+
+---
 
 ## FAQ
 
-**Q. I changed hook settings but nothing happened.**
-Hooks load at session start. Restart Claude Code. Use `/hooks` to see load status.
+### I changed a hook setting but it didn't take effect
 
-**Q. How do I know hooks are actually running?**
-`/hi-vibe:doctor` — it actually runs the 4 hooks and the scanner and shows ✅/❌.
-Since hooks fail silently by design, this command is the only reliable check.
+Hooks load at session start. Restart Claude Code. You can see the current load
+state with `/hooks`.
 
-**Q. Do hooks run in other projects too?**
-No. They only run in a project that has a `.hi-vibe/` folder (= where you ran
-`init`); elsewhere they quietly do nothing.
+### How do I confirm the hooks actually work?
 
-**Q. Won't handover.md grow forever?**
-Past 20 entries, the older half auto-moves to `handover-archive.md`. Those
-memories aren't lost — `/hi-vibe:recall` (or just asking "why did we do this
-before?") searches the archive too and answers with date + source.
+Run `/hi-vibe:doctor`. It actually runs the SessionStart, PreCompact, PostToolUse,
+Stop hooks and the repo-xray scanner and shows the result.
 
-**Q. A gate red light (lint warning / CI failure) is showing, but it's not
-actually a problem. How do I dismiss it?**
-**Telling the AI "it's fine" won't clear it** — the linter re-judges from the
-config and code every run; it has no memory of "the user said it's OK." So the
-exception has to live **in the code** to stick:
-- **Just that one line:** ruff → `# noqa: <rule>`, eslint →
-  `// eslint-disable-next-line <rule>`
-- **The rule doesn't fit this project at all:** turn it off in the config file
-  (`[tool.ruff]` in `pyproject.toml`, etc.) — applies project-wide
-- **A hi-vibe error-swallow / secret detection:** add a
-  `hi-vibe: allow-swallow` / `hi-vibe: allow-secret` comment on that line
-This is deliberate — if one word could silence it, the next session's AI would
-forget and the rule would erode. Leaving the exception in the code keeps it
-durable, and your teammates can see "this is an intentional exception" too.
+### Does it work automatically in other projects too?
 
-**Q. What gets created in my project?**
-**Committed to GitHub**: `CLAUDE.md` / `MODULE.md` / `CHANGELOG.md` (project docs).
-**Not committed**: `handover.md` · `handover-archive.md` (personal session log),
-`.hi-vibe/` (hook state), `.repo-xray/` (scan cache). `init` adds these to
-`.gitignore` automatically. (To share handover with a team, just remove that line
-from `.gitignore`.)
+No. It only works in projects where you ran `/hi-vibe:init` and a `.hi-vibe/`
+folder exists.
 
-## Credits / License
+### Won't handover.md keep growing?
 
-- Design inspiration: [lumin-repo-lens](https://github.com/annyeong844/lumin-repo-lens) (MIT) — the prototype of evidence-based discipline ("no claim without a scan")
+When it passes 20 entries, the older half moves to `handover-archive.md`.
+`/hi-vibe:recall` searches the current handover and the archive together.
+
+It uses file locking so entries aren't lost when multiple Claude Code terminals
+write at the same time.
+
+### What if a detection is intentional code — how does it pass?
+
+hi-vibe hook exceptions are marked as a code comment so the reason stays on that line.
+
+```python
+except OptionalDependencyError:
+    pass  # hi-vibe: allow-swallow
+```
+
+```javascript
+const token = "test-token-value"; // hi-vibe: allow-secret
+```
+
+Linter exceptions use each tool's standard way.
+
+- ruff: `# noqa: RULE_CODE`
+- eslint: `// eslint-disable-next-line rule-name`
+- A rule that doesn't fit the whole project: disable it explicitly in the config file
+
+Just telling the AI “this is fine” doesn't change a machine check's result. You
+have to leave the exception in the code and config so the next session and your
+teammates understand the intent.
+
+### Does it overwrite my existing CLAUDE.md or CHANGELOG.md?
+
+No. If a file already exists, it reads it first and confirms how to apply.
+(For how `gate` handles existing lint config, see
+[Why is it trustworthy?](#why-is-it-trustworthy).)
+
+### Can I share handover with my team?
+
+Yes. By default it's treated as a personal session record and added to
+`.gitignore`, but to share it with your team, remove that ignore entry and commit.
+
+---
+
+## Verify it yourself
+
+hi-vibe is a plugin that stops ungrounded claims. The project itself should be
+verifiable through its public code and tests.
+
+Paste the question and repo link below into Claude, Codex, or Gemini.
+
+```text
+https://github.com/jx-hxxx/hi-vibe
+
+Don't just summarize the README — check the actual code and tests. Rate honestly
+how much this plugin helps with vibe coding, its design complexity, target users,
+pros and cons, and how finished it is.
+```
+
+---
+
+## Credits and license
+
+- Design inspiration: [lumin-repo-lens](https://github.com/annyeong844/lumin-repo-lens) — the evidence-based principle of “no structural claims without a scan”
 - License: [MIT](./LICENSE)
