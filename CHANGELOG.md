@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+## [0.13.3] - 2026-07-13
+<!-- show:ko **깨진 명령 참조를 잡고, 문서-현실 어긋남을 테스트로 막아요.** 외부 AI 감사가 찾은 실제 결함: 선택형 격주 감사 템플릿이 존재하지 않는 `/hi-vibe:audit`을 호출했어요(→ `/hi-vibe:check`로 수정). 재발 방지로 무결성 테스트 2개 추가 — 모든 `/hi-vibe:<명령>` 참조가 실재하는지, README·랜딩이 광고하는 "자동 테스트 N개"가 실제 개수와 같은지 CI에서 강제. 테스트 수도 75→78로 동기화. -->
+<!-- show:en **Broken command reference fixed, and doc-vs-reality drift is now caught by tests.** A real defect found by an external AI audit: the optional biweekly-audit template invoked a non-existent `/hi-vibe:audit` (fixed to `/hi-vibe:check`). Two integrity tests now enforce in CI that every `/hi-vibe:<command>` reference resolves to a real command, and that the "N automated tests" advertised in the README/landing matches the actual count. Test count synced 75→78. -->
+
+### Fixed
+- **격주 감사 템플릿의 존재하지 않는 명령 참조** — `guards-setup`의 `github-actions-biweekly-audit.yml`이 `/hi-vibe:audit`(미존재)를 호출하던 것을 `/hi-vibe:check`로 수정. (감사 지적: 이 옵션 기능은 그대로 설치하면 신뢰 불가였음)
+
+### Added
+- **저장소 무결성 테스트(`test_integrity.py`)** — (1) 활성 파일의 모든 `/hi-vibe:<명령>` 참조가 `commands/`에 실재하는지 검증(옛 `audit` 오타류 재발 차단), (2) README·랜딩의 광고 테스트 수가 실제 `def test_` 수와 일치하는지 강제(숫자가 조용히 낡는 것 방지). 문서-코드 동기화 철학을 자기 저장소에 기계로 적용.
+
+### Docs
+- README·랜딩 테스트 수 75 → 78 동기화.
+
+### Tests
+- +2 (명령 참조 무결성 / 광고 테스트 수 동기화). 76→78.
+
 ## [0.13.2] - 2026-07-13
 <!-- show:ko **비밀키를 다른 비밀키로 바꿔치기해도 이제 잡아요.** 외부 AI 감사가 재현한 탐지 공백: PostToolUse 가드가 old/new의 위험 패턴 "개수"만 비교해서, 기존 하드코딩 시크릿 하나를 다른 시크릿 하나로 교체하면(1→1, 개수 같음) 경고가 안 났어요. 비교를 개수→실제 매치 값(Counter 차집합)으로 바꿔 값이 다르면 잡게 함. 에러 삼킴 패턴도 같은 로직이라 함께 개선하고 회귀 테스트 추가. -->
 <!-- show:en **Swapping one secret for a different one is now caught.** A detection gap reproduced by an external AI audit: the PostToolUse guard compared only the *count* of risky patterns in old vs new, so replacing one hardcoded secret with a different one (1→1, same count) produced no warning. The comparison is now value-based (Counter difference), so a different value is flagged. The swallowed-error path shares the logic and got the same fix, with a regression test. -->

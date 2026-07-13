@@ -91,7 +91,7 @@ jobs:
             --permission-mode acceptEdits \
             --max-turns 40 \
             -p "
-          /hi-vibe:audit 를 실행해 저장소 전체를 스캔한 뒤,
+          /hi-vibe:check 를 실행해 저장소 전체를 스캔한 뒤,
           write-gate post-write 체크리스트 관점(중복/죽은 코드 후보/
           비대 파일/순환 의존/문서 동기화)으로 구조 감사 보고서를
           작성해 저장소 루트의 STRUCTURE_AUDIT.md 에 저장하세요.

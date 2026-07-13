@@ -16,7 +16,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 - **Between sessions** — record and restore progress automatically
 - **After finishing** — review the code and sync the docs
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 75 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 78 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow.
@@ -152,7 +152,7 @@ Both are good tools, but they cover different ground.
 
 ## Why is it trustworthy?
 
-### 75 automated tests
+### 78 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
