@@ -238,11 +238,16 @@ If you want to share handover with your team, remove those lines from `.gitignor
 A diagnostic command you run as often as you like once code has piled up.
 
 - Scans Python and JS/TS (`.js`, `.jsx`, `.ts`, `.tsx`) files
-- Finds exactly identical functions
-- Finds function pairs that are ~90% similar in implementation
+- Finds exactly identical functions **(Python only)**
+- Finds function pairs that are ~90% similar in implementation **(Python only)**
 - Symbol candidates with no references found
+- Name collisions **(JS/TS)**
 - Files that grew too large, and structural issues
 - Shows the actual scan scope when it says “not found”
+
+> **Identical / near-duplicate function detection is currently Python-only (AST).**
+> JS/TS support is limited to symbol / name-collision detection and oversized-file
+> checks — it does not include duplicate or near-duplicate analysis.
 
 It won't make structural claims without the scanner's JSON output. Near-duplicate
 functions and unreferenced symbols are review leads — not a verdict that they're
