@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.14.4] - 2026-07-13
+<!-- show:ko **프론트엔드·CSS·레이아웃 수정은 이제 사용자가 검증해요 — 에이전트가 브라우저를 안 띄웁니다.** 시각적 변경(생김새·간격·정렬·색·반응형)은 앱을 직접 보고 있는 사용자가 검증 루프예요. 그래서 이런 변경은 에이전트가 Playwright로 자가 검증하는 대신, 변경하고 "⌘⇧R 후 무엇을 볼지" 한 줄만 알려주고 넘깁니다(레이아웃이 어긋나면 사용자가 즉시 봄 — 딴 브라우저 또 띄우는 건 이중일). 같은 화면을 여러 모드·폭·로딩상태로 반복 렌더하는 것도 금지. CSS 값도 브라우저로 픽셀 실측해 상수로 박지 말고 콘텐츠 기반으로 잡아요(실측 상수는 행 높이 바뀌면 깨지는 땜빵). v0.14.3 등급제로도 안 잡히던 "프론트 한 줄 바꾸는 데 브라우저 10번" 지연의 실제 원인 제거. -->
+<!-- show:en **Frontend/CSS/layout tweaks are now verified by you — the agent won't spin up a browser.** For visual changes (looks, spacing, alignment, color, responsive), the user watching the app IS the verification loop. So instead of self-verifying with Playwright, the agent makes the change and just tells you "after ⌘⇧R, here's what to look at," then hands off — if the layout is off you see it instantly, and a second headless browser is double work. Re-rendering the same view across modes/widths/loading states is also banned, and CSS values should be content-based rather than pixel-measured constants (a measured constant breaks when row height changes). Removes the real cause of the "one frontend line → ten browser renders" slowness that even v0.14.3's tiering didn't catch. -->
+
+### Changed
+- **UI·CSS·레이아웃 변경은 사용자 검증 특례** (write-gate `Mode: review` 9번) — 시각적 변경은 등급과 별개로 에이전트가 브라우저(Playwright)를 띄워 자가 검증하지 않는다. 변경 + 캐시버스팅 + "⌘⇧R 후 확인할 것" 한 줄을 사용자에게 넘긴다. 같은 화면을 여러 상태(모드·폭·로딩중)로 반복 렌더 금지, CSS 값은 픽셀 실측 상수 대신 콘텐츠 기반으로. 예외: 사용자가 "브라우저로 확인" 명시 / 특정 폭에서만 깨지는 회귀 등 렌더로만 재현되는 경우. 마지막 요약 줄에 "화면 확인 요청" 종결 상태 추가. 등급제(9번 tier)가 레이아웃을 tier 3으로 보고 여전히 자가 렌더시키던 틈을 메움.
+
 ## [0.14.3] - 2026-07-13
 <!-- show:ko **검증 강도가 이제 변경 크기에 비례해요 — 작은 일에 12분 안 걸려요.** 리뷰 체크리스트의 "실행 검증(필수)"이 변경 크기와 상관없이 늘 앱 구동·브라우저 실행을 요구하던 걸, 세 등급으로 나눴어요: 문서·포맷은 검증 없이 통과 / 패턴 복제·설정 한 줄 같은 작은 변경은 구문·서빙 확인만 / 로직·API·버그 수정만 실제 실행 관찰. 여기에 "최소 충분" 원칙을 못박아, 같은 걸 여러 화면폭·반복으로 다시 확인하거나 요청 범위 밖까지 파고드는 과잉검증을 금지했어요. hi-vibe가 작은 작업을 무겁게 만들던 지연의 근본 원인 제거. -->
 <!-- show:en **Verification strength now scales with change size — small tasks don't take 12 minutes.** The review checklist's "run-verification (required)" used to demand running the app / a browser regardless of change size; it's now tiered: docs/formatting pass with no verification, small changes (pattern copies, one-line config) need only a syntax/serving check, and only behavior changes (logic/API/bug fixes) require observing a real run. A "minimum sufficient" rule forbids re-checking the same thing across widths/repeats or digging outside the request's scope. Removes the root cause of hi-vibe making small tasks slow. -->
