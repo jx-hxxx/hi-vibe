@@ -303,7 +303,7 @@ this feature,” and you can call the command directly when you want to be sure.
 ```
 
 - `review` — review the single feature you just built
-- `review --all` — review everything that changed this session
+- `review --all` — review all uncommitted changes (committed changes drop out of scope)
 - `review --deep` — a separate Claude that didn't write the code does a fresh-eyes review
 - `review --all --deep` — review all changes through a separate Claude's eyes
 

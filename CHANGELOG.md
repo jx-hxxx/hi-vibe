@@ -5,9 +5,20 @@
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-07-13
+<!-- show:ko **MultiEdit로 편집해도 이제 진행상황에 기록돼요.** 외부 AI 감사에서 발견한 진짜 버그: PostToolUse 훅엔 MultiEdit가 등록돼 있어 에러·비밀키 감지는 됐는데, handover·Stop의 "변경 파일" 집계가 Write/Edit/NotebookEdit만 세서 MultiEdit로만 편집한 세션이 기록·CHANGELOG 알림에서 빠졌어요. 한 줄 수정 + 회귀 테스트로 막음. README도 review --all 범위(uncommitted)와 Python 전용/JS·TS 한정 지원을 더 정확히 명시. -->
+<!-- show:en **MultiEdit changes now show up in progress records.** A real bug found via external AI audit: MultiEdit is registered on the PostToolUse hook (so error/secret detection worked), but the handover/Stop changed-file tally only counted Write/Edit/NotebookEdit — so a session edited only via MultiEdit fell out of the records and the CHANGELOG nudge. Fixed in one line + a regression test. README also clarifies review --all scope (uncommitted) and the Python-only / limited-JS·TS scope. -->
+
+### Fixed
+- **MultiEdit가 handover·Stop 변경 추적에서 누락되던 버그** — `_common.py`의 수정 tool 집계가 `("Write","Edit","NotebookEdit")`만 봐서 MultiEdit 편집이 빠졌다. `hooks.json`엔 MultiEdit가 PostToolUse로 등록돼 있어 에러·비밀키 감지는 됐지만, PreCompact handover 기록과 Stop CHANGELOG 알림의 "변경 파일" 판정에서 누락. `MultiEdit`를 집계 대상에 추가.
+
 ### Docs
-- **README 정비** — `README.ko.md` 목차(TOC)·검증 섹션 정리, `README.md`(EN)를 동일 구조로 정렬, 랜딩과 프롬프트 AI 목록 통일(Claude·Codex·Gemini).
-- **랜딩 감사 섹션** — "직접 물어보기"를 상세 평가 프롬프트로 교체 + 박스 스크롤 처리.
+- **`review --all` 범위 정정** — "이번 세션 전체" → "아직 커밋하지 않은(uncommitted) 변경 전체(커밋하면 범위에서 빠짐)". 실제 `review_scope.py` 동작(git diff vs HEAD)과 일치.
+- **주 대상 언어 = Python 단정 명시 + JS/TS 한정 지원** — 중복·유사 함수 탐지는 Python(AST) 전용, JS/TS는 심볼·이름 충돌·파일 크기 점검만. 외부 AI 감사의 "JS/TS 과장" 지적 반영.
+- 검증 프롬프트 통일(랜딩·README), 테스트 수 72→**75** 정정, 윈도우 파일잠금 best-effort 각주, near-dup 보일러플레이트 기대치, README 종합 개편(목차 등).
+
+### Tests
+- +0 (`test_parse_transcript`에 MultiEdit 케이스 추가). 75 유지.
 
 ## [0.13.0] - 2026-07-13
 <!-- show:ko **repo-xray near-dup이 이제 몇 분이 아니라 몇십 초.** 함수 쌍마다 O(L²) 유사도 비교를 돌리던 걸 지문(shingle) 선필터로 바꿔, 완전탐색과 '똑같은' 결과를 훨씬 빠르게(측정: 14분→30초, ratio 호출 5750→213). 상위 20개만 보여주던 near-dup 리포트도 총 개수를 함께 알려 정직하게. 그리고 "느리다=고장"이라 단정하고 죽였다 다시 돌리는 실패를 막는 규율을 grounded-answers에 추가 — 실제로 이 규칙을 어긴 사례에서 나온 개선. -->

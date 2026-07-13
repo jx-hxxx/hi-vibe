@@ -80,7 +80,7 @@ def parse_transcript(path):
         elif isinstance(content, list):
             for c in content:
                 if isinstance(c, dict) and c.get("type") == "tool_use" \
-                        and c.get("name") in ("Write", "Edit", "NotebookEdit"):
+                        and c.get("name") in ("Write", "Edit", "MultiEdit", "NotebookEdit"):
                     inp = c.get("input") or {}
                     fp = inp.get("file_path") or inp.get("notebook_path")
                     if fp and fp not in edited:

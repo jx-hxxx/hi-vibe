@@ -95,6 +95,9 @@ class CommonTest(TempProject):
                 {"type": "tool_use", "name": "Edit",
                  "input": {"file_path": "/p/core.py", "new_string": "x"}},
                 {"type": "tool_use", "name": "Bash", "input": {"command": "ls"}},
+                {"type": "tool_use", "name": "MultiEdit",
+                 "input": {"file_path": "/p/util.py",
+                           "edits": [{"old_string": "a", "new_string": "b"}]}},
             ]}},
             {"type": "user", "message": {"role": "user", "content": [
                 {"type": "text", "text": "이제 배포해줘"}]}},
@@ -108,7 +111,8 @@ class CommonTest(TempProject):
                 f.write("\n")
         prompts, edited = _common.parse_transcript(transcript)
         self.assertEqual(prompts, ["버그 고쳐줘", "이제 배포해줘"])
-        self.assertEqual(edited, ["/p/core.py"])
+        # MultiEdit도 수정으로 집계되어야 함 (Bash는 제외)
+        self.assertEqual(edited, ["/p/core.py", "/p/util.py"])
 
 
 class PreCompactTest(TempProject):
