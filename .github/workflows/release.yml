@@ -1,0 +1,60 @@
+name: release
+
+# Auto-create a GitHub Release whenever plugin.json's version is bumped on main.
+# hi-vibe dogfooding: the tag + release notes come straight from the CHANGELOG,
+# so the plugin version, the git tag, and the release list never drift by hand.
+# (Version resolution for the plugin itself uses plugin.json, not the tag — this
+#  keeps the human-facing Releases list in sync with each version bump.)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.claude-plugin/plugin.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version from plugin.json
+        id: ver
+        run: |
+          V=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "Plugin version: $V"
+
+      - name: Skip if this release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.ver.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release v${{ steps.ver.outputs.version }} already exists — skipping."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build release notes from CHANGELOG
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          TITLE=$(python3 scripts/build-release-notes.py "${{ steps.ver.outputs.version }}" release-notes.md)
+          echo "$TITLE" > release-title.txt
+          echo "----- title -----"; cat release-title.txt
+          echo "----- notes -----"; cat release-notes.md
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ steps.ver.outputs.version }}" \
+            --target "${{ github.sha }}" \
+            --latest \
+            --title "$(cat release-title.txt)" \
+            --notes-file release-notes.md
