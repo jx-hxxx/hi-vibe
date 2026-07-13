@@ -73,12 +73,14 @@ Once installed, in each project folder where you want to use hi-vibe:
 
 That's it. From now on, code with Claude as usual in that project.
 
-> **Run `/hi-vibe:init` in every project where you want to use hi-vibe.**
-> You install the plugin once, but the automatic features (error/secret detection,
-> auto-handover, etc.) only run in folders where `/hi-vibe:init` created the
-> `.hi-vibe/` marker. **It never touches other projects you didn't init** — that's
-> the safety guard against hooks running where you don't want them. (So to use it
-> in a new project, just `init` once in that folder.)
+> **Install once (global); `init` per project.**
+> `/plugin install` defaults to **user scope (global)**, so a single install makes
+> the `/hi-vibe:` commands available in every project (no per-project reinstall).
+> But the automatic features (error/secret detection, auto-handover, etc.) only run
+> in folders where `/hi-vibe:init` created the `.hi-vibe/` marker.
+> **It never touches other projects you didn't init** — even with a global install,
+> that's the safety guard against hooks running where you don't want them. (So to use
+> it in a new project, just `/hi-vibe:init` once in that folder.)
 
 > Be sure to run `/reload-plugins`. Installing the plugin alone does not activate
 > its commands and hooks in the current session.
