@@ -193,6 +193,13 @@
   .audit .promptbox pre { margin:0 0 16px; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--text); max-height:230px; overflow-y:auto; padding-right:8px; }
   .audit .promptbox pre::-webkit-scrollbar { width:8px; }
   .audit .promptbox pre::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:8px; }
+  .audit .promptbox pre span { color:var(--accent-ink); font-weight:600; }
+  .fitform { display:grid; gap:10px; margin-top:18px; }
+  .fitform label { display:grid; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; }
+  .fitform input { font:inherit; font-size:13.5px; font-weight:400; color:var(--text); background:var(--bg); border:1px solid var(--border-2); border-radius:8px; padding:8px 11px; }
+  .fitform input:focus { outline:none; border-color:var(--accent); }
+  .fitform input::placeholder { color:var(--faint); }
+  .fitform .btn { margin-top:2px; justify-content:center; }
   @media (max-width:760px){ .audit { grid-template-columns:1fr; } }
 
   .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:pre; border:0; }
@@ -296,26 +303,38 @@
         <div class="card">
           <h3>2분이면 되는 설치 전 적합성 확인</h3>
           <p>README뿐 아니라 <b>실제 훅·스캐너·테스트</b>를 확인해, 이&nbsp;플러그인이 내&nbsp;프로젝트에 어떤 도움을 주고 어디까지 지원하는지 알아보세요.</p>
+          <div class="fitform">
+            <label>주 언어 / 프레임워크<input type="text" id="fit-lang-ko" placeholder="예: Python / FastAPI"></label>
+            <label>프로젝트 규모<input type="text" id="fit-size-ko" placeholder="예: 파일 30개 · 소규모"></label>
+            <label>혼자 / 팀 개발<input type="text" id="fit-team-ko" placeholder="예: 혼자"></label>
+            <label>지금 쓰는 검사 · 문서화<input type="text" id="fit-tools-ko" placeholder="예: pytest · 수기 README"></label>
+            <button class="btn primary js-fit" type="button" data-lang="ko">내 정보 반영 →</button>
+          </div>
         </div>
         <div class="promptbox">
           <pre id="audit-prompt-ko">https://github.com/jx-hxxx/hi-vibe
 
-평가할 때 README가 약속한 범위가 실제 구현에서 얼마나 충실하게 제공되는지를 중심으로 판단해줘.
-확인된 장점과 한계, 핵심 타깃에게 실제로 도움이 되는 부분을 구분해서 설명해줘.
+hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러그인입니다.
+제 프로젝트에 hi-vibe가 실질적인 도움이 되는지 중심으로 평가해 주세요.
 
-다음을 평가해줘.
+제 프로젝트 정보: <span id="proj-ko">[주 언어/프레임워크, 프로젝트 규모, 혼자 또는 팀 개발 여부, 현재 사용하는 검사·문서화 방식]</span>
+
+평가할 때 README가 약속한 범위가 실제 구현에서 얼마나 충실하게 제공되는지를 중심으로 판단해 주세요.
+확인된 장점과 한계, 제 프로젝트 같은 핵심 타깃에게 실제로 도움이 되는 부분을 구분해서 설명해 주세요.
+
+다음을 평가해 주세요.
 1. 바이브 코딩에 주는 도움
 2. 제품·기술 설계
-3. 핵심 타깃과 덜 맞는 사용자
+3. 제 프로젝트와의 적합성, 덜 맞는 사용자
 4. 주요 장점과 한계
 5. 테스트·자동화 신뢰도
 6. 현재 완성도
 
-- 핵심 타깃 기준 설치 가치: /10
-- 개발 도구로서 현재 성숙도: /10
+- 제 프로젝트 기준 설치 가치: /10
+- 개인용 Claude Code 플러그인으로서 현재 성숙도: /10
 - 종합점수: /10
 
-확인한 실제 구현에 근거해 공정하게 평가하고, 직접 확인하지 못한 내용은 확인 불가라고 밝혀줘.</pre>
+확인한 실제 구현에 근거해 공정하게 평가하고, 직접 확인하지 못한 내용은 확인 불가라고 밝혀 주세요.</pre>
           <button class="btn ghost js-copy" type="button" data-target="audit-prompt-ko">평가 질문 복사</button>
         </div>
       </div>
@@ -554,23 +573,35 @@
         <div class="card">
           <h3>A 2-minute fit check before you install</h3>
           <p>It inspects the <b>actual hooks, scanner, and tests</b> — not just the README — to find out how this plugin helps your project and how far its support goes.</p>
+          <div class="fitform">
+            <label>Main language / framework<input type="text" id="fit-lang-en" placeholder="e.g. Python / FastAPI"></label>
+            <label>Project size<input type="text" id="fit-size-en" placeholder="e.g. ~30 files, small"></label>
+            <label>Solo / team<input type="text" id="fit-team-en" placeholder="e.g. solo"></label>
+            <label>Current checks &amp; docs<input type="text" id="fit-tools-en" placeholder="e.g. pytest, hand-written README"></label>
+            <button class="btn primary js-fit" type="button" data-lang="en">Apply my info →</button>
+          </div>
         </div>
         <div class="promptbox">
           <pre id="audit-prompt-en">https://github.com/jx-hxxx/hi-vibe
 
+hi-vibe is a personal plugin an individual developer uses inside Claude Code.
+Please judge it centered on whether hi-vibe actually helps MY project.
+
+My project: <span id="proj-en">[main language/framework, project size, solo or team, checks & docs you currently use]</span>
+
 Judge how faithfully the scope the README promises is actually delivered in the real implementation.
-Separate the confirmed strengths from the limits, and spell out what actually helps the core target.
+Separate the confirmed strengths from the limits, and spell out what actually helps a core target like my project.
 
 Evaluate:
 1. Help for vibe coding
 2. Product / technical design
-3. Core target vs. who it fits less
+3. Fit with my project, and who it fits less
 4. Key strengths and limits
 5. Test / automation reliability
 6. Current maturity
 
-- Install value for the core target: /10
-- Current maturity as a dev tool: /10
+- Install value for my project: /10
+- Current maturity as a personal Claude Code plugin: /10
 - Overall: /10
 
 Judge fairly based on the actual implementation you verified, and say so for anything you couldn't verify directly.</pre>
@@ -773,6 +804,35 @@ Judge fairly based on the actual implementation you verified, and say so for any
   }
   var copyBtns = document.querySelectorAll('.js-copy');
   for (var k=0;k<copyBtns.length;k++){ copyBtns[k].addEventListener('click', function(){ copyFromTarget(this); }); }
+
+  // 적합성 폼: 입력 4칸을 프롬프트의 "제 프로젝트 정보:" 자리에 반영
+  var FIT_LABELS = {
+    ko: ['주 언어/프레임워크', '규모', '개발', '검사·문서화'],
+    en: ['language/framework', 'size', 'dev', 'checks & docs']
+  };
+  var FIT_PLACEHOLDER = {
+    ko: '[주 언어/프레임워크, 프로젝트 규모, 혼자 또는 팀 개발 여부, 현재 사용하는 검사·문서화 방식]',
+    en: '[main language/framework, project size, solo or team, checks & docs you currently use]'
+  };
+  function applyFit(lang){
+    var ids = ['fit-lang-', 'fit-size-', 'fit-team-', 'fit-tools-'];
+    var labels = FIT_LABELS[lang], parts = [];
+    for (var i=0;i<ids.length;i++){
+      var el = document.getElementById(ids[i] + lang);
+      var v = el ? el.value.trim() : '';
+      if (v) { parts.push(labels[i] + ' = ' + v); }
+    }
+    var span = document.getElementById('proj-' + lang);
+    if (span) { span.textContent = parts.length ? parts.join(' · ') : FIT_PLACEHOLDER[lang]; }
+  }
+  var fitBtns = document.querySelectorAll('.js-fit');
+  for (var m=0;m<fitBtns.length;m++){
+    fitBtns[m].addEventListener('click', function(){
+      var lang = this.getAttribute('data-lang');
+      applyFit(lang);
+      flashBtn(this, lang === 'en' ? 'Applied ✓' : '반영됨 ✓');
+    });
+  }
 })();
 </script>
 
