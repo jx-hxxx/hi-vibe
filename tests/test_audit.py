@@ -265,6 +265,27 @@ class ScanTest(unittest.TestCase):
         self.assertGreaterEqual(nd["similarity"], 0.9)
         self.assertLess(nd["similarity"], 1.0)
 
+    def test_is_test_file_classification(self):
+        self.assertTrue(audit._is_test_file("tests/test_hooks.py"))
+        self.assertTrue(audit._is_test_file("foo/test_x.py"))
+        self.assertTrue(audit._is_test_file("foo/x_test.py"))
+        self.assertFalse(audit._is_test_file("src/app.py"))
+        self.assertFalse(audit._is_test_file("lib/util.py"))
+
+    def test_test_pairs_split_into_separate_bucket(self):
+        """테스트끼리 유사한 쌍은 near_duplicate_test_functions로 분리되어,
+        기본 near_duplicate_functions(진짜 봐야 할 code<->code)를 오염시키지
+        않는다 — 스캐너 신호 대 잡음비."""
+        code_pairs = self.report["near_duplicate_functions"]
+        # 기본 버킷엔 test<->test 쌍이 들어오면 안 된다.
+        for nd in code_pairs:
+            files = [fn["file"] for fn in nd["functions"]]
+            self.assertFalse(all(audit._is_test_file(f) for f in files),
+                             f"test<->test 쌍이 코드 버킷에 샜다: {files}")
+        # 분리 버킷 키가 존재해야 한다(값이 0이어도 키는 있어야 함).
+        self.assertIn("near_duplicate_test_functions", self.report)
+        self.assertIn("near_duplicate_test_total", self.report)
+
     def test_near_duplicate_is_scan_order_independent(self):
         """near-dup 탐지는 파일 스캔 순서(OS마다 다름)에 의존하면 안 된다.
         과거 difflib autojunk 비대칭 + os.walk 순서 차이로 CI만 실패했던

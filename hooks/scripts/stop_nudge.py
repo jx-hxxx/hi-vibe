@@ -52,11 +52,11 @@ def main(payload):
     _common.emit(
         "Stop",
         system_message=(
-            "hi-vibe: 이번 세션에 코드 변경이 있었어요. 실질 변경이면 "
+            "hi-vibe: 이번 세션에 코드·설정 변경이 있었어요. 실질 변경이면 "
             "/hi-vibe:log 로 CHANGELOG에 남기고, /hi-vibe:review --all "
             "(\"전체 리뷰해줘\")로 이번 작업 전체를 품질·문서까지 점검받을 수 "
             "있어요 — 이미 본 건 건너뜁니다. 세션당 1회 · 사소하면 무시 OK.\n"
-            "— You changed code this session. Log it with /hi-vibe:log, and run "
+            "— You changed code/config this session. Log it with /hi-vibe:log, and run "
             "/hi-vibe:review --all to review the whole session at once "
             "(already-reviewed files are skipped). Once per session; "
             "ignore if trivial."

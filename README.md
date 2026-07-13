@@ -13,10 +13,10 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 
 - **Before writing** — search for the existing implementation first
 - **While coding** — catch swallowed errors and hardcoded secrets on the spot
-- **Between sessions** — record and restore progress automatically
+- **Between sessions** — auto-record & restore requests, edited files, Git & test state
 - **After finishing** — review the code and sync the docs
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 82 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 84 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow.
@@ -97,8 +97,8 @@ That's it. From now on, code with Claude as usual in that project.
 | When | What hi-vibe does | Guaranteed by |
 |---|---|---|
 | “Build me this feature” | Searches existing functions / files / types first | 🤖 AI |
-| The moment code is written | Detects new swallowed errors / hardcoded secrets | ⚙️ Machine |
-| When the chat compacts | Auto-records current progress into handover | ⚙️ Machine |
+| When Claude writes code via Write/Edit/MultiEdit | Detects new swallowed errors / hardcoded secrets | ⚙️ Machine |
+| When the chat compacts | Auto-records recent requests, edited files, Git & test state into handover | ⚙️ Machine |
 | Right after session start / compact / clear | Restores recent handover and working discipline | ⚙️ Machine |
 | “I'm done / review it” | Reviews code, edge cases, and doc sync | 🤖 AI |
 | When a session ends after real changes | Reminds you of a missing CHANGELOG entry | ⚙️ Machine |
@@ -158,7 +158,7 @@ Both are good tools, but they cover different ground.
 
 ## Why is it trustworthy?
 
-### 82 automated tests
+### 84 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
@@ -315,7 +315,7 @@ this feature,” and you can call the command directly when you want to be sure.
 ```
 
 - `review` — review the single feature you just built
-- `review --all` — review all uncommitted changes (committed changes drop out of scope)
+- `review --all` — review uncommitted Python/JS·TS code files (committed ones drop out of scope; config/doc files and deletions are excluded)
 - `review --deep` — a separate Claude that didn't write the code does a fresh-eyes review
 - `review --all --deep` — review all changes through a separate Claude's eyes
 

@@ -5,6 +5,21 @@
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-07-13
+<!-- show:ko **스캐너 신호가 깨끗해지고, README 문구가 구현에 딱 맞아졌어요.** 외부 감사 후속 다듬기: near-dup 리포트에서 테스트끼리 유사한 쌍(공통 setup·assert 보일러플레이트라 거의 재구현 버그 아님)을 별도 버킷으로 분리 — 요약이 "code N · test M"으로 나와 진짜 봐야 할 code↔code에 집중하게. 그리고 과장 소지가 있던 문구 4곳을 구현 범위에 맞게 좁힘(작성 순간→Write/Edit/MultiEdit, 진행상황→요청·파일·Git·테스트 상태, review --all 범위, Stop 메시지 코드→코드·설정). doctor의 Stop 판정 문구도 정직하게. -->
+<!-- show:en **The scanner's signal got cleaner and the README now matches the implementation exactly.** Post-audit polish: near-dup pairs where both functions are tests (shared setup/assert boilerplate — almost never a real reimplementation bug) are split into a separate bucket, so the summary reads "code N · test M" and you focus on the code<->code pairs that matter. Four possibly-overstated phrases were narrowed to the real scope (moment written -> Write/Edit/MultiEdit, progress -> requests/files/Git/test state, review --all scope, Stop message code -> code/config). doctor's Stop wording is now honest too. -->
+
+### Changed
+- **near-dup 리포트: test↔test 쌍 분리** — 자기 스캔에서 near-dup 84개 중 상위 20개가 전부 테스트 함수끼리 유사(공통 보일러플레이트)라 초보자에게 "문제 84개" 인상을 줄 수 있었다. 이제 `_is_test_file` 기준으로 test↔test 쌍을 `near_duplicate_test_functions`(+`_total`) 버킷으로 분리하고, 요약을 `code N · test M`으로 출력. 숨기지 않고 우선순위만 낮춘다.
+- **doctor Stop 문구 정직화** — "정상 종료 확인" → "실행 가능 확인 (빈 입력에 exit 0)". doctor는 Stop 훅에 빈 transcript를 넘겨 exit 0만 보므로, 실제 CHANGELOG 알림 발생까지 검증하지 않음을 정확히 표기.
+- **Stop 알림 문구** — "코드 변경" → "코드·설정 변경"(.md/.txt/.rst 외 수정은 설정 파일도 포함되므로).
+
+### Docs
+- 과장 소지 문구를 구현에 맞게 좁힘 — "코드가 작성되는 순간"→"Write/Edit/MultiEdit으로 작성할 때", "진행상황 자동 기록"→"요청·수정 파일·Git·테스트 상태", `review --all` "변경 전체"→"미커밋 Python/JS·TS 코드 파일(설정·삭제 제외)" (KO/EN).
+
+### Tests
+- +3 (`_is_test_file` 분류 / test↔test 분리 버킷 / doctor Stop). run_guard 중복 정의 2개를 TempProject 부모로 통합(스캐너 exact-dup도 해소). 82→84.
+
 ## [0.14.0] - 2026-07-13
 <!-- show:ko **handover에 이제 "다음 세션이 재개할 객관적 상태"가 남아요.** 자동 인수인계가 최근 요청·수정 파일만 적던 걸, git 상태(브랜치·수정/신규/삭제 개수)와 transcript에서 명확히 식별되는 테스트 결과(통과/실패 N)까지 기계로 추출해 남깁니다. "미해결 오류를 AI가 판정"하는 건 일부러 안 함 — 애매하면 조용히 생략(fail-open). 외부 감사가 반복 지적한 "핵심 약속(세션 사이 자동 기록)의 정보 밀도"를 정체성 안 깨고 보강. README엔 "Claude Code 내장 기능을 대체하지 않고 보완한다"는 포지셔닝도 명시. -->
 <!-- show:en **handover now carries "objective state the next session can resume from."** The auto-handover used to record only recent requests and edited files; it now also mechanically extracts git state (branch, modified/new/deleted counts) and, when clearly identifiable in the transcript, the last test result (pass/fail N). It deliberately does NOT have the AI judge "unresolved errors" — if ambiguous, it's silently omitted (fail-open). This strengthens the info density of the core promise (auto-record between sessions) that audits repeatedly flagged, without breaking identity. README also states the positioning: hi-vibe complements Claude Code's built-ins, it doesn't replace them. -->

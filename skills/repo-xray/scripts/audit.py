@@ -294,6 +294,21 @@ def _shingles(dump, k=9):
     return frozenset(dump[i:i + k] for i in range(len(dump) - k + 1))
 
 
+def _is_test_file(path):
+    """테스트 파일 판별: tests/ 경로이거나 test_*/​*_test 파일명."""
+    base = os.path.basename(path or "")
+    if "/tests/" in "/" + (path or "").replace(os.sep, "/") or (path or "").replace(os.sep, "/").startswith("tests/"):
+        return True
+    stem = base.rsplit(".", 1)[0]
+    return stem.startswith("test_") or stem.endswith("_test") or base.startswith("test")
+
+
+def _all_test_files(pair):
+    """near-dup 쌍의 두 함수가 모두 테스트 파일에 있으면 True."""
+    fns = pair.get("functions", [])
+    return bool(fns) and all(_is_test_file(f.get("file", "")) for f in fns)
+
+
 def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20000,
                          shingle_k=9, jaccard_floor=0.45, time_budget=60.0):
     """Pairs of functions whose normalized ASTs are >= threshold similar but
@@ -567,9 +582,17 @@ def cmd_scan(root):
     # report SHOWS only the most-similar few — but never hides the rest
     # silently: near_duplicate_total tells the reader how many were actually
     # found, so `total > len(shown)` means "there are more, ranked lower".
+    #
+    # Test functions naturally look alike (shared setup/assert boilerplate), so a
+    # test<->test pair is almost never a real reimplementation bug. We split those
+    # into a separate, lower-priority bucket instead of hiding them — the reader
+    # sees "code N · test M" and can focus on the code<->code pairs first.
     NEAR_DUP_SHOWN = 20
     near_total = len(near_dups)
-    near_shown = near_dups[:NEAR_DUP_SHOWN]
+    code_pairs = [p for p in near_dups if not _all_test_files(p)]
+    test_pairs = [p for p in near_dups if _all_test_files(p)]
+    near_shown = code_pairs[:NEAR_DUP_SHOWN]
+    test_near_shown = test_pairs[:NEAR_DUP_SHOWN]
 
     all_symbols = py_symbols + js_symbols
     def_counts = Counter(s["name"] for s in all_symbols)
@@ -598,7 +621,9 @@ def cmd_scan(root):
         "decorated_unreferenced": sorted(decorated_unref, key=lambda s: (s["file"], s["line"])),
         "duplicate_functions": duplicates,
         "near_duplicate_functions": near_shown,
-        "near_duplicate_total": near_total,
+        "near_duplicate_total": len(code_pairs),
+        "near_duplicate_test_functions": test_near_shown,
+        "near_duplicate_test_total": len(test_pairs),
         "js_name_collisions": collisions,
         "oversized_files": big_files,
         "oversized_functions": big_functions,
@@ -613,7 +638,10 @@ def cmd_scan(root):
         json.dump(report, f, ensure_ascii=False, indent=2)
 
     print(f"scanned: {len(py_files)} py / {len(js_files)} js+ts / {len(text_files)} text files")
-    near_str = str(near_total) if near_total <= NEAR_DUP_SHOWN else f"{NEAR_DUP_SHOWN} of {near_total}"
+    code_n, test_n = len(code_pairs), len(test_pairs)
+    near_str = f"code {code_n} · test {test_n}"
+    if code_n > NEAR_DUP_SHOWN:
+        near_str = f"code {NEAR_DUP_SHOWN} of {code_n} · test {test_n}"
     print(f"dead candidates: {len(dead)} (+{len(decorated_unref)} decorated)  "
           f"duplicates: {len(duplicates)}  near-duplicates: {near_str}  "
           f"js collisions: {len(collisions)}  oversized files: {len(big_files)}")

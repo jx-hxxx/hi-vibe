@@ -101,7 +101,7 @@ def check_hooks_live(python3):
 
         p = run_hook(python3, "stop_nudge.py", {"cwd": tmp, "session_id": "doctor", "transcript_path": ""}, tmp)
         if p.returncode == 0:
-            add("OK", "Stop 훅", "정상 종료 확인")
+            add("OK", "Stop 훅", "실행 가능 확인 (빈 입력에 exit 0)")
         else:
             add("FAIL", "Stop 훅", f"exit {p.returncode}")
 

@@ -41,6 +41,14 @@ class TempProject(unittest.TestCase):
         with open(self.handover, encoding="utf-8") as f:
             return f.read()
 
+    def run_guard(self, tool, tool_input):
+        """PostToolUse 가드를 실행하고 stdout(emit 결과)을 돌려준다."""
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            post_write_guard.main({"cwd": self.root, "tool_name": tool,
+                                   "tool_input": tool_input})
+        return buf.getvalue()
+
 
 class CommonTest(TempProject):
     def test_project_gate(self):
@@ -277,12 +285,6 @@ class SessionStartTest(TempProject):
 
 
 class PostWriteGuardTest(TempProject):
-    def run_guard(self, tool, tool_input):
-        buf = io.StringIO()
-        with redirect_stdout(buf):
-            post_write_guard.main({"cwd": self.root, "tool_name": tool,
-                                   "tool_input": tool_input})
-        return buf.getvalue()
 
     def test_write_with_bare_except_flagged(self):
         out = self.run_guard("Write", {
@@ -388,13 +390,6 @@ class PostWriteGuardTest(TempProject):
 class SecretGuardTest(TempProject):
     FAKE_ANTHROPIC = "sk-ant-" + "a1B2" * 8          # 32자 본문
     FAKE_AWS = "AKIA" + "ABCDEFGHIJKLMNOP"           # AKIA + 16 대문자
-
-    def run_guard(self, tool, tool_input):
-        buf = io.StringIO()
-        with redirect_stdout(buf):
-            post_write_guard.main({"cwd": self.root, "tool_name": tool,
-                                   "tool_input": tool_input})
-        return buf.getvalue()
 
     def test_hardcoded_api_key_flagged(self):
         out = self.run_guard("Write", {
