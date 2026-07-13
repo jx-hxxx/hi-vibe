@@ -256,6 +256,12 @@ semantically identical or safe to delete. Short, naturally similar functions —
 test setup boilerplate — can show up as "near-duplicate" even when they're fine, so
 treat them as review leads, not reimplementation bugs.
 
+> 💡 For example, this repo's own `audit.py` (the scanner) shows up as an
+> oversized candidate under the 400-line threshold. But it's a cohesive
+> single-responsibility file (scanning repo structure), so we chose to keep it.
+> The scanner offers "take a look" candidates, not "delete this" verdicts — the
+> judgment call is yours.
+
 ---
 
 ## Optional quality gate: `gate`
