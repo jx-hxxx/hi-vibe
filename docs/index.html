@@ -183,14 +183,14 @@
   .trust span { display:block; margin-top:5px; color:var(--muted); font-size:13px; }
   @media (max-width:640px){ .trust { grid-template-columns:1fr 1fr; } .trust > div:nth-child(3){ border-left:none; } .trust > div:nth-child(3), .trust > div:nth-child(4){ border-top:1px solid var(--border); } }
 
-  .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:start; margin-top:26px; }
+  .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:stretch; margin-top:26px; }
   .audit .promptbox { display:flex; flex-direction:column; align-items:flex-start; }
-  .audit .promptbox pre { align-self:stretch; }
+  .audit .promptbox pre { align-self:stretch; flex:1 1 auto; min-height:0; }
   .audit .card { border:1px solid var(--border); border-radius:var(--r); padding:24px; background:var(--surface); }
   .audit .card h3 { margin:0 0 9px; font-size:19px; }
   .audit .card p { margin:0; color:var(--muted); font-size:14px; text-wrap:pretty; }
   .audit .promptbox { border:1px solid var(--border); border-radius:var(--r); padding:20px; background:var(--surface-2); }
-  .audit .promptbox pre { margin:0 0 16px; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--text); max-height:230px; overflow-y:auto; padding-right:8px; }
+  .audit .promptbox pre { margin:0 0 16px; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--text); overflow-y:auto; padding-right:8px; }
   .audit .promptbox pre::-webkit-scrollbar { width:8px; }
   .audit .promptbox pre::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:8px; }
   .audit .promptbox pre span { color:var(--accent-ink); font-weight:600; }
@@ -820,10 +820,10 @@ Judge fairly based on the actual implementation you verified, and say so for any
     for (var i=0;i<ids.length;i++){
       var el = document.getElementById(ids[i] + lang);
       var v = el ? el.value.trim() : '';
-      if (v) { parts.push(labels[i] + ' = ' + v); }
+      if (v) { parts.push('  ' + labels[i] + ' = ' + v); }
     }
     var span = document.getElementById('proj-' + lang);
-    if (span) { span.textContent = parts.length ? parts.join(' · ') : FIT_PLACEHOLDER[lang]; }
+    if (span) { span.textContent = parts.length ? '\n' + parts.join('\n') : FIT_PLACEHOLDER[lang]; }
   }
   var fitBtns = document.querySelectorAll('.js-fit');
   for (var m=0;m<fitBtns.length;m++){
