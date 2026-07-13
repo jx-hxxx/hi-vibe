@@ -499,7 +499,7 @@ https://github.com/jx-hxxx/hi-vibe
 hi-vibe is a personal plugin an individual developer uses inside Claude Code.
 Please judge it centered on whether hi-vibe actually helps MY project.
 
-My project: [main language/framework, project size, solo or team, checks & docs you currently use]
+My repo (please inspect the real code if you can): [my project's GitHub link — if public, scan the real code and spell out concretely what hi-vibe finds in my project]
 
 Judge how faithfully the scope the README promises is actually delivered in the real implementation.
 Separate the confirmed strengths from the limits, and spell out what actually helps a core target like my project.
