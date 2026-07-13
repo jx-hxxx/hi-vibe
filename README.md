@@ -251,7 +251,9 @@ A diagnostic command you run as often as you like once code has piled up.
 
 It won't make structural claims without the scanner's JSON output. Near-duplicate
 functions and unreferenced symbols are review leads — not a verdict that they're
-semantically identical or safe to delete.
+semantically identical or safe to delete. Short, naturally similar functions — like
+test setup boilerplate — can show up as "near-duplicate" even when they're fine, so
+treat them as review leads, not reimplementation bugs.
 
 ---
 
@@ -432,7 +434,8 @@ When it passes 20 entries, the older half moves to `handover-archive.md`.
 `/hi-vibe:recall` searches the current handover and the archive together.
 
 It uses file locking so entries aren't lost when multiple Claude Code terminals
-write at the same time.
+write at the same time. On Windows (no `fcntl`), the lock degrades to best-effort,
+so concurrent-write safety is weaker.
 
 ### What if a detection is intentional code — how does it pass?
 
