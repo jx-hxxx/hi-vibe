@@ -48,15 +48,28 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
 2. If a file already exists, NEVER overwrite silently — show what is
    missing versus the template and ask before touching it
    (AskUserQuestion). `--audit` mode: only report drift, change nothing.
-3. Scaffold missing docs from templates:
+3. Scaffold the LEAN default only — do NOT create every doc up front. A
+   toy project must not start with more management docs than code.
    - CLAUDE.md: fill 개요/요구사항/실행 방법 by asking the user if not
      inferable; generate the 폴더 지도 by scanning 2 levels deep — one
-     line per folder + `→ 상세: <folder>/MODULE.md`.
-   - MODULE.md: propose the feature-folder list, confirm with the user
-     (one AskUserQuestion, multiSelect), then create one per confirmed
-     folder, pre-filling 주요 파일 from a directory listing and leaving
-     설계 sections as short TODO prompts for the user.
-   - handover.md + CHANGELOG.md from templates.
+     line per folder. Add the `→ 상세: <folder>/MODULE.md` pointer for a
+     folder ONLY once that folder's MODULE.md actually exists — never
+     write a pointer to a file you didn't create.
+   - handover.md from its template.
+   - Do NOT create MODULE.md or CHANGELOG.md at init. They are created
+     lazily, the moment they first earn their keep (step 3a). This is a
+     deliberate default, not a flag — there is no `--lite`/`--full`, so
+     the beginner never has to choose; the docs simply grow with the code.
+3a. Lazy docs — create each one the moment it is first needed, not before:
+   - `<folder>/MODULE.md`: create when that folder's design first needs
+     recording — a structural change lands in it, `review` finds it has
+     grown complex, or the user asks "이 폴더 문서 만들어줘". Pre-fill
+     주요 파일 from a directory listing, leave 설계 as short TODO prompts,
+     and add the `→ 상세:` pointer into the CLAUDE.md 폴더 지도 in the
+     SAME turn (per the doc-sync contract below).
+   - `CHANGELOG.md`: created on the first `/hi-vibe:log` (log mode creates
+     it from the template if missing). Until there is a substantive change
+     to record, the project does not need one.
 4. **Create the `.hi-vibe/` marker directory** — this is what turns the
    hooks ON for this project (the gate). Write `.hi-vibe/initialized`
    with a one-line note (date + "hi-vibe initialized"), which also
@@ -69,9 +82,14 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
    file for concurrent sessions) are in `.gitignore`. The two dirs are caches;
    `handover*` is a personal session log kept local (not shared to
    GitHub). The other three docs — CLAUDE.md / MODULE.md / CHANGELOG.md —
-   ARE committed.
+   ARE committed (each once it exists; MODULE.md and CHANGELOG.md arrive
+   lazily per step 3a).
 6. Tell the user the hooks are now active for this project (they gate on
    the `.hi-vibe/` directory existing) and what will happen automatically.
+   Say the start is intentionally lean — CLAUDE.md + handover.md for now —
+   and that MODULE.md and CHANGELOG.md appear on their own when the project
+   first needs them (a folder grows complex / the first `/hi-vibe:log`).
+   Do not frame this as a missing step the user must complete.
 
 ## Mode: handover
 
@@ -110,9 +128,12 @@ Rotation: if the file has more than 20 entries, move the older half to
 2. Filter: substantive = behavior, API, schema, dependency, or config
    changes. Typos, formatting, comments, pure refactors with identical
    behavior → do NOT log (say so instead of logging filler).
-3. Append under `## [Unreleased]` in the right category (Added /
-   Changed / Fixed / Removed), one bullet per change, each bullet
-   prefixed `YYYY-MM-DD HH:MM` (run `date`, never guess).
+3. If `CHANGELOG.md` does not exist yet (init creates it lazily, not up
+   front), create it first from `templates/CHANGELOG.md.tpl` — this is the
+   moment it earns its keep. Then append under `## [Unreleased]` in the
+   right category (Added / Changed / Fixed / Removed), one bullet per
+   change, each bullet prefixed `YYYY-MM-DD HH:MM` (run `date`, never
+   guess).
 4. Do not renumber or edit released sections.
 
 ## Mode: recall

@@ -12,14 +12,14 @@ A **vibe-coding seatbelt** that keeps Claude Code from rebuilding code that
 already exists, papering over errors, and forgetting yesterday's decisions.
 
 - **Before writing** — search for the existing implementation first
-- **While coding** — catch swallowed errors and hardcoded secrets on the spot
+- **When Claude writes code** — flag common swallowed-error / secret patterns
 - **Between sessions** — auto-record & restore requests, edited files, Git & test state
 - **After finishing** — review the code and sync the docs
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 84 regression
-tests · per-project activation · standard-library-only core features**, it puts
-the checks, records, and verification that AI often skips right into your
-workflow.
+> **New here? Just remember these 3 things.**
+> 1. Run the commands in [1-Minute Install](#1-minute-install), in order
+> 2. Then code with Claude as usual
+> 3. If something seems off, run `/hi-vibe:doctor`
 
 > **Read this first:** hi-vibe is not a tool that automatically finds every bug.
 > It's a set of working disciplines plus automatic safeguards that make the AI
@@ -31,6 +31,16 @@ workflow.
 > **limited (partial) support** — symbol / name-collision detection and oversized-file
 > checks; core analysis like duplicate / near-duplicate detection is **Python-only**.
 > **If JS/TS is your primary language, you'll get much less out of this tool.**
+
+<details>
+<summary><strong>Why is it built this way? (technical background)</strong></summary>
+
+It's not just a prompt pack. With **4 real Claude Code hooks · 84 regression
+tests · per-project activation · standard-library-only core features**, it puts
+the checks, records, and verification that AI often skips right into your
+workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
+
+</details>
 
 <details>
 <summary><strong>Table of contents</strong></summary>
@@ -215,14 +225,17 @@ never arbitrarily replaces your existing thresholds and rules.
 
 ## Docs it creates in your project
 
-Running `/hi-vibe:init` installs this documentation system.
+`/hi-vibe:init` **starts lean** — it creates only `CLAUDE.md` and `handover.md`
+at first. The rest appear on their own when they're actually needed, so a small
+project never ends up with more management docs than code. (There's no
+`--lite`/`--full` to pick — the docs simply grow with the code.)
 
-| Doc | Role |
-|---|---|
-| `CLAUDE.md` | Whole-project map — overview, requirements, folder structure |
-| `folder/MODULE.md` | That folder's features, models, design, and caveats |
-| `handover.md` | Progress (auto-recorded) + decisions/context (you or the AI fill in) for the next session |
-| `CHANGELOG.md` | Substantive changes and their reasons |
+| Doc | Role | When it's created |
+|---|---|---|
+| `CLAUDE.md` | Whole-project map — overview, requirements, folder structure | at `init` |
+| `handover.md` | Progress (auto-recorded) + decisions/context (you or the AI fill in) for the next session | at `init` |
+| `folder/MODULE.md` | That folder's features, models, design, and caveats | when the folder grows complex / "document this folder" |
+| `CHANGELOG.md` | Substantive changes and their reasons | on the first `/hi-vibe:log` |
 
 It doesn't cram everything into one file. `CLAUDE.md` stays a thin overall map,
 and details live in each folder's `MODULE.md`.

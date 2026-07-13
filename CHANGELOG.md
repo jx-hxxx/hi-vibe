@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.14.2] - 2026-07-13
+<!-- show:ko **첫 화면이 가벼워지고, 문서가 코드와 함께 자라요.** 초보자용 3줄 안내(설치→평소처럼 코딩→이상하면 doctor)를 README 맨 위로, "실제 훅 4종·84 tests·표준 라이브러리" 신뢰 문단은 접이식(왜 이렇게 만들었나요?)으로 내렸어요. init은 이제 CLAUDE.md·handover.md만 만들고 시작하고, MODULE.md는 폴더가 복잡해질 때·CHANGELOG.md는 첫 /hi-vibe:log 때 알아서 생겨요 — 작은 프로젝트가 코드보다 관리 문서가 많아지지 않게, 그것도 --lite/--full 같은 선택지 없이. 감지 범위 문구도 "저장하는 순간"→"Claude가 Write/Edit로 코드 쓸 때"로 좁혀 기대치를 정확히 맞췄어요. -->
+<!-- show:en **The first screen got lighter, and docs grow with the code.** A 3-line beginner intro (install → code as usual → doctor if something's off) now sits at the top of the README; the "4 hooks · 84 tests · stdlib-only" trust paragraph folds into a details block. init now starts with just CLAUDE.md + handover.md — MODULE.md appears when a folder grows complex, CHANGELOG.md on the first /hi-vibe:log — so a small project never has more management docs than code, and with no --lite/--full to choose. Detection wording narrowed from "the moment you save code" to "when Claude writes code via Write/Edit," matching the real scope. -->
+
+### Changed
+- **init 지연 생성** — init이 문서를 한 번에 다 만들지 않고 `CLAUDE.md`·`handover.md`만 생성한다. `MODULE.md`는 그 폴더 설계가 처음 기록될 때(구조 변경 / `review`가 복잡하다고 판단 / 사용자 요청), `CHANGELOG.md`는 첫 `/hi-vibe:log` 때 생성. `--lite`/`--full` 플래그를 두지 않고 기본을 가볍게 — 초보자가 선택하지 않아도 문서가 코드와 함께 자란다. (docs-keeper SKILL init/log 모드, `CLAUDE.md` 템플릿의 없는 MODULE.md로의 dangling 포인터 방지.)
+
+### Docs
+- **첫 화면 경량화** — README(KO/EN) 맨 위에 초보자용 3줄. "실제 훅 4종·84 tests·표준 라이브러리" 신뢰 문단을 `<details> 왜 이렇게 만들었나요?`로 접음. Python 한정·"모든 버그를 자동으로 찾지 않음" 기대치 문구는 그대로 노출 유지.
+- **감지 범위 문구 정직화** — "코딩 중 즉시 감지 / the moment you save code" → "Claude가 Write/Edit로 코드를 쓸 때 대표적인 에러 삼킴·비밀키 패턴 경고"로 좁힘(README·랜딩 KO/EN). 외부 에디터·터미널 저장까지 잡는 것처럼 읽히던 과장 제거.
+- **랜딩 동기화** — `docs/index.html`의 문서 지도(지연 생성)와 기계 보장 목록(감지 범위)을 위 변경에 맞춤(KO/EN).
+
 ## [0.14.1] - 2026-07-13
 <!-- show:ko **스캐너 신호가 깨끗해지고, README 문구가 구현에 딱 맞아졌어요.** 외부 감사 후속 다듬기: near-dup 리포트에서 테스트끼리 유사한 쌍(공통 setup·assert 보일러플레이트라 거의 재구현 버그 아님)을 별도 버킷으로 분리 — 요약이 "code N · test M"으로 나와 진짜 봐야 할 code↔code에 집중하게. 그리고 과장 소지가 있던 문구 4곳을 구현 범위에 맞게 좁힘(작성 순간→Write/Edit/MultiEdit, 진행상황→요청·파일·Git·테스트 상태, review --all 범위, Stop 메시지 코드→코드·설정). doctor의 Stop 판정 문구도 정직하게. -->
 <!-- show:en **The scanner's signal got cleaner and the README now matches the implementation exactly.** Post-audit polish: near-dup pairs where both functions are tests (shared setup/assert boilerplate — almost never a real reimplementation bug) are split into a separate bucket, so the summary reads "code N · test M" and you focus on the code<->code pairs that matter. Four possibly-overstated phrases were narrowed to the real scope (moment written -> Write/Edit/MultiEdit, progress -> requests/files/Git/test state, review --all scope, Stop message code -> code/config). doctor's Stop wording is now honest too. -->
