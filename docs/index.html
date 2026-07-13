@@ -183,9 +183,9 @@
   .trust span { display:block; margin-top:5px; color:var(--muted); font-size:13px; }
   @media (max-width:640px){ .trust { grid-template-columns:1fr 1fr; } .trust > div:nth-child(3){ border-left:none; } .trust > div:nth-child(3), .trust > div:nth-child(4){ border-top:1px solid var(--border); } }
 
-  .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:stretch; margin-top:26px; }
+  .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:start; margin-top:26px; }
   .audit .promptbox { display:flex; flex-direction:column; align-items:flex-start; }
-  .audit .promptbox pre { align-self:stretch; flex:1 1 auto; min-height:0; }
+  .audit .promptbox pre { align-self:stretch; }
   .audit .card { border:1px solid var(--border); border-radius:var(--r); padding:24px; background:var(--surface); }
   .audit .card h3 { margin:0 0 9px; font-size:19px; }
   .audit .card p { margin:0; color:var(--muted); font-size:14px; text-wrap:pretty; }
@@ -833,6 +833,28 @@ Judge fairly based on the actual implementation you verified, and say so for any
       flashBtn(this, lang === 'en' ? 'Applied ✓' : '반영됨 ✓');
     });
   }
+
+  // 우측 프롬프트 pre의 최대 높이를 좌측 카드 높이에 맞춘다(넘치면 스크롤).
+  function syncAuditHeights(){
+    var sections = [document.getElementById('audit-ko'), document.getElementById('audit-en')];
+    for (var i=0;i<sections.length;i++){
+      var sec = sections[i]; if (!sec) continue;
+      var card = sec.querySelector('.card');
+      var pre = sec.querySelector('.promptbox pre');
+      var box = sec.querySelector('.promptbox');
+      if (!card || !pre || !box) continue;
+      // promptbox 자체 패딩/버튼을 뺀, pre에 허용할 높이
+      var extra = box.offsetHeight - pre.offsetHeight; // 패딩 + 복사버튼 영역
+      var target = card.offsetHeight - extra;
+      pre.style.maxHeight = (target > 160 ? target : 160) + 'px';
+    }
+  }
+  // 폼 반영·리사이즈·언어전환 때 다시 맞춘다.
+  for (var n=0;n<fitBtns.length;n++){ fitBtns[n].addEventListener('click', syncAuditHeights); }
+  window.addEventListener('resize', syncAuditHeights);
+  var langBtns2 = document.querySelectorAll('.js-lang');
+  for (var q=0;q<langBtns2.length;q++){ langBtns2[q].addEventListener('click', function(){ setTimeout(syncAuditHeights, 0); }); }
+  syncAuditHeights();
 })();
 </script>
 
