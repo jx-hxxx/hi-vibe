@@ -212,7 +212,7 @@ Running `/hi-vibe:init` installs this documentation system.
 |---|---|
 | `CLAUDE.md` | Whole-project map — overview, requirements, folder structure |
 | `folder/MODULE.md` | That folder's features, models, design, and caveats |
-| `handover.md` | Progress and decisions for the next session |
+| `handover.md` | Progress (auto-recorded) + decisions/context (you or the AI fill in) for the next session |
 | `CHANGELOG.md` | Substantive changes and their reasons |
 
 It doesn't cram everything into one file. `CLAUDE.md` stays a thin overall map,
