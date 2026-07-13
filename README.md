@@ -484,20 +484,14 @@ Paste the question and repo link below into Claude, Codex, or Gemini.
 ```text
 https://github.com/jx-hxxx/hi-vibe
 
-Don't just summarize the README — inspect the actual hooks, scanner, skills, and tests on the current main branch to evaluate this Claude Code plugin.
-If possible, run the tests yourself and report the results. For anything you couldn't verify directly, say so instead of guessing.
+Judge how faithfully the scope the README promises is actually delivered in the real implementation.
+Separate the confirmed strengths from the limits, and spell out what actually helps the core target.
 
-hi-vibe does not claim to be a professional static analyzer that catches every bug, or an enterprise quality platform.
-It's a "seatbelt" plugin that backfills the habits vibe coders on personal / small projects with Claude Code tend to skip: searching for existing code, root-cause debugging, session handover, doc sync, and verification.
-
-Judge it mainly on how well it implements the scope the README actually promises.
-Conversely, clearly dock points where the real implementation is weaker than the README claims.
-
-Evaluate the following, and give scores with reasons for any deductions:
+Evaluate:
 1. Help for vibe coding
-2. Product / technical design difficulty
+2. Product / technical design
 3. Core target vs. who it fits less
-4. Strengths and weaknesses
+4. Key strengths and limits
 5. Test / automation reliability
 6. Current maturity
 
@@ -505,7 +499,7 @@ Evaluate the following, and give scores with reasons for any deductions:
 - Current maturity as a dev tool: /10
 - Overall: /10
 
-This is not an evaluation meant to praise or criticize — judge fairly, based on the actual implementation.
+Judge fairly based on the actual implementation you verified, and say so for anything you couldn't verify directly.
 ```
 
 ---
