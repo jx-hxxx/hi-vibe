@@ -5,8 +5,20 @@
 
 ## [Unreleased]
 
-### CI
-- **CI 매트릭스에 Python 3.8 추가** — README가 최소 지원을 3.8+로 밝히는데 CI는 3.9·3.12만 돌던 간극을 메움(외부 감사가 3회 지적). 이제 최소 지원 버전을 실제로 검증한다. (코드에 3.9+ 전용 문법·API 없음을 사전 확인.)
+## [0.14.0] - 2026-07-13
+<!-- show:ko **handover에 이제 "다음 세션이 재개할 객관적 상태"가 남아요.** 자동 인수인계가 최근 요청·수정 파일만 적던 걸, git 상태(브랜치·수정/신규/삭제 개수)와 transcript에서 명확히 식별되는 테스트 결과(통과/실패 N)까지 기계로 추출해 남깁니다. "미해결 오류를 AI가 판정"하는 건 일부러 안 함 — 애매하면 조용히 생략(fail-open). 외부 감사가 반복 지적한 "핵심 약속(세션 사이 자동 기록)의 정보 밀도"를 정체성 안 깨고 보강. README엔 "Claude Code 내장 기능을 대체하지 않고 보완한다"는 포지셔닝도 명시. -->
+<!-- show:en **handover now carries "objective state the next session can resume from."** The auto-handover used to record only recent requests and edited files; it now also mechanically extracts git state (branch, modified/new/deleted counts) and, when clearly identifiable in the transcript, the last test result (pass/fail N). It deliberately does NOT have the AI judge "unresolved errors" — if ambiguous, it's silently omitted (fail-open). This strengthens the info density of the core promise (auto-record between sessions) that audits repeatedly flagged, without breaking identity. README also states the positioning: hi-vibe complements Claude Code's built-ins, it doesn't replace them. -->
+
+### Added
+- **handover 자동 기록에 git·테스트 상태 추가** — PreCompact가 `_common.git_status()`(브랜치 + `git status --short` 요약)와 `_common.last_test_result()`(transcript의 테스트 명령·결과에서 명확한 pass/fail만)를 추출해 handover 항목에 남긴다. git 저장소가 아니거나 결과가 애매하면 조용히 생략(fail-open). 의미 판정 없이 재개용 객관적 상태만.
+- **CI 매트릭스에 Python 3.8** — README 최소 지원(3.8)을 CI가 실제 검증(외부 감사 3회 지적).
+
+### Docs
+- **포지셔닝 명시** — README에 "Claude Code 내장 기능(문서·기억·리뷰·훅)을 대체하지 않고, Python 바이브 코딩 작업 흐름으로 묶어 보완한다"는 문단 추가(KO/EN).
+- CI 테스트 버전 표기 3.9·3.12 → 3.8·3.9·3.12, audit.py oversized 자기 인정 한 줄, 저장소 CLAUDE.md 추가.
+
+### Tests
+- +4 (`last_test_result` 2 / handover의 git·테스트 상태 기록 / 비-git 생략). 78→82.
 
 ## [0.13.4] - 2026-07-13
 <!-- show:ko **자기 검증 규율을 자기 저장소에 마저 지켜요.** 외부 AI 감사가 main이 red(테스트 1개 실패)임을 짚었어요. 두 가지 사각지대를 근본적으로 막음: (1) 무결성 테스트가 랜딩의 릴리스 타임라인(CHANGELOG 자동 복사본, 즉 역사 서술)까지 명령 참조로 오인하던 걸, SHOWCASE 마커 영역을 도려내 해결 — 실제 명령어 안내는 계속 검사. (2) showcase 봇 커밋의 [skip ci]를 제거해, 봇이 생성한 docs가 테스트를 깨도 CI가 잡게 함(무한루프 없음 확인). -->

@@ -16,12 +16,20 @@ def main(payload):
         return
     transcript = payload.get("transcript_path", "")
     prompts, edited = _common.parse_transcript(transcript) if transcript else ([], [])
+    git = _common.git_status(cwd)
+    test = _common.last_test_result(transcript) if transcript else None
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     trigger = payload.get("trigger", "auto")
     sid = str(payload.get("session_id", ""))[:8]
 
     lines = [f"## {now} ({trigger} compact 직전, session {sid})", ""]
+    # 다음 세션이 재개할 수 있는 객관적 상태(있을 때만 — fail-open)
+    if git:
+        lines.append(f"- Git: {git}")
+    if test:
+        cmd, res = test
+        lines.append(f"- 최근 검증: `{cmd}` → {res}")
     if prompts:
         lines.append("- 사용자 요청(최근):")
         lines += [f"  - {p}" for p in prompts]
@@ -30,7 +38,7 @@ def main(payload):
         lines += [f"  - `{fp}`" for fp in edited[:15]]
         if len(edited) > 15:
             lines.append(f"  - …외 {len(edited) - 15}개")
-    if not prompts and not edited:
+    if not prompts and not edited and not git and not test:
         lines.append("- (트랜스크립트에서 추출된 내용 없음)")
     lines += ["", f"⚠️ 자동 생성({trigger} compact) — 세션이 이어지면 이 항목을 다듬어 주세요."]
 

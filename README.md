@@ -16,7 +16,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 - **Between sessions** — record and restore progress automatically
 - **After finishing** — review the code and sync the docs
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 78 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 82 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow.
@@ -115,6 +115,12 @@ directly — e.g. `/hi-vibe:find`, `/hi-vibe:review`.
 
 ## How is this different from a prompt pack?
 
+> **Claude Code already has powerful built-ins — docs, memory, review, hooks.
+> hi-vibe doesn't replace them.** It's a complementary layer that ties the
+> steps Python vibe-coders often skip — searching for existing code, verifying
+> runs, recording docs — into one lightweight workflow, and reinforces some of
+> them with deterministic scripts (hooks, scanner).
+
 Text rules can be forgotten or skipped by the AI. So hi-vibe splits its
 safeguards into three layers.
 
@@ -152,7 +158,7 @@ Both are good tools, but they cover different ground.
 
 ## Why is it trustworthy?
 
-### 78 automated tests
+### 82 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,

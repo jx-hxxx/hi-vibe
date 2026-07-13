@@ -8,6 +8,8 @@ run()이 모든 예외를 삼키고 exit 0 한다. 넓은 except는 원칙적으
 import contextlib
 import json
 import os
+import re
+import subprocess
 import sys
 
 
@@ -25,6 +27,53 @@ def project_gate(cwd):
     전용 마커 `.hi-vibe/` 디렉토리로 판단한다 — init이 만들며, 사용자가
     우연히 가질 확률이 거의 없다."""
     return bool(cwd) and os.path.isdir(os.path.join(cwd, ".hi-vibe"))
+
+
+def _run_git(args, cwd):
+    """git 명령 실행 후 stdout(성공) 또는 None(실패/git 없음/타임아웃).
+    handover 보강은 부가 정보이므로 어떤 실패도 조용히 생략(fail-open)."""
+    try:
+        r = subprocess.run(["git"] + args, cwd=cwd, capture_output=True,
+                           text=True, timeout=3)
+    except Exception:
+        return None
+    if r.returncode != 0:
+        return None
+    return r.stdout
+
+
+def git_status(cwd):
+    """현재 브랜치 + 작업트리 요약(수정/신규/삭제 개수)을 한 줄로.
+    git 저장소가 아니거나 실패하면 None — 호출부가 조용히 생략한다.
+    다음 세션이 재개할 수 있는 '객관적 상태'만 남긴다(의미 판정 없음)."""
+    # status --short 로 git 저장소인지 판별(빈 출력도 유효 — 변경 없음).
+    porcelain = _run_git(["status", "--short"], cwd)
+    if porcelain is None:
+        return None
+    # 브랜치: 커밋이 아직 없으면 rev-parse가 실패하므로 symbolic-ref로 폴백.
+    branch = _run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd)
+    if not branch or branch.strip() == "HEAD":
+        sym = _run_git(["symbolic-ref", "--short", "HEAD"], cwd)
+        branch = sym if sym else "(detached)"
+    branch = branch.strip() or "(detached)"
+    mod = new = deleted = 0
+    for ln in porcelain.splitlines():
+        code = ln[:2]
+        if "D" in code:
+            deleted += 1
+        elif "?" in code or "A" in code:
+            new += 1
+        elif code.strip():
+            mod += 1
+    parts = []
+    if mod:
+        parts.append(f"수정 {mod}")
+    if new:
+        parts.append(f"신규 {new}")
+    if deleted:
+        parts.append(f"삭제 {deleted}")
+    summary = " · ".join(parts) if parts else "변경 없음"
+    return f"{branch}, {summary}"
 
 
 def emit(event_name, additional_context=None, system_message=None):
@@ -86,6 +135,60 @@ def parse_transcript(path):
                     if fp and fp not in edited:
                         edited.append(fp)
     return prompts[-5:], edited
+
+
+# 테스트 실행으로 보이는 Bash 명령 (pytest/unittest/jest/vitest/go test/cargo test 등)
+_TEST_CMD_RE = re.compile(
+    r"\b(pytest|python[0-9.]*\s+-m\s+(?:unittest|pytest)|unittest|jest|vitest|"
+    r"npm\s+(?:run\s+)?test|yarn\s+test|pnpm\s+test|go\s+test|cargo\s+test)\b")
+def _result_from_output(text):
+    """테스트 출력 텍스트에서 명확한 결과 한 줄. 없으면 None."""
+    if not text:
+        return None
+    fail = re.search(r"(\d+)\s+failed", text, re.I) or \
+        re.search(r"FAILED\s*\(.*?(?:failures|errors)=(\d+)", text, re.I) or \
+        re.search(r"Tests:\s+(\d+)\s+failed", text, re.I)
+    if fail:
+        return f"실패 {fail.group(1)}"
+    ok = re.search(r"Ran\s+\d+\s+tests?.*?\bOK\b", text, re.I | re.S) or \
+        re.search(r"(\d+)\s+passed", text, re.I)
+    if ok:
+        return "통과"
+    return None
+
+
+def last_test_result(path):
+    """트랜스크립트에서 마지막 테스트 실행의 (명령, 결과 요약)을 찾는다.
+    명확히 식별될 때만 반환하고, 애매하면 None (의미 판정하지 않음)."""
+    lines = tail_lines(path)
+    pending_cmd = None      # 아직 결과를 못 만난 테스트 명령
+    found = None            # (cmd, result)
+    for line in lines:
+        try:
+            entry = json.loads(line)
+        except Exception:
+            continue
+        content = (entry.get("message") or {}).get("content")
+        if not isinstance(content, list):
+            continue
+        for c in content:
+            if not isinstance(c, dict):
+                continue
+            if c.get("type") == "tool_use" and c.get("name") == "Bash":
+                cmd = (c.get("input") or {}).get("command", "")
+                m = _TEST_CMD_RE.search(cmd)
+                if m:
+                    pending_cmd = " ".join(cmd.split())[:80]
+            elif c.get("type") == "tool_result" and pending_cmd:
+                out = c.get("content")
+                if isinstance(out, list):
+                    out = " ".join(x.get("text", "") for x in out
+                                   if isinstance(x, dict))
+                res = _result_from_output(out if isinstance(out, str) else "")
+                if res:
+                    found = (pending_cmd, res)
+                pending_cmd = None
+    return found
 
 
 def prepend_entry(handover_path, entry_text):

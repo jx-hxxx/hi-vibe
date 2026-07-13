@@ -8,6 +8,7 @@ import io
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -114,6 +115,31 @@ class CommonTest(TempProject):
         # MultiEdit도 수정으로 집계되어야 함 (Bash는 제외)
         self.assertEqual(edited, ["/p/core.py", "/p/util.py"])
 
+    def _transcript_with(self, cmd, output):
+        p = os.path.join(self.root, "tt.jsonl")
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"message": {"content": [
+                {"type": "tool_use", "name": "Bash", "input": {"command": cmd}}]}}) + "\n")
+            f.write(json.dumps({"message": {"content": [
+                {"type": "tool_result", "content": output}]}}) + "\n")
+        return p
+
+    def test_last_test_result_reads_pass_and_fail(self):
+        ok = self._transcript_with("python3 -m unittest discover -s tests",
+                                    "Ran 78 tests in 5s\n\nOK")
+        self.assertEqual(_common.last_test_result(ok),
+                         ("python3 -m unittest discover -s tests", "통과"))
+        fail = self._transcript_with("pytest", "2 failed, 5 passed")
+        self.assertEqual(_common.last_test_result(fail), ("pytest", "실패 2"))
+
+    def test_last_test_result_none_when_ambiguous_or_nontest(self):
+        # 테스트 명령이 아니면 무시
+        self.assertIsNone(_common.last_test_result(
+            self._transcript_with("ls -la", "total 8")))
+        # 테스트 명령이어도 명확한 결과 신호 없으면 None (의미 판정하지 않음)
+        self.assertIsNone(_common.last_test_result(
+            self._transcript_with("pytest", "collecting ...")))
+
 
 class PreCompactTest(TempProject):
     def payload(self, transcript=""):
@@ -134,6 +160,32 @@ class PreCompactTest(TempProject):
             self.assertEqual(os.listdir(other), [])
         finally:
             shutil.rmtree(other, ignore_errors=True)
+
+    def test_records_git_and_test_state(self):
+        """git 저장소면 브랜치·변경 요약과, transcript의 명확한 테스트 결과를
+        handover에 남긴다 — 다음 세션 재개용 객관적 상태."""
+        subprocess.run(["git", "init", "-q"], cwd=self.root)
+        with open(os.path.join(self.root, "new.py"), "w") as f:
+            f.write("x=1\n")  # untracked = 신규
+        tp = os.path.join(self.root, "t.jsonl")
+        with open(tp, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"message": {"content": [
+                {"type": "tool_use", "name": "Bash",
+                 "input": {"command": "python3 -m unittest"}}]}}) + "\n")
+            f.write(json.dumps({"message": {"content": [
+                {"type": "tool_result", "content": "Ran 5 tests\n\nOK"}]}}) + "\n")
+        pre_compact.main(self.payload(transcript=tp))
+        text = self.read_handover()
+        self.assertIn("- Git:", text)
+        self.assertIn("master", text)   # 브랜치명
+        self.assertIn("신규", text)      # untracked 파일 집계(new.py 등)
+        self.assertIn("최근 검증:", text)
+        self.assertIn("통과", text)
+
+    def test_no_git_line_outside_repo(self):
+        """git 저장소가 아니면 Git 줄을 조용히 생략(fail-open)."""
+        pre_compact.main(self.payload())  # self.root는 git init 안 함
+        self.assertNotIn("- Git:", self.read_handover())
 
 
 class StopNudgeTest(TempProject):
