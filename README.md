@@ -26,10 +26,11 @@ workflow.
 > search for evidence, leave records, and verify — at the moments it tends to
 > gloss over.
 
-> **The primary language is Python.** The hooks, scanner, and tests are designed
-> and validated around Python first. JS/TS (`.js`·`.jsx`·`.ts`·`.tsx`) is also
-> supported via scanning, `gate`, and symbol lookup, but with narrower coverage
-> and shallower validation than Python.
+> **hi-vibe is built for Python projects.** All hooks, the scanner, and the tests
+> are designed and validated for Python. JS/TS (`.js`·`.jsx`·`.ts`·`.tsx`) has only
+> **limited (partial) support** — symbol / name-collision detection and oversized-file
+> checks; core analysis like duplicate / near-duplicate detection is **Python-only**.
+> **If JS/TS is your primary language, you'll get much less out of this tool.**
 
 <details>
 <summary><strong>Table of contents</strong></summary>
