@@ -316,8 +316,8 @@ this feature,” and you can call the command directly when you want to be sure.
 
 - `review` — review the single feature you just built
 - `review --all` — review uncommitted Python/JS·TS code files (committed ones drop out of scope; config/doc files and deletions are excluded)
-- `review --deep` — a separate Claude that didn't write the code does a fresh-eyes review
-- `review --all --deep` — review all changes through a separate Claude's eyes
+- `review --deep` — **spawns a new subagent (fresh-eyes)** that never wrote the code, reviewing the design with clean, unbiased eyes
+- `review --all --deep` — review the whole session's changes through that subagent's eyes at once (especially recommended right after installing on an existing project)
 
 `--all` skips files already reviewed and unchanged since. If the change is large,
 it measures the file count and changed lines, then asks whether to review
