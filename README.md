@@ -496,19 +496,24 @@ Paste the question and repo link below into Claude, Codex, or Gemini.
 ```text
 https://github.com/jx-hxxx/hi-vibe
 
+hi-vibe is a personal plugin an individual developer uses inside Claude Code.
+Please judge it centered on whether hi-vibe actually helps MY project.
+
+My project: [main language/framework, project size, solo or team, checks & docs you currently use]
+
 Judge how faithfully the scope the README promises is actually delivered in the real implementation.
-Separate the confirmed strengths from the limits, and spell out what actually helps the core target.
+Separate the confirmed strengths from the limits, and spell out what actually helps a core target like my project.
 
 Evaluate:
 1. Help for vibe coding
 2. Product / technical design
-3. Core target vs. who it fits less
+3. Fit with my project, and who it fits less
 4. Key strengths and limits
 5. Test / automation reliability
 6. Current maturity
 
-- Install value for the core target: /10
-- Current maturity as a dev tool: /10
+- Install value for my project: /10
+- Current maturity as a personal Claude Code plugin: /10
 - Overall: /10
 
 Judge fairly based on the actual implementation you verified, and say so for anything you couldn't verify directly.
