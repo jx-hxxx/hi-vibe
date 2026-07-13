@@ -5,6 +5,9 @@
 
 ## [Unreleased]
 
+### CI
+- **CI 매트릭스에 Python 3.8 추가** — README가 최소 지원을 3.8+로 밝히는데 CI는 3.9·3.12만 돌던 간극을 메움(외부 감사가 3회 지적). 이제 최소 지원 버전을 실제로 검증한다. (코드에 3.9+ 전용 문법·API 없음을 사전 확인.)
+
 ## [0.13.4] - 2026-07-13
 <!-- show:ko **자기 검증 규율을 자기 저장소에 마저 지켜요.** 외부 AI 감사가 main이 red(테스트 1개 실패)임을 짚었어요. 두 가지 사각지대를 근본적으로 막음: (1) 무결성 테스트가 랜딩의 릴리스 타임라인(CHANGELOG 자동 복사본, 즉 역사 서술)까지 명령 참조로 오인하던 걸, SHOWCASE 마커 영역을 도려내 해결 — 실제 명령어 안내는 계속 검사. (2) showcase 봇 커밋의 [skip ci]를 제거해, 봇이 생성한 docs가 테스트를 깨도 CI가 잡게 함(무한루프 없음 확인). -->
 <!-- show:en **The self-verification discipline now holds on our own repo too.** An external AI audit caught main being red (1 failing test). Two blind spots fixed at the root: (1) the integrity test was mis-reading the landing's release timeline (an auto-copied CHANGELOG history) as live command references — now the SHOWCASE-marked region is excised, while real command guidance is still checked. (2) Removed [skip ci] from the showcase bot commit so a bot-generated docs change that breaks tests is caught by CI (verified: no trigger loop). -->
