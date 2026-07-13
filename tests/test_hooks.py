@@ -373,6 +373,16 @@ class SecretGuardTest(TempProject):
         })
         self.assertIn("비밀키", out)
 
+    def test_secret_swap_same_count_flagged(self):
+        """기존 시크릿 1개를 다른 시크릿 1개로 교체하면 개수는 1→1로 같아도
+        새 값이라 경고해야 한다 — 개수 비교가 놓치던 실제 탐지 공백(감사 재현)."""
+        out = self.run_guard("Edit", {
+            "file_path": "/p/svc.py",
+            "old_string": f'key = "{self.FAKE_ANTHROPIC}"\n',
+            "new_string": f'key = "{self.FAKE_AWS}"\n',
+        })
+        self.assertIn("비밀키", out)
+
     def test_env_file_is_correct_place_not_flagged(self):
         out = self.run_guard("Write", {
             "file_path": "/p/.env",

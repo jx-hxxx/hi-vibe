@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.13.2] - 2026-07-13
+<!-- show:ko **비밀키를 다른 비밀키로 바꿔치기해도 이제 잡아요.** 외부 AI 감사가 재현한 탐지 공백: PostToolUse 가드가 old/new의 위험 패턴 "개수"만 비교해서, 기존 하드코딩 시크릿 하나를 다른 시크릿 하나로 교체하면(1→1, 개수 같음) 경고가 안 났어요. 비교를 개수→실제 매치 값(Counter 차집합)으로 바꿔 값이 다르면 잡게 함. 에러 삼킴 패턴도 같은 로직이라 함께 개선하고 회귀 테스트 추가. -->
+<!-- show:en **Swapping one secret for a different one is now caught.** A detection gap reproduced by an external AI audit: the PostToolUse guard compared only the *count* of risky patterns in old vs new, so replacing one hardcoded secret with a different one (1→1, same count) produced no warning. The comparison is now value-based (Counter difference), so a different value is flagged. The swallowed-error path shares the logic and got the same fix, with a regression test. -->
+
+### Fixed
+- **비밀키·에러삼킴 스왑을 놓치던 탐지 공백** — `post_write_guard.py`가 `len(new) > len(old)` 개수 비교라, 기존 시크릿 1개를 다른 시크릿 1개로 교체하면(개수 1→1) 경고가 안 났다(감사 재현: `token="…OLD"` → `password="…NEW"` = exit 0, 무경고). `find_secrets`/`find_swallows`가 정규화된 매치 값을 반환하게 하고, 비교를 `Counter(new) - Counter(old)` 차집합으로 변경 — 값이 다르면(개수가 같아도) 새 위험으로 잡는다. 기존 시크릿을 그대로 옮기는 편집은 여전히 재경고 안 함.
+
+### Tests
+- +1 (시크릿 스왑=경고 회귀 테스트). 75→76.
+
 ## [0.13.1] - 2026-07-13
 <!-- show:ko **MultiEdit로 편집해도 이제 진행상황에 기록돼요.** 외부 AI 감사에서 발견한 진짜 버그: PostToolUse 훅엔 MultiEdit가 등록돼 있어 에러·비밀키 감지는 됐는데, handover·Stop의 "변경 파일" 집계가 Write/Edit/NotebookEdit만 세서 MultiEdit로만 편집한 세션이 기록·CHANGELOG 알림에서 빠졌어요. 한 줄 수정 + 회귀 테스트로 막음. README도 review --all 범위(uncommitted)와 Python 전용/JS·TS 한정 지원을 더 정확히 명시. -->
 <!-- show:en **MultiEdit changes now show up in progress records.** A real bug found via external AI audit: MultiEdit is registered on the PostToolUse hook (so error/secret detection worked), but the handover/Stop changed-file tally only counted Write/Edit/NotebookEdit — so a session edited only via MultiEdit fell out of the records and the CHANGELOG nudge. Fixed in one line + a regression test. README also clarifies review --all scope (uncommitted) and the Python-only / limited-JS·TS scope. -->

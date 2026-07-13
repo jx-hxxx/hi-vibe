@@ -9,11 +9,14 @@
 
 경고만 한다: 도구 실행을 막지도, 호스트를 깨지도 않는다 (항상 exit 0).
 Edit/MultiEdit은 old_string과 비교해 '새로 늘어난' 것만 경고한다 —
-기존 코드를 다시 만질 때마다 잔소리하지 않기 위해서다.
+기존 코드를 다시 만질 때마다 잔소리하지 않기 위해서다. 비교는 개수가
+아니라 실제 매치 값 기준(Counter 차집합)이라, 기존 시크릿 하나를 다른
+시크릿으로 바꿔치기해도(개수는 같아도) 새 값으로 잡는다.
 """
 import os
 import re
 import sys
+from collections import Counter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _common
@@ -67,7 +70,7 @@ def _match_region(text, m):
 
 
 def find_swallows(text, path):
-    """(라벨, 조각 내 줄 번호) 리스트. allow-swallow 표시된 매치는 제외."""
+    """(라벨, 정규화된 매치 텍스트) 리스트. allow-swallow 표시된 매치는 제외."""
     if not text:
         return []
     patterns = PY_PATTERNS if path.endswith(".py") else JS_PATTERNS
@@ -76,12 +79,12 @@ def find_swallows(text, path):
         for m in rx.finditer(text):
             if ALLOW_MARK in _match_region(text, m):
                 continue
-            found.append((label, text[:m.start()].count("\n") + 1))
+            found.append((label, " ".join(m.group(0).split())))
     return found
 
 
 def find_secrets(text):
-    """(라벨, 조각 내 줄 번호) 리스트. allow-secret 표시·자리표시자 줄 제외."""
+    """(라벨, 정규화된 매치 텍스트) 리스트. allow-secret 표시·자리표시자 줄 제외."""
     if not text:
         return []
     found = []
@@ -92,7 +95,7 @@ def find_secrets(text):
             line = text[start: end if end != -1 else len(text)]
             if ALLOW_SECRET_MARK in line or SECRET_FALSE_ALARM_RE.search(line):
                 continue
-            found.append((label, text[:m.start()].count("\n") + 1))
+            found.append((label, " ".join(m.group(0).split())))
     return found
 
 
@@ -121,8 +124,9 @@ def main(payload):
         for new, old in pairs:
             new_hits += find_swallows(new, fp)
             old_hits += find_swallows(old, fp)
-        if len(new_hits) > len(old_hits):
-            labels = ", ".join(sorted({label for label, _ in new_hits}))
+        new_swallows = Counter(new_hits) - Counter(old_hits)
+        if new_swallows:
+            labels = ", ".join(sorted({label for (label, _) in new_swallows}))
             messages.append(
                 f"hi-vibe 감지: 방금 `{os.path.basename(fp)}`에 에러 삼킴 패턴이 "
                 f"추가됐다 — {labels}. 사용자에게 **한 줄로** 짚어라(길게 설명하지 "
@@ -138,8 +142,9 @@ def main(payload):
         for new, old in pairs:
             new_sec += find_secrets(new)
             old_sec += find_secrets(old)
-        if len(new_sec) > len(old_sec):
-            labels = ", ".join(sorted({label for label, _ in new_sec}))
+        new_secrets = Counter(new_sec) - Counter(old_sec)
+        if new_secrets:
+            labels = ", ".join(sorted({label for (label, _) in new_secrets}))
             messages.append(
                 f"hi-vibe 감지: 방금 `{os.path.basename(fp)}`에 실제 비밀키로 보이는 "
                 f"문자열이 들어갔다 — {labels}. 이건 드물지만 치명적이라 **왜 위험한지 "
