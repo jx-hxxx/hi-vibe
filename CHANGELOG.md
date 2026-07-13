@@ -5,7 +5,12 @@
 
 ## [Unreleased]
 
-## [0.14.2] - 2026-07-13
+## [0.14.3] - 2026-07-13
+<!-- show:ko **검증 강도가 이제 변경 크기에 비례해요 — 작은 일에 12분 안 걸려요.** 리뷰 체크리스트의 "실행 검증(필수)"이 변경 크기와 상관없이 늘 앱 구동·브라우저 실행을 요구하던 걸, 세 등급으로 나눴어요: 문서·포맷은 검증 없이 통과 / 패턴 복제·설정 한 줄 같은 작은 변경은 구문·서빙 확인만 / 로직·API·버그 수정만 실제 실행 관찰. 여기에 "최소 충분" 원칙을 못박아, 같은 걸 여러 화면폭·반복으로 다시 확인하거나 요청 범위 밖까지 파고드는 과잉검증을 금지했어요. hi-vibe가 작은 작업을 무겁게 만들던 지연의 근본 원인 제거. -->
+<!-- show:en **Verification strength now scales with change size — small tasks don't take 12 minutes.** The review checklist's "run-verification (required)" used to demand running the app / a browser regardless of change size; it's now tiered: docs/formatting pass with no verification, small changes (pattern copies, one-line config) need only a syntax/serving check, and only behavior changes (logic/API/bug fixes) require observing a real run. A "minimum sufficient" rule forbids re-checking the same thing across widths/repeats or digging outside the request's scope. Removes the root cause of hi-vibe making small tasks slow. -->
+
+### Changed
+- **실행 검증을 등급제로** (write-gate `Mode: review` 9번) — 변경의 런타임 표면·크기에 비례해 검증한다. ①런타임 표면 없음(문서·주석·포맷·동작 동일 설정/이름변경) → 검증 불필요 ②작은·국소 변경(검증된 패턴 복제·script/설정 한 줄) → 구문·서빙 확인만 ③동작 변경(로직·API·스키마·새 기능·버그) → 실제 실행 관찰. "최소 충분 원칙"으로 여러 조건(화면폭·브라우저·반복) 재확인·범위 밖 검증을 명시 금지. 마지막 요약 줄도 "가벼운 검증"·"런타임 표면 없음" 종결 상태를 허용. 이전엔 크기 무관 "실행 검증(필수)"이라 3줄짜리 변경에도 앱·브라우저를 띄우게 만들던 지연의 근본 원인.
 <!-- show:ko **첫 화면이 가벼워지고, 문서가 코드와 함께 자라요.** 초보자용 3줄 안내(설치→평소처럼 코딩→이상하면 doctor)를 README 맨 위로, "실제 훅 4종·84 tests·표준 라이브러리" 신뢰 문단은 접이식(왜 이렇게 만들었나요?)으로 내렸어요. init은 이제 CLAUDE.md·handover.md만 만들고 시작하고, MODULE.md는 폴더가 복잡해질 때·CHANGELOG.md는 첫 /hi-vibe:log 때 알아서 생겨요 — 작은 프로젝트가 코드보다 관리 문서가 많아지지 않게, 그것도 --lite/--full 같은 선택지 없이. 감지 범위 문구도 "저장하는 순간"→"Claude가 Write/Edit로 코드 쓸 때"로 좁혀 기대치를 정확히 맞췄어요. -->
 <!-- show:en **The first screen got lighter, and docs grow with the code.** A 3-line beginner intro (install → code as usual → doctor if something's off) now sits at the top of the README; the "4 hooks · 84 tests · stdlib-only" trust paragraph folds into a details block. init now starts with just CLAUDE.md + handover.md — MODULE.md appears when a folder grows complex, CHANGELOG.md on the first /hi-vibe:log — so a small project never has more management docs than code, and with no --lite/--full to choose. Detection wording narrowed from "the moment you save code" to "when Claude writes code via Write/Edit," matching the real scope. -->
 
