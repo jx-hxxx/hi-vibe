@@ -159,8 +159,8 @@ PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
 Python / JS-TS symbol lookup, identical & near-duplicate functions, review-scope
 caching, and false-positive regressions.
 
-Tests run on GitHub Actions with Python 3.9 and 3.12. (Supported version is
-Python 3.8+; CI validates against 3.9 and 3.12.)
+Tests run on GitHub Actions with Python 3.8, 3.9, and 3.12 — so the minimum
+supported version (3.8) the README states is actually validated in CI.
 
 ### A doctor that doesn't just check files
 

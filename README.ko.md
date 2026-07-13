@@ -156,8 +156,8 @@ handover 기록·회전·동시 쓰기, SessionStart·PreCompact·PostToolUse·S
 훅, 비밀키와 에러 삼킴 감지, Python·JS/TS 심볼 탐색, 동일·유사 함수,
 리뷰 범위 캐시와 오탐 회귀를 테스트합니다.
 
-테스트는 GitHub Actions에서 Python 3.9와 3.12로 실행됩니다. (지원 버전은
-Python 3.8+이며, CI는 3.9·3.12 두 버전으로 검증합니다.)
+테스트는 GitHub Actions에서 Python 3.8·3.9·3.12로 실행됩니다. (README가
+밝히는 최소 지원 버전 3.8을 CI에서도 실제로 검증합니다.)
 
 ### 파일만 확인하지 않는 doctor
 
