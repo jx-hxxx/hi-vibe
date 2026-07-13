@@ -48,6 +48,7 @@
 
   .brandbox { display:flex; align-items:center; gap:10px; }
   .ver { font-family:var(--mono); font-size:11px; color:var(--accent-ink); background:color-mix(in srgb, var(--accent) 15%, transparent); padding:2px 8px; border-radius:20px; letter-spacing:.02em; white-space:nowrap; }
+  html { overflow-x:clip; }
   body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
   .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
   section { padding:88px 0; border-top:1px solid var(--border); }
@@ -158,6 +159,7 @@
     background:#0a0c12; color:var(--text); border-bottom:1px solid var(--border); }
   .band .eyebrow { color:var(--accent-ink); }
   .band .eyebrow::before { background:var(--accent); }
+  .band h2 { letter-spacing:.01em; }
   .split { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:36px; }
   @media (max-width:820px){ .split { grid-template-columns:1fr; } }
   .scol { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:26px 26px 14px; }
@@ -460,6 +462,8 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
         🔒 <b>깔면 거저 (훅)</b> — <code>init</code>만 하면 왼쪽 ⚙️ 4개가 자동. 코드 쓸 때마다 에러 삼킴·비밀키를 기계가 잡아요. <i>진짜 항상 매인 벨트.</i><br>
         🧭 <b>부르면 (find · review · check)</b> — 말하면 도는 🤖 규율·스캔. 강력하지만 AI가 놓치면 안 걸려요. <i>잔소리하는 코치.</i><br>
         🛡️ <b>원하면 (gate)</b> — 복잡도·순환의존 린트. 제일 많이 잡지만 침습적이라 준비됐을 때 1회 설치(필수 아님).</div></div>
+      <div class="honest-note"><span>🔒</span><div><b>쓰고 싶은 프로젝트마다 각각 <code>/hi-vibe:init</code>을 해야 켜져요.</b><br>
+        플러그인은 한 번만 설치하지만, 자동 기능은 <code>init</code>으로 <code>.hi-vibe/</code> 마커가 만들어진 폴더에서만 돌아요. <b>init 안 한 다른 프로젝트엔 전혀 개입하지 않아요</b> — 원하지 않는 곳에서 훅이 도는 걸 막는 <b>안전장치</b>예요. <span class="dim">(새 프로젝트에서 쓰려면 그 폴더에서 <code>init</code> 한 번.)</span></div></div>
       </div>
     </section>
 
@@ -767,6 +771,8 @@ Judge fairly based on the actual implementation you verified, and say so for any
         🔒 <b>Free once installed (hooks)</b> — after <code>init</code>, the 4 ⚙️ rows on the left run automatically; every code write is checked for error-swallowing & secrets. <i>The belt that's actually always on.</i><br>
         🧭 <b>On demand (find · review · check)</b> — 🤖 discipline & scans that run when you talk. Powerful, but the AI can skip them. <i>A coach nagging beside you.</i><br>
         🛡️ <b>Opt-in (gate)</b> — lints complexity & circular deps. Catches the most, but it's invasive — install once when ready (not required).</div></div>
+      <div class="honest-note"><span>🔒</span><div><b>Run <code>/hi-vibe:init</code> in every project where you want it.</b><br>
+        You install the plugin once, but the automatic features only run in folders where <code>init</code> created the <code>.hi-vibe/</code> marker. <b>It never touches other projects you didn't init</b> — that's the <b>safety guard</b> against hooks running where you don't want them. <span class="dim">(To use it in a new project, just <code>init</code> once in that folder.)</span></div></div>
       </div>
     </section>
 
