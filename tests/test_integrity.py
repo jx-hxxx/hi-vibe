@@ -24,6 +24,19 @@ def _read(path):
         return f.read()
 
 
+# SHOWCASE 마커 안(랜딩 타임라인)은 CHANGELOG에서 자동 생성된 *역사 서술*이라
+# 이름이 바뀐 옛 명령을 언급할 수 있다 — 명령 참조 검사에서 제외한다.
+# (CHANGELOG 자체를 제외하는 것과 같은 이유. 그 CHANGELOG가 랜딩에 복사되므로
+#  랜딩에서도 같은 영역을 도려내야 한다.)
+_SHOWCASE_RE = re.compile(r"<!--\s*SHOWCASE:[a-z]+-start\s*-->.*?"
+                          r"<!--\s*SHOWCASE:[a-z]+-end\s*-->", re.S)
+
+
+def _read_active(path):
+    """명령 참조 검사용: 역사 서술(SHOWCASE 타임라인)을 뺀 본문."""
+    return _SHOWCASE_RE.sub("", _read(path))
+
+
 def _active_files():
     for root, dirs, files in os.walk(REPO):
         dirs[:] = [d for d in dirs if d not in _SKIP_DIRS]
@@ -50,7 +63,7 @@ class RepoIntegrityTest(unittest.TestCase):
         ref = re.compile(r"/hi-vibe:([a-z][a-z0-9-]*)")
         bad = set()
         for path in _active_files():
-            for m in ref.finditer(_read(path)):
+            for m in ref.finditer(_read_active(path)):
                 if m.group(1) not in commands:
                     bad.add(f"{os.path.relpath(path, REPO)} → /hi-vibe:{m.group(1)}")
         self.assertEqual(

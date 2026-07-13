@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.13.4] - 2026-07-13
+<!-- show:ko **자기 검증 규율을 자기 저장소에 마저 지켜요.** 외부 AI 감사가 main이 red(테스트 1개 실패)임을 짚었어요. 두 가지 사각지대를 근본적으로 막음: (1) 무결성 테스트가 랜딩의 릴리스 타임라인(CHANGELOG 자동 복사본, 즉 역사 서술)까지 명령 참조로 오인하던 걸, SHOWCASE 마커 영역을 도려내 해결 — 실제 명령어 안내는 계속 검사. (2) showcase 봇 커밋의 [skip ci]를 제거해, 봇이 생성한 docs가 테스트를 깨도 CI가 잡게 함(무한루프 없음 확인). -->
+<!-- show:en **The self-verification discipline now holds on our own repo too.** An external AI audit caught main being red (1 failing test). Two blind spots fixed at the root: (1) the integrity test was mis-reading the landing's release timeline (an auto-copied CHANGELOG history) as live command references — now the SHOWCASE-marked region is excised, while real command guidance is still checked. (2) Removed [skip ci] from the showcase bot commit so a bot-generated docs change that breaks tests is caught by CI (verified: no trigger loop). -->
+
+### Fixed
+- **main red — 무결성 테스트 오탐** — `test_all_command_references_exist`가 랜딩(`docs/index.html`)의 SHOWCASE 타임라인(CHANGELOG에서 자동 복사된 역사 서술)에 남은 옛 `/hi-vibe:audit` 문자열을 현재 명령 참조로 오인해 실패. 명령 참조 검사에서 `<!--SHOWCASE:*-start/end-->` 영역을 제외(역사 서술이므로). 명령어 표 등 실제 안내는 그대로 검사 — 가짜 명령은 여전히 잡힌다(테스트로 확인).
+- **CI 사각지대 — showcase 봇 커밋의 `[skip ci]`** — 봇이 생성한 `docs/index.html`이 테스트를 깨도 그 커밋에서 CI가 안 돌던 문제. `[skip ci]` 제거. showcase는 `CHANGELOG.md`/`build-showcase.py`에만, release는 `plugin.json`에만 트리거되므로 docs-only 봇 커밋은 test.yml만 추가로 돌리고 재트리거 루프는 없다.
+
 ## [0.13.3] - 2026-07-13
 <!-- show:ko **깨진 명령 참조를 잡고, 문서-현실 어긋남을 테스트로 막아요.** 외부 AI 감사가 찾은 실제 결함: 선택형 격주 감사 템플릿이 존재하지 않는 `/hi-vibe:audit`을 호출했어요(→ `/hi-vibe:check`로 수정). 재발 방지로 무결성 테스트 2개 추가 — 모든 `/hi-vibe:<명령>` 참조가 실재하는지, README·랜딩이 광고하는 "자동 테스트 N개"가 실제 개수와 같은지 CI에서 강제. 테스트 수도 75→78로 동기화. -->
 <!-- show:en **Broken command reference fixed, and doc-vs-reality drift is now caught by tests.** A real defect found by an external AI audit: the optional biweekly-audit template invoked a non-existent `/hi-vibe:audit` (fixed to `/hi-vibe:check`). Two integrity tests now enforce in CI that every `/hi-vibe:<command>` reference resolves to a real command, and that the "N automated tests" advertised in the README/landing matches the actual count. Test count synced 75→78. -->
