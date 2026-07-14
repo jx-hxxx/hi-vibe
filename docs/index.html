@@ -270,6 +270,9 @@
   .hterm pre .c { color:#85857e; }
   .hterm .bar .runhint { flex:none; display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:12px; font-weight:700; color:#c9a84a; letter-spacing:.01em; }
   .hterm .bar .runhint::before { content:"↵"; font-size:13px; opacity:.85; }
+  /* hero 3D cube (gold, WebGL) */
+  .hero-cube { position:relative; width:100%; max-width:460px; aspect-ratio:1/1; margin:0 auto 18px; }
+  .hero-cube > div, .hero-cube canvas { position:absolute; inset:0; width:100%!important; height:100%!important; display:block; }
 </style>
 </head>
 <body>
@@ -307,6 +310,7 @@
           <p class="micro"><span>python3만 있으면 돼요</span><span>핵심 훅은 외부 패키지 0</span><span>기존 설정 안 덮어써요</span></p>
         </div>
         <div class="clcol" id="install-ko">
+          <div class="hero-cube"><div id="cube-ko" aria-hidden="true"></div></div>
           <div class="hterm">
             <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">플러그인 설치하기</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">한 줄씩 실행</span></span></div>
             <div class="body">
@@ -1003,6 +1007,27 @@ Judge fairly based on the actual implementation you verified, and say so for any
   var langBtns2 = document.querySelectorAll('.js-lang');
   for (var q=0;q<langBtns2.length;q++){ langBtns2[q].addEventListener('click', function(){ setTimeout(syncAuditHeights, 0); }); }
   syncAuditHeights();
+})();
+</script>
+
+<script src="cube/three.min.js"></script>
+<script src="cube/cube.js"></script>
+<script>
+(function(){
+  if (!window.MeetingCube) return;
+  var GOLD = {
+    logoUrl: 'cube/gold-cube-logo.png',
+    pixelRatioCap: 1.75,
+    theme: {
+      envStops: ['#fdf1cc', '#f0cf7e', '#cc9a3c'],
+      glassShades: [0xb4801a, 0xa67214, 0xc48c1e, 0x8e6010, 0xac7c18],
+      attenuationColor: 0x452f06,
+      logoGradient: ['#FFD84C', '#E09422', '#A64E0E'],
+      glowColor: '#ffe39a',
+      ambientColor: 0xbc9a5c
+    }
+  };
+  if (document.getElementById('cube-ko')) MeetingCube.mount('#cube-ko', GOLD);
 })();
 </script>
 
