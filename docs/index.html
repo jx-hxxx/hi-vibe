@@ -273,6 +273,8 @@
   /* hero 3D cube (gold, WebGL) */
   .hero-cube { position:relative; width:100%; max-width:460px; aspect-ratio:1/1; margin:0 auto 18px; }
   .hero-cube > div, .hero-cube canvas { position:absolute; inset:0; width:100%!important; height:100%!important; display:block; }
+  .instrip { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0 36px; align-items:start; }
+  @media (max-width:860px){ .instrip { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -309,28 +311,31 @@
           </div>
           <p class="micro"><span>python3만 있으면 돼요</span><span>핵심 훅은 외부 패키지 0</span><span>기존 설정 안 덮어써요</span></p>
         </div>
-        <div class="clcol" id="install-ko">
+        <div class="clcol">
           <div class="hero-cube"><div id="cube-ko" aria-hidden="true"></div></div>
-          <div class="hterm">
-            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">플러그인 설치하기</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">한 줄씩 실행</span></span></div>
-            <div class="body">
-              <pre><span class="c"># 목록에 등록</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="instrip" id="install-ko">
+      <div class="hterm">
+        <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">플러그인 설치하기</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">한 줄씩 실행</span></span></div>
+        <div class="body">
+          <pre><span class="c"># 목록에 등록</span>
 /plugin marketplace add jx-hxxx/hi-vibe
 <span class="c"># 설치하고 지금 켜기</span>
 /plugin install hi-vibe@hi-vibe-marketplace
 /reload-plugins</pre>
-            </div>
-          </div>
-          <div class="hterm" style="margin-top:16px">
-            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">설치 다음 · 이 순서로</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">한 줄씩 실행</span></span></div>
-            <div class="body">
-              <pre><span class="c"># 잘 깔렸나 확인하고, 이 프로젝트에 켜기 (프로젝트 당 1회성)</span>
+        </div>
+      </div>
+      <div class="hterm">
+        <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">설치 다음 · 이 순서로</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">한 줄씩 실행</span></span></div>
+        <div class="body">
+          <pre><span class="c"># 잘 깔렸나 확인하고, 이 프로젝트에 켜기 (프로젝트 당 1회성)</span>
 /hi-vibe:doctor
 /hi-vibe:init
 <span class="c"># 코드 검사기 + CI까지 설치 (선택 - 프로젝트 당 1회성)</span>
 /hi-vibe:gate --ci</pre>
-            </div>
-          </div>
         </div>
       </div>
     </section>
