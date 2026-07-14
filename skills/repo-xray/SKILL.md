@@ -134,6 +134,22 @@ next steps, each backed by evidence (`file:line`, counts, scan range).
 Offer the full list ("전체 목록 보여드릴까요?") instead of dumping it.
 Expand raw JSON only when the user asks for proof or detail.
 
+## hi-vibe catch — 반사실적 발견에만 공을 밝힌다
+
+스캔이 **사용자가 몰랐던 것을 드러냈을 때만**(예: 자기도 잊고 있던 죽은 코드,
+모르고 두 번 짠 중복 함수) 답변 맨 끝에 한 줄을 더한다. 세 조건을 **모두**
+만족할 때: ① 이 스캔이 찾았다(사용자가 자발적으로 짚은 게 아니다) ② 진짜
+정리 대상·구조 문제다(스타일이 아니다) ③ 스캔 전엔 레이더 밖이었다 —
+안 돌렸으면 놓쳤을 것이다.
+
+형식(문구는 사용자 언어로, `🎣 hi-vibe catch` 접두사는 고정 — 나중에 grep 가능하게):
+`🎣 hi-vibe catch — <무엇>을 repo-xray 스캔이 잡음. hi-vibe 없었으면 놓쳤을 것.`
+
+**과장 금지(핵심):** 셋 중 하나라도 아니면 넣지 마라. `dead_candidates`처럼
+"확인이 더 필요한 후보"에 확정처럼 공을 붙이지 말고, 사용자가 이미 알던 것에도
+붙이지 마라 — 조용히 일하는 스캐너의 신뢰가 깨진다. 이 표기는 자화자찬이 아니라
+스캐너가 실제로 무엇을 살렸는지를 보이게 하는 창이다.
+
 ## Red flags — stop and re-run instead
 
 - about to state a count without a scan in this session
