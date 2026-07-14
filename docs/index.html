@@ -621,33 +621,10 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
           <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br><span class="amber">hi-vibe</span> is your seatbelt.</h1>
           <p class="tag-en">The vibe-coding seatbelt for Claude Code.</p>
           <p class="say">When you let AI write your code, the same mistakes keep coming back — it rebuilds things that already exist, papers over errors, skips edge cases and piles everything into god-files… hi-vibe watches your back. No commands to memorize — <b>just talk normally</b>.</p>
-          <div class="cta">
-            <a class="btn primary" href="#install-en">Install</a>
-            <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">View on GitHub ↗</a>
-          </div>
           <p class="micro"><span>Just needs python3</span><span>Core hooks need zero external packages</span><span>Never overwrites your config</span></p>
         </div>
-        <div class="clcol" id="install-en">
-          <div class="hterm">
-            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">Install the plugin</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">run one at a time</span></span></div>
-            <div class="body">
-              <pre><span class="c"># register</span>
-/plugin marketplace add jx-hxxx/hi-vibe
-<span class="c"># install &amp; turn on now</span>
-/plugin install hi-vibe@hi-vibe-marketplace
-/reload-plugins</pre>
-            </div>
-          </div>
-          <div class="hterm" style="margin-top:16px">
-            <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">After install · in order</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">run one at a time</span></span></div>
-            <div class="body">
-              <pre><span class="c"># check it's on, then arm this project (once per project)</span>
-/hi-vibe:doctor
-/hi-vibe:init
-<span class="c"># optional: install the code guards + CI (once per project)</span>
-/hi-vibe:gate --ci</pre>
-            </div>
-          </div>
+        <div class="clcol">
+          <div class="hero-cube"><div id="cube-en" aria-hidden="true"></div></div>
         </div>
       </div>
     </section>
@@ -802,6 +779,28 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="eyebrow">Commands at a glance</p>
       <h2>Mostly automatic. Manual only when you need it.</h2>
       <p class="lead">⚡ Auto fires on its own when you talk normally; 🖐 Manual is for setup and checkups when you want them.</p>
+      <div class="instrip" id="install-en">
+        <div class="hterm">
+          <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">Install the plugin</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">run one at a time</span></span></div>
+          <div class="body">
+            <pre><span class="c"># register</span>
+/plugin marketplace add jx-hxxx/hi-vibe
+<span class="c"># install &amp; turn on now</span>
+/plugin install hi-vibe@hi-vibe-marketplace
+/reload-plugins</pre>
+          </div>
+        </div>
+        <div class="hterm">
+          <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">After install · in order</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">run one at a time</span></span></div>
+          <div class="body">
+            <pre><span class="c"># check it's on, then arm this project (once per project)</span>
+/hi-vibe:doctor
+/hi-vibe:init
+<span class="c"># optional: install the code guards + CI (once per project)</span>
+/hi-vibe:gate --ci</pre>
+          </div>
+        </div>
+      </div>
       <div class="honest-note"><span>🔒</span><div><b>Install once (global); <code>init</code> per project.</b><br>
         <code>/plugin install</code> defaults to <b>user scope (global)</b>, so a single install makes the <code>/hi-vibe:</code> commands available everywhere (no per-project reinstall).<br>
         But the automatic features (hooks) only turn on when you run <code>/hi-vibe:init</code> <b>from each project's top-level folder</b><br>
@@ -1027,7 +1026,18 @@ Judge fairly based on the actual implementation you verified, and say so for any
       ambientColor: 0xd0a060
     }
   };
-  if (document.getElementById('cube-ko')) MeetingCube.mount('#cube-ko', GOLD);
+  var mounted = {};
+  function mountCube(id){
+    if (mounted[id]) return;
+    var el = document.getElementById(id);
+    if (!el || (el.offsetWidth === 0 && el.offsetHeight === 0)) return; // skip hidden (0-size) canvas
+    mounted[id] = true;
+    MeetingCube.mount('#' + id, GOLD);
+  }
+  function mountVisible(){ mountCube('cube-ko'); mountCube('cube-en'); }
+  mountVisible(); // mount whichever language is shown now
+  var langBtns = document.querySelectorAll('.js-lang'); // lazy-mount the other on first switch
+  for (var i = 0; i < langBtns.length; i++){ langBtns[i].addEventListener('click', function(){ setTimeout(mountVisible, 0); }); }
 })();
 </script>
 
