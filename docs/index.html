@@ -278,6 +278,10 @@
   /* scroll reveal */
   .has-rv .rv { opacity:0; transform:translateY(28px); transition:opacity 1.3s cubic-bezier(.16,1,.3,1), transform 1.3s cubic-bezier(.16,1,.3,1); will-change:opacity,transform; }
   .has-rv .rv.in { opacity:1; transform:none; }
+  /* header scroll progress bar */
+  #hv-progress { position:fixed; top:0; left:0; height:3px; width:0; background:var(--accent); z-index:120; pointer-events:none; }
+  /* 3D tilt cards */
+  .layers > * { transform-style:preserve-3d; }
   /* terminal typing caret */
   .hterm .term-cur { display:inline-block; width:7px; height:15px; background:#ffbd4a; margin-left:2px; vertical-align:-2px; animation:hvblink 1.05s steps(1,end) infinite; }
   @keyframes hvblink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
@@ -1080,7 +1084,10 @@ Judge fairly based on the actual implementation you verified, and say so for any
       for (var k = 0; k < entries.length; k++){
         if (!entries[k].isIntersecting) continue;
         var t = entries[k].target;
-        if (t.matches(GROUP_SEL)){ for (var q = 0; q < t.children.length; q++){ t.children[q].classList.add('in'); } }
+        if (t.matches(GROUP_SEL)){
+          for (var q = 0; q < t.children.length; q++){ t.children[q].classList.add('in'); }
+          if (t.classList.contains('trust')) countTrust(t); // ① stats count up as the bar reveals
+        }
         else { t.classList.add('in'); }
         rio.unobserve(t);
       }
@@ -1088,6 +1095,73 @@ Judge fairly based on the actual implementation you verified, and say so for any
     for (var m = 0; m < solo.length; m++){ rio.observe(solo[m]); }
     for (var n = 0; n < groupEls.length; n++){ rio.observe(groupEls[n]); }
   }
+
+  /* stat count-up — numbers in the trust bar roll 0→N when it reveals */
+  function countTrust(bar){
+    if (reduce) return;
+    var bs = bar.querySelectorAll('b');
+    for (var i = 0; i < bs.length; i++){ (function(el){
+      var mm = el.textContent.match(/^(\d+)([\s\S]*)$/); if (!mm) return; // init / MIT / opt-in stay as-is
+      var target = parseInt(mm[1], 10), suffix = mm[2], t0 = null, dur = 1100;
+      function step(ts){
+        if (!t0) t0 = ts;
+        var p = Math.min((ts - t0) / dur, 1), eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * eased) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    })(bs[i]); }
+  }
+
+  /* cube scroll parallax — the hero cube floats & twists slightly against the scroll */
+  var cubeWraps = document.querySelectorAll('.hero-cube');
+  var pxTick = false;
+  function cubeParallax(){
+    pxTick = false;
+    var y = window.scrollY || 0;
+    for (var i = 0; i < cubeWraps.length; i++){
+      cubeWraps[i].style.transform = 'translateY(' + Math.min(y * 0.16, 180) + 'px) rotate(' + Math.min(y * 0.02, 9) + 'deg)';
+    }
+  }
+  if (!reduce && cubeWraps.length){
+    window.addEventListener('scroll', function(){ if (!pxTick){ pxTick = true; requestAnimationFrame(cubeParallax); } }, { passive:true });
+  }
+
+  /* 3D tilt — the three layer cards lean toward the cursor */
+  var tiltEls = document.querySelectorAll('.layers > *');
+  var canHover = false;
+  try { canHover = window.matchMedia('(hover:hover) and (pointer:fine)').matches; } catch(e){}
+  if (!reduce && canHover){
+    for (var ti = 0; ti < tiltEls.length; ti++){ (function(el){
+      el.addEventListener('mousemove', function(e){
+        if (!el.classList.contains('in')) return; // wait for reveal to finish
+        var r = el.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transitionDelay = '0s';
+        el.style.transition = 'transform .13s ease-out';
+        el.style.transform = 'perspective(700px) rotateX(' + (-py * 6).toFixed(2) + 'deg) rotateY(' + (px * 8).toFixed(2) + 'deg) translateY(-3px)';
+      });
+      el.addEventListener('mouseleave', function(){
+        el.style.transition = 'transform .45s ease';
+        el.style.transform = 'none';
+      });
+    })(tiltEls[ti]); }
+  }
+
+  /* header scroll progress — gold line fills as you read */
+  var pbar = document.createElement('div');
+  pbar.id = 'hv-progress';
+  document.body.appendChild(pbar);
+  var pgTick = false;
+  function progress(){
+    pgTick = false;
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    pbar.style.width = (max > 0 ? ((window.scrollY || 0) / max * 100) : 0) + '%';
+  }
+  window.addEventListener('scroll', function(){ if (!pgTick){ pgTick = true; requestAnimationFrame(progress); } }, { passive:true });
+  window.addEventListener('resize', function(){ if (!pgTick){ pgTick = true; requestAnimationFrame(progress); } });
+  progress();
 
   /* ① terminal typing — replay install commands char-by-char when a terminal strip enters view */
   function parseLines(html){
