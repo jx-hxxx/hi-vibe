@@ -280,10 +280,6 @@
   .has-rv .rv.in { opacity:1; transform:none; }
   /* header scroll progress bar */
   #hv-progress { position:fixed; top:0; left:0; height:3px; width:0; background:var(--accent); z-index:120; pointer-events:none; }
-  /* seatbelt line — gold belt drawn down the left margin by scroll */
-  .page { position:relative; }
-  .beltline { position:absolute; top:0; left:0; pointer-events:none; z-index:0; }
-  .beltline path { stroke:var(--accent); stroke-width:3; fill:none; stroke-linecap:round; opacity:.45; }
   /* gold highlighter sweep on key phrases */
   b.hlx { background-image:linear-gradient(100deg, rgba(255,203,84,.42), rgba(232,146,10,.26)); background-repeat:no-repeat; background-size:0% 44%; background-position:0 80%; transition:background-size .9s cubic-bezier(.25,.8,.25,1); border-radius:3px; }
   b.hlx.on { background-size:100% 44%; }
@@ -1133,52 +1129,6 @@ Judge fairly based on the actual implementation you verified, and say so for any
   window.addEventListener('scroll', function(){ if (!pgTick){ pgTick = true; requestAnimationFrame(progress); } }, { passive:true });
   window.addEventListener('resize', function(){ if (!pgTick){ pgTick = true; requestAnimationFrame(progress); } });
   progress();
-
-  /* ③ seatbelt line — a gold belt weaves down the left margin, drawn by your scroll */
-  var beltPath = null, beltTick = false;
-  function beltDraw(){
-    beltTick = false;
-    if (!beltPath || reduce) return;
-    var f = ((window.scrollY || 0) + window.innerHeight * 0.85) / beltPath.H;
-    f = Math.max(0, Math.min(1, f));
-    beltPath.p.style.strokeDashoffset = beltPath.len * (1 - f);
-  }
-  function buildBelt(){
-    var olds = document.querySelectorAll('.beltline');
-    for (var i = 0; i < olds.length; i++){ olds[i].parentNode.removeChild(olds[i]); }
-    beltPath = null;
-    var page = document.querySelector('.page:not([hidden])');
-    if (!page) return;
-    var mgn = (window.innerWidth - 1080) / 2;
-    if (mgn < 110) return; // no room on narrow windows
-    var H = page.scrollHeight, top = 150, bottom = H - 160;
-    if (bottom - top < 800) return;
-    var cx = Math.max(36, mgn * 0.42), amp = 20, y = top, side = 1, seg = 640;
-    var d = 'M ' + (cx + amp) + ' ' + top;
-    while (y < bottom){
-      var ny = Math.min(y + seg, bottom), x0 = cx + amp * side, x1 = cx - amp * side;
-      d += ' C ' + x0 + ' ' + Math.round(y + (ny - y) * 0.5) + ', ' + x1 + ' ' + Math.round(ny - (ny - y) * 0.5) + ', ' + x1 + ' ' + ny;
-      side = -side; y = ny;
-    }
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('class', 'beltline');
-    svg.setAttribute('width', Math.ceil(mgn)); svg.setAttribute('height', H);
-    var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    p.setAttribute('d', d);
-    svg.appendChild(p); page.appendChild(svg);
-    var len = p.getTotalLength();
-    p.style.strokeDasharray = len;
-    p.style.strokeDashoffset = reduce ? 0 : len;
-    beltPath = { p:p, len:len, H:H };
-    beltDraw();
-  }
-  window.addEventListener('scroll', function(){ if (!beltTick){ beltTick = true; requestAnimationFrame(beltDraw); } }, { passive:true });
-  var beltRsz;
-  window.addEventListener('resize', function(){ clearTimeout(beltRsz); beltRsz = setTimeout(buildBelt, 180); });
-  var beltLangBtns = document.querySelectorAll('.js-lang');
-  for (var bl = 0; bl < beltLangBtns.length; bl++){ beltLangBtns[bl].addEventListener('click', function(){ setTimeout(buildBelt, 60); }); }
-  window.addEventListener('load', buildBelt); // rebuild once assets settle the page height
-  buildBelt();
 
   /* gold highlighter sweep — key narrative phrases get marked as they scroll into view */
   var hlEls = document.querySelectorAll('.hero .say b, p.lead b');
