@@ -280,6 +280,20 @@
   .has-rv .rv.in { opacity:1; transform:none; }
   /* header scroll progress bar */
   #hv-progress { position:fixed; top:0; left:0; height:3px; width:0; background:var(--accent); z-index:120; pointer-events:none; }
+  /* gold highlighter sweep on key phrases */
+  b.hlx { background-image:linear-gradient(100deg, rgba(255,203,84,.42), rgba(232,146,10,.26)); background-repeat:no-repeat; background-size:0% 44%; background-position:0 80%; transition:background-size .9s cubic-bezier(.25,.8,.25,1); border-radius:3px; }
+  b.hlx.on { background-size:100% 44%; }
+  /* floating gold orbs behind hero & key sections */
+  .orb { position:absolute; z-index:-1; border-radius:50%; pointer-events:none; filter:blur(58px);
+    width:380px; height:380px; right:-90px; top:6%;
+    background:radial-gradient(circle at 36% 36%, rgba(255,205,92,.5), rgba(232,146,10,.16) 58%, transparent 74%);
+    animation:orbdrift 17s ease-in-out infinite alternate; }
+  .orb.o2 { width:300px; height:300px; left:-110px; bottom:0; top:auto; right:auto; animation-duration:23s; animation-delay:-7s; }
+  @keyframes orbdrift { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(30px,-24px) scale(1.07)} 100%{transform:translate(-20px,16px) scale(.95)} }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .orb { opacity:.34; } }
+  :root[data-theme="dark"] .orb { opacity:.34; }
+  :root[data-theme="light"] .orb { opacity:1; }
+  @media (prefers-reduced-motion:reduce){ .orb { animation:none; } b.hlx { background-size:100% 44%; transition:none; } }
   /* terminal typing caret */
   .hterm .term-cur { display:inline-block; width:7px; height:15px; background:#ffbd4a; margin-left:2px; vertical-align:-2px; animation:hvblink 1.05s steps(1,end) infinite; }
   @keyframes hvblink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
@@ -1125,6 +1139,36 @@ Judge fairly based on the actual implementation you verified, and say so for any
   window.addEventListener('scroll', function(){ if (!pgTick){ pgTick = true; requestAnimationFrame(progress); } }, { passive:true });
   window.addEventListener('resize', function(){ if (!pgTick){ pgTick = true; requestAnimationFrame(progress); } });
   progress();
+
+  /* gold highlighter sweep — key narrative phrases get marked as they scroll into view */
+  var hlEls = document.querySelectorAll('.hero .say b, .prow b, p.lead b');
+  for (var hi = 0; hi < hlEls.length; hi++){ hlEls[hi].classList.add('hlx'); }
+  if (!reduce && hasIO){
+    var hio = new IntersectionObserver(function(entries){
+      for (var hz = 0; hz < entries.length; hz++){
+        if (!entries[hz].isIntersecting) continue;
+        var hEl = entries[hz].target;
+        hio.unobserve(hEl);
+        // wait for the parent block's fade-in before sweeping, so the mark lands on visible text
+        setTimeout((function(e){ return function(){ e.classList.add('on'); }; })(hEl), hEl.closest('.rv') ? 650 : 250);
+      }
+    }, { threshold:0.6 });
+    for (var hj = 0; hj < hlEls.length; hj++){ hio.observe(hlEls[hj]); }
+  } else {
+    for (var hk = 0; hk < hlEls.length; hk++){ hlEls[hk].classList.add('on'); }
+  }
+
+  /* floating gold orbs — two soft shapes drifting behind the hero and key sections */
+  var orbHosts = document.querySelectorAll('.hero, #how-ko, #how-en, #commands-ko, #commands-en');
+  for (var ob = 0; ob < orbHosts.length; ob++){
+    var host = orbHosts[ob];
+    host.style.position = 'relative';
+    host.style.zIndex = '0'; // own stacking context so z-index:-1 orbs sit behind content but above the page bg
+    var o1 = document.createElement('div'); o1.className = 'orb'; o1.setAttribute('aria-hidden', 'true');
+    var o2 = document.createElement('div'); o2.className = 'orb o2'; o2.setAttribute('aria-hidden', 'true');
+    host.insertBefore(o1, host.firstChild);
+    host.insertBefore(o2, host.firstChild);
+  }
 
   /* ① terminal typing — replay install commands char-by-char when a terminal strip enters view */
   function parseLines(html){
