@@ -275,6 +275,13 @@
   .hero-cube > div, .hero-cube canvas { position:absolute; inset:0; width:100%!important; height:100%!important; display:block; }
   .instrip { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0 36px; align-items:start; }
   @media (max-width:860px){ .instrip { grid-template-columns:1fr; } }
+  /* scroll reveal */
+  .has-rv .rv { opacity:0; transform:translateY(24px); transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); will-change:opacity,transform; }
+  .has-rv .rv.in { opacity:1; transform:none; }
+  /* terminal typing caret */
+  .hterm .term-cur { display:inline-block; width:7px; height:15px; background:#ffbd4a; margin-left:2px; vertical-align:-2px; animation:hvblink 1.05s steps(1,end) infinite; }
+  @keyframes hvblink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
+  @media (prefers-reduced-motion:reduce){ .has-rv .rv { opacity:1!important; transform:none!important; transition:none; } .hterm .term-cur { display:none; } }
 </style>
 </head>
 <body>
@@ -1038,6 +1045,75 @@ Judge fairly based on the actual implementation you verified, and say so for any
   mountVisible(); // mount whichever language is shown now
   var langBtns = document.querySelectorAll('.js-lang'); // lazy-mount the other on first switch
   for (var i = 0; i < langBtns.length; i++){ langBtns[i].addEventListener('click', function(){ setTimeout(mountVisible, 0); }); }
+})();
+</script>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches; } catch(e){}
+  var hasIO = ('IntersectionObserver' in window);
+
+  /* ② scroll reveal — fade-up section blocks as they enter view (terminals excluded; they type) */
+  root.className += ' has-rv';
+  var rvEls = [];
+  var blocks = document.querySelectorAll('main > section:not(.hero) > *:not(.instrip), .trust');
+  for (var i = 0; i < blocks.length; i++){ blocks[i].classList.add('rv'); rvEls.push(blocks[i]); }
+  if (reduce || !hasIO) {
+    for (var j = 0; j < rvEls.length; j++){ rvEls[j].classList.add('in'); }
+  } else {
+    var rio = new IntersectionObserver(function(entries){
+      for (var k = 0; k < entries.length; k++){ if (entries[k].isIntersecting){ entries[k].target.classList.add('in'); rio.unobserve(entries[k].target); } }
+    }, { threshold:0.12, rootMargin:'0px 0px -6% 0px' });
+    for (var m = 0; m < rvEls.length; m++){ rio.observe(rvEls[m]); }
+  }
+
+  /* ① terminal typing — replay install commands char-by-char when a terminal strip enters view */
+  function parseLines(pre){
+    var raw = pre.innerHTML.split('\n'), lines = [];
+    for (var i = 0; i < raw.length; i++){
+      var mm = raw[i].match(/^<span class="c">([\s\S]*)<\/span>$/);
+      lines.push(mm ? { c:true, t:mm[1] } : { c:false, t:raw[i] });
+    }
+    return lines;
+  }
+  function typePre(pre, done){
+    var original = pre.innerHTML, lines = parseLines(pre), doneHTML = '', li = 0;
+    pre.textContent = '';
+    function nextLine(){
+      if (li >= lines.length){ pre.innerHTML = original; done && done(); return; }
+      var ln = lines[li], nl = (li < lines.length - 1) ? '\n' : '';
+      if (ln.c){
+        doneHTML += '<span class="c">' + ln.t + '</span>' + nl;
+        pre.innerHTML = doneHTML + '<span class="term-cur"></span>';
+        li++; setTimeout(nextLine, 140);
+      } else {
+        var ci = 0;
+        (function typeChar(){
+          pre.innerHTML = doneHTML + ln.t.slice(0, ci) + '<span class="term-cur"></span>';
+          ci++;
+          if (ci <= ln.t.length) setTimeout(typeChar, 42);
+          else { doneHTML += ln.t + nl; li++; setTimeout(nextLine, 180); }
+        })();
+      }
+    }
+    nextLine();
+  }
+  function runStrip(strip){
+    var pres = strip.querySelectorAll('.hterm pre'), idx = 0;
+    (function nextPre(){
+      if (idx >= pres.length) return;
+      typePre(pres[idx], function(){ idx++; setTimeout(nextPre, 350); });
+    })();
+  }
+  if (!reduce && hasIO) {
+    var tio = new IntersectionObserver(function(entries){
+      for (var i = 0; i < entries.length; i++){ if (entries[i].isIntersecting){ tio.unobserve(entries[i].target); runStrip(entries[i].target); } }
+    }, { threshold:0.3 });
+    var strips = document.querySelectorAll('.instrip');
+    for (var s = 0; s < strips.length; s++){ tio.observe(strips[s]); }
+  }
 })();
 </script>
 
