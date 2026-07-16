@@ -1070,17 +1070,16 @@ Judge fairly based on the actual implementation you verified, and say so for any
   }
 
   /* ① terminal typing — replay install commands char-by-char when a terminal strip enters view */
-  function parseLines(pre){
-    var raw = pre.innerHTML.split('\n'), lines = [];
+  function parseLines(html){
+    var raw = html.split('\n'), lines = [];
     for (var i = 0; i < raw.length; i++){
       var mm = raw[i].match(/^<span class="c">([\s\S]*)<\/span>$/);
       lines.push(mm ? { c:true, t:mm[1] } : { c:false, t:raw[i] });
     }
     return lines;
   }
-  function typePre(pre, done){
-    var original = pre.innerHTML, lines = parseLines(pre), doneHTML = '', li = 0;
-    pre.textContent = '';
+  function typePre(pre, original, done){
+    var lines = parseLines(original), doneHTML = '', li = 0;
     function nextLine(){
       if (li >= lines.length){ pre.innerHTML = original; done && done(); return; }
       var ln = lines[li], nl = (li < lines.length - 1) ? '\n' : '';
@@ -1101,10 +1100,16 @@ Judge fairly based on the actual implementation you verified, and say so for any
     nextLine();
   }
   function runStrip(strip){
-    var pres = strip.querySelectorAll('.hterm pre'), idx = 0;
+    var pres = strip.querySelectorAll('.hterm pre'), data = [];
+    for (var i = 0; i < pres.length; i++){
+      pres[i].style.minHeight = pres[i].offsetHeight + 'px'; // reserve final height so the box never collapses
+      data.push({ pre:pres[i], html:pres[i].innerHTML });
+      pres[i].textContent = '';                              // empty (but full-sized) while waiting its turn
+    }
+    var idx = 0;
     (function nextPre(){
-      if (idx >= pres.length) return;
-      typePre(pres[idx], function(){ idx++; setTimeout(nextPre, 350); });
+      if (idx >= data.length) return;
+      typePre(data[idx].pre, data[idx].html, function(){ idx++; setTimeout(nextPre, 350); });
     })();
   }
   if (!reduce && hasIO) {
