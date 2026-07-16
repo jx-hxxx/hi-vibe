@@ -1055,18 +1055,32 @@ Judge fairly based on the actual implementation you verified, and say so for any
   try { reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches; } catch(e){}
   var hasIO = ('IntersectionObserver' in window);
 
-  /* ② scroll reveal — fade-up section blocks as they enter view (terminals excluded; they type) */
+  /* ② scroll reveal — structure-aware. Horizontal card rows cascade left→right; other blocks fade up. */
   root.className += ' has-rv';
-  var rvEls = [];
-  var blocks = document.querySelectorAll('main > section:not(.hero) > *:not(.instrip), .trust');
-  for (var i = 0; i < blocks.length; i++){ blocks[i].classList.add('rv'); rvEls.push(blocks[i]); }
+  var GROUP_SEL = '.layers, .featgrid, .split, .audit, .trust'; // horizontal rows: stagger their children
+  var groupEls = document.querySelectorAll(GROUP_SEL);
+  for (var g = 0; g < groupEls.length; g++){
+    var kids = groupEls[g].children;
+    for (var c = 0; c < kids.length; c++){ kids[c].classList.add('rv'); kids[c].style.transitionDelay = (c * 0.1) + 's'; }
+  }
+  var solo = []; // section blocks that aren't a card-row container or the typing terminals
+  var blocks = document.querySelectorAll('main > section:not(.hero) > *:not(.instrip)');
+  for (var i = 0; i < blocks.length; i++){ if (!blocks[i].matches(GROUP_SEL)){ blocks[i].classList.add('rv'); solo.push(blocks[i]); } }
   if (reduce || !hasIO) {
-    for (var j = 0; j < rvEls.length; j++){ rvEls[j].classList.add('in'); }
+    var all = document.querySelectorAll('.rv');
+    for (var j = 0; j < all.length; j++){ all[j].classList.add('in'); }
   } else {
     var rio = new IntersectionObserver(function(entries){
-      for (var k = 0; k < entries.length; k++){ if (entries[k].isIntersecting){ entries[k].target.classList.add('in'); rio.unobserve(entries[k].target); } }
+      for (var k = 0; k < entries.length; k++){
+        if (!entries[k].isIntersecting) continue;
+        var t = entries[k].target;
+        if (t.matches(GROUP_SEL)){ for (var q = 0; q < t.children.length; q++){ t.children[q].classList.add('in'); } }
+        else { t.classList.add('in'); }
+        rio.unobserve(t);
+      }
     }, { threshold:0.12, rootMargin:'0px 0px -6% 0px' });
-    for (var m = 0; m < rvEls.length; m++){ rio.observe(rvEls[m]); }
+    for (var m = 0; m < solo.length; m++){ rio.observe(solo[m]); }
+    for (var n = 0; n < groupEls.length; n++){ rio.observe(groupEls[n]); }
   }
 
   /* ① terminal typing — replay install commands char-by-char when a terminal strip enters view */
