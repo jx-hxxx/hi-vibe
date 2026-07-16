@@ -1055,6 +1055,12 @@ Judge fairly based on the actual implementation you verified, and say so for any
   try { reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches; } catch(e){}
   var hasIO = ('IntersectionObserver' in window);
 
+  /* header brand → full page reload (not just an anchor jump) */
+  var brands = document.querySelectorAll('a.brand');
+  for (var bi = 0; bi < brands.length; bi++){
+    brands[bi].addEventListener('click', function(e){ e.preventDefault(); location.reload(); });
+  }
+
   /* ② scroll reveal — structure-aware. Horizontal card rows cascade left→right; other blocks fade up. */
   root.className += ' has-rv';
   var GROUP_SEL = '.layers, .featgrid, .split, .audit, .trust'; // horizontal rows: stagger their children
