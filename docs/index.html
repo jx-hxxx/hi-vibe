@@ -284,6 +284,15 @@
   b.hlx { background-image:linear-gradient(100deg, rgba(255,203,84,.42), rgba(232,146,10,.26)); background-repeat:no-repeat; background-size:0% 44%; background-position:0 80%; transition:background-size .9s cubic-bezier(.25,.8,.25,1); border-radius:3px; }
   b.hlx.on { background-size:100% 44%; }
   @media (prefers-reduced-motion:reduce){ b.hlx { background-size:100% 44%; transition:none; } }
+  /* ④ problem card "blocked" stamp */
+  .prow .pstamp { margin-left:auto; flex:none; opacity:0; transform:scale(1.6) rotate(-13deg); transform-origin:center;
+    display:inline-flex; align-items:center; gap:5px; font-family:var(--mono); font-size:12px; font-weight:800; letter-spacing:.02em;
+    color:var(--accent-ink); background:color-mix(in srgb, var(--accent) 16%, var(--surface)); border:1.5px solid var(--accent);
+    border-radius:8px; padding:5px 10px; pointer-events:none; white-space:nowrap; }
+  .prow.blocked .pstamp { animation:pstamp .55s cubic-bezier(.2,1.5,.35,1) forwards; }
+  @keyframes pstamp { 0%{opacity:0; transform:scale(1.6) rotate(-16deg)} 55%{opacity:1; transform:scale(.9) rotate(-6deg)} 100%{opacity:1; transform:scale(1) rotate(-8deg)} }
+  .prow.blocked { border-left-color:var(--accent); transition:border-left-color .45s ease; }
+  @media (prefers-reduced-motion:reduce){ .prow .pstamp { opacity:1; transform:rotate(-8deg); animation:none; } .prow.blocked { transition:none; } }
   /* terminal typing caret */
   .hterm .term-cur { display:inline-block; width:7px; height:15px; background:#ffbd4a; margin-left:2px; vertical-align:-2px; animation:hvblink 1.05s steps(1,end) infinite; }
   @keyframes hvblink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
@@ -1069,7 +1078,22 @@ Judge fairly based on the actual implementation you verified, and say so for any
 
   /* ② scroll reveal — structure-aware. Horizontal card rows cascade left→right; other blocks fade up. */
   root.className += ' has-rv';
-  var GROUP_SEL = '.layers, .featgrid, .split, .audit, .trust'; // horizontal rows: stagger their children
+  var GROUP_SEL = '.layers, .featgrid, .split, .audit, .trust, .rows'; // rows/grids: stagger their children on reveal
+  // ④ give each problem card a "blocked" stamp element (hidden until the card is caught)
+  var prows = document.querySelectorAll('.prow');
+  for (var pw = 0; pw < prows.length; pw++){
+    var lang = prows[pw].closest('.page') && prows[pw].closest('.page').id === 'en' ? 'en' : 'ko';
+    var st = document.createElement('span');
+    st.className = 'pstamp'; st.setAttribute('aria-hidden', 'true');
+    st.textContent = (lang === 'en') ? '🛡 blocked' : '🛡 막음';
+    prows[pw].appendChild(st);
+  }
+  function blockCards(rows){
+    var ps = rows.querySelectorAll('.prow');
+    for (var i = 0; i < ps.length; i++){ (function(pr, idx){
+      setTimeout(function(){ pr.classList.add('blocked'); }, 650 + idx * 260); // stamp lands just after each card reveals
+    })(ps[i], i); }
+  }
   var groupEls = document.querySelectorAll(GROUP_SEL);
   for (var g = 0; g < groupEls.length; g++){
     var kids = groupEls[g].children;
@@ -1089,6 +1113,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
         if (t.matches(GROUP_SEL)){
           for (var q = 0; q < t.children.length; q++){ t.children[q].classList.add('in'); }
           if (t.classList.contains('trust')) countTrust(t); // ① stats count up as the bar reveals
+          if (t.classList.contains('rows')) blockCards(t);  // ④ stamp each mistake as "blocked"
         }
         else { t.classList.add('in'); }
         rio.unobserve(t);
