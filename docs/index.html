@@ -276,7 +276,7 @@
   .instrip { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0 36px; align-items:start; }
   @media (max-width:860px){ .instrip { grid-template-columns:1fr; } }
   /* scroll reveal */
-  .has-rv .rv { opacity:0; transform:translateY(24px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); will-change:opacity,transform; }
+  .has-rv .rv { opacity:0; transform:translateY(28px); transition:opacity 1.3s cubic-bezier(.16,1,.3,1), transform 1.3s cubic-bezier(.16,1,.3,1); will-change:opacity,transform; }
   .has-rv .rv.in { opacity:1; transform:none; }
   /* terminal typing caret */
   .hterm .term-cur { display:inline-block; width:7px; height:15px; background:#ffbd4a; margin-left:2px; vertical-align:-2px; animation:hvblink 1.05s steps(1,end) infinite; }
@@ -1067,7 +1067,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
   var groupEls = document.querySelectorAll(GROUP_SEL);
   for (var g = 0; g < groupEls.length; g++){
     var kids = groupEls[g].children;
-    for (var c = 0; c < kids.length; c++){ kids[c].classList.add('rv'); kids[c].style.transitionDelay = (c * 0.16) + 's'; }
+    for (var c = 0; c < kids.length; c++){ kids[c].classList.add('rv'); kids[c].style.transitionDelay = (c * 0.24) + 's'; }
   }
   var solo = []; // section blocks that aren't a card-row container or the typing terminals
   var blocks = document.querySelectorAll('main > section:not(.hero) > *:not(.instrip)');
