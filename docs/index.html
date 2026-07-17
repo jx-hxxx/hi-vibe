@@ -131,6 +131,11 @@
   .tick { width:15px; height:15px; display:inline-block; vertical-align:-3px; }
   .tick.ok { color:var(--good); }
   .tick.no { color:var(--danger); }
+  /* inline line-icons replacing emoji */
+  .eic { width:1.05em; height:1.05em; display:inline-block; vertical-align:-.16em; color:var(--accent); }
+  .pic { width:1em; height:1em; display:inline-block; vertical-align:-.12em; margin-right:1px; }
+  .nic { width:20px; height:20px; flex:none; color:var(--accent); margin-top:1px; }
+  .js-theme svg { width:17px; height:17px; display:block; }
   .fhead .ftitle { font-size:14.5px; font-weight:700; letter-spacing:-.01em; }
   .fhead .ftag { font-family:var(--mono); font-size:10.5px; color:var(--faint); letter-spacing:.02em; margin-left:auto; white-space:nowrap; }
   .fhead .ftag b { color:var(--accent-ink); font-weight:400; }
@@ -285,9 +290,9 @@
   /* header scroll progress bar */
   #hv-progress { position:fixed; top:0; left:0; height:3px; width:0; background:var(--accent); z-index:120; pointer-events:none; }
   /* gold highlighter sweep on key phrases */
-  b.hlx { background-image:linear-gradient(100deg, rgba(255,203,84,.42), rgba(232,146,10,.26)); background-repeat:no-repeat; background-size:0% 44%; background-position:0 80%; transition:background-size .9s cubic-bezier(.25,.8,.25,1); border-radius:3px; }
-  b.hlx.on { background-size:100% 44%; }
-  @media (prefers-reduced-motion:reduce){ b.hlx { background-size:100% 44%; transition:none; } }
+  b.hlx { background-image:linear-gradient(100deg, rgba(255,199,74,.78), rgba(240,158,16,.55)); background-repeat:no-repeat; background-size:0% 58%; background-position:0 82%; transition:background-size .9s cubic-bezier(.25,.8,.25,1); border-radius:3px; }
+  b.hlx.on { background-size:100% 58%; }
+  @media (prefers-reduced-motion:reduce){ b.hlx { background-size:100% 58%; transition:none; } }
   /* terminal typing caret */
   .hterm .term-cur { display:inline-block; width:7px; height:15px; background:#ffbd4a; margin-left:2px; vertical-align:-2px; animation:hvblink 1.05s steps(1,end) infinite; }
   @keyframes hvblink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
@@ -309,7 +314,7 @@
     </nav>
     <div class="hdr-right">
       <button class="ctl js-lang" type="button">EN</button>
-      <button class="ctl js-theme" type="button" aria-label="라이트/다크 전환">🌙</button>
+      <button class="ctl js-theme" type="button" aria-label="라이트/다크 전환"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
       <a class="ghub" href="https://github.com/jx-hxxx/hi-vibe">GitHub ↗</a>
     </div>
   </div></header>
@@ -411,7 +416,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">추상적인 "좋아져요"가 아니라, 실제로 만들어지고 봐주는 것들이에요.<br>핵심은 <b>문서를 한 파일에 몰아넣지 않고 여러 곳에 나눠 두고, 코드가 바뀌면 자동으로 따라 갱신</b>한다는 거예요.</p>
 
       <div class="docmap">
-        <div class="dm-head">📁 내 프로젝트/ — <code>/hi-vibe:init</code>은 가볍게 시작하고, 나머지 문서는 필요할 때 알아서 생겨요</div>
+        <div class="dm-head"><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> 내 프로젝트/ — <code>/hi-vibe:init</code>은 가볍게 시작하고, 나머지 문서는 필요할 때 알아서 생겨요</div>
         <ul class="dm-list">
           <li><code>CLAUDE.md</code><span>프로젝트 전체 지도 — 개요·요구사항·폴더 구조 <b>(init 때)</b></span></li>
           <li><code>handover.md</code><span>세션 인수인계 — 다음 대화가 맥락 안 잃게. 대화 정리(compact) 때 자동 기록돼요 <b>(init 때)</b></span></li>
@@ -422,19 +427,19 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
 
       <div class="featgrid">
         <div class="featcol">
-          <div class="colhd"><span class="dot"></span><span class="ct">자동 예방</span><span class="cn">⚡ AUTO</span></div>
+          <div class="colhd"><span class="dot"></span><span class="ct">자동 예방</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> AUTO</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="ftitle">중복 재구현 방지</span><span class="ftag"><b>find</b></span></div><p class="fdesc">새 함수·파일을 만들기 전에 "이미 있는지" 먼저 찾아봐요. AI가 세션마다 있던 걸 또 만드는 걸 막죠. 없을 땐 "스캔한 N개 파일에서 못 찾았어요"라고 <b>범위까지 밝혀요</b>.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 2.6 20h18.8L12 3.2Z"/><path d="M12 10v4"/><path d="M12 17.4h.01"/></svg></span><span class="ftitle">에러 땜빵 금지</span><span class="ftag"><b>즉시 감지</b></span></div><p class="fdesc">에러를 fallback으로 덮는 대신 <b>원인부터</b> 보게 해요. 몰래 삼키는 코드(빈 catch, <code>except: pass</code>)를 쓰는 순간 감지해요. 의도한 거면 주석 한 줄로 통과.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M6 21v-6"/><path d="M12 21V7"/><path d="M18 21v-9"/></svg></span><span class="ftitle">근거 없는 단정 금지</span><span class="ftag"><b>규율</b></span></div><p class="fdesc">"아마 이럴 거예요"를 사실처럼 말하지 않게 해요. 수치·API는 확인하고 답하거나, 못 하면 "추정입니다"라고 밝혀요. (context7 연결 시 <b>최신 문서</b>까지 조회)</p></div>
         </div>
         <div class="featcol">
-          <div class="colhd"><span class="dot"></span><span class="ct">기억·검토</span><span class="cn">⚡ AUTO</span></div>
+          <div class="colhd"><span class="dot"></span><span class="ct">기억·검토</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> AUTO</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="ftitle">딴 클로드가 설계 재검토</span><span class="ftag"><b>review --deep</b></span></div><p class="fdesc">코드를 짠 기억이 <b>전혀 없는 딴 클로드</b>를 불러와 방금 짠 걸 봐요 — 편견 없이. 과잉설계·불필요한 기능·숨은 결합을 "이건 좀 과한데?" 하고 짚어줘요.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h11a1 1 0 0 1 1 1v16.5l-6.5-4-6.5 4V4a1 1 0 0 1 1-1Z"/></svg></span><span class="ftitle">기억·인수인계·검색</span><span class="ftag"><b>handover · recall</b></span></div><p class="fdesc">대화가 정리(compact)될 때마다 진행상황을 자동 기록하고, 새 대화엔 최근 인수인계를 다시 넣어줘요. "예전에 왜 이렇게 했지?" 하면 <b>날짜·이유까지</b> 답해요.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></span><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b></span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요. 프레임워크가 이름 없이 부르는 함수·테스트·<code>export default</code>·만드는 중인 코드를 죽은 코드로 오해하지 않게 인덱스로 관리해요.</p></div>
         </div>
         <div class="featcol">
-          <div class="colhd g"><span class="dot"></span><span class="ct">직접 점검</span><span class="cn">🖐 MANUAL</span></div>
+          <div class="colhd g"><span class="dot"></span><span class="ct">직접 점검</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> MANUAL</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M9.5 20.5v-11"/></svg></span><span class="ftitle">구조 점검</span><span class="ftag"><b>check</b></span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요. 지우기 전 "아직 만드는 중"인지 구분해요.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate --ci</b></span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환의존)를 설치해 빨간 줄로 표시. <code>gate --ci</code>면 GitHub push마다 검문 — 위반은 <b>빌드 실패</b>로 막아요.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5 6.5L14 5.5l2 6.5h5"/></svg></span><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b></span></div><p class="fdesc">hook은 방해 안 하려고 <b>조용히 실패</b>하게 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요. doctor가 hook 4종·스캐너를 <b>실제로 돌려</b> <svg class="tick ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>/<svg class="tick no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>로 확인해줘요.</p></div>
@@ -471,18 +476,18 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       </div>
       <div class="honest-note" style="margin-top:28px"><span>⚠️</span><div><b>hi-vibe는 "버그 자동 탐지기"가 아니에요.</b><br>
         코드를 훑어 버그를 찾아주는 도구가 아니라, <b>AI가 대충 못 하게 만드는 안전벨트</b>예요. 버그를 잡는 건 결국 Claude의 추론이고, hi-vibe는 그 추론을 <b>빡세게 하도록 강제하는 규율·문서·기계 장치</b>예요. "자동으로 다 잡아줘요"가 아니라 <b>"안 하던 규율을 강제로 하게 만들어요"</b> — 기대를 여기 맞추면 실망이 없어요.</div></div>
-      <div class="honest-note"><span>💡</span><div><b>🤖 “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:find</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
-      <div class="honest-note"><span>🎚️</span><div><b>켜지는 방식이 3단이에요.</b><br>
-        🔒 <b>깔면 거저 (훅)</b> — <code>init</code>만 하면 왼쪽 ⚙️ 4개가 자동. 코드 쓸 때마다 에러 삼킴·비밀키를 기계가 잡아요. <i>진짜 항상 매인 벨트.</i><br>
-        🧭 <b>부르면 (find · review · check)</b> — 말하면 도는 🤖 규율·스캔. 강력하지만 AI가 놓치면 안 걸려요. <i>잔소리하는 코치.</i><br>
-        🛡️ <b>원하면 (gate)</b> — 복잡도·순환의존 린트. 제일 많이 잡지만 침습적이라 준비됐을 때 1회 설치(필수 아님).</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg><div><b><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그럴 땐 명령어(<code>/hi-vibe:find</code> 같은 거)를 직접 눌러서 확실히 챙기면 돼요 — AI가 놓친 안전벨트를 손으로 채우는 셈이에요.</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><div><b>켜지는 방식이 3단이에요.</b><br>
+        <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg> <b>깔면 거저 (훅)</b> — <code>init</code>만 하면 왼쪽 <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg> 4개가 자동. 코드 쓸 때마다 에러 삼킴·비밀키를 기계가 잡아요. <i>진짜 항상 매인 벨트.</i><br>
+        <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z"/></svg> <b>부르면 (find · review · check)</b> — 말하면 도는 <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> 규율·스캔. 강력하지만 AI가 놓치면 안 걸려요. <i>잔소리하는 코치.</i><br>
+        <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg> <b>원하면 (gate)</b> — 복잡도·순환의존 린트. 제일 많이 잡지만 침습적이라 준비됐을 때 1회 설치(필수 아님).</div></div>
       </div>
     </section>
 
     <section id="commands-ko">
       <p class="eyebrow">명령어 한눈에</p>
       <h2>대부분 자동. 필요할 때만 직접.</h2>
-      <p class="lead">⚡ 자동은 평소처럼 말하면 알아서 걸리고,<br>🖐 직접은 설치·점검처럼 내가 필요할 때 눌러요.</p>
+      <p class="lead"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동은 평소처럼 말하면 알아서 걸리고,<br><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접은 설치·점검처럼 내가 필요할 때 눌러요.</p>
       <div class="instrip" id="install-ko">
         <div class="hterm">
           <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">플러그인 설치하기</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">한 줄씩 실행</span></span></div>
@@ -505,7 +510,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
           </div>
         </div>
       </div>
-      <div class="honest-note"><span>🔒</span><div><b>설치는 전역 한 번, <code>init</code>은 프로젝트마다.</b><br>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><div><b>설치는 전역 한 번, <code>init</code>은 프로젝트마다.</b><br>
         <code>/plugin install</code>은 기본이 <b>유저 스코프(전역)</b>라 한 번 설치하면 모든 프로젝트에서 <code>/hi-vibe:</code> 명령어를 써요(프로젝트마다 재설치 X).<br>
         하지만 자동 기능(훅)은 <b>쓰고 싶은 프로젝트마다, 그 최상위 폴더에서</b> <code>/hi-vibe:init</code>을 해야 켜져요<br>
         — <code>.hi-vibe/</code> 마커가 만들어진 폴더에서만 돌아요.<br>
@@ -515,20 +520,20 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <div class="tbl"><div class="tscroll"><table>
         <thead><tr><th>명령어</th><th>언제 쓰나</th><th>발동</th></tr></thead>
         <tbody>
-          <tr><td><code>/hi-vibe:welcome</code></td><td>처음이라 뭐부터 할지 모를 때</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:doctor</code></td><td>설치 직후, 잘 켜졌나 확인</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:init</code></td><td>새 프로젝트마다 한 번, 켜기</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:check</code></td><td>중복·너무 큰 파일 훑어보기 (언제든 반복)</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치 (프로젝트마다 1회 → 자동)</td><td><span class="fire man">🖐 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:find</code></td><td>“이 기능 만들어줘” 할 때 (있는지 먼저 검색)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:review</code></td><td>“다 했어 / 리뷰해줘” 할 때 (작성 후 리뷰 · <code>--all</code> 세션 전체 · <code>--deep</code> 딴 클로드가 재검토)</td><td><span class="fire auto">⚡ 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:handover</code></td><td>세션 끝 — 어디까지 했는지 진행상황 넘기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:log</code></td><td>코드가 바뀐 걸 CHANGELOG(변경 이력)에 남기기</td><td><span class="fire auto">⚡ 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:recall</code></td><td>“예전에 왜 이렇게 했지?”</td><td><span class="fire auto">⚡ 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:welcome</code></td><td>처음이라 뭐부터 할지 모를 때</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:doctor</code></td><td>설치 직후, 잘 켜졌나 확인</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:init</code></td><td>새 프로젝트마다 한 번, 켜기</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:check</code></td><td>중복·너무 큰 파일 훑어보기 (언제든 반복)</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치 (프로젝트마다 1회 → 자동)</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:find</code></td><td>“이 기능 만들어줘” 할 때 (있는지 먼저 검색)</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>“다 했어 / 리뷰해줘” 할 때 (작성 후 리뷰 · <code>--all</code> 세션 전체 · <code>--deep</code> 딴 클로드가 재검토)</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:handover</code></td><td>세션 끝 — 어디까지 했는지 진행상황 넘기기</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:log</code></td><td>코드가 바뀐 걸 CHANGELOG(변경 이력)에 남기기</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:recall</code></td><td>“예전에 왜 이렇게 했지?”</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
         </tbody>
       </table></div></div>
       <div class="quickstart">
-        <h4>🚀 상황별 빠른 시작 — 그래서 뭘 치면 돼요?</h4>
+        <h4><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7Z"/></svg>상황별 빠른 시작 — 그래서 뭘 치면 돼요?</h4>
         <p class="qs-sub">설명 다 안 읽어도 돼요. 지금 내 상황을 찾아 그 명령어만 치세요. (평소엔 그냥 말하면 자동으로 걸려요.)</p>
         <div class="qs-row"><div class="qs-when">내 컴퓨터에 방금 설치</div><div class="qs-do"><code>/hi-vibe:doctor</code> <span class="arrow">→</span> <code>/hi-vibe:init</code> <span class="dim">(잘 켜졌나 확인 → 이 프로젝트에 켜기)</span></div></div>
         <div class="qs-row"><div class="qs-when">이미 만들던 프로젝트에 설치</div><div class="qs-do"><code>init</code> <span class="arrow">→</span> <code>doctor</code> <span class="arrow">→</span> <code>review --all --deep</code> <span class="dim">(지금까지 쌓인 코드를 처음 보는 클로드 눈으로 전체 설계 검토 — <b>강력 추천</b>)</span></div></div>
@@ -541,7 +546,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
 
       <p class="lead small" style="margin:26px 0 4px;font-size:14px">더 자세히 — 헷갈리기 쉬운 것들 (펼쳐 보기)</p>
 
-      <details class="note-toggle"><summary>🔍 review는 하나에 옵션 두 개 (<code>--all</code> · <code>--deep</code>)</summary>
+      <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>review는 하나에 옵션 두 개 (<code>--all</code> · <code>--deep</code>)</summary>
         <div class="tbody">
           <code>review</code>는 <b>방금 만든 기능 하나</b>를, <code>review --all</code>은 <b>세션에서 바뀐 기능 전체</b>를 한 번에 검증해요. <span class="dim">(안 바뀐 건 자동 skip — 여러 개 몰아 만든 뒤 “전체 리뷰해줘”에 좋아요.)</span><br>
           <code>review --deep</code>은 <b>코드를 짠 기억이 없는 서브에이전트</b>를 새로 불러와, 편견 없이 깨끗한 눈(fresh-eyes)으로 과잉설계·숨은 결합을 봐요 — 새로운 시각으로 설계를 검증하는 거예요.<br>
@@ -549,7 +554,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
         </div>
       </details>
 
-      <details class="note-toggle"><summary>🧭 check vs review — 헷갈리기 쉬운데 완전 달라요</summary>
+      <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z"/></svg>check vs review — 헷갈리기 쉬운데 완전 달라요</summary>
         <div class="tbody">
           <code>check</code>는 <b>기계(스캐너)가 저장소 구조를 훑어</b> “뭐가 있는지”를 증거로 짚어요 — 중복 코드·안 쓰는 코드·너무 큰 파일. <b>사실 확인</b>이에요.<br>
           <code>review --deep</code>은 <b>서브에이전트가 방금 바꾼 코드를 설계 관점으로 봐</b> “잘 만들었는지”를 판단해요 — 과잉설계·더 단순한 길·숨은 결합. <b>의견·판단</b>이에요.<br>
@@ -557,7 +562,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
         </div>
       </details>
 
-      <details class="note-toggle"><summary>🔁 check와 gate는 리듬이 반대예요</summary>
+      <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>check와 gate는 리듬이 반대예요</summary>
         <div class="tbody">
           <code>check</code>는 <b>내가 돌리는 진단</b> — 구조가 궁금할 때마다 몇 번이든 반복해요.<br>
           <code>gate --ci</code>는 <b>프로젝트마다 한 번 깔면 끝인 관문</b> — 설치는 1회, 이후 push마다 GitHub이 자동 검문(다시 칠 필요 없어요).
@@ -577,7 +582,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
           <tr><td><code>root-cause-first</code></td><td>(자동) 버그·에러 고칠 때</td><td>땜빵 대신 근본 원인</td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><span>🔌</span><div><b>스킬은 Claude Code가 <code>/스킬이름</code> 슬래시로도 자동 노출해요.</b><br>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>스킬은 Claude Code가 <code>/스킬이름</code> 슬래시로도 자동 노출해요.</b><br>
         hi-vibe가 제공하는 건 <code>check</code>·<code>find</code> 같은 <b>쉬운 명령어 10개</b>예요.<br>
         여기에 Claude Code가 <b>스킬 6개를 각각 <code>/repo-xray</code>처럼</b> 슬래시로 자동으로 열어둬요.<br>
         그래서 같은 엔진(repo-xray)을 세 갈래로 부를 수 있어요 — <b>① <code>check</code> 명령어 · ② <code>/repo-xray</code> 슬래시 · ③ “중복 찾아줘”라고 말하면 AI가 <code>Skill()</code>로.</b><br>
@@ -628,7 +633,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
     </nav>
     <div class="hdr-right">
       <button class="ctl js-lang" type="button">한국어</button>
-      <button class="ctl js-theme" type="button" aria-label="Toggle light/dark">🌙</button>
+      <button class="ctl js-theme" type="button" aria-label="Toggle light/dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
       <a class="ghub" href="https://github.com/jx-hxxx/hi-vibe">GitHub ↗</a>
     </div>
   </div></header>
@@ -730,7 +735,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">Not a vague "things get better" — actual things it creates and watches.<br>The core idea: <b>docs aren't dumped in one file; they're split across the project and auto-updated as the code changes.</b></p>
 
       <div class="docmap">
-        <div class="dm-head">📁 my-project/ — <code>/hi-vibe:init</code> starts lean; the rest appear when they're actually needed</div>
+        <div class="dm-head"><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> my-project/ — <code>/hi-vibe:init</code> starts lean; the rest appear when they're actually needed</div>
         <ul class="dm-list">
           <li><code>CLAUDE.md</code><span>The whole-project map — overview, requirements, folder layout <b>(at init)</b></span></li>
           <li><code>handover.md</code><span>Session handover — so the next chat keeps context. Auto-recorded on compaction <b>(at init)</b></span></li>
@@ -741,19 +746,19 @@ Judge fairly based on the actual implementation you verified, and say so for any
 
       <div class="featgrid">
         <div class="featcol">
-          <div class="colhd"><span class="dot"></span><span class="ct">Prevention</span><span class="cn">⚡ AUTO</span></div>
+          <div class="colhd"><span class="dot"></span><span class="ct">Prevention</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> AUTO</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="ftitle">No duplicate reimplementation</span><span class="ftag"><b>find</b></span></div><p class="fdesc">Before making a new function or file, it checks if one already exists — so the AI stops rebuilding last session's work. When there's none, it says "not found across N scanned files" — <b>evidence, not a guess</b>.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 2.6 20h18.8L12 3.2Z"/><path d="M12 10v4"/><path d="M12 17.4h.01"/></svg></span><span class="ftitle">No band-aid error handling</span><span class="ftag"><b>instant detect</b></span></div><p class="fdesc">Instead of burying an error under a fallback, it makes you look at the <b>cause</b>. Code that silently swallows errors (empty catch, <code>except: pass</code>) is flagged the moment you write it. One comment lets it pass if intended.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M6 21v-6"/><path d="M12 21V7"/><path d="M18 21v-9"/></svg></span><span class="ftitle">No unfounded claims</span><span class="ftag"><b>discipline</b></span></div><p class="fdesc">It won't state "probably X" as fact. Numbers and APIs get verified — or labeled "estimate" when they can't be. (With context7, it pulls the <b>latest docs</b>.)</p></div>
         </div>
         <div class="featcol">
-          <div class="colhd"><span class="dot"></span><span class="ct">Memory &amp; review</span><span class="cn">⚡ AUTO</span></div>
+          <div class="colhd"><span class="dot"></span><span class="ct">Memory &amp; review</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> AUTO</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="ftitle">Fresh-eyes design review</span><span class="ftag"><b>review --deep</b></span></div><p class="fdesc">A <b>fresh Claude</b> with zero memory of writing the code reviews it — with no bias. It catches what a checklist can't: over-engineering, needless features, hidden coupling — "this looks like too much."</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3h11a1 1 0 0 1 1 1v16.5l-6.5-4-6.5 4V4a1 1 0 0 1 1-1Z"/></svg></span><span class="ftitle">Memory, handover &amp; recall</span><span class="ftag"><b>handover · recall</b></span></div><p class="fdesc">Auto-records progress every time the chat is compacted, and re-injects the latest handover on a new chat. Ask "why did we do it this way?" and it digs the records for the <b>date and reason</b>.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></span><span class="ftitle">No false positives</span><span class="ftag"><b>discipline · scanner</b></span></div><p class="fdesc">It won't wrongly call live code "dead." Framework-registered functions, tests, <code>export default</code> components, and work-in-progress code are kept off the dead list by a <b>false-positive index</b>.</p></div>
         </div>
         <div class="featcol">
-          <div class="colhd g"><span class="dot"></span><span class="ct">Manual checks</span><span class="cn">🖐 MANUAL</span></div>
+          <div class="colhd g"><span class="dot"></span><span class="ct">Manual checks</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> MANUAL</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M9.5 20.5v-11"/></svg></span><span class="ftitle">Structure checkup</span><span class="ftag"><b>check</b></span></div><p class="fdesc">Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. It tells work-in-progress apart before suggesting a delete.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>gate --ci</b></span></div><p class="fdesc"><code>gate</code> installs the checkers (ruff·eslint, types, circular deps) locally — your editor flags them. <code>gate --ci</code> gates every push — violations <b>fail the build</b>.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5 6.5L14 5.5l2 6.5h5"/></svg></span><span class="ftitle">Self-diagnosis</span><span class="ftag"><b>doctor</b></span></div><p class="fdesc">Hooks are built to <b>fail silently</b> so they never block Claude Code — so a missing python3 could turn them off unnoticed. doctor actually runs all 4 hooks and the scanner, showing <svg class="tick ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>/<svg class="tick no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>.</p></div>
@@ -790,18 +795,18 @@ Judge fairly based on the actual implementation you verified, and say so for any
       </div>
       <div class="honest-note" style="margin-top:28px"><span>⚠️</span><div><b>hi-vibe is not a "bug detector."</b><br>
         It doesn't scan your code to find bugs; it's a <b>seatbelt that stops the AI from cutting corners</b>. Catching bugs is still Claude's reasoning — hi-vibe is the <b>discipline, docs, and machinery that force that reasoning to be rigorous</b>. Not "it auto-catches everything" but <b>"it forces the discipline you'd otherwise skip."</b> Set expectations there and you won't be let down.</div></div>
-      <div class="honest-note"><span>💡</span><div><b>🤖 “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:find</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
-      <div class="honest-note"><span>🎚️</span><div><b>Three tiers, each turned on differently.</b><br>
-        🔒 <b>Free once installed (hooks)</b> — after <code>init</code>, the 4 ⚙️ rows on the left run automatically; every code write is checked for error-swallowing & secrets. <i>The belt that's actually always on.</i><br>
-        🧭 <b>On demand (find · review · check)</b> — 🤖 discipline & scans that run when you talk. Powerful, but the AI can skip them. <i>A coach nagging beside you.</i><br>
-        🛡️ <b>Opt-in (gate)</b> — lints complexity & circular deps. Catches the most, but it's invasive — install once when ready (not required).</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg><div><b><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> “AI does it” is not a 100% guarantee.</b><br>The AI can forget. When you want to be sure, run the command (like <code>/hi-vibe:find</code>) yourself — the manual latch for the seatbelt the AI missed.</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><div><b>Three tiers, each turned on differently.</b><br>
+        <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg> <b>Free once installed (hooks)</b> — after <code>init</code>, the 4 <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg> rows on the left run automatically; every code write is checked for error-swallowing & secrets. <i>The belt that's actually always on.</i><br>
+        <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z"/></svg> <b>On demand (find · review · check)</b> — <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> discipline & scans that run when you talk. Powerful, but the AI can skip them. <i>A coach nagging beside you.</i><br>
+        <svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg> <b>Opt-in (gate)</b> — lints complexity & circular deps. Catches the most, but it's invasive — install once when ready (not required).</div></div>
       </div>
     </section>
 
     <section id="commands-en">
       <p class="eyebrow">Commands at a glance</p>
       <h2>Mostly automatic. Manual only when you need it.</h2>
-      <p class="lead">⚡ Auto fires on its own when you talk normally; 🖐 Manual is for setup and checkups when you want them.</p>
+      <p class="lead"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Auto fires on its own when you talk normally; <svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> Manual is for setup and checkups when you want them.</p>
       <div class="instrip" id="install-en">
         <div class="hterm">
           <div class="bar"><span class="barleft"><span class="dots"><i></i><i></i><i></i></span><span class="barlabel">Install the plugin</span></span><span class="barright"><span class="cc">CLAUDE CODE</span><span class="runhint">run one at a time</span></span></div>
@@ -824,7 +829,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
           </div>
         </div>
       </div>
-      <div class="honest-note"><span>🔒</span><div><b>Install once (global); <code>init</code> per project.</b><br>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><div><b>Install once (global); <code>init</code> per project.</b><br>
         <code>/plugin install</code> defaults to <b>user scope (global)</b>, so a single install makes the <code>/hi-vibe:</code> commands available everywhere (no per-project reinstall).<br>
         But the automatic features (hooks) only turn on when you run <code>/hi-vibe:init</code> <b>from each project's top-level folder</b><br>
         — they run only in folders where the <code>.hi-vibe/</code> marker was created.<br>
@@ -834,20 +839,20 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <div class="tbl"><div class="tscroll"><table>
         <thead><tr><th>Command</th><th>When</th><th>Fires</th></tr></thead>
         <tbody>
-          <tr><td><code>/hi-vibe:welcome</code></td><td>First time, unsure where to start</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:doctor</code></td><td>Right after install — is it on?</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:init</code></td><td>Once per project — turn it on</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:check</code></td><td>Scan for duplicates &amp; huge files (repeat anytime)</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:gate</code></td><td>Install the code checker (once per project → auto)</td><td><span class="fire man">🖐 Manual</span></td></tr>
-          <tr><td><code>/hi-vibe:find</code></td><td>When you say “make me X” (searches first)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
-          <tr><td><code>/hi-vibe:review</code></td><td>When you say “done” (reviews after · <code>--all</code> whole session · <code>--deep</code> a fresh Claude re-reviews)</td><td><span class="fire auto">⚡ Auto</span></td></tr>
-          <tr><td><code>/hi-vibe:handover</code></td><td>End of session — hand off where you left off</td><td><span class="fire auto">⚡ Auto</span></td></tr>
-          <tr><td><code>/hi-vibe:log</code></td><td>Record what changed in the CHANGELOG</td><td><span class="fire auto">⚡ Auto</span></td></tr>
-          <tr><td><code>/hi-vibe:recall</code></td><td>“Why did we do it this way?”</td><td><span class="fire auto">⚡ Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:welcome</code></td><td>First time, unsure where to start</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:doctor</code></td><td>Right after install — is it on?</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:init</code></td><td>Once per project — turn it on</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:check</code></td><td>Scan for duplicates &amp; huge files (repeat anytime)</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:gate</code></td><td>Install the code checker (once per project → auto)</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> Manual</span></td></tr>
+          <tr><td><code>/hi-vibe:find</code></td><td>When you say “make me X” (searches first)</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>When you say “done” (reviews after · <code>--all</code> whole session · <code>--deep</code> a fresh Claude re-reviews)</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:handover</code></td><td>End of session — hand off where you left off</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:log</code></td><td>Record what changed in the CHANGELOG</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Auto</span></td></tr>
+          <tr><td><code>/hi-vibe:recall</code></td><td>“Why did we do it this way?”</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> Auto</span></td></tr>
         </tbody>
       </table></div></div>
       <div class="quickstart">
-        <h4>🚀 Quick start by situation — so which command do I run?</h4>
+        <h4><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7Z"/></svg>Quick start by situation — so which command do I run?</h4>
         <p class="qs-sub">No need to read everything. Find your situation and run just that command. (Day to day, plain talk triggers it automatically.)</p>
         <div class="qs-row"><div class="qs-when">Just installed on your machine</div><div class="qs-do"><code>/hi-vibe:doctor</code> <span class="arrow">→</span> <code>/hi-vibe:init</code> <span class="dim">(confirm it's on → turn it on in this project)</span></div></div>
         <div class="qs-row"><div class="qs-when">Installing on an existing project</div><div class="qs-do"><code>init</code> <span class="arrow">→</span> <code>doctor</code> <span class="arrow">→</span> <code>review --all --deep</code> <span class="dim">(review all your existing code through a first-time Claude's eyes — <b>strongly recommended</b>)</span></div></div>
@@ -860,7 +865,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
 
       <p class="lead small" style="margin:26px 0 4px;font-size:14px">More detail — easy-to-confuse things (expand)</p>
 
-      <details class="note-toggle"><summary>🔍 One review, two options (<code>--all</code> · <code>--deep</code>)</summary>
+      <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>One review, two options (<code>--all</code> · <code>--deep</code>)</summary>
         <div class="tbody">
           <code>review</code> checks <b>the one feature you just made</b>; <code>review --all</code> checks <b>every feature changed this session</b> at once <span class="dim">(already-reviewed, unchanged files are skipped — great after building several things, then “review everything”).</span><br>
           <code>review --deep</code> spawns a <b>new subagent</b> that never wrote this code, so with no bias it uses clean eyes (fresh-eyes) to catch over-engineering and hidden coupling the author can't see.<br>
@@ -868,7 +873,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
         </div>
       </details>
 
-      <details class="note-toggle"><summary>🧭 check vs review — easy to confuse, but totally different</summary>
+      <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z"/></svg>check vs review — easy to confuse, but totally different</summary>
         <div class="tbody">
           <code>check</code> is <b>a machine (scanner) sweeping your repo's structure</b> to point out “what's there” with evidence — duplicate code, unused code, oversized files. It's <b>fact-finding</b>.<br>
           <code>review --deep</code> is <b>a subagent looking at what you just changed from a design angle</b> to judge “is it well-built?” — over-engineering, simpler alternatives, hidden coupling. It's <b>judgment</b>.<br>
@@ -876,7 +881,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
         </div>
       </details>
 
-      <details class="note-toggle"><summary>🔁 check and gate have opposite rhythms</summary>
+      <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>check and gate have opposite rhythms</summary>
         <div class="tbody">
           <code>check</code> is <b>a diagnostic you run</b> — repeat it whenever you're curious about structure.<br>
           <code>gate --ci</code> is <b>a guard you install once per project</b> — after that GitHub checks every push automatically, no need to re-run it.
@@ -896,7 +901,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
           <tr><td><code>root-cause-first</code></td><td>(auto) when fixing a bug/error</td><td>Root cause, not a band-aid</td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><span>🔌</span><div><b>Claude Code also exposes each skill as a <code>/skill-name</code> slash.</b><br>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>Claude Code also exposes each skill as a <code>/skill-name</code> slash.</b><br>
         hi-vibe ships <b>10 friendly commands</b> (<code>check</code>, <code>find</code>…).<br>
         On top of that, Claude Code auto-opens <b>each of the 6 skills as a slash like <code>/repo-xray</code></b>.<br>
         So the same engine (repo-xray) can be reached three ways — <b>① the <code>check</code> command · ② the <code>/repo-xray</code> slash · ③ saying “find duplicates” so the AI loads it with <code>Skill()</code>.</b><br>
@@ -950,10 +955,12 @@ Judge fairly based on the actual implementation you verified, and say so for any
     if (!cur) { cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
     return cur;
   }
+  var SUN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>';
+  var MOON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
   function updateThemeIcon(){
-    var icon = (effectiveTheme() === 'dark') ? '☀️' : '🌙';
+    var icon = (effectiveTheme() === 'dark') ? SUN_SVG : MOON_SVG;
     var btns = document.querySelectorAll('.js-theme');
-    for (var i=0;i<btns.length;i++){ btns[i].textContent = icon; }
+    for (var i=0;i<btns.length;i++){ btns[i].innerHTML = icon; }
   }
   function setTheme(t){
     if (t) { root.setAttribute('data-theme', t); } else { root.removeAttribute('data-theme'); }
