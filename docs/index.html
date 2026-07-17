@@ -1062,10 +1062,19 @@ Judge fairly based on the actual implementation you verified, and say so for any
     var el = document.getElementById(id);
     if (!el || (el.offsetWidth === 0 && el.offsetHeight === 0)) return; // skip hidden (0-size) canvas
     mounted[id] = true;
+    var host = el.closest ? el.closest('.hero-cube') : null;
+    if (host) { host.style.opacity = '0'; host.style.transition = 'opacity .5s ease'; } // hide the glass-only first frames
     MeetingCube.mount('#' + id, GOLD);
+    // reveal once the (preloaded) logo texture has been placed — no cube-before-logo flash
+    if (host) { requestAnimationFrame(function(){ requestAnimationFrame(function(){ host.style.opacity = '1'; }); }); }
   }
   function mountVisible(){ mountCube('cube-ko'); mountCube('cube-en'); }
-  mountVisible(); // mount whichever language is shown now
+  // preload the logo sprite first so the cube renders WITH its logo already applied
+  var pre = new Image();
+  pre.onload = mountVisible;
+  pre.onerror = mountVisible;        // never block the cube if the logo 404s
+  pre.src = GOLD.logoUrl;
+  if (pre.complete) mountVisible();  // already cached
   var langBtns = document.querySelectorAll('.js-lang'); // lazy-mount the other on first switch
   for (var i = 0; i < langBtns.length; i++){ langBtns[i].addEventListener('click', function(){ setTimeout(mountVisible, 0); }); }
 })();
