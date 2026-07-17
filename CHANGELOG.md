@@ -5,6 +5,9 @@
 
 ## [Unreleased]
 
+### Decided against
+- **범용 병렬 서브에이전트 오케스트레이션 미도입** — "서브에이전트가 유행"이라 올인원처럼 얹자는 논의가 있었으나 보류. ①hi-vibe는 안전벨트(제약)지 생산성 액셀러레이터가 아니다 — "설계 빨리 병렬로"는 Claude Code 기본 Task 도구로 이미 되며, 우리가 또 싸면 잡화점이 된다. ②병렬은 벽시계 시간만 줄이고 **총 토큰은 오히려 늘어난다**(시스템프롬프트·파일재독 N배). "토큰 절약"은 메인 컨텍스트 오염 방지일 뿐 총비용 절감이 아니며, 짧은 작업엔 순오버헤드다. ③fresh-eyes가 잡을 전형적 과잉설계다. 유일한 fit은 `review --all --deep`에 fresh-eyes 팬아웃 하나뿐이나, 소규모 타깃엔 근거가 약해 **"review가 실제로 느리다/놓친다"고 실측될 때까지 보류.** (코드 변경 없음 — 결정 기록.)
+
 ## [0.15.0] - 2026-07-14
 <!-- show:ko **hi-vibe가 조용히 뭔가를 살렸을 때, 이제 한 줄로 티가 나요.** hi-vibe는 티 안 나게 뒤에서 잡아주는 게 설계라, 잘 작동할수록 정작 "이거 플러그인 덕에 산 거였네"를 모르고 지나가요. 그래서 세 조건을 모두 만족할 때 — ①hi-vibe가 찾았고 ②진짜 결함·판단이고 ③그 스킬 돌기 전엔 몰랐던 것 — 보고 맨 끝에 `🎣 hi-vibe catch — <무엇>을 <어느 스킬>이 잡음` 한 줄을 답니다. 리뷰 체크리스트·남의 눈·구조 스캔·원인 규율 네 곳에 들어갔어요. 핵심은 과장 금지: 통과·스타일 지적·이미 알던 것엔 절대 안 붙어요(자화자찬이 되면 신뢰가 깨지니까). 접두사가 고정이라 나중에 세션에서 grep해 "이 플러그인이 실제로 뭘 잡았나"를 모아볼 수도 있어요. -->
 <!-- show:en **When hi-vibe quietly saves you, now you see it — one line.** hi-vibe is built to work invisibly in the background, so the better it works, the more you miss the "oh, the plugin caught that" moment. Now, when all three conditions hold — ① hi-vibe found it ② it's a real defect/judgment ③ it wasn't on your radar before the skill ran — the report ends with `🎣 hi-vibe catch — <what> caught by <which skill>`. It's wired into the review checklist, fresh-eyes, the structure scan, and the root-cause discipline. The key is no overclaiming: it never attaches to passes, style nits, or things you already knew (self-congratulation would break trust). The fixed prefix lets you grep past sessions to see what the plugin actually caught. -->
