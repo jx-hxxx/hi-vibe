@@ -222,9 +222,32 @@ class StopNudgeTest(TempProject):
         second = self.run_nudge(transcript)  # 같은 세션에선 침묵
         self.assertEqual(second, "")
 
-    def test_silent_when_changelog_touched(self):
+    def test_summary_shown_but_no_lognag_when_changelog_touched(self):
+        # CHANGELOG를 이미 만졌으면 로그·리뷰 잔소리는 안 하되, 살아있음 요약은 남긴다.
         transcript = self.make_transcript(["/p/core.py", "/p/CHANGELOG.md"])
-        self.assertEqual(self.run_nudge(transcript, sid="s2"), "")
+        out = self.run_nudge(transcript, sid="s2")
+        self.assertIn("검사", out)             # 세션 요약(살아있음)은 나옴
+        self.assertNotIn("review --all", out)  # 로그·리뷰 잔소리는 침묵
+
+    def test_session_summary_counts_writes_and_catches(self):
+        # 코드 쓰기 2회 + 어시스턴트가 남긴 👋 마커 1개 → "2회 검사 · 👋 1건".
+        transcript = os.path.join(self.root, "t2.jsonl")
+        with open(transcript, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "assistant", "message": {"content": [
+                {"type": "tool_use", "name": "Write", "input": {"file_path": "/p/a.py"}}]}}) + "\n")
+            f.write(json.dumps({"type": "assistant", "message": {"content": [
+                {"type": "text", "text": "고쳤어요. 👋 hi-vibe가 방금 빈 except를 잡았어요."}]}}) + "\n")
+            f.write(json.dumps({"type": "assistant", "message": {"content": [
+                {"type": "tool_use", "name": "Edit", "input": {"file_path": "/p/b.py"}}]}}) + "\n")
+        out = self.run_nudge(transcript, sid="sum1")
+        self.assertIn("2회", out)
+        self.assertIn("👋 1건", out)
+
+    def test_session_summary_zero_catches_still_shown(self):
+        # 잡은 게 없어도 "검사 N회 · 0건"으로 조용히 돌고 있었음을 증명한다.
+        out = self.run_nudge(self.make_transcript(["/p/core.py"]), sid="sum2")
+        self.assertIn("검사", out)
+        self.assertIn("0건", out)
 
     def test_silent_for_doc_only_edits(self):
         transcript = self.make_transcript(["/p/README.md"])
@@ -292,6 +315,14 @@ class PostWriteGuardTest(TempProject):
             "content": "try:\n    fetch()\nexcept:\n    pass\n",
         })
         self.assertIn("에러 삼킴", out)
+
+    def test_auto_catch_emits_wave_marker(self):
+        # 훅이 명령어 없이 자동으로 잡으면, 응답 끝에 👋 마커를 남기라고 지시한다.
+        out = self.run_guard("Write", {
+            "file_path": "/p/svc.py",
+            "content": "try:\n    fetch()\nexcept:\n    pass\n",
+        })
+        self.assertIn("👋 hi-vibe", out)
 
     def test_swallow_warning_is_on_demand(self):
         """에러 삼킴 경고는 짧게 짚고, '왜'는 사용자가 물어볼 때만 (#3 온디맨드)."""

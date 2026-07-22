@@ -8,6 +8,20 @@
 ### Decided against
 - **범용 병렬 서브에이전트 오케스트레이션 미도입** — "서브에이전트가 유행"이라 올인원처럼 얹자는 논의가 있었으나 보류. ①hi-vibe는 안전벨트(제약)지 생산성 액셀러레이터가 아니다 — "설계 빨리 병렬로"는 Claude Code 기본 Task 도구로 이미 되며, 우리가 또 싸면 잡화점이 된다. ②병렬은 벽시계 시간만 줄이고 **총 토큰은 오히려 늘어난다**(시스템프롬프트·파일재독 N배). "토큰 절약"은 메인 컨텍스트 오염 방지일 뿐 총비용 절감이 아니며, 짧은 작업엔 순오버헤드다. ③fresh-eyes가 잡을 전형적 과잉설계다. 유일한 fit은 `review --all --deep`에 fresh-eyes 팬아웃 하나뿐이나, 소규모 타깃엔 근거가 약해 **"review가 실제로 느리다/놓친다"고 실측될 때까지 보류.** (코드 변경 없음 — 결정 기록.)
 
+## [0.16.0] - 2026-07-22
+<!-- show:ko **이제 hi-vibe가 뒤에서 뭘 잡으면 티가 나요 — 명령어 없이도.** 지금까진 너무 조용히 잡아서 "정말 돌고 있나?"가 안 보였어요. 이제 훅이 코드 쓸 때마다 자동으로 에러 삼킴·비밀키를 잡으면 그 자리에서 `👋 hi-vibe가 방금 <무엇>을 잡았어요` 한 줄이 붙고, 세션 끝엔 "이번 세션: 코드쓰기 N회 검사 · 👋 M건 잡음(잡을 게 없으면 0건)" 요약이 한 번 떠요 — 잡은 게 없어도 조용히 돌고 있었다는 증명. 마커도 낚싯대(🎣)에서 인사 손짓(👋 "hi"-vibe)으로, 문구도 "없었으면 놓쳤을 것"에서 "방금 잡았어요/고쳤어요"로 능동형으로 바꿨어요. 붙이는 조건(진짜 결함일 때만·통과엔 안 붙임)은 그대로. -->
+<!-- show:en **Now you can see hi-vibe working in the background — without typing a command.** It used to catch things so quietly you couldn't tell it was running. Now, whenever the always-on hook auto-catches a swallowed error or a secret as you write code, it appends a `👋 hi-vibe just caught <what>` line on the spot, and at session end you get a one-time summary: "this session: N code writes checked, M caught by hi-vibe (0 if nothing to catch)" — proof it ran even when clean. The marker also changed from a fishing rod (🎣) to a friendly wave (👋 "hi"-vibe), and the wording shifted from "you'd have missed it" to the active "just caught/fixed it." When it attaches (real defects only, never on passes) is unchanged. -->
+
+### Added
+- **훅 자동 catch 표기** — `post_write_guard`가 명령어 없이 에러 삼킴·비밀키를 자동으로 잡으면, 응답 끝에 `👋 hi-vibe가 방금 …을 잡았어요` 한 줄을 남기라고 지시한다. 항상 도는 기계 강제 층의 성과가 명령어 없이도 보인다.
+- **세션 활동 요약(Stop)** — 세션 끝에 "코드쓰기 N회 검사 · 👋 M건 잡음" 한 줄(세션당 1회). 잡은 게 0건이어도 "검사 N회 · 위험 0건(깨끗)"으로 조용히 돌고 있었음을 증명. `_common.session_activity()`가 트랜스크립트에서 코드 쓰기 수와 `👋 hi-vibe` 마커 수를 집계(상태 파일 없이 트랜스크립트 파생, fail-open). CHANGELOG를 이미 만졌으면 로그 잔소리는 침묵하되 요약은 유지.
+
+### Changed
+- **catch 마커 🎣 → 👋 + 능동형 문구** — 낚싯대에서 인사 손짓(👋 — "hi"-vibe와 맞음)으로. 문구도 "hi-vibe 없었으면 놓쳤을 것"(반사실) → "👋 hi-vibe가 방금 …을 잡았어요/고쳤어요"(능동). write-gate·repo-xray·root-cause-first·fresh-eyes 네 표면 + 훅에 동일 적용. **붙이는 조건(세 조건·과장 금지)은 불변** — 통과·스타일·기지 항목엔 여전히 안 붙는다. grep 접두사는 `👋 hi-vibe`로 고정.
+
+### Tests
+- +3 (훅 자동 catch가 👋 마커 지시 / 세션 요약의 쓰기·catch 집계 / 0건도 요약 표시). CHANGELOG 만졌을 때 로그 잔소리는 침묵하되 요약 유지하도록 기존 테스트 갱신. 84→87.
+
 ## [0.15.0] - 2026-07-14
 <!-- show:ko **hi-vibe가 조용히 뭔가를 살렸을 때, 이제 한 줄로 티가 나요.** hi-vibe는 티 안 나게 뒤에서 잡아주는 게 설계라, 잘 작동할수록 정작 "이거 플러그인 덕에 산 거였네"를 모르고 지나가요. 그래서 세 조건을 모두 만족할 때 — ①hi-vibe가 찾았고 ②진짜 결함·판단이고 ③그 스킬 돌기 전엔 몰랐던 것 — 보고 맨 끝에 `🎣 hi-vibe catch — <무엇>을 <어느 스킬>이 잡음` 한 줄을 답니다. 리뷰 체크리스트·남의 눈·구조 스캔·원인 규율 네 곳에 들어갔어요. 핵심은 과장 금지: 통과·스타일 지적·이미 알던 것엔 절대 안 붙어요(자화자찬이 되면 신뢰가 깨지니까). 접두사가 고정이라 나중에 세션에서 grep해 "이 플러그인이 실제로 뭘 잡았나"를 모아볼 수도 있어요. -->
 <!-- show:en **When hi-vibe quietly saves you, now you see it — one line.** hi-vibe is built to work invisibly in the background, so the better it works, the more you miss the "oh, the plugin caught that" moment. Now, when all three conditions hold — ① hi-vibe found it ② it's a real defect/judgment ③ it wasn't on your radar before the skill ran — the report ends with `🎣 hi-vibe catch — <what> caught by <which skill>`. It's wired into the review checklist, fresh-eyes, the structure scan, and the root-cause discipline. The key is no overclaiming: it never attaches to passes, style nits, or things you already knew (self-congratulation would break trust). The fixed prefix lets you grep past sessions to see what the plugin actually caught. -->

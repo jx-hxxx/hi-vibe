@@ -157,6 +157,15 @@ def main(payload):
             )
 
     if messages:
+        # 이건 훅이 명령어 없이 자동으로 잡은 것 — 사용자가 "hi-vibe가 실제로
+        # 일하고 있다"를 느끼도록, 응답 맨 끝에 공을 밝히는 한 줄을 남기게 한다.
+        messages.append(
+            "위 감지는 hi-vibe 훅이 명령어 없이 자동으로 잡은 것이다. 이번 응답 "
+            "맨 끝에 한 줄을 더해라(문구는 사용자 언어, 접두사 `👋 hi-vibe`는 고정 "
+            "— 나중에 세션에서 grep 가능하게): `👋 hi-vibe가 방금 <무엇>을 "
+            "잡았어요.` (사용자가 바로 고치면 \"…을 잡아서 고쳤어요.\") "
+            "단 사용자가 그 줄에 allow-swallow/allow-secret로 의도를 밝히면 붙이지 마라."
+        )
         _common.emit("PostToolUse", additional_context="\n\n".join(messages))
 
 

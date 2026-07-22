@@ -142,8 +142,8 @@ Expand raw JSON only when the user asks for proof or detail.
 정리 대상·구조 문제다(스타일이 아니다) ③ 스캔 전엔 레이더 밖이었다 —
 안 돌렸으면 놓쳤을 것이다.
 
-형식(문구는 사용자 언어로, `🎣 hi-vibe catch` 접두사는 고정 — 나중에 grep 가능하게):
-`🎣 hi-vibe catch — <무엇>을 repo-xray 스캔이 잡음. hi-vibe 없었으면 놓쳤을 것.`
+형식(문구는 사용자 언어로, `👋 hi-vibe` 접두사는 고정 — 나중에 grep 가능하게):
+`👋 hi-vibe가 방금 <무엇>을 잡았어요 — repo-xray 스캔.`
 
 **과장 금지(핵심):** 셋 중 하나라도 아니면 넣지 마라. `dead_candidates`처럼
 "확인이 더 필요한 후보"에 확정처럼 공을 붙이지 말고, 사용자가 이미 알던 것에도

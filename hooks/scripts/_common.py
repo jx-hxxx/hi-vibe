@@ -137,6 +137,44 @@ def parse_transcript(path):
     return prompts[-5:], edited
 
 
+_DOC_SUFFIXES = (".md", ".txt", ".rst")
+_CATCH_MARK = "👋 hi-vibe"  # 마커 접두사(고정) — 세션에서 이 문자열로 grep
+
+
+def session_activity(path):
+    """(코드 쓰기 tool_use 횟수, 어시스턴트가 남긴 `👋 hi-vibe` 마커 수).
+
+    - 코드 쓰기: Write/Edit/MultiEdit/NotebookEdit 중 대상이 문서(.md/.txt/.rst)가
+      아닌 것만 센다(훅이 실제로 위험 패턴을 검사한 쓰기).
+    - 마커: 어시스턴트 텍스트에 남은 `👋 hi-vibe` 개수 = 이번 세션에 hi-vibe가
+      드러낸 발견 수(훅·스킬·에이전트 합산). 세지 못해도 훅 동작엔 무해."""
+    writes = 0
+    catches = 0
+    for line in tail_lines(path):
+        try:
+            entry = json.loads(line)
+        except Exception:
+            continue
+        content = (entry.get("message") or {}).get("content")
+        if isinstance(content, str):
+            catches += content.count(_CATCH_MARK)
+            continue
+        if not isinstance(content, list):
+            continue
+        for c in content:
+            if not isinstance(c, dict):
+                continue
+            if c.get("type") == "tool_use" and c.get("name") in (
+                    "Write", "Edit", "MultiEdit", "NotebookEdit"):
+                inp = c.get("input") or {}
+                fp = inp.get("file_path") or inp.get("notebook_path") or ""
+                if not fp.endswith(_DOC_SUFFIXES):
+                    writes += 1
+            elif c.get("type") == "text":
+                catches += c.get("text", "").count(_CATCH_MARK)
+    return writes, catches
+
+
 # 테스트 실행으로 보이는 Bash 명령 (pytest/unittest/jest/vitest/go test/cargo test 등)
 _TEST_CMD_RE = re.compile(
     r"\b(pytest|python[0-9.]*\s+-m\s+(?:unittest|pytest)|unittest|jest|vitest|"
