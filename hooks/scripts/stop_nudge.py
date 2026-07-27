@@ -1,8 +1,20 @@
-"""Stop: 이번 세션에 실질 코드 변경이 있었는데 CHANGELOG.md가 안
-갱신됐으면 사용자에게 한 번만 알린다. 절대 턴을 막지(block) 않는다 —
-잔소리 훅은 플러그인 삭제로 이어지는 지름길이다.
+"""Stop: 아직 리뷰 안 받은 코드 변경이 있으면 그 자리에서 리뷰하게 한다.
+
+예전엔 "리뷰하세요" 안내만 띄웠다. 안내는 무시된다 — 사용자는 기능을 만들
+때마다 명령어를 치지 않고, 애초에 코드를 쓰는 건 에이전트이기 때문이다.
+그래서 안내를 실행으로 바꿨다(decision: block).
+
+"잔소리 훅은 플러그인 삭제로 이어진다"는 원래 우려는 유효하므로, 막는
+조건을 좁게 지킨다:
+
+  - 코드를 안 건드린 턴에는 아예 안 걸린다
+  - 같은 변경으로는 두 번 막지 않는다 (내용 지문으로 판단)
+  - 리뷰가 끝나 mark되면 자동으로 조용해진다
+  - 범위 계산이 조금이라도 실패하면 막지 않는다 (fail-open)
 """
+import json
 import os
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -10,6 +22,11 @@ import _common
 
 DOC_SUFFIXES = (".md", ".txt", ".rst")
 MAX_FLAGS = 200  # 세션당 1개씩 쌓이는 .nudged 플래그의 상한
+SCOPE_TIMEOUT = 8  # 훅 자체 제한(10초)보다 짧게 — 넘기면 막지 않고 통과
+
+REVIEW_SCOPE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    "skills", "write-gate", "scripts", "review_scope.py")
 
 
 def _prune_flags(flag_dir):
@@ -26,58 +43,110 @@ def _prune_flags(flag_dir):
         pass  # best-effort 청소 — 실패해도 훅 동작에 영향 없음
 
 
+def review_scope(cwd):
+    """review_scope list 결과(dict). 어떤 실패에서도 None → 막지 않는다."""
+    if not os.path.isfile(REVIEW_SCOPE):
+        return None
+    try:
+        r = subprocess.run([sys.executable or "python3", REVIEW_SCOPE,
+                            "list", "--root", cwd],
+                           capture_output=True, text=True, timeout=SCOPE_TIMEOUT)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if r.returncode != 0:
+        return None
+    try:
+        return json.loads(r.stdout)
+    except ValueError:
+        return None
+
+
+def _block_flag(flag_dir):
+    return os.path.join(flag_dir, "last_block")
+
+
+def _already_blocked(flag_dir, fingerprint):
+    """같은 내용으로 이미 막은 적이 있나 — 한 번 넘긴 변경으로 또 막지 않는다."""
+    try:
+        with open(_block_flag(flag_dir), encoding="utf-8") as fh:
+            return fh.read().strip() == fingerprint
+    except OSError:
+        return False
+
+
+def _remember_block(flag_dir, fingerprint):
+    try:
+        os.makedirs(flag_dir, exist_ok=True)
+        with open(_block_flag(flag_dir), "w", encoding="utf-8") as fh:
+            fh.write(fingerprint + "\n")
+    except OSError:
+        pass  # 기록 못 해도 막는 것 자체는 유효 — 다음 턴에 한 번 더 걸릴 뿐
+
+
+def review_reason(scope):
+    """차단 사유 = 에이전트가 받을 지시. 무엇을·왜·어떻게 끝내는지까지 담는다."""
+    files = scope.get("to_review", [])
+    shown = ", ".join(files[:8])
+    more = "" if len(files) <= 8 else f" 외 {len(files) - 8}개"
+    return (
+        "hi-vibe: 아직 리뷰 안 받은 코드 변경이 있습니다 "
+        f"({scope.get('scope_label', '')}, {scope.get('file_count', 0)}파일 "
+        f"{scope.get('total_changed_lines', 0)}줄): {shown}{more}.\n"
+        "지금 write-gate 스킬의 `Mode: review`를 그대로 수행하세요 "
+        "(범위 계산 → 체크리스트 → fresh-eyes → mark).\n"
+        "리뷰를 마치면 review_scope.py mark 로 표시해야 이 알림이 멈춥니다.\n"
+        "단, 사용자가 방금 '넘어가'/'나중에'/'가볍게'라고 했으면 그 뜻을 "
+        "따르세요 — 같은 변경으로는 다시 막지 않습니다."
+    )
+
+
 def main(payload):
     cwd = payload.get("cwd", "")
     if not _common.project_gate(cwd):
         return
-    sid = str(payload.get("session_id", "unknown"))
-    flag_dir = os.path.join(cwd, ".hi-vibe", "state")
-    flag = os.path.join(flag_dir, f"{sid}.nudged")
-    if os.path.isfile(flag):
-        return
-
     transcript = payload.get("transcript_path", "")
     if not transcript:
         return
+
     _, edited = _common.parse_transcript(transcript)
     writes, catches = _common.session_activity(transcript)
     code_edits = [f for f in edited if not f.endswith(DOC_SUFFIXES)]
-    changelog_touched = any(os.path.basename(f) == "CHANGELOG.md" for f in edited)
+    flag_dir = os.path.join(cwd, ".hi-vibe", "state")
 
-    parts = []
-    # 살아있음·효과 요약: 이번 세션에 실제 코드 쓰기가 있었을 때만(한 줄).
-    # 잡은 게 0건이어도 "검사 N회"로 조용히 돌고 있었음을 증명한다.
-    if writes > 0:
-        if catches > 0:
-            parts.append(
-                f"hi-vibe 이번 세션: 코드쓰기 {writes}회 검사 · 👋 {catches}건 잡음.\n"
-                f"— This session: hi-vibe checked {writes} code write(s), caught {catches}."
-            )
-        else:
-            parts.append(
-                f"hi-vibe 이번 세션: 코드쓰기 {writes}회 검사 · 위험 패턴 0건(깨끗).\n"
-                f"— This session: hi-vibe checked {writes} code write(s), 0 risky patterns."
-            )
-    # 로그·전체리뷰 발견성: 코드 변경이 있는데 CHANGELOG를 아직 안 건드렸을 때만.
-    if code_edits and not changelog_touched:
-        parts.append(
-            "실질 변경이면 /hi-vibe:log 로 CHANGELOG에 남기고, /hi-vibe:review --all "
-            "(\"전체 리뷰해줘\")로 이번 작업 전체를 품질·문서까지 점검받을 수 있어요 "
-            "— 이미 본 건 건너뜁니다.\n"
-            "— Log real changes with /hi-vibe:log, and run /hi-vibe:review --all to review "
-            "the whole session at once (already-reviewed files skipped). You changed code/config."
-        )
+    # 1) 리뷰 안 받은 코드 변경이 있으면 → 안내가 아니라 실행으로 넘긴다.
+    #    이 세션에 실제로 코드를 썼을 때만 — 남이 남긴 오래된 변경으로
+    #    남의 세션을 붙잡지 않는다.
+    if code_edits:
+        scope = review_scope(cwd)
+        if scope and scope.get("to_review"):
+            fingerprint = scope.get("fingerprint") or ""
+            if fingerprint and not _already_blocked(flag_dir, fingerprint):
+                _remember_block(flag_dir, fingerprint)
+                _common.emit("Stop", decision="block",
+                             reason=review_reason(scope))
+                return
 
-    if not parts:
+    # 2) 막을 게 없을 때만, 살아있음 요약을 세션당 한 번 남긴다.
+    #    잡은 게 0건이어도 "검사 N회"로 조용히 돌고 있었음을 증명한다.
+    if writes <= 0:
         return
+    sid = str(payload.get("session_id", "unknown"))
+    flag = os.path.join(flag_dir, f"{sid}.nudged")
+    if os.path.isfile(flag):
+        return
+    if catches > 0:
+        summary = (f"hi-vibe 이번 세션: 코드쓰기 {writes}회 검사 · 👋 {catches}건 잡음.\n"
+                   f"— This session: hi-vibe checked {writes} code write(s), "
+                   f"caught {catches}.")
+    else:
+        summary = (f"hi-vibe 이번 세션: 코드쓰기 {writes}회 검사 · 위험 패턴 0건(깨끗).\n"
+                   f"— This session: hi-vibe checked {writes} code write(s), "
+                   f"0 risky patterns.")
     os.makedirs(flag_dir, exist_ok=True)
     with open(flag, "w", encoding="utf-8") as f:
         f.write("nudged\n")
     _prune_flags(flag_dir)
-    _common.emit(
-        "Stop",
-        system_message="\n".join(parts) + "\n세션당 1회 · 사소하면 무시 OK · once per session.",
-    )
+    _common.emit("Stop", system_message=summary + "\n세션당 1회 · once per session.")
 
 
 if __name__ == "__main__":

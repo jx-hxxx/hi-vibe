@@ -1,4 +1,4 @@
-"""review_scope 동작 검증 — /hi-vibe:review --all 의 범위 계산.
+"""review_scope 동작 검증 — /hi-vibe:review 의 범위 계산.
 
 임시 git 저장소에서 실제로 돌려 확인한다: 바뀐 코드 파일만 잡히는지,
 mark 후 안 바뀐 파일은 skipped로 빠지는지, 다시 바뀌면 재등장하는지,
@@ -91,6 +91,40 @@ class ReviewScopeTest(unittest.TestCase):
         self.assertGreater(out["sizes"]["big.py"], out["sizes"]["small.py"])
         self.assertEqual(out["total_changed_lines"],
                          sum(out["sizes"].values()))
+
+    def test_uncommitted_is_the_default_tier(self):
+        _write(self.root, "feat.py", "def a():\n    return 1\n")
+        out = _list(self.root)
+        self.assertEqual(out["scope"], "uncommitted")
+
+    def test_falls_back_to_last_commit_after_committing(self):
+        """커밋하면 리뷰가 '볼 게 없다'로 죽어버리던 문제 — 마지막 커밋으로
+        내려가 계속 볼 수 있어야 한다."""
+        _write(self.root, "feat.py", "def a():\n    return 1\n")
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "feat")
+        out = _list(self.root)
+        self.assertEqual(out["scope"], "last_commit")
+        self.assertIn("feat.py", out["to_review"])
+        self.assertGreater(out["total_changed_lines"], 0)
+
+    def test_finished_review_does_not_drag_in_older_commits(self):
+        """계단은 '바뀐 파일이 있느냐'로 고른다 — 리뷰를 마쳐서 to_review가
+        빈 것과, 그 단계에 애초에 변경이 없는 것을 구분해야 한다."""
+        _write(self.root, "feat.py", "def a():\n    return 1\n")
+        review_scope.cmd_mark(self.root, ["feat.py"])
+        out = _list(self.root)
+        self.assertEqual(out["scope"], "uncommitted")   # 아래로 안 내려감
+        self.assertEqual(out["to_review"], [])
+        self.assertNotIn("base.py", out["to_review"])
+
+    def test_fingerprint_tracks_content(self):
+        _write(self.root, "feat.py", "def a():\n    return 1\n")
+        first = _list(self.root)["fingerprint"]
+        self.assertTrue(first)
+        self.assertEqual(first, _list(self.root)["fingerprint"])  # 그대로면 같음
+        _write(self.root, "feat.py", "def a():\n    return 2\n")
+        self.assertNotEqual(first, _list(self.root)["fingerprint"])
 
     def _chunk(self, n):
         buf = io.StringIO()

@@ -70,7 +70,25 @@ TEST_FILE_RE = re.compile(r"(^|[/\\])(test_[^/\\]*|[^/\\]*_test)\.(py|js|mjs|cjs
 
 
 def is_test_file(relpath):
+    """**러너가 이름 규칙으로 발견하는** 테스트 파일인가 (test_*, *_test,
+    conftest, *.spec/*.test). dead 판정은 이걸 쓴다 — 이름 규칙에 걸리는
+    심볼만 "참조가 없어도 러너가 부른다"가 성립하기 때문이다."""
     return bool(TEST_FILE_RE.search(relpath))
+
+
+def is_test_code(relpath):
+    """**테스트 코드 전반**인가 — 위 규칙 + `tests/` 아래 파일(픽스처·헬퍼 포함).
+
+    `is_test_file`보다 넓다. 둘은 중복이 아니라 **다른 질문**이다:
+    near-dup 버킷은 "닮은 게 정상인 코드냐"를 묻고(픽스처·헬퍼도 해당),
+    dead 판정은 "러너가 이름으로 부르냐"를 묻는다. **dead 판정에 이걸 쓰지
+    마라** — `tests/helpers.py`의 안 쓰는 헬퍼는 진짜 후보다(FP-02).
+
+    규칙 정의는 `is_test_file` 한 곳에만 두고 여기서 재사용한다."""
+    if is_test_file(relpath):
+        return True
+    norm = "/" + (relpath or "").replace(os.sep, "/")
+    return "/tests/" in norm or "/test/" in norm
 
 
 def is_minified(path):
@@ -294,19 +312,10 @@ def _shingles(dump, k=9):
     return frozenset(dump[i:i + k] for i in range(len(dump) - k + 1))
 
 
-def _is_test_file(path):
-    """테스트 파일 판별: tests/ 경로이거나 test_*/​*_test 파일명."""
-    base = os.path.basename(path or "")
-    if "/tests/" in "/" + (path or "").replace(os.sep, "/") or (path or "").replace(os.sep, "/").startswith("tests/"):
-        return True
-    stem = base.rsplit(".", 1)[0]
-    return stem.startswith("test_") or stem.endswith("_test") or base.startswith("test")
-
-
 def _all_test_files(pair):
-    """near-dup 쌍의 두 함수가 모두 테스트 파일에 있으면 True."""
+    """near-dup 쌍의 두 함수가 모두 테스트 코드에 있으면 True."""
     fns = pair.get("functions", [])
-    return bool(fns) and all(_is_test_file(f.get("file", "")) for f in fns)
+    return bool(fns) and all(is_test_code(f.get("file", "")) for f in fns)
 
 
 def find_near_duplicates(norm_entries, threshold=0.9, min_length=6, max_pairs=20000,
@@ -568,6 +577,78 @@ def oversized_report(root, text_files, symbols):
     return big_files[:15], big_functions[:15]
 
 
+# ---------- unfinished work ----------
+#
+# 여기서 찾는 것은 "이런 걸 만드세요"(제안)가 아니라 "이거 하다 만 것 같은데요"
+# (발견)다. 근거가 전부 코드 안에 있어야 한다는 repo-xray의 증거 계약은
+# 그대로 — 요청하지 않은 기능을 권하는 순간 fresh-eyes가 잡는 스코프 크립을
+# 우리가 조장하게 된다.
+
+PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__)))))
+
+TODO_RE = re.compile(
+    r"(?:#|//|/\*|\*|<!--)\s*(TODO|FIXME|XXX|HACK)\b[:\s]*(.{0,120})")
+
+
+def load_swallow_finder():
+    """에러 삼킴 판정은 PostToolUse 훅과 **같은 정의**를 쓴다 (SSOT).
+    규칙을 두 벌 두면 한쪽만 고쳐져 "훅은 잡는데 스캔은 못 잡는" 상태가 된다.
+    훅 파일이 없으면 None — 호출부가 그 사실을 리포트에 밝힌다(조용한 생략 금지)."""
+    hooks_dir = os.path.join(PLUGIN_ROOT, "hooks", "scripts")
+    if not os.path.isfile(os.path.join(hooks_dir, "post_write_guard.py")):
+        return None
+    if hooks_dir not in sys.path:
+        sys.path.insert(0, hooks_dir)
+    try:
+        import post_write_guard
+    except ImportError:
+        return None
+    return post_write_guard.iter_swallows
+
+
+def swallow_report(root, code_files, finder):
+    """저장소 전체의 에러 삼킴. 훅은 '새로 쓰는 코드'만 보므로, 훅을 깔기 전에
+    만든 코드와 남이 짠 코드는 여기서 처음 검사된다."""
+    found = []
+    for path in code_files:
+        relpath = rel(root, path)
+        text = read_text(path)
+        if not text:
+            continue
+        for label, snippet, offset in finder(text, path):
+            found.append({"file": relpath, "line": text.count("\n", 0, offset) + 1,
+                          "kind": label, "code": snippet})
+    return found
+
+
+def todo_report(root, code_files):
+    """남겨둔 TODO/FIXME. 본인이 적은 메모라 근거가 확실하다."""
+    found = []
+    for path in code_files:
+        relpath = rel(root, path)
+        text = read_text(path)
+        if not text:
+            continue
+        for i, line in enumerate(text.splitlines(), 1):
+            m = TODO_RE.search(line)
+            if m:
+                found.append({"file": relpath, "line": i, "kind": m.group(1),
+                              "note": m.group(2).strip().rstrip("*/-->").strip()})
+    return found
+
+
+def test_coverage_report(root, code_files):
+    """테스트 유무를 **요약 한 줄**로만 준다. 파일별로 나열하면 테스트가 없는
+    프로젝트에서는 모든 파일이 후보가 되어 소음이 된다 — 그건 발견이 아니다."""
+    modules, tests = [], []
+    for path in code_files:
+        relpath = rel(root, path)
+        (tests if is_test_code(relpath) else modules).append(relpath)
+    return {"module_count": len(modules), "test_file_count": len(tests),
+            "has_tests": bool(tests)}
+
+
 # ---------- commands ----------
 
 def cmd_scan(root):
@@ -602,6 +683,19 @@ def cmd_scan(root):
     decorated_unref = [d for d in dead_all if d.get("decorated")]
     big_files, big_functions = oversized_report(root, text_files, py_symbols)
 
+    # 하다 만 흔적: 정리 대상(중복·미사용)과 성격이 달라 별도 버킷으로 준다.
+    code_files = py_files + js_files
+    unavailable = []
+    finder = load_swallow_finder()
+    if finder is None:
+        swallows = []
+        unavailable.append(
+            "swallowed_errors: hooks/scripts/post_write_guard.py 를 못 읽어 "
+            "에러 삼킴 검사를 건너뜀 (규칙 중복을 만들지 않으려 대체 구현을 두지 않음)")
+    else:
+        swallows = swallow_report(root, code_files, finder)
+    todos = todo_report(root, code_files)
+
     report = {
         "tool": "repo-xray",
         "scan": {
@@ -616,6 +710,7 @@ def cmd_scan(root):
                 "doc files (.md/.css) never count as references — see doc_mentions."
             ),
             "near_duplicate_scan_truncated": near_truncated,
+            "unavailable": unavailable,
         },
         "dead_candidates": sorted(dead, key=lambda s: (s["file"], s["line"])),
         "decorated_unreferenced": sorted(decorated_unref, key=lambda s: (s["file"], s["line"])),
@@ -629,6 +724,10 @@ def cmd_scan(root):
         "oversized_functions": big_functions,
         "python_parse_errors": parse_errors,
         "symbol_count": {"python": len(py_symbols), "js": len(js_symbols)},
+        # 하다 만 흔적 (정리 대상과 다른 버킷 — 지울 것이 아니라 마저 할 것)
+        "swallowed_errors": swallows,
+        "todos": todos,
+        "test_coverage": test_coverage_report(root, code_files),
     }
 
     out_dir = os.path.join(root, ".repo-xray")
@@ -645,6 +744,12 @@ def cmd_scan(root):
     print(f"dead candidates: {len(dead)} (+{len(decorated_unref)} decorated)  "
           f"duplicates: {len(duplicates)}  near-duplicates: {near_str}  "
           f"js collisions: {len(collisions)}  oversized files: {len(big_files)}")
+    tests = report["test_coverage"]
+    print(f"swallowed errors: {len(swallows)}  todos: {len(todos)}  "
+          f"tests: {tests['test_file_count']} test files / "
+          f"{tests['module_count']} modules")
+    for line in unavailable:
+        print(f"unavailable: {line}")
     print(f"report: {out_path}")
     return 0
 

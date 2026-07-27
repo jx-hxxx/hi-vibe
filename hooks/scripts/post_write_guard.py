@@ -69,8 +69,12 @@ def _match_region(text, m):
     return text[start: end if end != -1 else len(text)]
 
 
-def find_swallows(text, path):
-    """(라벨, 정규화된 매치 텍스트) 리스트. allow-swallow 표시된 매치는 제외."""
+def iter_swallows(text, path):
+    """(라벨, 정규화된 매치 텍스트, 시작 오프셋) 리스트.
+
+    훅은 "무엇을 잡았나"만 있으면 되지만 저장소 전체를 훑는 스캐너는 위치까지
+    필요하다. 규칙을 두 벌 두면 한쪽만 고쳐져 훅과 스캔 결과가 갈리므로,
+    판정은 여기 한 곳에만 두고 필요한 것만 골라 쓴다."""
     if not text:
         return []
     patterns = PY_PATTERNS if path.endswith(".py") else JS_PATTERNS
@@ -79,8 +83,13 @@ def find_swallows(text, path):
         for m in rx.finditer(text):
             if ALLOW_MARK in _match_region(text, m):
                 continue
-            found.append((label, " ".join(m.group(0).split())))
+            found.append((label, " ".join(m.group(0).split()), m.start()))
     return found
+
+
+def find_swallows(text, path):
+    """(라벨, 정규화된 매치 텍스트) 리스트. allow-swallow 표시된 매치는 제외."""
+    return [(label, snippet) for label, snippet, _ in iter_swallows(text, path)]
 
 
 def find_secrets(text):

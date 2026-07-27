@@ -46,6 +46,19 @@ def _active_files():
             yield os.path.join(root, name)
 
 
+# "자동 테스트 N개"를 광고하는 표현들. 위치가 아니라 **표현**으로 잡으므로,
+# 문구를 새 파일·새 문단에 추가해도 자동으로 검사 대상이 된다.
+_ADVERTISED_COUNT_RES = [
+    re.compile(r"(\d+)\s*(?:automated|regression)\s+tests?\b"),
+    re.compile(r"·\s*(\d+)\s+regression\b"),
+    re.compile(r"(\d+)\s*개의?\s*자동\s*테스트"),
+    re.compile(r"회귀\s*테스트\s*\n?\s*(\d+)\s*개"),
+    re.compile(r"<b>(\d+)</b>\s*<span>[^<]*(?:테스트|tests)"),
+]
+# 표현을 통째로 갈아엎어 검사가 0건이 되는 것을 막는 하한(현재 6곳).
+_MIN_ADVERTISED_SPOTS = 6
+
+
 def _actual_test_count():
     tests_dir = os.path.join(REPO, "tests")
     n = 0
@@ -71,21 +84,30 @@ class RepoIntegrityTest(unittest.TestCase):
             "존재하지 않는 명령을 참조한다:\n" + "\n".join(sorted(bad)))
 
     def test_advertised_test_count_matches_reality(self):
+        """정해진 몇 곳이 아니라 **활성 문서 전체**를 훑는다.
+
+        예전엔 (파일, 정규식) 6쌍만 검사해서, 문구를 새로 하나 더 추가하면
+        그 숫자는 아무도 안 보고 조용히 낡았다 — 실제로 겪은 실패 모드다.
+        이제 "테스트 수를 광고하는 표현"을 문서 어디에 써도 걸린다."""
         actual = _actual_test_count()
-        # README·랜딩이 광고하는 테스트 수(안정적인 위치들).
-        advertised = []
-        for rel, pat in [
-            ("README.md", r"### (\d+) automated tests"),
-            ("README.md", r"·\s*(\d+) regression"),
-            ("README.ko.md", r"### (\d+)개의 자동 테스트"),
-            ("README.ko.md", r"·\s*회귀 테스트\s*\n(\d+)개"),
-            ("docs/index.html", r"<b>(\d+)</b><span>자동 회귀 테스트"),
-            ("docs/index.html", r"<b>(\d+)</b><span>automated regression tests"),
-        ]:
-            found = re.findall(pat, _read(os.path.join(REPO, rel)))
-            self.assertTrue(found, f"{rel}: 광고 테스트 수를 못 찾음 (패턴 낡음?)")
-            advertised += [(rel, int(x)) for x in found]
-        wrong = [(rel, n) for rel, n in advertised if n != actual]
+        advertised, seen_files = [], set()
+        for path in _active_files():
+            text = _read_active(path)   # 랜딩 타임라인(과거 릴리스 서술)은 제외
+            for pat in _ADVERTISED_COUNT_RES:
+                for m in pat.finditer(text):
+                    rel = os.path.relpath(path, REPO)
+                    advertised.append((rel, int(m.group(1))))
+                    seen_files.add(rel)
+
+        # 표현을 통째로 바꿔 검사가 조용히 0건이 되는 것도 실패로 본다.
+        self.assertGreaterEqual(
+            len(advertised), _MIN_ADVERTISED_SPOTS,
+            f"테스트 수 광고 문구를 {len(advertised)}곳에서만 찾았다 "
+            f"(최소 {_MIN_ADVERTISED_SPOTS}곳 기대) — 문구가 바뀌었으면 "
+            f"_ADVERTISED_COUNT_RES에 패턴을 추가하라. 찾은 파일: "
+            f"{sorted(seen_files)}")
+
+        wrong = sorted({(rel, n) for rel, n in advertised if n != actual})
         self.assertEqual(
             wrong, [],
             f"광고 테스트 수 != 실제({actual}개): {wrong} — README/랜딩 숫자를 갱신하라.")

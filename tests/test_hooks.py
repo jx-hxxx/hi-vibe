@@ -213,21 +213,15 @@ class StopNudgeTest(TempProject):
                              "transcript_path": transcript})
         return buf.getvalue()
 
-    def test_nudges_once_for_code_without_changelog(self):
+    def test_summary_shown_once_per_session(self):
+        # git 저장소가 아니라 리뷰 범위를 못 구하는 상황 = 막지 않고 요약만.
         transcript = self.make_transcript(["/p/core.py"])
         first = self.run_nudge(transcript)
-        self.assertIn("CHANGELOG", first)
-        self.assertIn("review --all", first)  # 전체 리뷰 발견성도 한 번에 안내
-        self.assertIn("You changed code", first)  # 한/영 병기 (외국인 사용자용)
-        second = self.run_nudge(transcript)  # 같은 세션에선 침묵
+        self.assertIn("검사", first)
+        self.assertIn("This session", first)  # 한/영 병기 (외국인 사용자용)
+        self.assertNotIn("block", first)      # 막을 근거가 없으면 안 막는다
+        second = self.run_nudge(transcript)   # 같은 세션에선 침묵
         self.assertEqual(second, "")
-
-    def test_summary_shown_but_no_lognag_when_changelog_touched(self):
-        # CHANGELOG를 이미 만졌으면 로그·리뷰 잔소리는 안 하되, 살아있음 요약은 남긴다.
-        transcript = self.make_transcript(["/p/core.py", "/p/CHANGELOG.md"])
-        out = self.run_nudge(transcript, sid="s2")
-        self.assertIn("검사", out)             # 세션 요약(살아있음)은 나옴
-        self.assertNotIn("review --all", out)  # 로그·리뷰 잔소리는 침묵
 
     def test_session_summary_counts_writes_and_catches(self):
         # 코드 쓰기 2회 + 어시스턴트가 남긴 👋 마커 1개 → "2회 검사 · 👋 1건".
@@ -265,6 +259,69 @@ class StopNudgeTest(TempProject):
         self.run_nudge(transcript, sid="fresh-session")  # 새 플래그 1개 추가 + 정리
         remaining = [f for f in os.listdir(flag_dir) if f.endswith(".nudged")]
         self.assertLessEqual(len(remaining), stop_nudge.MAX_FLAGS)
+
+
+class StopBlockTest(TempProject):
+    """안 받은 리뷰가 있으면 안내가 아니라 실행으로 넘긴다(decision: block).
+
+    안내는 무시된다는 게 이 변경의 이유이므로, "막는다"와 "두 번은 안 막는다"를
+    둘 다 고정한다 — 후자가 깨지면 잔소리 훅이 되어 플러그인이 지워진다.
+    """
+
+    def setUp(self):
+        super().setUp()
+        for args in (["init", "-q"], ["config", "user.email", "t@t.t"],
+                     ["config", "user.name", "t"]):
+            subprocess.run(["git", *args], cwd=self.root, check=True,
+                           capture_output=True, text=True)
+        with open(os.path.join(self.root, "feat.py"), "w", encoding="utf-8") as f:
+            f.write("def a():\n    return 1\n")
+
+    def run_nudge(self, sid="b1"):
+        transcript = os.path.join(self.root, "t.jsonl")
+        with open(transcript, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "assistant", "message": {"content": [
+                {"type": "tool_use", "name": "Edit",
+                 "input": {"file_path": "feat.py"}}]}}) + "\n")
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            stop_nudge.main({"cwd": self.root, "session_id": sid,
+                             "transcript_path": transcript})
+        return buf.getvalue()
+
+    def test_blocks_when_change_is_unreviewed(self):
+        out = json.loads(self.run_nudge())
+        self.assertEqual(out["decision"], "block")
+        self.assertIn("feat.py", out["reason"])
+        self.assertIn("review", out["reason"])
+
+    def test_does_not_block_twice_for_the_same_change(self):
+        self.assertIn("block", self.run_nudge())
+        second = self.run_nudge(sid="b2")   # 사용자가 넘겼어도 다시 막지 않는다
+        self.assertNotIn("block", second)
+
+    def test_blocks_again_after_code_changes(self):
+        self.assertIn("block", self.run_nudge())
+        with open(os.path.join(self.root, "feat.py"), "w", encoding="utf-8") as f:
+            f.write("def a():\n    return 2\n")   # 내용이 실제로 바뀌면
+        self.assertIn("block", self.run_nudge(sid="b3"))
+
+    def test_no_block_once_reviewed(self):
+        sys.path.insert(0, os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "skills", "write-gate", "scripts"))
+        import review_scope
+        review_scope.cmd_mark(self.root, ["feat.py"])
+        self.assertNotIn("block", self.run_nudge(sid="b4"))
+
+    def test_fails_open_when_scope_unavailable(self):
+        """범위 계산이 실패하면 막지 않는다 — 훅이 호스트를 붙잡으면 안 된다."""
+        original = stop_nudge.REVIEW_SCOPE
+        stop_nudge.REVIEW_SCOPE = os.path.join(self.root, "does-not-exist.py")
+        try:
+            self.assertNotIn("block", self.run_nudge(sid="b5"))
+        finally:
+            stop_nudge.REVIEW_SCOPE = original
 
 
 class SessionStartTest(TempProject):

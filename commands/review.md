@@ -1,16 +1,14 @@
 ---
-description: "Post-write review checklist + doc sync (--all: batch-review the whole session's changes; --deep: clean-eyes design review)"
-argument-hint: "[--all] [--deep]"
+description: "Post-write review — checklist, clean-eyes design review, doc sync. No flags: scope, depth and parallelism are decided for you."
+argument-hint: "[범위를 좁히고 싶을 때만: 예 \"로그인 쪽만\"]"
 ---
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/write-gate/SKILL.md`.
 
-Mode: `review`.
-- If `--all` is in $ARGUMENTS: run **`review --all`** mode — batch-review every
-  changed area of this session, skipping files already reviewed and unchanged.
-- If `--deep` is in $ARGUMENTS: after the checklist, also run `review --deep`
-  (spawn the fresh-eyes agent).
-
+Mode: `review`
 Arguments: $ARGUMENTS
 
-Follow that mode exactly.
+Follow that mode exactly. There are no `--all` / `--deep` flags any more — the
+skill decides scope, whether to spawn fresh-eyes, and whether to parallelize,
+from what actually changed. If $ARGUMENTS names a narrower target
+(e.g. "로그인 쪽만", "3일치"), honour it as the review scope.

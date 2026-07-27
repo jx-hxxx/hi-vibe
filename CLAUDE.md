@@ -27,7 +27,7 @@ python3 skills/repo-xray/scripts/audit.py scan --root .   # 구조 스캔
 - `hooks/` — Claude Code 생명주기 훅 4종(PostToolUse·PreCompact·SessionStart·Stop)과 공용 `_common.py`. 기계 강제 층.
 - `skills/` — 6개 스킬(repo-xray·write-gate·docs-keeper·guards-setup·grounded-answers·root-cause-first). 명령의 실제 동작 담당.
 - `commands/` — 10개 슬래시 명령(사용자용 버튼). 각 명령이 스킬을 호출.
-- `agents/` — `fresh-eyes`(clean-context 설계 리뷰어, `review --deep`용).
+- `agents/` — `fresh-eyes`(설계 판단, `review`가 기본 소환) · `proof-eyes`(스캔 결과 검증, `check`가 기본 소환). 둘의 차이는 **의심 대상**이다: fresh-eyes는 코드를, proof-eyes는 스캐너를 의심한다.
 - `scripts/` — 저장소 자동화(doctor·build-showcase·build-release-notes). 플러그인 런타임 아님.
 - `tests/` — 회귀 테스트(훅·스캐너·리뷰범위·무결성). CI가 3.8·3.9·3.12로 실행.
 - `docs/` — 랜딩 페이지(`index.html`). 업데이트 타임라인은 CHANGELOG에서 자동 생성.

@@ -76,7 +76,12 @@ def git_status(cwd):
     return f"{branch}, {summary}"
 
 
-def emit(event_name, additional_context=None, system_message=None):
+def emit(event_name, additional_context=None, system_message=None,
+         decision=None, reason=None):
+    """훅 출력 JSON. decision="block"은 Stop에서만 쓰며, 턴을 멈추지 않고
+    reason을 지시로 실어 계속 일하게 한다 — 조언(additionalContext)과 달리
+    무시되지 않는 유일한 경로다. 호출부가 "언제 막을지"를 좁게 지키는 게
+    전제이며, 여기서는 형식만 책임진다."""
     out = {}
     if additional_context:
         out["hookSpecificOutput"] = {
@@ -85,6 +90,10 @@ def emit(event_name, additional_context=None, system_message=None):
         }
     if system_message:
         out["systemMessage"] = system_message[:1000]
+    if decision:
+        out["decision"] = decision
+        if reason:
+            out["reason"] = reason[:4000]
     if out:
         print(json.dumps(out, ensure_ascii=False))
 

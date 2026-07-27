@@ -265,12 +265,27 @@ class ScanTest(unittest.TestCase):
         self.assertGreaterEqual(nd["similarity"], 0.9)
         self.assertLess(nd["similarity"], 1.0)
 
-    def test_is_test_file_classification(self):
-        self.assertTrue(audit._is_test_file("tests/test_hooks.py"))
-        self.assertTrue(audit._is_test_file("foo/test_x.py"))
-        self.assertTrue(audit._is_test_file("foo/x_test.py"))
-        self.assertFalse(audit._is_test_file("src/app.py"))
-        self.assertFalse(audit._is_test_file("lib/util.py"))
+    def test_is_test_code_classification(self):
+        self.assertTrue(audit.is_test_code("tests/test_hooks.py"))
+        self.assertTrue(audit.is_test_code("foo/test_x.py"))
+        self.assertTrue(audit.is_test_code("foo/x_test.py"))
+        self.assertTrue(audit.is_test_code("tests/helpers.py"))   # 픽스처·헬퍼
+        self.assertTrue(audit.is_test_code("api/quote.spec.ts"))
+        self.assertFalse(audit.is_test_code("src/app.py"))
+        self.assertFalse(audit.is_test_code("lib/util.py"))
+
+    def test_test_prefix_alone_is_not_test_code(self):
+        """`test`로 시작한다는 이유만으로 테스트로 보면, 평범한 파일의 진짜
+        중복이 '테스트끼리 유사' 버킷에 묻혀 사용자 눈에 영영 안 띈다."""
+        for path in ("testimonials.py", "src/testing_utils.py", "testbed.js"):
+            self.assertFalse(audit.is_test_code(path), path)
+
+    def test_dead_detection_uses_the_narrower_rule(self):
+        """dead 판정은 '러너가 이름으로 부르나'만 물어야 한다 —
+        tests/helpers.py의 안 쓰는 헬퍼는 진짜 후보다 (FP-02)."""
+        self.assertTrue(audit.is_test_file("tests/test_hooks.py"))
+        self.assertTrue(audit.is_test_file("conftest.py"))
+        self.assertFalse(audit.is_test_file("tests/helpers.py"))
 
     def test_test_pairs_split_into_separate_bucket(self):
         """테스트끼리 유사한 쌍은 near_duplicate_test_functions로 분리되어,
@@ -280,7 +295,7 @@ class ScanTest(unittest.TestCase):
         # 기본 버킷엔 test<->test 쌍이 들어오면 안 된다.
         for nd in code_pairs:
             files = [fn["file"] for fn in nd["functions"]]
-            self.assertFalse(all(audit._is_test_file(f) for f in files),
+            self.assertFalse(all(audit.is_test_code(f) for f in files),
                              f"test<->test 쌍이 코드 버킷에 샜다: {files}")
         # 분리 버킷 키가 존재해야 한다(값이 0이어도 키는 있어야 함).
         self.assertIn("near_duplicate_test_functions", self.report)
@@ -326,6 +341,140 @@ class ScanTest(unittest.TestCase):
         """unittest/pytest는 이름 규칙으로 심볼을 호출한다 — 죽은 후보 제외."""
         self.assertNotIn("UnreferencedSuite", self.dead_names())
         self.assertNotIn("test_lonely_case", self.dead_names())
+
+    def test_todos_collected_with_location(self):
+        todos = self.report["todos"]
+        hit = next(t for t in todos if t["file"] == "a.py")
+        self.assertEqual(hit["kind"], "TODO")
+        self.assertIn("여기 채우기", hit["note"])
+        self.assertGreater(hit["line"], 0)
+
+    def test_test_coverage_is_a_summary_not_a_file_list(self):
+        """테스트 없는 프로젝트에서 모든 파일을 후보로 올리면 소음이다 —
+        요약 숫자만 준다."""
+        cov = self.report["test_coverage"]
+        self.assertTrue(cov["has_tests"])
+        self.assertGreater(cov["module_count"], 0)
+        self.assertGreater(cov["test_file_count"], 0)
+        self.assertNotIn("files", cov)
+
+
+class TestPrefixBucketTest(unittest.TestCase):
+    """`test`로 시작하는 평범한 파일(testimonials.py)의 진짜 중복이 코드
+    버킷에 남아야 한다. 예전엔 파일명 접두사만 보고 테스트로 분류해서, 이
+    쌍이 '테스트끼리 유사' 버킷으로 밀려나 사용자 눈에 안 띄었다."""
+
+    NEAR_DUP_PAIR = '''\
+def render_quote_a(items, sep, limit):
+    out = []
+    for item in items:
+        if not item:
+            continue
+        text = item.strip().upper()
+        if len(text) > limit:
+            text = text[:limit]
+        out.append(text)
+    joined = sep.join(sorted(out))
+    if not joined:
+        return None
+    return joined
+
+
+def render_quote_b(rows, delim, cap):
+    result = []
+    seen = set()
+    for row in rows:
+        if not row:
+            continue
+        value = row.strip().upper()
+        if len(value) > cap:
+            value = value[:cap]
+        result.append(value)
+    merged = delim.join(sorted(result))
+    if not merged:
+        return None
+    return merged
+'''
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = tempfile.mkdtemp(prefix="xray-prefix-")
+        with open(os.path.join(cls.root, "testimonials.py"), "w",
+                  encoding="utf-8") as f:
+            f.write(cls.NEAR_DUP_PAIR)
+        with redirect_stdout(io.StringIO()):
+            audit.cmd_scan(cls.root)
+        with open(os.path.join(cls.root, ".repo-xray", "report.json"),
+                  encoding="utf-8") as f:
+            cls.report = json.load(f)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.root, ignore_errors=True)
+
+    def test_pair_lands_in_the_code_bucket(self):
+        code_files = [[fn["file"] for fn in p["functions"]]
+                      for p in self.report["near_duplicate_functions"]]
+        self.assertIn(["testimonials.py", "testimonials.py"], code_files)
+        self.assertEqual(self.report["near_duplicate_test_functions"], [])
+
+
+class UnfinishedWorkTest(unittest.TestCase):
+    """에러 삼킴은 저장소 전체에서 잡혀야 한다 — 훅은 새로 쓰는 코드만 보므로
+    훅을 깔기 전 코드와 남이 짠 코드는 이 스캔이 유일한 검사다."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = tempfile.mkdtemp(prefix="xray-unfinished-")
+        files = {
+            "old.py": (
+                "import json\n\n\n"
+                "def load(p):\n"
+                "    try:\n"
+                "        return json.load(open(p))\n"
+                "    except Exception:\n"
+                "        pass\n"
+            ),
+            "allowed.py": (
+                "def f():\n"
+                "    try:\n"
+                "        g()\n"
+                "    except Exception:\n"
+                "        pass  # hi-vibe: allow-swallow\n"
+            ),
+            "old.js": "function f() {\n  try { g(); } catch (e) {}\n}\n",
+        }
+        for name, body in files.items():
+            with open(os.path.join(cls.root, name), "w", encoding="utf-8") as f:
+                f.write(body)
+        with redirect_stdout(io.StringIO()):
+            audit.cmd_scan(cls.root)
+        with open(os.path.join(cls.root, ".repo-xray", "report.json"),
+                  encoding="utf-8") as f:
+            cls.report = json.load(f)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.root, ignore_errors=True)
+
+    def test_finds_swallows_across_languages(self):
+        files = {s["file"] for s in self.report["swallowed_errors"]}
+        self.assertIn("old.py", files)
+        self.assertIn("old.js", files)
+
+    def test_line_number_points_at_the_real_match(self):
+        hit = next(s for s in self.report["swallowed_errors"]
+                   if s["file"] == "old.py")
+        source = open(os.path.join(self.root, "old.py"), encoding="utf-8").read()
+        self.assertIn("except", source.splitlines()[hit["line"] - 1])
+
+    def test_allow_swallow_marker_is_respected(self):
+        """의도된 삼킴까지 잡으면 잔소리가 되고 결과 전체가 무시된다."""
+        files = {s["file"] for s in self.report["swallowed_errors"]}
+        self.assertNotIn("allowed.py", files)
+
+    def test_reports_nothing_as_unavailable_when_hook_is_present(self):
+        self.assertEqual(self.report["scan"]["unavailable"], [])
 
 
 class FindTest(unittest.TestCase):

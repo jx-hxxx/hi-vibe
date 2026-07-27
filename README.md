@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 87 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 104 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -120,7 +120,7 @@ That's it. From now on, code with Claude as usual in that project.
 | When the chat compacts | Auto-records recent requests, edited files, Git & test state into handover | ⚙️ Machine |
 | Right after session start / compact / clear | Restores recent handover and working discipline | ⚙️ Machine |
 | “I'm done / review it” | Reviews code, edge cases, and doc sync | 🤖 AI |
-| When a session ends after real changes | Reminds you of a missing CHANGELOG entry | ⚙️ Machine |
+| When a turn ends with unreviewed code | Runs the review right there — you don't type anything | ⚙️ Machine |
 | “Why did we do it this way before?” | Searches decision records in handover and archive | 🤖 AI |
 
 **⚙️ Machine** is actually executed by Python hooks. It works regardless of
@@ -152,7 +152,7 @@ Claude Code events
 ├─ PostToolUse ── swallowed-error / secret detection
 ├─ PreCompact ─── auto-record handover
 ├─ SessionStart ─ restore memory & working discipline
-└─ Stop ───────── CHANGELOG / review reminder
+└─ Stop ───────── run the review on unreviewed changes
 
 Natural-language requests
 ├─ “build it” ─── search existing implementations
@@ -177,7 +177,7 @@ Both are good tools, but they cover different ground.
 
 ## Why is it trustworthy?
 
-### 87 automated tests
+### 104 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
@@ -266,13 +266,30 @@ If you want to share handover with your team, remove those lines from `.gitignor
 
 A diagnostic command you run as often as you like once code has piled up.
 
-- Scans Python and JS/TS (`.js`, `.jsx`, `.ts`, `.tsx`) files
-- Finds exactly identical functions **(Python only)**
-- Finds function pairs that are ~90% similar in implementation **(Python only)**
-- Symbol candidates with no references found
+**To clean up**
+
+- Exactly identical functions **(Python only)**
+- Function pairs ~90% similar in implementation **(Python only)**
+- Symbols with no references found
 - Name collisions **(JS/TS)**
-- Files that grew too large, and structural issues
-- Shows the actual scan scope when it says “not found”
+- Oversized files
+
+**Left unfinished** (not to delete — to finish)
+
+- Swallowed errors across the whole repo — the hook only sees code as it's
+  written, so code from before you installed it, and code someone else wrote,
+  is checked here for the first time
+- Leftover TODO / FIXME
+- Test files vs. modules (a summary, not a per-file list)
+
+**And it doesn't just hand you the candidate list.** After the scan, the
+`proof-eyes` subagent **opens the real code at each candidate**, rules on which
+ones are real, filters out the false positives, and gives a one-line cleanup
+direction. You get "3 real out of 12, 9 false positives" instead of "12 found".
+It never deletes anything — the final call is yours.
+
+It scans Python and JS/TS (`.js`, `.jsx`, `.ts`, `.tsx`) files, and shows the
+actual scan scope whenever it says "not found".
 
 > **Identical / near-duplicate function detection is currently Python-only (AST).**
 > JS/TS support is limited to symbol / name-collision detection and oversized-file
@@ -331,23 +348,31 @@ this feature,” and you can call the command directly when you want to be sure.
 
 ```text
 /hi-vibe:review
-/hi-vibe:review --all
-/hi-vibe:review --deep
-/hi-vibe:review --all --deep
 ```
 
-- `review` — review the single feature you just built
-- `review --all` — review uncommitted Python/JS·TS code files (committed ones drop out of scope; config/doc files and deletions are excluded)
-- `review --deep` — **spawns a new subagent (fresh-eyes)** that never wrote the code, reviewing the design with clean, unbiased eyes
-- `review --all --deep` — review the whole session's changes through that subagent's eyes at once (especially recommended right after installing on an existing project)
+**No flags.** Scope, depth and parallelism are decided from what actually
+changed — a flag you have to remember is a feature that never runs.
 
-`--all` skips files already reviewed and unchanged since. If the change is large,
-it measures the file count and changed lines, then asks whether to review
-sequentially or split in parallel.
+- **Scope** — uncommitted Python/JS·TS code files (config/doc files and
+  deletions excluded). Committed everything already? It steps down to your
+  unpushed commits, then to the last commit, and tells you which it's looking
+  at. Files you already reviewed and haven't touched since are skipped.
+- **Depth** — a **new subagent (fresh-eyes)** that never wrote the code reviews
+  the design with clean, unbiased eyes. This runs by **default**, not behind a
+  flag. It's skipped only for changes too small to have a design (and it says so
+  when it skips).
+- **Parallelism** — for a large change it measures file count and changed lines,
+  then splits the work across parallel reviewers, telling you it's doing so and
+  that it costs more tokens. It doesn't stop to ask.
 
-`--deep` looks for over-engineering, unnecessary features, hidden coupling, and
-excessive abstraction that a checklist alone struggles to catch — in a fresh
-context.
+Say "가볍게 봐줘" / "just a light pass" to turn the extra depth off. You narrow
+the scope the same way — in words, e.g. "just the login part".
+
+fresh-eyes looks for over-engineering, unnecessary features, hidden coupling,
+and excessive abstraction that a checklist alone struggles to catch.
+
+**You usually don't type this at all.** The Stop hook runs it for you when a
+code change hasn't been reviewed yet — see below.
 
 ---
 
@@ -363,7 +388,7 @@ context.
 | `/hi-vibe:handover` | Hand off session progress | 🤖 AI / hook |
 | `/hi-vibe:log` | Record substantive changes in CHANGELOG | 🤖 AI |
 | `/hi-vibe:recall` | Search past decisions and reasons | 🤖 AI |
-| `/hi-vibe:check` | Structure check: duplicates, unreferenced candidates, large files | 🖐 Manual |
+| `/hi-vibe:check` | Structure + unfinished work — a subagent verifies the candidates and narrows them | 🖐 Manual |
 | `/hi-vibe:gate` | Install lint · type · cyclic-deps · CI gates | 🖐 Manual |
 
 ### Internal skill composition
