@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.20.2] - 2026-07-28
+<!-- show:ko **문서에 빠져 있던 새 기능들을 채웠어요.** 어제오늘 만든 "훅이 죽으면 알려줌"·"CI가 연속 실패하면 알려줌"이 CHANGELOG에만 있고 README와 랜딩에는 없었어요. 세션 시작 훅이 하는 일 목록과 랜딩 카드에 반영했습니다. 회귀 테스트 숫자는 6곳 전부 실제와 맞는 것을 확인했고, 한/영 문서 섹션 수와 랜딩 HTML 태그 균형도 같이 점검했어요. -->
+<!-- show:en **Filled in the features the docs had missed.** The "we tell you when a hook dies" and "we tell you when CI keeps failing" work from the last two releases lived only in the CHANGELOG — the README and landing page never mentioned it. Both now list it under what the session-start hook does. The regression-test count was verified against reality in all six places, and KO/EN section parity plus landing HTML tag balance were checked too. -->
+
+### Fixed
+- **README·랜딩에 빠져 있던 새 기능** (2026-07-28) — v0.18(CI 사망 알림)·v0.19(훅 사망 알림, init 안 한 폴더 안내)가 CHANGELOG에만 있었다. 사용자 문서에 없으면 **없는 기능**이다. 두 README의 기능 표·훅 다이어그램에 SessionStart가 하는 일로 추가하고, 랜딩의 `자가진단` 카드를 "안전벨트가 풀리면 알려줘요"로 바꿨다(doctor를 직접 치는 것에서 자동 감지로 무게 이동).
+
+### Verified
+- **전면 점검** (2026-07-28) — 회귀 테스트 수: 실제 121개, 문서 6곳 전부 121로 일치. 구조 개수 주장(훅 4종·스킬 6개·명령 10개) 실제와 일치. 없앤 플래그(`--all`·`--deep`·`--ci`)가 활성 문서에 남아 있지 않음(SHOWCASE 타임라인은 역사 기록이라 제외). 한/영 README 섹션 14개로 동일. 랜딩 HTML 태그 균형 이상 없음.
+
 ## [0.20.1] - 2026-07-28
 <!-- show:ko **README가 실제 동작과 어긋나 있던 것.** `find`·`review`를 직접 치는 명령처럼 큰 코드 블록으로 먼저 보여줬는데, 둘 다 알아서 도는 것들이라 안 쳐도 됩니다. "직접 칠 일 없다"는 맨 아래 묻혀 있었어요. 이제 자동이라고 먼저 밝히고, 명령어는 접어뒀습니다. 명령어 표도 10개를 평평하게 늘어놓던 걸 세팅용·평소용·자동으로 나눴어요. 볼드 문법이 깨져 별표가 그대로 보이던 것도 고쳤습니다. -->
 <!-- show:en **The README no longer contradicts the behaviour.** `find` and `review` were presented as commands to type, leading with a big code block — but both fire on their own. The line saying "you don't type this" was buried at the bottom. Now the automatic part comes first and the commands are folded away. The command table, previously ten flat rows, is split into setup / day-to-day / automatic. A broken bold that rendered literal asterisks is fixed too. -->

@@ -119,6 +119,7 @@ That's it. From now on, code with Claude as usual in that project.
 | When Claude writes code via Write/Edit/MultiEdit | Detects new swallowed errors / hardcoded secrets | ⚙️ Machine |
 | When the chat compacts | Auto-records recent requests, edited files, Git & test state into handover | ⚙️ Machine |
 | Right after session start / compact / clear | Restores recent handover and working discipline | ⚙️ Machine |
+| Session start (only when something's wrong) | Says so if hooks aren't running or CI keeps failing | ⚙️ Machine |
 | “I'm done / review it” | Reviews code, edge cases, and doc sync | 🤖 AI |
 | When a turn ends with unreviewed code | Runs the review right there — you don't type anything | ⚙️ Machine |
 | “Why did we do it this way before?” | Searches decision records in handover and archive | 🤖 AI |
@@ -151,7 +152,7 @@ safeguards into three layers.
 Claude Code events
 ├─ PostToolUse ── swallowed-error / secret detection
 ├─ PreCompact ─── auto-record handover
-├─ SessionStart ─ restore memory & working discipline
+├─ SessionStart ─ restore memory & discipline + flag dead hooks/CI
 └─ Stop ───────── run the review on unreviewed changes
 
 Natural-language requests
