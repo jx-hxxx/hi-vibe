@@ -46,6 +46,9 @@ def _active_files():
             yield os.path.join(root, name)
 
 
+# 저자 개인 이름·호칭. `jx-hxxx`(GitHub 핸들)는 공개 정보라 대상이 아니다.
+_PERSONAL_NAME_RE = re.compile(r"지현|(?<![\w/-])jihyun(?![\w-])", re.I)
+
 # "자동 테스트 N개"를 광고하는 표현들. 위치가 아니라 **표현**으로 잡으므로,
 # 문구를 새 파일·새 문단에 추가해도 자동으로 검사 대상이 된다.
 _ADVERTISED_COUNT_RES = [
@@ -82,6 +85,25 @@ class RepoIntegrityTest(unittest.TestCase):
         self.assertEqual(
             sorted(bad), [],
             "존재하지 않는 명령을 참조한다:\n" + "\n".join(sorted(bad)))
+
+    def test_no_personal_names_in_public_docs(self):
+        """공개 문서에 저자 개인 이름·호칭이 들어가면 안 된다.
+
+        두 번 일어났다 — 한 번 고치고, 나중에 문서를 다시 쓰면서 또 들어갔다.
+        사람이 눈으로 잡는 걸론 두 번 다 놓쳤으므로 기계가 막는다
+        (안전장치를 사람 주의력에 기대지 않는다).
+
+        `jx-hxxx`(GitHub 핸들)와 저장소 URL은 공개 정보라 예외."""
+        leaked = []
+        for path in _active_files():
+            text = _read(path)
+            for m in _PERSONAL_NAME_RE.finditer(text):
+                line = text[:m.start()].count("\n") + 1
+                leaked.append(f"{os.path.relpath(path, REPO)}:{line} → {m.group(0)}")
+        self.assertEqual(
+            sorted(leaked), [],
+            "공개 문서에 개인 이름이 들어갔다 (일반 표현으로 바꿔라):\n"
+            + "\n".join(sorted(leaked)))
 
     def test_advertised_test_count_matches_reality(self):
         """정해진 몇 곳이 아니라 **활성 문서 전체**를 훑는다.

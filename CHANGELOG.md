@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.20.3] - 2026-07-28
+<!-- show:ko **공개 README에 저자 이름이 또 들어갔던 것.** 예전에 한 번 빼놓고, 문서를 다시 쓰면서 똑같이 또 들어갔어요. 사람이 눈으로 잡는 걸론 두 번 다 놓쳤으니 이번엔 기계가 막습니다 — 공개 문서에 개인 이름이 있으면 테스트가 실패해요. 실제로 이름을 심어보고 잡히는 것까지 확인했습니다. -->
+<!-- show:en **The author's name slipped into the public README again.** It had been removed once before, then came back while the docs were rewritten. Human review missed it both times, so a machine now blocks it: the test suite fails if a personal name appears in public docs. Verified by planting one and watching it get caught. -->
+
+### Fixed
+- **공개 README에 저자 개인 이름** (2026-07-28) — `README.ko.md`의 리뷰 절에 개인 호칭이 들어가 있었다. 커밋 `9ce720f`에서 같은 이유로 한 번 제거했던 것이 문서를 다시 쓰며 재발했다. 일반 표현으로 교체.
+
+### Added
+- **개인 이름 유출 검사** (2026-07-28) — 활성 문서 전체에서 저자 이름·호칭을 찾아 있으면 테스트를 실패시킨다(`jx-hxxx` GitHub 핸들은 예외). **두 번 일어난 실수는 사람이 아니라 기계가 막아야 한다** — 이 저장소의 원칙(안전장치를 사람 주의력에 기대지 않는다)을 문서 검사에도 적용한 것. 이름을 실제로 심어 잡히는 것을 확인했다.
+
+### Verified
+- **전면 재점검** (2026-07-28) — 섹션을 통째로 갈아끼운 자리에서 내용 유실 없음(삭제된 헤딩은 전부 이름만 바뀐 것). 목차 링크 한/영 모두 깨진 것 0개. 랜딩 HTML 태그 균형 정상. 다른 개인정보(로컬 절대경로·이메일·전화번호) 흔적 없음.
+
 ## [0.20.2] - 2026-07-28
 <!-- show:ko **문서에 빠져 있던 새 기능들을 채웠어요.** 어제오늘 만든 "훅이 죽으면 알려줌"·"CI가 연속 실패하면 알려줌"이 CHANGELOG에만 있고 README와 랜딩에는 없었어요. 세션 시작 훅이 하는 일 목록과 랜딩 카드에 반영했습니다. 회귀 테스트 숫자는 6곳 전부 실제와 맞는 것을 확인했고, 한/영 문서 섹션 수와 랜딩 HTML 태그 균형도 같이 점검했어요. -->
 <!-- show:en **Filled in the features the docs had missed.** The "we tell you when a hook dies" and "we tell you when CI keeps failing" work from the last two releases lived only in the CHANGELOG — the README and landing page never mentioned it. Both now list it under what the session-start hook does. The regression-test count was verified against reality in all six places, and KO/EN section parity plus landing HTML tag balance were checked too. -->
