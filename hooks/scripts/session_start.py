@@ -38,6 +38,25 @@ def _ci_warning(ci):
     )
 
 
+def _suggest_gate_once(cwd):
+    """CI 가드를 켤 수 있게 됐다고 딱 한 번만 알린다.
+
+    한 번 말하고 플래그를 남긴다 — 매 세션 반복하면 잔소리가 되고, 잔소리는
+    무시된다. 깔아주지는 않는다: 설정 파일을 쓰는 건 사용자가 정한다."""
+    if not _common.ci_guard_missing(cwd):
+        return False
+    flag = os.path.join(cwd, ".hi-vibe", "state", "gate_suggested")
+    if os.path.isfile(flag):
+        return False
+    try:
+        os.makedirs(os.path.dirname(flag), exist_ok=True)
+        with open(flag, "w", encoding="utf-8") as f:
+            f.write("suggested\n")
+    except OSError:
+        return False   # 기록 못 하면 알리지 않는다 — 매번 반복하느니 침묵
+    return True
+
+
 def main(payload):
     cwd = payload.get("cwd", "")
     if not _common.project_gate(cwd):
@@ -67,6 +86,14 @@ def main(payload):
         ci = _common.ci_health(cwd)
         if ci and ci["failures"] >= CI_FAILURE_THRESHOLD:
             parts.append(_ci_warning(ci))
+        elif _suggest_gate_once(cwd):
+            parts.append(
+                "이 프로젝트가 GitHub에 연결돼 있는데 hi-vibe CI 가드가 "
+                "없습니다. 사용자에게 **한 줄로만** 알리세요: `/hi-vibe:gate`로 "
+                "푸시할 때마다 자동 검사(복잡도·타입·순환 의존)를 켤 수 있다고. "
+                "**켜라고 밀지 말고**, 이미 만든 코드가 많으면 위반이 쏟아질 수 "
+                "있다는 것도 같이 짚으세요. 이 안내는 한 번만 나갑니다."
+            )
         _common.emit("SessionStart", additional_context="\n\n".join(parts)[:1100])
 
 

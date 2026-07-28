@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-07-28
+<!-- show:ko **`gate`도 옵션이 사라졌어요.** GitHub에 올리는 프로젝트인지 알아서 확인하고 CI 관문을 제안합니다. 예전엔 `--ci`를 외워서 쳐야 목록에 떴어요. 그리고 처음엔 GitHub 없이 시작했다가 나중에 연결하면 아무도 안 알려주던 것도 고쳤어요 — 이제 세션 시작할 때 한 번 짚어줍니다. 이미 다 만든 프로젝트에 켜서 위반이 수백 개 쏟아질 때도, 하나하나 묻지 않고 종류별로 세어 보여준 뒤 **질문 한 번**으로 기존 코드는 덮고 새 코드부터 봅니다. -->
+<!-- show:en **`gate` lost its flag too.** It now checks whether the project is on GitHub and offers the CI guard accordingly — you used to have to know to type `--ci`. And if you started without GitHub and connected it later, nothing told you the guard was now possible; the session start now mentions it once. When switching it on for a mature codebase floods you with hundreds of violations, it no longer asks about them one by one: it counts them by kind and asks a **single** question, then baselines the old code and gates only what you write next. -->
+
+### Changed
+- **`gate --ci` 플래그 제거** (2026-07-28) — CI를 목록에 넣을지는 `git remote`로 직접 확인해 정한다. 외워서 쳐야 보이는 옵션은 모르는 사람에겐 없는 기능이다(`review --deep`과 같은 실패). 리모트가 없으면 빼고 **왜 뺐는지 한 줄** — GitHub에 안 올리는 프로젝트에 워크플로 파일만 깔면 **안 도는 안전장치**가 되어 보호받는다는 착각만 준다.
+- **위반이 쏟아질 때 하나씩 묻지 않는다** (2026-07-28) — 기존 프로젝트에 켜면 수백 개가 정상인데, "이거 의도한 거예요?"를 수백 번 물으면 그 자체가 실패다(사용자도 코드를 다시 열기 전엔 답할 수 없다). 이제 ①종류별로 세어 4~5줄로 압축하고 ②**질문은 한 번** ③JS/TS는 `eslint --suppress-all`로 기존 위반을 `eslint-suppressions.json`에 한 번에 덮는다(소스 미변경). Python은 `--add-noqa`를 **금지** — 소스 수백 군데에 이유 없는 `# noqa`가 영구히 남는다. ④개별 판단은 **그 코드를 실제로 건드릴 때** 한다(그때는 review·fresh-eyes가 이미 붙는다). ⑤순환 의존만 지금 본다.
+
+### Added
+- **나중에 GitHub에 연결하면 한 번 알린다** (2026-07-28) — gate를 칠 때 리모트가 없었으면 CI는 목록에서 빠지는데, 그 판단이 **한 번 내려지고 다시 안 보였다.** 나중에 저장소를 만들어 연결해도 "이제 켤 수 있다"고 아무도 말해주지 않았다. 이제 SessionStart가 리모트 유무와 가드 파일 유무를 보고 딱 한 번 짚는다. **깔아주지는 않는다** — 설정 파일을 쓰는 건 사용자가 정한다.
+
 ## [0.19.0] - 2026-07-28
 <!-- show:ko **안전벨트가 풀렸으면 이제 알려줘요.** 훅은 호스트를 안 깨뜨리려고 조용히 실패하게 만들어져 있어요. 그 대가로 훅이 망가져도 **에러조차 안 뜨고**, `/hi-vibe:doctor`를 직접 치기 전엔 몰랐습니다. 이제 훅이 돌 때마다 흔적을 남기고, 훅과 무관하게 도는 스킬이 그 흔적이 낡은 걸 보면 알려줘요. init 안 한 폴더에서 조용히 아무것도 안 하던 것도 한 번은 알려주고요 — 안 쓰실 거면 그렇다고 말씀만 하면 다시 안 묻습니다. -->
 <!-- show:en **You'll now know when the seatbelt came undone.** Hooks are built to fail silently so they never break the host. The cost: when a hook breaks there's **no error at all**, and you wouldn't know until you happened to run `/hi-vibe:doctor`. Now every hook leaves a heartbeat, and the skill layer — which runs independently of hooks — tells you when that heartbeat goes stale. A folder where hi-vibe was never initialized used to be silently inert; now it says so once, and you can opt out for good with a word. -->

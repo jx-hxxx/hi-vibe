@@ -363,6 +363,53 @@ class HeartbeatTest(TempProject):
         self.assertFalse(_common.project_gate(self.root))
 
 
+class GateSuggestionTest(TempProject):
+    """gate를 칠 때 리모트가 없었으면 CI는 목록에서 빠진다. 그 판단이 한 번
+    내려지고 다시 안 보이는 게 문제였다 — 나중에 GitHub에 붙여도 아무도
+    알려주지 않았다."""
+
+    def setUp(self):
+        super().setUp()
+        for args in (["init", "-q"], ["config", "user.email", "t@t.t"],
+                     ["config", "user.name", "t"]):
+            subprocess.run(["git", *args], cwd=self.root, check=True,
+                           capture_output=True, text=True)
+        self._ci = _common.ci_health
+        _common.ci_health = lambda cwd, **kw: None   # CI 실패 경고와 분리
+
+    def tearDown(self):
+        _common.ci_health = self._ci
+        super().tearDown()
+
+    def add_remote(self):
+        subprocess.run(["git", "remote", "add", "origin",
+                        "https://github.com/x/y.git"], cwd=self.root,
+                       check=True, capture_output=True, text=True)
+
+    def start(self):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            session_start.main({"cwd": self.root, "source": "startup"})
+        return buf.getvalue()
+
+    def test_silent_without_a_remote(self):
+        """GitHub에 안 올리는 프로젝트엔 CI가 돌 자리가 없다 — 권하면 소음."""
+        self.assertNotIn("gate", self.start())
+
+    def test_suggests_once_after_remote_is_added(self):
+        self.add_remote()
+        self.assertIn("gate", self.start())
+        self.assertNotIn("gate", self.start())   # 두 번째부턴 침묵
+
+    def test_silent_when_guard_already_installed(self):
+        self.add_remote()
+        wf = os.path.join(self.root, ".github", "workflows")
+        os.makedirs(wf, exist_ok=True)
+        with open(os.path.join(wf, "vibe-guards.yml"), "w") as f:
+            f.write("name: vibe-guards\n")
+        self.assertNotIn("gate", self.start())
+
+
 class CiHealthTest(TempProject):
     """연속 실패 계산 — 여기가 틀리면 잔소리가 되거나(과다) 죽은 관문을
     놓친다(과소). 둘 다 이 기능을 무의미하게 만든다."""

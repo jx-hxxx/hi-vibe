@@ -185,6 +185,26 @@ def _run_gh_json(args, cwd):
         return None
 
 
+def ci_guard_missing(cwd):
+    """GitHub 리모트는 생겼는데 CI 가드가 없는 상태인가.
+
+    gate를 칠 때 리모트가 없었으면 CI는 목록에서 빠진다. 문제는 그 판단이
+    **그때 한 번 내려지고 다시 안 보인다**는 것 — 나중에 GitHub에 연결해도
+    아무도 "이제 켤 수 있다"고 알려주지 않는다. 판단 시점 이후의 변화를
+    잡아주는 자리다."""
+    if not _run_git(["remote"], cwd):
+        return False
+    wf_dir = os.path.join(cwd, ".github", "workflows")
+    try:
+        names = os.listdir(wf_dir)
+    except OSError:
+        return True     # 워크플로 폴더 자체가 없음 = 가드 없음
+    for name in names:
+        if "vibe-guards" in name:
+            return False
+    return True
+
+
 def ci_health(cwd, limit=15):
     """현재 브랜치의 연속 CI 실패 수 → {"failures": N, "workflow": ..., "last_success": ...}.
 

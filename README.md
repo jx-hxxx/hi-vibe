@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 118 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 121 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -103,7 +103,7 @@ That's it. From now on, code with Claude as usual in that project.
 | Confirm the install worked | `/hi-vibe:doctor` | Right after install, or when something's off |
 | Start using it in a new project | `/hi-vibe:init` | Once per project |
 | Curious about the structure | `/hi-vibe:check` | Whenever you need it |
-| Need a lint / CI gate | `/hi-vibe:gate --ci` | Optional, once per project |
+| Need a lint / CI gate | `/hi-vibe:gate` | Optional, once per project |
 | Everyday coding | Ask in natural language | Automatic, or a command when needed |
 
 **Requirements:** Python 3.8+ and a `python3` command. On Windows, if there's no
@@ -177,7 +177,7 @@ Both are good tools, but they cover different ground.
 
 ## Why is it trustworthy?
 
-### 118 automated tests
+### 121 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
@@ -313,7 +313,7 @@ treat them as review leads, not reimplementation bugs.
 
 ```text
 /hi-vibe:gate       # install local checkers
-/hi-vibe:gate --ci  # local + GitHub Actions gate
+/hi-vibe:gate  # local checkers + a push gate when the project is on GitHub
 ```
 
 `check` is a **diagnostic** you run when needed; `gate` is a **standing gate**

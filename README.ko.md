@@ -35,7 +35,7 @@ Claude Code가 이미 있는 코드를 또 만들고, 에러를 덮고, 어제�
 <summary><strong>왜 이렇게 만들었나요? (기술적 배경)</strong></summary>
 
 단순한 프롬프트 묶음이 아닙니다. **실제 Claude Code 훅 4종 · 회귀 테스트
-118개 · 프로젝트별 활성화 · Python 표준 라이브러리 기반 핵심 기능**으로
+121개 · 프로젝트별 활성화 · Python 표준 라이브러리 기반 핵심 기능**으로
 AI가 자주 생략하는 확인·기록·검증을 작업 흐름 안에 넣습니다. 자세한 근거는
 아래 [왜 믿을 만한가요?](#왜-믿을-만한가요)에 있습니다.
 
@@ -102,7 +102,7 @@ Claude Code 안에서 아래 명령을 차례대로 실행하세요.
 | 설치가 제대로 됐는지 확인 | `/hi-vibe:doctor` | 설치 직후 또는 문제 있을 때 |
 | 새 프로젝트에서 사용 시작 | `/hi-vibe:init` | 프로젝트마다 한 번 |
 | 구조가 궁금할 때 | `/hi-vibe:check` | 필요할 때마다 |
-| lint·CI 관문이 필요할 때 | `/hi-vibe:gate --ci` | 선택, 프로젝트마다 한 번 |
+| lint·CI 관문이 필요할 때 | `/hi-vibe:gate` | 선택, 프로젝트마다 한 번 |
 | 평소 코딩 | 자연어로 요청 | 자동 또는 필요 시 명령어 |
 
 **필수 요구사항:** Python 3.8+와 `python3` 명령이 필요합니다. Windows에서
@@ -175,7 +175,7 @@ Claude Code 이벤트
 
 ## 왜 믿을 만한가요?
 
-### 118개의 자동 테스트
+### 121개의 자동 테스트
 
 handover 기록·회전·동시 쓰기, SessionStart·PreCompact·PostToolUse·Stop
 훅, 비밀키와 에러 삼킴 감지, Python·JS/TS 심볼 탐색, 동일·유사 함수,
@@ -306,7 +306,7 @@ Python과 JS/TS(`.js`, `.jsx`, `.ts`, `.tsx`) 파일을 스캔하며, "없다"�
 
 ```text
 /hi-vibe:gate       # 로컬 검사기 설치
-/hi-vibe:gate --ci  # 로컬 + GitHub Actions 관문
+/hi-vibe:gate  # 로컬 검사기 + (GitHub에 올리는 프로젝트면) push 관문까지
 ```
 
 `check`는 필요할 때마다 돌리는 **진단**이고, `gate`는 프로젝트마다 한 번

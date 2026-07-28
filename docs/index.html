@@ -350,7 +350,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>118</b><span>자동 회귀 테스트</span></div>
+      <div><b>121</b><span>자동 회귀 테스트</span></div>
       <div><b>4종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -452,7 +452,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
         <div class="featcol">
           <div class="colhd g"><span class="dot"></span><span class="ct">직접 점검</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> MANUAL</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M9.5 20.5v-11"/></svg></span><span class="ftitle">구조 점검</span><span class="ftag"><b>check</b></span></div><p class="fdesc">이미 코드가 많은 프로젝트를 스캔해 <b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일까지 짚어줘요. 지우기 전 "아직 만드는 중"인지 구분해요.</p></div>
-          <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate --ci</b></span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환의존)를 설치해 빨간 줄로 표시. <code>gate --ci</code>면 GitHub push마다 검문 — 위반은 <b>빌드 실패</b>로 막아요.</p></div>
+          <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate</b></span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환의존)를 설치해 빨간 줄로 표시. GitHub에 올리는 프로젝트면 <b>push마다 검문</b>도 같이 제안해요 — 옵션 없이 알아서 판단합니다.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5 6.5L14 5.5l2 6.5h5"/></svg></span><span class="ftitle">자가진단</span><span class="ftag"><b>doctor</b></span></div><p class="fdesc">hook은 방해 안 하려고 <b>조용히 실패</b>하게 설계돼서, python3가 없으면 티 안 나게 꺼질 수 있어요. doctor가 hook 4종·스캐너를 <b>실제로 돌려</b> <svg class="tick ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>/<svg class="tick no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>로 확인해줘요.</p></div>
         </div>
       </div>
@@ -519,7 +519,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
 /hi-vibe:doctor
 /hi-vibe:init
 <span class="c"># 코드 검사기 + CI까지 설치 (선택 - 프로젝트 당 1회성)</span>
-/hi-vibe:gate --ci</pre>
+/hi-vibe:gate</pre>
           </div>
         </div>
       </div>
@@ -553,7 +553,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
         <div class="qs-row"><div class="qs-when">새 기능 만들 때</div><div class="qs-do">그냥 <b>평소처럼 말하기</b> <span class="dim">(자동으로 “이미 있나” 먼저 찾아요)</span> <span class="arrow">·</span> 확실히 하려면 <code>/hi-vibe:find</code></div></div>
         <div class="qs-row"><div class="qs-when">다 만든 후 점검</div><div class="qs-do"><code>/hi-vibe:review</code> <span class="dim">(안 쳐도 훅이 알아서 돌려줘요)</span></div></div>
         <div class="qs-row"><div class="qs-when">코드 정리하고 싶을 때</div><div class="qs-do"><code>/hi-vibe:check</code> <span class="dim">(스캔 후 딴 클로드가 후보를 열어보고 진짜만 골라줘요)</span></div></div>
-        <div class="qs-row"><div class="qs-when">검사 자동화(선택)</div><div class="qs-do"><code>/hi-vibe:gate --ci</code> <span class="dim">(프로젝트마다 1회 · 이후 push마다 GitHub이 자동 검문)</span></div></div>
+        <div class="qs-row"><div class="qs-when">검사 자동화(선택)</div><div class="qs-do"><code>/hi-vibe:gate</code> <span class="dim">(프로젝트마다 1회 · GitHub에 올리는 프로젝트면 push마다 자동 검문도 제안)</span></div></div>
         <div class="qs-row"><div class="qs-when">뭐부터 할지 모르겠으면</div><div class="qs-do"><code>/hi-vibe:welcome</code></div></div>
       </div>
 
@@ -579,7 +579,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>check와 gate는 리듬이 반대예요</summary>
         <div class="tbody">
           <code>check</code>는 <b>내가 돌리는 진단</b> — 구조가 궁금할 때마다 몇 번이든 반복해요.<br>
-          <code>gate --ci</code>는 <b>프로젝트마다 한 번 깔면 끝인 관문</b> — 설치는 1회, 이후 push마다 GitHub이 자동 검문(다시 칠 필요 없어요).
+          <code>gate</code>는 <b>프로젝트마다 한 번 깔면 끝인 관문</b> — 설치는 1회, 이후 push마다 GitHub이 자동 검문(다시 칠 필요 없어요).
         </div>
       </details>
 
@@ -610,9 +610,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.20.0<small>2026-07-28</small></div><div class="h"><b>`gate`도 옵션이 사라졌어요.</b> <span>GitHub에 올리는 프로젝트인지 알아서 확인하고 CI 관문을 제안합니다. 예전엔 `--ci`를 외워서 쳐야 목록에 떴어요. 그리고 처음엔 GitHub 없이 시작했다가 나중에 연결하면 아무도 안 알려주던 것도 고쳤어요 — 이제 세션 시작할 때 한 번 짚어줍니다. 이미 다 만든 프로젝트에 켜서 위반이 수백 개 쏟아질 때도, 하나하나 묻지 않고 종류별로 세어 보여준 뒤 **질문 한 번**으로 기존 코드는 덮고 새 코드부터 봅니다.</span></div></div>
         <div class="rel"><div class="v">v0.19.0<small>2026-07-28</small></div><div class="h"><b>안전벨트가 풀렸으면 이제 알려줘요.</b> <span>훅은 호스트를 안 깨뜨리려고 조용히 실패하게 만들어져 있어요. 그 대가로 훅이 망가져도 **에러조차 안 뜨고**, `/hi-vibe:doctor`를 직접 치기 전엔 몰랐습니다. 이제 훅이 돌 때마다 흔적을 남기고, 훅과 무관하게 도는 스킬이 그 흔적이 낡은 걸 보면 알려줘요. init 안 한 폴더에서 조용히 아무것도 안 하던 것도 한 번은 알려주고요 — 안 쓰실 거면 그렇다고 말씀만 하면 다시 안 묻습니다.</span></div></div>
         <div class="rel"><div class="v">v0.18.0<small>2026-07-28</small></div><div class="h"><b>세워둔 관문이 죽으면 이제 알려줘요.</b> <span>`gate --ci`로 CI를 깔아주고는 그게 깨져도 알려주는 경로가 없었어요. 실제로 한 프로젝트에서 CI가 나흘간 죽어 있었는데(최근 60번 중 47번 실패) GitHub 알림함에 68개가 쌓여 아무도 못 봤습니다. 깨진 CI는 '빨간불'이 아니라 **검사가 아예 안 도는 상태**라, 그동안 lint가 한 번도 안 돌았어요. 이제 세션을 시작할 때 '이 저장소 CI가 N번 연속 실패 중'이라고 대화창에서 알려줍니다. 원인이었던 `npm ci` lock 불일치도 템플릿에 경고로 남겼어요.</span></div></div>
-        <div class="rel"><div class="v">v0.17.0<small>2026-07-27</small></div><div class="h"><b>이제 리뷰를 직접 안 쳐도 돼요 — 끝날 때 알아서 돌아가요.</b> <span>제일 잘 잡는 남의 눈 리뷰(fresh-eyes)가 `--deep` 뒤에 숨어 있어서 대부분 안 켜졌어요. 이제 옵션이 아예 없어졌고, 코드를 고친 채로 턴이 끝나면 훅이 그 자리에서 리뷰를 돌려요 (같은 변경으로 두 번 잔소리하진 않아요). 커밋·푸시한 뒤에도 '안 푸시한 커밋 → 마지막 커밋' 순으로 내려가 계속 봐줍니다. `check`도 후보 목록만 던지지 않고 딴 클로드(proof-eyes)가 코드를 열어 진짜만 골라주고, 에러 삼킴·TODO 같은 '하다 만 것'까지 찾아줘요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -672,7 +672,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>118</b><span>automated regression tests</span></div>
+      <div><b>121</b><span>automated regression tests</span></div>
       <div><b>4</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -774,7 +774,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
         <div class="featcol">
           <div class="colhd g"><span class="dot"></span><span class="ct">Manual checks</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> MANUAL</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M9.5 20.5v-11"/></svg></span><span class="ftitle">Structure checkup</span><span class="ftag"><b>check</b></span></div><p class="fdesc">Scans a code-heavy project for not just exact duplicates but <b>"90%-reimplemented"</b> functions, unused code, and oversized files. It tells work-in-progress apart before suggesting a delete.</p></div>
-          <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>gate --ci</b></span></div><p class="fdesc"><code>gate</code> installs the checkers (ruff·eslint, types, circular deps) locally — your editor flags them. <code>gate --ci</code> gates every push — violations <b>fail the build</b>.</p></div>
+          <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">Machine enforcement (lint · CI)</span><span class="ftag"><b>gate</b></span></div><p class="fdesc"><code>gate</code> installs the checkers (ruff·eslint, types, circular deps) locally — your editor flags them. If the project is on GitHub it also offers to gate every push — no flag, it checks for you.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5 6.5L14 5.5l2 6.5h5"/></svg></span><span class="ftitle">Self-diagnosis</span><span class="ftag"><b>doctor</b></span></div><p class="fdesc">Hooks are built to <b>fail silently</b> so they never block Claude Code — so a missing python3 could turn them off unnoticed. doctor actually runs all 4 hooks and the scanner, showing <svg class="tick ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>/<svg class="tick no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>.</p></div>
         </div>
       </div>
@@ -841,7 +841,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
 /hi-vibe:doctor
 /hi-vibe:init
 <span class="c"># optional: install the code guards + CI (once per project)</span>
-/hi-vibe:gate --ci</pre>
+/hi-vibe:gate</pre>
           </div>
         </div>
       </div>
@@ -875,7 +875,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
         <div class="qs-row"><div class="qs-when">Building a new feature</div><div class="qs-do">just <b>talk normally</b> <span class="dim">(it searches “does this exist?” first)</span> <span class="arrow">·</span> to be sure, <code>/hi-vibe:find</code></div></div>
         <div class="qs-row"><div class="qs-when">Checking after you're done</div><div class="qs-do"><code>/hi-vibe:review</code> <span class="dim">(you rarely type it — the hook runs it for you)</span></div></div>
         <div class="qs-row"><div class="qs-when">Want to clean up structure</div><div class="qs-do"><code>/hi-vibe:check</code> <span class="dim">(after the scan, a fresh Claude opens each candidate and keeps only the real ones)</span></div></div>
-        <div class="qs-row"><div class="qs-when">Automate the checks (optional)</div><div class="qs-do"><code>/hi-vibe:gate --ci</code> <span class="dim">(once per project · then GitHub gates every push)</span></div></div>
+        <div class="qs-row"><div class="qs-when">Automate the checks (optional)</div><div class="qs-do"><code>/hi-vibe:gate</code> <span class="dim">(once per project · offers push-time gating when the project is on GitHub)</span></div></div>
         <div class="qs-row"><div class="qs-when">Not sure where to start</div><div class="qs-do"><code>/hi-vibe:welcome</code></div></div>
       </div>
 
@@ -901,7 +901,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>check and gate have opposite rhythms</summary>
         <div class="tbody">
           <code>check</code> is <b>a diagnostic you run</b> — repeat it whenever you're curious about structure.<br>
-          <code>gate --ci</code> is <b>a guard you install once per project</b> — after that GitHub checks every push automatically, no need to re-run it.
+          <code>gate</code> is <b>a guard you install once per project</b> — after that GitHub checks every push automatically, no need to re-run it.
         </div>
       </details>
 
@@ -932,9 +932,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.20.0<small>2026-07-28</small></div><div class="h"><b>`gate` lost its flag too.</b> <span>It now checks whether the project is on GitHub and offers the CI guard accordingly — you used to have to know to type `--ci`. And if you started without GitHub and connected it later, nothing told you the guard was now possible; the session start now mentions it once. When switching it on for a mature codebase floods you with hundreds of violations, it no longer asks about them one by one: it counts them by kind and asks a **single** question, then baselines the old code and gates only what you write next.</span></div></div>
         <div class="rel"><div class="v">v0.19.0<small>2026-07-28</small></div><div class="h"><b>You'll now know when the seatbelt came undone.</b> <span>Hooks are built to fail silently so they never break the host. The cost: when a hook breaks there's **no error at all**, and you wouldn't know until you happened to run `/hi-vibe:doctor`. Now every hook leaves a heartbeat, and the skill layer — which runs independently of hooks — tells you when that heartbeat goes stale. A folder where hi-vibe was never initialized used to be silently inert; now it says so once, and you can opt out for good with a word.</span></div></div>
         <div class="rel"><div class="v">v0.18.0<small>2026-07-28</small></div><div class="h"><b>When a guard you installed dies, you'll now hear about it.</b> <span>`gate --ci` set up CI and then had no way to tell you it broke. In one project CI was dead for four days (47 of the last 60 runs failed) while 68 unread GitHub notifications piled up. A broken CI isn't a red light, it means **the checks aren't running at all** — lint hadn't run once in that window. Now the session start tells you right in the chat: "CI has failed N times in a row." The `npm ci` lockfile mismatch that caused it is documented in the template too.</span></div></div>
-        <div class="rel"><div class="v">v0.17.0<small>2026-07-27</small></div><div class="h"><b>You don't type review any more — it runs itself when a turn ends.</b> <span>The sharpest reviewer (fresh-eyes) was hidden behind `--deep`, so most reviews never got it. Flags are gone entirely, and when a turn ends with unreviewed code the hook runs the review right there (never nagging twice for the same change). Already committed and pushed? It steps down to unpushed commits, then the last commit, instead of giving up. `check` no longer dumps a candidate list either: a fresh Claude (proof-eyes) opens the real code and keeps only what's real, and now also finds unfinished work — swallowed errors, TODOs.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
