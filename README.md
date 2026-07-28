@@ -334,21 +334,18 @@ CI up to your project's situation.
 
 ## Verify before and after writing code
 
-### Before building: `find`
+**You don't type these.** They fire while you code. The commands exist only as
+a "run it right now" button.
 
-```text
-/hi-vibe:find
-```
+### Before building: `find` — automatic
 
-Before you make a new function / file / type, it searches for an existing
-implementation. The AI can run it automatically when you naturally ask “build me
-this feature,” and you can call the command directly when you want to be sure.
+Triggered when you say "build me this feature". Before a new function / file /
+type is created, it searches for an existing implementation first.
 
-### After writing: `review`
+### After writing: `review` — automatic
 
-```text
-/hi-vibe:review
-```
+When a turn ends with code you changed, the Stop hook runs it right there. It
+never nags twice for the same change.
 
 **No flags.** Scope, depth and parallelism are decided from what actually
 changed — a flag you have to remember is a feature that never runs.
@@ -357,7 +354,7 @@ changed — a flag you have to remember is a feature that never runs.
   deletions excluded). Committed everything already? It steps down to your
   unpushed commits, then to the last commit, and tells you which it's looking
   at. Files you already reviewed and haven't touched since are skipped.
-- **Depth** — a **new subagent (fresh-eyes)** that never wrote the code reviews
+- **Depth** — a **new subagent** (fresh-eyes) that never wrote the code reviews
   the design with clean, unbiased eyes. This runs by **default**, not behind a
   flag. It's skipped only for changes too small to have a design (and it says so
   when it skips).
@@ -365,31 +362,55 @@ changed — a flag you have to remember is a feature that never runs.
   then splits the work across parallel reviewers, telling you it's doing so and
   that it costs more tokens. It doesn't stop to ask.
 
-Say "가볍게 봐줘" / "just a light pass" to turn the extra depth off. You narrow
-the scope the same way — in words, e.g. "just the login part".
-
 fresh-eyes looks for over-engineering, unnecessary features, hidden coupling,
 and excessive abstraction that a checklist alone struggles to catch.
 
-**You usually don't type this at all.** The Stop hook runs it for you when a
-code change hasn't been reviewed yet — see below.
+**To dial it back or narrow it, just say so** — "just a light pass", "only the
+login part". Nothing to memorise.
+
+<details>
+<summary>If you want to call them yourself</summary>
+
+```text
+/hi-vibe:find
+/hi-vibe:review
+```
+
+Only needed when you want another look after committing everything, or in a
+folder without `.hi-vibe/` where the hooks don't run.
+
+</details>
 
 ---
 
 ## Commands at a glance
 
-| Command | When to use it | Default trigger |
+It looks like a lot, but **you only type three during setup and one day to day.**
+
+**Once, during setup**
+
+| Command | When | How often |
 |---|---|---|
-| `/hi-vibe:welcome` | You're new or unsure what to use | 🖐 Manual |
-| `/hi-vibe:doctor` | Right after install, or when a hook seems off | 🖐 Manual |
-| `/hi-vibe:init` | Activate docs & hooks in a new project | 🖐 Manual |
-| `/hi-vibe:find` | Search existing implementations before a new feature | 🤖 AI / manual |
-| `/hi-vibe:review` | Review code & docs after implementing | 🤖 AI / manual |
-| `/hi-vibe:handover` | Hand off session progress | 🤖 AI / hook |
-| `/hi-vibe:log` | Record substantive changes in CHANGELOG | 🤖 AI |
-| `/hi-vibe:recall` | Search past decisions and reasons | 🤖 AI |
-| `/hi-vibe:check` | Structure + unfinished work — a subagent verifies the candidates and narrows them | 🖐 Manual |
-| `/hi-vibe:gate` | Install lint · type · cyclic-deps · CI gates | 🖐 Manual |
+| `/hi-vibe:welcome` | You're unsure what any of this is | Optional |
+| `/hi-vibe:doctor` | Confirm the install worked | Once |
+| `/hi-vibe:init` | Start using it in this project | Once per project |
+| `/hi-vibe:gate` | Install lint / type / cyclic-dep checks (optional) | Once per project |
+
+**Day to day**
+
+| Command | When |
+|---|---|
+| `/hi-vibe:check` | The codebase feels messy |
+
+**Runs on its own** (the command is just a "run it right now" button)
+
+| Command | What calls it |
+|---|---|
+| `/hi-vibe:review` | The Stop hook, when you have unreviewed code changes |
+| `/hi-vibe:find` | The skill fires when you say "build me X" |
+| `/hi-vibe:log` | The review checklist writes the CHANGELOG entry itself |
+| `/hi-vibe:handover` | The PreCompact hook, just before the chat compacts |
+| `/hi-vibe:recall` | Fires when you ask "why did we do it this way?" |
 
 ### Internal skill composition
 

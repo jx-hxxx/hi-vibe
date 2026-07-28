@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-07-28
+<!-- show:ko **README가 실제 동작과 어긋나 있던 것.** `find`·`review`를 직접 치는 명령처럼 큰 코드 블록으로 먼저 보여줬는데, 둘 다 알아서 도는 것들이라 안 쳐도 됩니다. "직접 칠 일 없다"는 맨 아래 묻혀 있었어요. 이제 자동이라고 먼저 밝히고, 명령어는 접어뒀습니다. 명령어 표도 10개를 평평하게 늘어놓던 걸 세팅용·평소용·자동으로 나눴어요. 볼드 문법이 깨져 별표가 그대로 보이던 것도 고쳤습니다. -->
+<!-- show:en **The README no longer contradicts the behaviour.** `find` and `review` were presented as commands to type, leading with a big code block — but both fire on their own. The line saying "you don't type this" was buried at the bottom. Now the automatic part comes first and the commands are folded away. The command table, previously ten flat rows, is split into setup / day-to-day / automatic. A broken bold that rendered literal asterisks is fixed too. -->
+
+### Fixed
+- **README가 자동 동작을 수동 명령처럼 보여주던 것** (2026-07-28) — `find`·`review` 절이 명령어 코드 블록으로 시작해 "이걸 쳐라"로 읽혔다. 실제로는 훅과 스킬이 알아서 부르고, 그 사실은 절 맨 아래에 한 줄로 묻혀 있었다. 자동이라는 것을 먼저 밝히고 명령어는 `<details>`로 접었다. **문서가 구현과 어긋나면 그것도 과장이다.**
+- **볼드가 깨져 별표가 그대로 보이던 것** (2026-07-28) — `**새 서브에이전트(fresh-eyes)**가`처럼 닫는 `**` 앞이 문장부호이고 뒤가 글자면 마크다운이 닫는 표시로 인정하지 않는다. 괄호를 볼드 밖으로 빼서 해결하고, 같은 패턴이 더 있는지 정규식으로 전수 확인해 CHANGELOG의 한 건도 같이 고쳤다.
+
+### Changed
+- **명령어 표를 세 덩어리로** (2026-07-28) — 10개를 평평하게 나열하니 전부 외워야 할 것처럼 보였다. `세팅할 때 한 번씩`(welcome·doctor·init·gate) / `평소에`(check) / `알아서 도는 것`(review·find·log·handover·recall)으로 나눴다. **실제로 치는 건 세팅 때 셋, 평소엔 하나**라는 것이 표에서 바로 보인다.
+
 ## [0.20.0] - 2026-07-28
 <!-- show:ko **`gate`도 옵션이 사라졌어요.** GitHub에 올리는 프로젝트인지 알아서 확인하고 CI 관문을 제안합니다. 예전엔 `--ci`를 외워서 쳐야 목록에 떴어요. 그리고 처음엔 GitHub 없이 시작했다가 나중에 연결하면 아무도 안 알려주던 것도 고쳤어요 — 이제 세션 시작할 때 한 번 짚어줍니다. 이미 다 만든 프로젝트에 켜서 위반이 수백 개 쏟아질 때도, 하나하나 묻지 않고 종류별로 세어 보여준 뒤 **질문 한 번**으로 기존 코드는 덮고 새 코드부터 봅니다. -->
 <!-- show:en **`gate` lost its flag too.** It now checks whether the project is on GitHub and offers the CI guard accordingly — you used to have to know to type `--ci`. And if you started without GitHub and connected it later, nothing told you the guard was now possible; the session start now mentions it once. When switching it on for a mature codebase floods you with hundreds of violations, it no longer asks about them one by one: it counts them by kind and asks a **single** question, then baselines the old code and gates only what you write next. -->
@@ -58,7 +69,7 @@
 ### Added
 - **`proof-eyes` 에이전트 — check도 후보를 던지지 않고 검증한다** (2026-07-27 17:24) — 스캐너는 놓치지 않는 대신 헛짚어서, 후보 20건을 그대로 내밀면 사용자는 뭐가 진짜인지 몰라 전부 무시했다. 이제 스캔이 끝나면 **후보 자리의 실제 코드를 열어보는** 서브에이전트를 기본으로 소환해 진짜/오탐/애매를 가르고 정리 방향까지 준다. **버린 것도 숫자로 밝힌다**("12건 중 진짜 3건, 오탐 9건") — 조용히 줄이면 스캐너가 못 찾은 것처럼 읽힌다. 지우지는 않는다(최종 결정은 사람). fresh-eyes와 역할이 다르다: fresh-eyes는 **코드**를 의심하고(의도 필요), proof-eyes는 **스캐너**를 의심한다(증거 필요).
 - **스캐너에 "하다 만 것" 버킷** (2026-07-27 17:24) — 정리 대상(지울 것)과 성격이 다른 **마저 할 것**을 따로 준다: `swallowed_errors`(저장소 전체 에러 삼킴 — 훅은 새로 쓰는 코드만 보므로 훅 설치 전 코드·남이 짠 코드는 여기서 처음 검사된다), `todos`(남겨둔 TODO/FIXME), `test_coverage`(모듈 대비 테스트 파일 수 **요약만** — 파일별로 나열하면 테스트 없는 프로젝트에서 전부가 후보가 되어 소음이다). 판정 규칙은 PostToolUse 훅과 **같은 정의를 공유**한다(`iter_swallows`) — 두 벌 두면 한쪽만 고쳐져 "훅은 잡는데 스캔은 못 잡는" 상태가 된다. 훅 파일을 못 읽으면 대체 구현을 만들지 않고 `scan.unavailable`에 밝힌다.
-- **기능 제안은 넣지 않기로 함** (2026-07-27 17:24) — "로그인은 있는데 비밀번호 찾기가 없네요" 류. 근거가 코드 안에 없고, 같은 플러그인의 fresh-eyes가 잡는 스코프 크립을 우리가 조장하게 된다. 대신 **근거가 코드 안에 있는 "하다 만 흔적"**만 발견한다.
+- **기능 제안은 넣지 않기로 함** (2026-07-27 17:24) — "로그인은 있는데 비밀번호 찾기가 없네요" 류. 근거가 코드 안에 없고, 같은 플러그인의 fresh-eyes가 잡는 스코프 크립을 우리가 조장하게 된다. 대신 코드 안에 근거가 있는 **"하다 만 흔적"** 만 발견한다.
 - **리뷰 범위 계단** (2026-07-27 16:52) — 커밋·푸시하고 나면 `review`가 "볼 게 없습니다"로 죽던 문제. 이제 `안 커밋한 변경 → 안 푸시한 커밋 → 마지막 커밋` 순으로 내려가고, `scope`·`scope_label`로 지금 무엇을 보는지 밝힌다. 계단은 "그 단계에 바뀐 파일이 있느냐"로 고르므로, 리뷰를 마쳐서 비는 것과 구분되어 옛날 커밋이 도로 끌려오지 않는다.
 - **`review_scope.py`의 `fingerprint`** (2026-07-27 16:52) — 리뷰 대상의 내용 지문. Stop 훅이 "한 번 넘긴 변경으로 또 막지 않기"에 쓴다.
 - **회귀 테스트 17건** (2026-07-27 17:41) — 범위 계단(커밋 후 폴백·리뷰 완료가 옛 커밋을 안 끌어옴)·지문·Stop 차단(막는다/두 번은 안 막는다/코드가 바뀌면 다시 막는다/mark되면 조용/범위 실패 시 fail-open)·에러 삼킴 전체 스캔(언어별 탐지·줄 번호 정확도·`allow-swallow` 존중·훅 있으면 unavailable 비어 있음)·TODO 수집·테스트 커버리지가 목록이 아닌 요약·테스트 판별(`test` 접두사 오분류 재현 케이스 포함). 87 → 104개.
