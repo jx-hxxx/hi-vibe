@@ -15,6 +15,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOOK_SCRIPTS = ["session_start.py", "pre_compact.py", "stop_nudge.py", "post_write_guard.py"]
@@ -158,11 +159,57 @@ def check_project(root):
             "관리 중이면 그 항목은 무시해도 됩니다.")
 
 
+STALE_AFTER = 6 * 3600   # 훅 흔적이 이만큼 낡으면 "이 세션엔 안 돌았다"로 본다
+
+
+def cmd_quick(root):
+    """훅이 실제로 도는지만 값싸게 판정한다 (JSON 한 줄, 훅 실행 없음).
+
+    훅은 조용히 실패한다(fail-open) — 망가져도 에러조차 안 뜬다. 그래서
+    "훅이 죽었나"를 훅으로는 알 수 없다. 대신 살아있을 때 남긴 흔적을
+    **훅과 무관하게 도는 스킬 층**이 확인한다. 전체 doctor는 훅을 실제로
+    실행해 느리므로, 자동으로 자주 부를 이 경로는 파일만 읽는다."""
+    marker = os.path.join(root, ".hi-vibe")
+    if not os.path.isdir(marker):
+        print(json.dumps({"state": "not-initialized"}, ensure_ascii=False))
+        return 0
+    if os.path.isfile(os.path.join(marker, "optout")):
+        print(json.dumps({"state": "optout"}, ensure_ascii=False))
+        return 0
+
+    beats = {}
+    try:
+        with open(os.path.join(marker, "state", "heartbeat.json"),
+                  encoding="utf-8") as f:
+            loaded = json.load(f)
+        if isinstance(loaded, dict):
+            beats = loaded
+    except (OSError, ValueError):
+        beats = {}
+
+    now = time.time()
+    fresh = sorted(k for k, v in beats.items()
+                   if isinstance(v, (int, float)) and now - v < STALE_AFTER)
+    # SessionStart는 세션마다 반드시 돈다 — 이게 낡았으면 훅 자체가 안 도는 것.
+    state = "alive" if "SessionStart" in fresh else ("stale" if beats else "never-ran")
+    last = max((v for v in beats.values() if isinstance(v, (int, float))), default=0)
+    print(json.dumps({
+        "state": state,
+        "fresh_hooks": fresh,
+        "last_seen_hours": round((now - last) / 3600, 1) if last else None,
+    }, ensure_ascii=False))
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description="hi-vibe self-diagnosis")
     parser.add_argument("--root", default=".")
+    parser.add_argument("--quick", action="store_true",
+                        help="훅 생존 여부만 JSON 한 줄로 (훅 실행 없음)")
     args = parser.parse_args()
     root = os.path.abspath(args.root)
+    if args.quick:
+        return cmd_quick(root)
 
     python3 = check_python3()
     files_ok = check_plugin_files()

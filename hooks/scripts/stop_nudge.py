@@ -104,6 +104,7 @@ def main(payload):
     cwd = payload.get("cwd", "")
     if not _common.project_gate(cwd):
         return
+    _common.touch_heartbeat(cwd, "Stop")
     transcript = payload.get("transcript_path", "")
     if not transcript:
         return

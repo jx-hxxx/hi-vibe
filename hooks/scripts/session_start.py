@@ -42,6 +42,7 @@ def main(payload):
     cwd = payload.get("cwd", "")
     if not _common.project_gate(cwd):
         return
+    _common.touch_heartbeat(cwd, "SessionStart")
     source = payload.get("source", "startup")
     handover = os.path.join(cwd, "handover.md")
 

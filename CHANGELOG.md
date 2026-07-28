@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-07-28
+<!-- show:ko **안전벨트가 풀렸으면 이제 알려줘요.** 훅은 호스트를 안 깨뜨리려고 조용히 실패하게 만들어져 있어요. 그 대가로 훅이 망가져도 **에러조차 안 뜨고**, `/hi-vibe:doctor`를 직접 치기 전엔 몰랐습니다. 이제 훅이 돌 때마다 흔적을 남기고, 훅과 무관하게 도는 스킬이 그 흔적이 낡은 걸 보면 알려줘요. init 안 한 폴더에서 조용히 아무것도 안 하던 것도 한 번은 알려주고요 — 안 쓰실 거면 그렇다고 말씀만 하면 다시 안 묻습니다. -->
+<!-- show:en **You'll now know when the seatbelt came undone.** Hooks are built to fail silently so they never break the host. The cost: when a hook breaks there's **no error at all**, and you wouldn't know until you happened to run `/hi-vibe:doctor`. Now every hook leaves a heartbeat, and the skill layer — which runs independently of hooks — tells you when that heartbeat goes stale. A folder where hi-vibe was never initialized used to be silently inert; now it says so once, and you can opt out for good with a word. -->
+
+### Added
+- **훅 생존 신호(heartbeat) + 스킬이 그걸 확인** (2026-07-28) — 훅 4종이 돌 때마다 `.hi-vibe/state/heartbeat.json`에 시각을 남긴다. "훅이 죽었나"는 **훅으로 확인할 수 없다**(자기가 안 도니까). 확인할 수 있는 건 훅과 무관하게 도는 스킬 층뿐이라, write-gate가 세션당 한 번 `doctor.py --quick`으로 흔적을 보고 낡았으면 알린다. doctor를 안 쳐도 고장을 안다.
+- **`doctor.py --quick`** (2026-07-28) — 훅을 실제로 실행하는 전체 진단은 느려서 자동으로 자주 부를 수 없다. 파일만 읽어 `alive`/`stale`/`never-ran`/`not-initialized`/`optout`을 JSON 한 줄로 준다. **건강 확인 창구를 새로 만들지 않고 doctor에 깊이만 하나 더했다** — 같은 질문에 두 개의 답이 생기면 갈린다.
+- **`.hi-vibe/optout`** (2026-07-28) — "이 폴더에선 안 쓴다"를 기록할 자리. 마커가 있어도 훅을 끄고, 다시 묻지 않는다. 기록할 곳이 없으면 계속 물어보게 되고, 그건 잔소리다.
+
+### Changed
+- **init 안 한 폴더에서 조용히 아무것도 안 하던 것** (2026-07-28) — `.hi-vibe/`가 없으면 훅이 통째로 빠져나가서, "켜져 있고 깨끗함"과 "아예 꺼져 있음"이 구분되지 않았다. 지인이 설치하고 init을 안 했으면 **보호받고 있다고 믿으면서 아무 보호도 못 받는다.** 이제 스킬이 한 번만 알리고, 사용자가 안 쓴다고 하면 opt-out으로 조용해진다. **마음대로 init하지는 않는다** — opt-in은 사용자가 정한다.
+- **CLAUDE.md에 설계 원칙 명문화** (2026-07-28) — "안전장치를 사람 주의력에 기대지 않는다". 오늘 세 건(리뷰 자동 실행·CI 사망 알림·훅 사망 알림)이 전부 같은 원칙에서 나왔다. 기록(CHANGELOG)에만 두면 다음에 뭘 만들 때 안 읽히므로, 새 기능마다 읽히는 자리로 옮겼다 — **원칙을 기록에만 두는 것도 사람 주의력에 기대는 것**이다.
+
 ## [0.18.0] - 2026-07-28
 <!-- show:ko **세워둔 관문이 죽으면 이제 알려줘요.** `gate --ci`로 CI를 깔아주고는 그게 깨져도 알려주는 경로가 없었어요. 실제로 한 프로젝트에서 CI가 나흘간 죽어 있었는데(최근 60번 중 47번 실패) GitHub 알림함에 68개가 쌓여 아무도 못 봤습니다. 깨진 CI는 '빨간불'이 아니라 **검사가 아예 안 도는 상태**라, 그동안 lint가 한 번도 안 돌았어요. 이제 세션을 시작할 때 '이 저장소 CI가 N번 연속 실패 중'이라고 대화창에서 알려줍니다. 원인이었던 `npm ci` lock 불일치도 템플릿에 경고로 남겼어요. -->
 <!-- show:en **When a guard you installed dies, you'll now hear about it.** `gate --ci` set up CI and then had no way to tell you it broke. In one project CI was dead for four days (47 of the last 60 runs failed) while 68 unread GitHub notifications piled up. A broken CI isn't a red light, it means **the checks aren't running at all** — lint hadn't run once in that window. Now the session start tells you right in the chat: "CI has failed N times in a row." The `npm ci` lockfile mismatch that caused it is documented in the template too. -->

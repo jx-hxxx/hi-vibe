@@ -14,6 +14,7 @@ def main(payload):
     cwd = payload.get("cwd", "")
     if not _common.project_gate(cwd):
         return
+    _common.touch_heartbeat(cwd, "PreCompact")
     transcript = payload.get("transcript_path", "")
     prompts, edited = _common.parse_transcript(transcript) if transcript else ([], [])
     git = _common.git_status(cwd)

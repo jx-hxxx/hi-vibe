@@ -324,6 +324,45 @@ class StopBlockTest(TempProject):
             stop_nudge.REVIEW_SCOPE = original
 
 
+class HeartbeatTest(TempProject):
+    """훅은 조용히 실패한다 — 살아있을 때 흔적을 남겨야 스킬 층이 죽음을
+    알아챌 수 있다. 흔적이 안 남으면 이 감지 경로가 통째로 무의미해진다."""
+
+    def test_hooks_record_that_they_ran(self):
+        session_start.main({"cwd": self.root, "source": "startup"})
+        beats = _common.read_heartbeat(self.root)
+        self.assertIn("SessionStart", beats)
+        self.assertGreater(beats["SessionStart"], 0)
+
+    def test_multiple_hooks_accumulate(self):
+        """한 훅이 다른 훅의 기록을 지우면 안 된다 — 어느 훅이 죽었는지
+        구분할 수 없게 된다."""
+        session_start.main({"cwd": self.root, "source": "startup"})
+        self.run_guard("Write", {"file_path": os.path.join(self.root, "x.py"),
+                                 "content": "x = 1\n"})
+        beats = _common.read_heartbeat(self.root)
+        self.assertIn("SessionStart", beats)
+        self.assertIn("PostToolUse", beats)
+
+    def test_never_creates_the_marker(self):
+        """CI 캐시와 같은 함정 — 흔적을 남기겠다고 `.hi-vibe/`를 만들면
+        init한 적 없는 저장소에 훅이 켜진다."""
+        other = tempfile.mkdtemp(prefix="vibe-noinit-hb-")
+        try:
+            _common.touch_heartbeat(other, "SessionStart")
+            self.assertFalse(os.path.isdir(os.path.join(other, ".hi-vibe")))
+        finally:
+            shutil.rmtree(other, ignore_errors=True)
+
+    def test_optout_turns_the_gate_off(self):
+        """마커가 있어도 opt-out이면 훅은 꺼져야 한다 — "여기선 안 쓸래"를
+        기록할 곳이 없으면 계속 물어보게 된다."""
+        self.assertTrue(_common.project_gate(self.root))
+        with open(os.path.join(self.root, ".hi-vibe", "optout"), "w") as f:
+            f.write("")
+        self.assertFalse(_common.project_gate(self.root))
+
+
 class CiHealthTest(TempProject):
     """연속 실패 계산 — 여기가 틀리면 잔소리가 되거나(과다) 죽은 관문을
     놓친다(과소). 둘 다 이 기능을 무의미하게 만든다."""

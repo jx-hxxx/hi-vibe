@@ -26,8 +26,57 @@ def project_gate(cwd):
     파일명이라 사용자가 자기 목적으로 이미 가질 수 있으므로, 그 존재로
     판단하면 오판(+ 남의 handover.md 오염) 위험이 있다. 대신 hi-vibe
     전용 마커 `.hi-vibe/` 디렉토리로 판단한다 — init이 만들며, 사용자가
-    우연히 가질 확률이 거의 없다."""
-    return bool(cwd) and os.path.isdir(os.path.join(cwd, ".hi-vibe"))
+    우연히 가질 확률이 거의 없다.
+
+    `optout` 파일이 있으면 마커가 있어도 끈다 — "여기선 안 쓸래"라고
+    말한 사용자에게 다시 묻지 않기 위한 자리다(그 기록을 남길 곳이
+    있어야 조용해질 수 있다)."""
+    if not cwd or not os.path.isdir(os.path.join(cwd, ".hi-vibe")):
+        return False
+    return not os.path.isfile(os.path.join(cwd, ".hi-vibe", "optout"))
+
+
+HEARTBEAT_FILE = "heartbeat.json"
+
+
+def touch_heartbeat(cwd, hook_name):
+    """이 훅이 실제로 돌았다는 흔적을 남긴다.
+
+    훅은 설계상 조용히 실패한다(fail-open) — 망가져도 에러조차 안 뜬다.
+    그래서 "훅이 죽었나"를 훅으로는 확인할 수 없다(자기가 안 도니까).
+    대신 살아있을 때 흔적을 남겨두면, **훅과 무관하게 도는 스킬 층**이
+    그 흔적이 낡은 것을 보고 죽음을 알아챌 수 있다.
+
+    CI 캐시와 같은 이유로 `.hi-vibe/`를 만들지 않는다 — 그건 hi-vibe를
+    켜는 마커라, 없는 곳에 만들면 opt-in 원칙이 깨진다."""
+    if not os.path.isdir(os.path.join(cwd or "", ".hi-vibe")):
+        return
+    path = os.path.join(cwd, ".hi-vibe", "state", HEARTBEAT_FILE)
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        try:
+            with open(path, encoding="utf-8") as fh:
+                data = json.load(fh)
+        except (OSError, ValueError):
+            data = {}
+        if not isinstance(data, dict):
+            data = {}
+        data[hook_name] = int(time.time())
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, ensure_ascii=False, indent=2, sort_keys=True)
+    except OSError:
+        pass  # 흔적 남기기 실패가 훅 본업을 막으면 안 된다
+
+
+def read_heartbeat(cwd):
+    """{훅 이름: 마지막 실행 epoch}. 없으면 {}."""
+    try:
+        with open(os.path.join(cwd, ".hi-vibe", "state", HEARTBEAT_FILE),
+                  encoding="utf-8") as fh:
+            data = json.load(fh)
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
 
 
 def _run_git(args, cwd):
