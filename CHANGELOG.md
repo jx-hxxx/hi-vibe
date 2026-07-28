@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-07-28
+<!-- show:ko **세워둔 관문이 죽으면 이제 알려줘요.** `gate --ci`로 CI를 깔아주고는 그게 깨져도 알려주는 경로가 없었어요. 실제로 한 프로젝트에서 CI가 나흘간 죽어 있었는데(최근 60번 중 47번 실패) GitHub 알림함에 68개가 쌓여 아무도 못 봤습니다. 깨진 CI는 '빨간불'이 아니라 **검사가 아예 안 도는 상태**라, 그동안 lint가 한 번도 안 돌았어요. 이제 세션을 시작할 때 '이 저장소 CI가 N번 연속 실패 중'이라고 대화창에서 알려줍니다. 원인이었던 `npm ci` lock 불일치도 템플릿에 경고로 남겼어요. -->
+<!-- show:en **When a guard you installed dies, you'll now hear about it.** `gate --ci` set up CI and then had no way to tell you it broke. In one project CI was dead for four days (47 of the last 60 runs failed) while 68 unread GitHub notifications piled up. A broken CI isn't a red light, it means **the checks aren't running at all** — lint hadn't run once in that window. Now the session start tells you right in the chat: "CI has failed N times in a row." The `npm ci` lockfile mismatch that caused it is documented in the template too. -->
+
+### Added
+- **세션 시작 시 CI 건강 상태 알림** (2026-07-28) — 현재 브랜치의 CI가 **연속 2회 이상** 실패 중이면 세션 첫머리에 알린다(워크플로 이름·연속 실패 수·마지막 성공일). 1회 실패는 흔해서 세지 않는다 — 잔소리가 되면 무시되고, 그러면 이 기능을 만든 이유와 정반대가 된다. `gh` CLI는 **선택 의존성**이라 없거나 미인증·오프라인이면 조용히 생략하고(fail-open), 결과는 20분 캐시해 세션마다 네트워크를 때리지 않는다.
+
+### Fixed
+- **CI 캐시가 `.hi-vibe/` 마커를 만들어버리던 문제** (2026-07-28) — 캐시를 쓰려고 `makedirs`를 하면서 **hi-vibe를 켜는 마커**를 생성했다. init한 적 없는 저장소에 훅이 돌기 시작하는 경로였다("init 안 한 프로젝트에는 전혀 개입하지 않는다"가 깨짐). 마커가 이미 있을 때만 캐시하도록 고치고 회귀 테스트로 고정. 구현 중 실제로 이 저장소에 `.hi-vibe/`가 생겨서 발견했다.
+
+### Changed
+- **`gate --ci`가 깔고 끝내지 않는다** (2026-07-28) — ①기존 워크플로의 의존성 설치 명령을 먼저 읽고 맞춘다(`npm ci` vs `npm install`). 플랫폼별 optional 의존성(wasm이 끌어오는 `@emnapi/*` 등)은 맥에서 만든 lock에 안 들어가 리눅스 러너에서 거부되는데, 배포 워크플로만 `npm install`이고 가드만 `npm ci`여서 나흘간 CI가 죽어 있던 실사례가 있다. ②설치 후 "푸시하고 실제 통과를 한 번 확인하라"고 안내한다 — 첫 실행이 깨진 채 방치되면 관문은 세운 적 없는 것과 같다.
+
 ## [0.17.0] - 2026-07-27
 <!-- show:ko **이제 리뷰를 직접 안 쳐도 돼요 — 끝날 때 알아서 돌아가요.** 제일 잘 잡는 남의 눈 리뷰(fresh-eyes)가 `--deep` 뒤에 숨어 있어서 대부분 안 켜졌어요. 이제 옵션이 아예 없어졌고, 코드를 고친 채로 턴이 끝나면 훅이 그 자리에서 리뷰를 돌려요 (같은 변경으로 두 번 잔소리하진 않아요). 커밋·푸시한 뒤에도 '안 푸시한 커밋 → 마지막 커밋' 순으로 내려가 계속 봐줍니다. `check`도 후보 목록만 던지지 않고 딴 클로드(proof-eyes)가 코드를 열어 진짜만 골라주고, 에러 삼킴·TODO 같은 '하다 만 것'까지 찾아줘요. -->
 <!-- show:en **You don't type review any more — it runs itself when a turn ends.** The sharpest reviewer (fresh-eyes) was hidden behind `--deep`, so most reviews never got it. Flags are gone entirely, and when a turn ends with unreviewed code the hook runs the review right there (never nagging twice for the same change). Already committed and pushed? It steps down to unpushed commits, then the last commit, instead of giving up. `check` no longer dumps a candidate list either: a fresh Claude (proof-eyes) opens the real code and keeps only what's real, and now also finds unfinished work — swallowed errors, TODOs. -->

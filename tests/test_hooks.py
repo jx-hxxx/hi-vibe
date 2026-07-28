@@ -324,6 +324,101 @@ class StopBlockTest(TempProject):
             stop_nudge.REVIEW_SCOPE = original
 
 
+class CiHealthTest(TempProject):
+    """연속 실패 계산 — 여기가 틀리면 잔소리가 되거나(과다) 죽은 관문을
+    놓친다(과소). 둘 다 이 기능을 무의미하게 만든다."""
+
+    def setUp(self):
+        super().setUp()
+        for args in (["init", "-q"], ["config", "user.email", "t@t.t"],
+                     ["config", "user.name", "t"]):
+            subprocess.run(["git", *args], cwd=self.root, check=True,
+                           capture_output=True, text=True)
+        with open(os.path.join(self.root, "a.txt"), "w") as f:
+            f.write("x\n")
+        for args in (["add", "-A"], ["commit", "-qm", "init"]):
+            subprocess.run(["git", *args], cwd=self.root, check=True,
+                           capture_output=True, text=True)
+        self._original = _common._run_gh_json
+
+    def tearDown(self):
+        _common._run_gh_json = self._original
+        super().tearDown()
+
+    def fake_runs(self, runs):
+        _common._run_gh_json = lambda args, cwd: runs
+
+    def run_health(self):
+        # 캐시가 이전 케이스를 물고 오지 않도록 매번 지운다.
+        cache = os.path.join(self.root, ".hi-vibe", "state", "ci.json")
+        if os.path.isfile(cache):
+            os.remove(cache)
+        return _common.ci_health(self.root)
+
+    @staticmethod
+    def a_run(conclusion, date="2026-07-27", name="vibe-guards"):
+        return {"status": "completed", "conclusion": conclusion,
+                "createdAt": date + "T00:00:00Z", "workflowName": name}
+
+    def test_counts_consecutive_failures_until_a_success(self):
+        self.fake_runs([self.a_run("failure"), self.a_run("failure"),
+                        self.a_run("success", "2026-07-23"), self.a_run("failure")])
+        ci = self.run_health()
+        self.assertEqual(ci["failures"], 2)          # 성공 뒤의 실패는 안 센다
+        self.assertEqual(ci["last_success"], "2026-07-23")
+        self.assertEqual(ci["workflow"], "vibe-guards")
+
+    def test_returns_none_when_latest_is_green(self):
+        self.fake_runs([self.a_run("success"), self.a_run("failure")])
+        self.assertIsNone(self.run_health())
+
+    def test_in_progress_run_does_not_break_the_streak(self):
+        """도는 중인 실행은 판정 보류 — 아직 결과가 없는 걸 성공으로 쳐서
+        죽은 관문을 놓치면 안 된다."""
+        pending = dict(self.a_run("failure"), status="in_progress", conclusion=None)
+        self.fake_runs([pending, self.a_run("failure"), self.a_run("failure")])
+        self.assertEqual(self.run_health()["failures"], 2)
+
+    def test_cancelled_run_stops_the_streak(self):
+        """취소·스킵은 '실패'가 아니다 — 실패로 세면 없는 문제를 만든다."""
+        self.fake_runs([self.a_run("failure"), self.a_run("cancelled"),
+                        self.a_run("failure")])
+        self.assertEqual(self.run_health()["failures"], 1)
+
+    def test_returns_none_when_gh_unavailable(self):
+        self.fake_runs(None)
+        self.assertIsNone(self.run_health())
+
+    def test_never_creates_the_hi_vibe_marker(self):
+        """`.hi-vibe/`는 캐시 폴더가 아니라 **hi-vibe를 켜는 마커**다. 캐시를
+        쓰겠다고 이걸 만들면 init한 적 없는 저장소에 훅이 돌기 시작한다."""
+        other = tempfile.mkdtemp(prefix="vibe-noinit-ci-")
+        try:
+            for args in (["init", "-q"], ["config", "user.email", "t@t.t"],
+                         ["config", "user.name", "t"]):
+                subprocess.run(["git", *args], cwd=other, check=True,
+                               capture_output=True, text=True)
+            with open(os.path.join(other, "a.txt"), "w") as f:
+                f.write("x\n")
+            for args in (["add", "-A"], ["commit", "-qm", "init"]):
+                subprocess.run(["git", *args], cwd=other, check=True,
+                               capture_output=True, text=True)
+            self.fake_runs([self.a_run("failure"), self.a_run("failure")])
+            _common.ci_health(other)
+            self.assertFalse(os.path.isdir(os.path.join(other, ".hi-vibe")),
+                             "init 안 한 저장소에 마커를 만들었다")
+        finally:
+            shutil.rmtree(other, ignore_errors=True)
+
+    def test_result_is_cached(self):
+        self.fake_runs([self.a_run("failure"), self.a_run("failure")])
+        self.assertEqual(self.run_health()["failures"], 2)
+        calls = []
+        _common._run_gh_json = lambda args, cwd: calls.append(1) or []
+        self.assertEqual(_common.ci_health(self.root)["failures"], 2)  # 캐시 적중
+        self.assertEqual(calls, [], "캐시가 있는데 gh를 다시 불렀다")
+
+
 class SessionStartTest(TempProject):
     """SessionStart 주입 — 훅 4종 중 유일하게 미테스트였던 것."""
 
@@ -341,6 +436,46 @@ class SessionStartTest(TempProject):
         """세션 시작에 컨텍스트 관리 팁(/compact 권유)이 한 줄 주입돼야 한다 (#4)."""
         out = self.run_start("startup")
         self.assertIn("/compact", out)
+
+    def test_ci_warning_shown_when_guard_is_dead(self):
+        """세워둔 관문이 죽으면 세션 첫머리에 알려야 한다 — GitHub 알림은
+        쌓이면 신호가 안 되므로(47/60 실패가 나흘 방치된 실사례)."""
+        original = _common.ci_health
+        _common.ci_health = lambda cwd, **kw: {
+            "failures": 12, "workflow": "vibe-guards",
+            "last_success": "2026-07-23", "branch": "main"}
+        try:
+            out = self.run_start("startup")
+        finally:
+            _common.ci_health = original
+        self.assertIn("vibe-guards", out)
+        self.assertIn("12", out)
+        self.assertIn("2026-07-23", out)
+
+    def test_single_ci_failure_is_not_nagged(self):
+        """1회 실패는 흔하다(일시 장애·재시도). 매번 경고하면 잔소리가 되고,
+        잔소리는 무시된다 — 이 훅을 만든 이유와 정반대가 된다."""
+        original = _common.ci_health
+        _common.ci_health = lambda cwd, **kw: {
+            "failures": 1, "workflow": "vibe-guards",
+            "last_success": "2026-07-27", "branch": "main"}
+        try:
+            out = self.run_start("startup")
+        finally:
+            _common.ci_health = original
+        self.assertNotIn("vibe-guards", out)
+
+    def test_ci_check_failure_is_silent(self):
+        """gh가 없거나 오프라인이면 조용히 생략한다 — 세션 시작을 붙잡는 것이
+        CI 상태를 아는 것보다 나쁘다 (fail-open)."""
+        original = _common.ci_health
+        _common.ci_health = lambda cwd, **kw: None
+        try:
+            out = self.run_start("startup")
+        finally:
+            _common.ci_health = original
+        self.assertIn("hi-vibe 규율", out)   # 나머지 주입은 정상 동작
+        self.assertNotIn("연속", out)
 
     def test_clear_injects_charter_like_startup(self):
         """/clear 직후는 컨텍스트가 통째로 사라진 순간 — 규율 재주입이 가장

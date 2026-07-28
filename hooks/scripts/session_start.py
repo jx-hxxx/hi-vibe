@@ -18,6 +18,26 @@ CHARTER = (
 )
 
 
+# 1회 실패는 흔하다(일시적 장애·재시도). 연속 2회부터가 "관문이 죽었다"에
+# 가깝다 — 잔소리로 만들지 않으려는 하한.
+CI_FAILURE_THRESHOLD = 2
+
+
+def _ci_warning(ci):
+    """관문이 열려 있다는 사실을 사용자에게 먼저 알리게 한다.
+
+    깨진 CI는 "빨간불"이 아니라 **검사가 아예 안 돌고 있는 상태**다. 그걸
+    모르고 며칠 더 밀어넣는 게 진짜 손해이므로, 세션 첫머리에서 알린다."""
+    last = f"마지막 성공 {ci['last_success']}" if ci["last_success"] else "최근 성공 기록 없음"
+    name = ci["workflow"] or "CI"
+    return (
+        f"⚠️ 이 저장소의 `{name}`가 `{ci['branch']}`에서 {ci['failures']}번 연속 "
+        f"실패 중입니다 ({last}). 검사가 통과한 게 아니라 **아예 안 돌고 있는** "
+        "상태일 수 있습니다. 사용자에게 이 사실을 먼저 한 줄로 알리고, 고칠지 "
+        "물어보세요 (`gh run view --log-failed`로 원인 확인)."
+    )
+
+
 def main(payload):
     cwd = payload.get("cwd", "")
     if not _common.project_gate(cwd):
@@ -43,7 +63,10 @@ def main(payload):
         if entry:
             head = "\n".join(entry.splitlines()[:4])
             parts.append("직전 인수인계(handover.md 최신 항목):\n" + head)
-        _common.emit("SessionStart", additional_context="\n\n".join(parts)[:800])
+        ci = _common.ci_health(cwd)
+        if ci and ci["failures"] >= CI_FAILURE_THRESHOLD:
+            parts.append(_ci_warning(ci))
+        _common.emit("SessionStart", additional_context="\n\n".join(parts)[:1100])
 
 
 if __name__ == "__main__":

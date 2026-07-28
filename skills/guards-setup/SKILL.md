@@ -64,6 +64,19 @@ description: >-
 
 **CI** (`templates/github-actions-vibe-guards.yml`):
 - push/PR마다 위 가드 전부 실행. 순환·경계 위반 = 빌드 실패 (d-2).
+- **기존 워크플로의 의존성 설치 명령을 먼저 읽고 맞춰라.** `.github/workflows/`
+  의 다른 파일이 `npm install`을 쓰고 있으면 여기도 `npm install`로 바꾼다.
+  `npm ci`는 lock이 정확할 때만 통과하는데, 플랫폼별 optional 의존성(wasm
+  패키지가 끌어오는 `@emnapi/*` 등)은 맥에서 만든 lock에 안 들어가 리눅스
+  러너에서 거부된다. 배포 워크플로만 `npm install`이고 가드만 `npm ci`여서
+  **나흘간 CI가 죽어 있던 실사례**가 있다.
+- **깔고 끝내지 마라.** 설치 후 사용자에게 이렇게 안내한다: "푸시하고
+  `gh run list --workflow vibe-guards --limit 3`로 실제 통과를 한 번
+  확인하세요." 첫 실행이 깨진 채로 방치되면 관문은 세운 적 없는 것과 같다.
+- 세워둔 관문이 나중에 죽는 것은 SessionStart 훅이 잡는다 — 현재 브랜치의
+  CI가 연속 실패 중이면 세션 첫머리에 알린다(gh CLI 있을 때만, 20분 캐시).
+  **깨진 CI는 "빨간불"이 아니라 검사가 아예 안 도는 상태**라서, 모르고
+  며칠 더 밀어넣는 것이 진짜 손해다.
 
 **정기 감사** (`templates/github-actions-biweekly-audit.yml`):
 - 격주 cron. 직전 `audit/*` 태그 이후 코드 변경(문서 제외)이 없으면

@@ -350,7 +350,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>104</b><span>자동 회귀 테스트</span></div>
+      <div><b>114</b><span>자동 회귀 테스트</span></div>
       <div><b>4종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -610,9 +610,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.18.0<small>2026-07-28</small></div><div class="h"><b>세워둔 관문이 죽으면 이제 알려줘요.</b> <span>`gate --ci`로 CI를 깔아주고는 그게 깨져도 알려주는 경로가 없었어요. 실제로 한 프로젝트에서 CI가 나흘간 죽어 있었는데(최근 60번 중 47번 실패) GitHub 알림함에 68개가 쌓여 아무도 못 봤습니다. 깨진 CI는 '빨간불'이 아니라 **검사가 아예 안 도는 상태**라, 그동안 lint가 한 번도 안 돌았어요. 이제 세션을 시작할 때 '이 저장소 CI가 N번 연속 실패 중'이라고 대화창에서 알려줍니다. 원인이었던 `npm ci` lock 불일치도 템플릿에 경고로 남겼어요.</span></div></div>
         <div class="rel"><div class="v">v0.17.0<small>2026-07-27</small></div><div class="h"><b>이제 리뷰를 직접 안 쳐도 돼요 — 끝날 때 알아서 돌아가요.</b> <span>제일 잘 잡는 남의 눈 리뷰(fresh-eyes)가 `--deep` 뒤에 숨어 있어서 대부분 안 켜졌어요. 이제 옵션이 아예 없어졌고, 코드를 고친 채로 턴이 끝나면 훅이 그 자리에서 리뷰를 돌려요 (같은 변경으로 두 번 잔소리하진 않아요). 커밋·푸시한 뒤에도 '안 푸시한 커밋 → 마지막 커밋' 순으로 내려가 계속 봐줍니다. `check`도 후보 목록만 던지지 않고 딴 클로드(proof-eyes)가 코드를 열어 진짜만 골라주고, 에러 삼킴·TODO 같은 '하다 만 것'까지 찾아줘요.</span></div></div>
         <div class="rel"><div class="v">v0.16.0<small>2026-07-22</small></div><div class="h"><b>이제 hi-vibe가 뒤에서 뭘 잡으면 티가 나요 — 명령어 없이도.</b> <span>지금까진 너무 조용히 잡아서 "정말 돌고 있나?"가 안 보였어요. 이제 훅이 코드 쓸 때마다 자동으로 에러 삼킴·비밀키를 잡으면 그 자리에서 `👋 hi-vibe가 방금 &lt;무엇&gt;을 잡았어요` 한 줄이 붙고, 세션 끝엔 "이번 세션: 코드쓰기 N회 검사 · 👋 M건 잡음(잡을 게 없으면 0건)" 요약이 한 번 떠요 — 잡은 게 없어도 조용히 돌고 있었다는 증명. 마커도 낚싯대(🎣)에서 인사 손짓(👋 "hi"-vibe)으로, 문구도 "없었으면 놓쳤을 것"에서 "방금 잡았어요/고쳤어요"로 능동형으로 바꿨어요. 붙이는 조건(진짜 결함일 때만·통과엔 안 붙임)은 그대로.</span></div></div>
-        <div class="rel"><div class="v">v0.15.0<small>2026-07-14</small></div><div class="h"><b>hi-vibe가 조용히 뭔가를 살렸을 때, 이제 한 줄로 티가 나요.</b> <span>hi-vibe는 티 안 나게 뒤에서 잡아주는 게 설계라, 잘 작동할수록 정작 "이거 플러그인 덕에 산 거였네"를 모르고 지나가요. 그래서 세 조건을 모두 만족할 때 — ①hi-vibe가 찾았고 ②진짜 결함·판단이고 ③그 스킬 돌기 전엔 몰랐던 것 — 보고 맨 끝에 `🎣 hi-vibe catch — &lt;무엇&gt;을 &lt;어느 스킬&gt;이 잡음` 한 줄을 답니다. 리뷰 체크리스트·남의 눈·구조 스캔·원인 규율 네 곳에 들어갔어요. 핵심은 과장 금지: 통과·스타일 지적·이미 알던 것엔 절대 안 붙어요(자화자찬이 되면 신뢰가 깨지니까). 접두사가 고정이라 나중에 세션에서 grep해 "이 플러그인이 실제로 뭘 잡았나"를 모아볼 수도 있어요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -672,7 +672,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>104</b><span>automated regression tests</span></div>
+      <div><b>114</b><span>automated regression tests</span></div>
       <div><b>4</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -932,9 +932,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.18.0<small>2026-07-28</small></div><div class="h"><b>When a guard you installed dies, you'll now hear about it.</b> <span>`gate --ci` set up CI and then had no way to tell you it broke. In one project CI was dead for four days (47 of the last 60 runs failed) while 68 unread GitHub notifications piled up. A broken CI isn't a red light, it means **the checks aren't running at all** — lint hadn't run once in that window. Now the session start tells you right in the chat: "CI has failed N times in a row." The `npm ci` lockfile mismatch that caused it is documented in the template too.</span></div></div>
         <div class="rel"><div class="v">v0.17.0<small>2026-07-27</small></div><div class="h"><b>You don't type review any more — it runs itself when a turn ends.</b> <span>The sharpest reviewer (fresh-eyes) was hidden behind `--deep`, so most reviews never got it. Flags are gone entirely, and when a turn ends with unreviewed code the hook runs the review right there (never nagging twice for the same change). Already committed and pushed? It steps down to unpushed commits, then the last commit, instead of giving up. `check` no longer dumps a candidate list either: a fresh Claude (proof-eyes) opens the real code and keeps only what's real, and now also finds unfinished work — swallowed errors, TODOs.</span></div></div>
         <div class="rel"><div class="v">v0.16.0<small>2026-07-22</small></div><div class="h"><b>Now you can see hi-vibe working in the background — without typing a command.</b> <span>It used to catch things so quietly you couldn't tell it was running. Now, whenever the always-on hook auto-catches a swallowed error or a secret as you write code, it appends a `👋 hi-vibe just caught &lt;what&gt;` line on the spot, and at session end you get a one-time summary: "this session: N code writes checked, M caught by hi-vibe (0 if nothing to catch)" — proof it ran even when clean. The marker also changed from a fishing rod (🎣) to a friendly wave (👋 "hi"-vibe), and the wording shifted from "you'd have missed it" to the active "just caught/fixed it." When it attaches (real defects only, never on passes) is unchanged.</span></div></div>
-        <div class="rel"><div class="v">v0.15.0<small>2026-07-14</small></div><div class="h"><b>When hi-vibe quietly saves you, now you see it — one line.</b> <span>hi-vibe is built to work invisibly in the background, so the better it works, the more you miss the "oh, the plugin caught that" moment. Now, when all three conditions hold — ① hi-vibe found it ② it's a real defect/judgment ③ it wasn't on your radar before the skill ran — the report ends with `🎣 hi-vibe catch — &lt;what&gt; caught by &lt;which skill&gt;`. It's wired into the review checklist, fresh-eyes, the structure scan, and the root-cause discipline. The key is no overclaiming: it never attaches to passes, style nits, or things you already knew (self-congratulation would break trust). The fixed prefix lets you grep past sessions to see what the plugin actually caught.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
