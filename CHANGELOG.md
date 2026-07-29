@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.20.5] - 2026-07-29
+<!-- show:ko **랜딩 본문이 아직 옛날 동작을 설명하고 있었어요.** 앞 릴리스에서 빠른 시작 표만 고쳤는데, 전면 재점검해 보니 본문 네 군데가 더 낡아 있었습니다. 제일 심한 건 정반대로 적힌 문장이었어요 — "부르면 도는 것(find·review·check), 강력하지만 AI가 놓치면 안 걸려요". `review`는 이제 훅이 강제하니 놓쳐도 걸립니다. 기계가 하는 일 목록에도 Stop 훅이 아직 "기록 안 하면 알려주기"로 남아 있었고, `check` 카드에는 새로 붙은 "하다 만 것"과 proof-eyes 검증이 통째로 빠져 있었어요. 한·영 양쪽 다 고쳤습니다. -->
+<!-- show:en **The landing page's body copy was still describing the old behaviour.** The previous release fixed only the quick-start table; a full re-audit turned up four more stale spots. The worst said the exact opposite of what ships today: "on demand (find · review · check) — powerful, but the AI can skip them." `review` is enforced by a hook now, so skipping it isn't possible. The machine-guarantees list still described the Stop hook as nudging you to log things, and the `check` card was missing both the new half-finished-work buckets and the proof-eyes verification pass. Fixed in both languages. -->
+
+### Fixed
+- **랜딩이 `review`를 "AI가 놓치면 안 걸리는 것"으로 설명** (2026-07-29) — v0.17.0에서 Stop 훅이 리뷰를 직접 실행하도록 바꾼 것이 README에는 반영됐지만 랜딩 본문에는 들어가지 않았다. 3단 설명에서 `review`를 빼고 "놓쳐도 훅이 잡는다"를 명시.
+- **기계가 하는 일 목록의 Stop 훅 설명이 옛날 것** (2026-07-29) — "뭔가 바꿨는데 기록 안 하면 알려주기"는 안내(nudge) 시절 동작이다. "아무도 안 본 코드 변경이 있으면 리뷰를 직접 돌리기"로 교체하고, AI 쪽 목록의 `review` 항목은 "돌아온 결과를 읽고 판단하기"로 옮겼다.
+- **`check` 카드에 v0.17.0 기능이 빠져 있음** (2026-07-29) — "하다 만 것"(에러 삼킴·TODO·테스트 없는 모듈) 버킷과 proof-eyes 검증("12건 중 진짜 3건")이 명령어 표에만 있고 기능 카드에는 없었다.
+- **`check` vs `review` 설명에서 proof-eyes 누락** (2026-07-29) — `check`를 "기계(스캐너)만"으로 설명하고 있었다. 두 에이전트의 실제 차이(fresh-eyes는 코드를 의심해 의도가 필요, proof-eyes는 스캐너를 의심해 증거가 필요)를 그대로 적었다.
+
+### Verified
+- **문서 전면 재점검** (2026-07-29) — 회귀 테스트 122개 실제와 일치. 구조 개수(명령 10 · 스킬 6 · 에이전트 2 · 훅 4) 실제와 일치. 없앤 플래그(`--all`·`--deep`·`--ci`)와 옛 에이전트 이름 잔존 0건. 한/영 README 헤딩 34개로 동일, 랜딩 구성요소도 한/영 대칭(기능 카드 9·빠른시작 7·정직함 노트 5·펼침 노트 3). 목차 링크·랜딩 앵커 깨진 것 0개, HTML 태그 균형 정상. `doctor`가 훅 4종을 실제로 실행하는 것도 소스에서 확인(Stop 훅 포함).
+
 ## [0.20.4] - 2026-07-29
 <!-- show:ko **랜딩의 "상황별 빠른 시작"만 옛날 그대로였어요.** README는 치는 명령과 자동으로 도는 것을 나눠놨는데, 랜딩의 이 표는 `review`·`find`를 여전히 "치세요" 칸에 넣어둬서 칠 게 일곱 개처럼 보였습니다. 둘 다 "칠 것 없어요"로 바꿨어요. 같은 표에 사실이 틀린 줄도 있었습니다 — 이미 만들던 프로젝트에 설치하면 `review`를 치라고 했는데, `review`는 마지막 커밋까지만 봅니다. 쌓인 코드 전체를 보는 건 `check`라서 그렇게 고쳤어요. -->
 <!-- show:en **The landing page's "quick start by situation" was the one place still showing the old surface.** The README already separates what you type from what runs on its own, but this table still listed `review` and `find` under "run this", making it look like seven commands. Both now say "nothing to type". One row was also factually wrong: it told you to run `review` after installing on an existing project, but `review` only ever looks back as far as the last commit. Scanning everything you've already built is `check`, so that's what it says now. -->
