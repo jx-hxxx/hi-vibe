@@ -129,7 +129,11 @@ whether the AI remembers the instructions.
 
 **🤖 AI** is Claude recognizing natural-language intent and running a skill.
 Powerful, but not 100% guaranteed. If you want it for sure, call the command
-directly — e.g. `/hi-vibe:find`, `/hi-vibe:review`.
+directly — e.g. `/hi-vibe:find`.
+
+`review` is the exception. The AI can trigger it from what you say, but if it
+doesn't, the **Stop hook catches the turn and runs it anyway**. The half that
+doesn't depend on the AI's memory is the one backing it up.
 
 ---
 

@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.20.6] - 2026-07-29
+<!-- show:ko **"뭘 치면 되나"를 말하는 자리를 전부 다시 맞췄어요.** 앞 릴리스에서 `review`만 자동으로 옮겼는데, `find`도 치는 게 아니었습니다. 랜딩의 3단 설명이 "켜지는 방식"으로 나눈 목록인데 한 칸에 AI가 알아서 거는 것(`find`)과 사람이 직접 치는 것(`check`)이 섞여 있었어요. 이제 훅 / 말하면 걸리는 것 / 내가 치는 것으로 갈라서, **평소에 치는 건 `check` 하나**가 그 목록에서도 바로 읽힙니다. 두 README도 `review`를 "AI라 보장이 안 되니 직접 치세요" 예시로 들고 있어서 고쳤고, 기능 카드 하나가 자동인데 "직접 점검" 칸에 들어가 있던 것도 바로잡았어요. -->
+<!-- show:en **Every place that says what you actually type is now consistent.** The last release moved only `review` to automatic, but `find` isn't something you type either. The landing page's three tiers are meant to split things by *how they turn on*, yet one tier mixed what the AI triggers for you (`find`) with what you type yourself (`check`). They're now split into hooks / triggered by talking / what you type, so "day to day it's just `check`" reads straight off the list. Both READMEs also cited `review` as an example of "the AI might miss it, so run it yourself" — fixed. And one feature card marked automatic was sitting under the "manual checks" heading. -->
+
+### Fixed
+- **3단 설명의 분류 기준이 어긋남** (2026-07-29) — "켜지는 방식"으로 나눈 목록인데 둘째 칸에 `find`(AI가 발동)와 `check`(사람이 입력)가 섞여 있었다. `깔면 자동(훅)` / `말하면 걸리는 것(find·recall·log)` / `내가 치는 것(check·gate)`으로 재분류. 평소 표면이 `check` 하나라는 사실이 이 목록에서도 드러난다.
+- **두 README가 `review`를 "AI 보장 없음" 예시로 인용** (2026-07-29) — 🤖 AI 설명이 "100% 보장 안 되니 `/hi-vibe:find`, `/hi-vibe:review`를 직접 호출하라"였다. `review`는 Stop 훅이 뒤를 받치므로 예시에서 빼고, 예외라는 것을 한 문단으로 명시했다.
+- **자동 기능 카드가 "직접 점검" 칸에 있었음** (2026-07-29) — `안전벨트가 풀리면 알려줘요`는 카드 태그가 `자동`인데 MANUAL 그룹에 있었다. 자동 그룹으로 옮기고(그룹명 `기억·검토·감시`), 대신 `오탐 방지`를 `check`와 같은 칸으로 내렸다. 이제 어느 그룹에도 성격이 반대인 카드가 없다.
+- **명령어 표의 `check` 설명이 카드와 불일치** (2026-07-29) — "하다 만 것"에 테스트 커버리지가 빠져 있었다.
+
+### Verified
+- **한/영 대칭 재확인** (2026-07-29) — 기능 카드 9·빠른시작 7·정직함 노트 5·카드 그룹 3으로 양쪽 동일. 그룹별 카드 성격 대조에서 AUTO 그룹의 `직접` 카드 0건, MANUAL 그룹의 `자동` 카드 0건. README 헤딩 34개 동일, 목차 링크·랜딩 앵커 깨짐 0개, HTML 태그 균형 정상, 테스트 122개 통과.
+
 ## [0.20.5] - 2026-07-29
 <!-- show:ko **랜딩 본문이 아직 옛날 동작을 설명하고 있었어요.** 앞 릴리스에서 빠른 시작 표만 고쳤는데, 전면 재점검해 보니 본문 네 군데가 더 낡아 있었습니다. 제일 심한 건 정반대로 적힌 문장이었어요 — "부르면 도는 것(find·review·check), 강력하지만 AI가 놓치면 안 걸려요". `review`는 이제 훅이 강제하니 놓쳐도 걸립니다. 기계가 하는 일 목록에도 Stop 훅이 아직 "기록 안 하면 알려주기"로 남아 있었고, `check` 카드에는 새로 붙은 "하다 만 것"과 proof-eyes 검증이 통째로 빠져 있었어요. 한·영 양쪽 다 고쳤습니다. -->
 <!-- show:en **The landing page's body copy was still describing the old behaviour.** The previous release fixed only the quick-start table; a full re-audit turned up four more stale spots. The worst said the exact opposite of what ships today: "on demand (find · review · check) — powerful, but the AI can skip them." `review` is enforced by a hook now, so skipping it isn't possible. The machine-guarantees list still described the Stop hook as nudging you to log things, and the `check` card was missing both the new half-finished-work buckets and the proof-eyes verification pass. Fixed in both languages. -->
