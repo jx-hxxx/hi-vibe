@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.20.4] - 2026-07-29
+<!-- show:ko **랜딩의 "상황별 빠른 시작"만 옛날 그대로였어요.** README는 치는 명령과 자동으로 도는 것을 나눠놨는데, 랜딩의 이 표는 `review`·`find`를 여전히 "치세요" 칸에 넣어둬서 칠 게 일곱 개처럼 보였습니다. 둘 다 "칠 것 없어요"로 바꿨어요. 같은 표에 사실이 틀린 줄도 있었습니다 — 이미 만들던 프로젝트에 설치하면 `review`를 치라고 했는데, `review`는 마지막 커밋까지만 봅니다. 쌓인 코드 전체를 보는 건 `check`라서 그렇게 고쳤어요. -->
+<!-- show:en **The landing page's "quick start by situation" was the one place still showing the old surface.** The README already separates what you type from what runs on its own, but this table still listed `review` and `find` under "run this", making it look like seven commands. Both now say "nothing to type". One row was also factually wrong: it told you to run `review` after installing on an existing project, but `review` only ever looks back as far as the last commit. Scanning everything you've already built is `check`, so that's what it says now. -->
+
+### Fixed
+- **랜딩 빠른 시작이 자동 동작을 수동 명령으로 보여줌** (2026-07-29) — v0.20.1에서 README를 세팅/평소/자동으로 나눴는데 랜딩의 `상황별 빠른 시작` 블록은 같이 고쳐지지 않았다. 한 화면 안에서 "실제로 치는 건 넷"과 "일곱 개를 치세요"가 동시에 보이던 상태. 한·영 모두 수정.
+- **"이미 만들던 프로젝트엔 review" 안내가 사실과 다름** (2026-07-29) — `review_scope.py`의 범위 계단은 안 커밋 → 안 푸시 → **마지막 커밋**이라, 히스토리가 있는 저장소에서 `review`는 마지막 커밋 하나만 본다. "지금까지 쌓인 코드를 처음 보는 눈으로 검토"는 저장소 전체를 스캔하고 proof-eyes가 후보를 열어보는 `check`의 동작이므로 그쪽으로 바꿨다.
+
 ## [0.20.3] - 2026-07-28
 <!-- show:ko **공개 README에 저자 이름이 또 들어갔던 것.** 예전에 한 번 빼놓고, 문서를 다시 쓰면서 똑같이 또 들어갔어요. 사람이 눈으로 잡는 걸론 두 번 다 놓쳤으니 이번엔 기계가 막습니다 — 공개 문서에 개인 이름이 있으면 테스트가 실패해요. 실제로 이름을 심어보고 잡히는 것까지 확인했습니다. -->
 <!-- show:en **The author's name slipped into the public README again.** It had been removed once before, then came back while the docs were rewritten. Human review missed it both times, so a machine now blocks it: the test suite fails if a personal name appears in public docs. Verified by planting one and watching it get caught. -->
