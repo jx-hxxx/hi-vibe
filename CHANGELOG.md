@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-07-29
+<!-- show:ko **같은 실수를 세 번 놓쳐서, 이번엔 기계가 막게 했어요.** `review`를 훅이 직접 실행하도록 바꾼 뒤로 "이 명령은 자동인가 직접 치는 건가"가 문서마다 어긋났는데, 세 번 다 사람 눈으로는 뒤늦게 발견했습니다. 문장 하나만 보고 그 문장이 속한 분류를 안 봤기 때문이에요. 이제 명령별 자동/직접이 코드 한 곳에 적혀 있고, README 한/영과 랜딩 한/영이 그것과 어긋나면 CI가 실패합니다. 자동으로 도는 명령을 "직접 치세요"라고 권하는 문장도 잡아요. 과거 실수 세 개를 실제로 되살려 전부 잡히는 것까지 확인했습니다. -->
+<!-- show:en **The same mistake slipped through three times, so a machine now blocks it.** Ever since the hook started running `review` itself, "is this command automatic or something you type?" drifted apart across the docs — and all three times a human caught it late. Each time the fix looked at one sentence without looking at the category that sentence belonged to. Now each command's mode lives in one place in code, and CI fails if either README or either half of the landing page disagrees. It also catches sentences urging you to run an automatic command yourself. All three past mistakes were resurrected and verified to be caught. -->
+
+### Added
+- **명령 자동/직접 분류 무결성 검사** (2026-07-29) — `tests/test_command_modes.py`. `COMMAND_MODE`가 단일 기준이고, README 한/영의 명령어 표와 랜딩 한/영의 `발동` 열이 전부 그것과 맞는지 대조한다. 랜딩 기능 카드가 자기 그룹(AUTO/MANUAL)과 반대 성격인 것도 잡는다. **과거 재발 3건을 실제로 되살려 셋 다 실패하는 것을 확인**했다.
+- **자동 명령 권유 문구 금지 검사** (2026-07-29) — 자동으로 도는 명령을 "직접 호출하세요" 식으로 권하면 실패한다. 놓쳤을 때 쓰는 비상 손잡이라는 단서가 같은 문장에 있으면 통과 — **오탐이 나면 검사 자체가 무시당하고, 무시당하는 알림은 안전장치가 아니기 때문**에 좁게 잡았다. 옛 문장을 못 잡게 되는 것을 막는 자기검사도 같이 넣었다.
+
+### Changed
+- 테스트 122 → 128개. `COMMAND_MODE`가 자동/직접의 단일 기준이라는 것을 CLAUDE.md 폴더 지도에 적었다.
+
 ## [0.20.7] - 2026-07-29
 <!-- show:ko **`find`를 치라고 권하는 문장이 README에 남아 있었어요.** 앞 릴리스에서 `review`를 예시에서 뺐는데, 같은 문장의 `find`가 "확실히 하려면 직접 호출하세요"라는 권유형 그대로였습니다. 랜딩은 "칠 일이 없어요"라고 적어둔 자리라 두 문서가 어긋나 있었어요. `find`의 실제 위치는 평소 습관이 아니라 **AI가 놓친 게 눈에 보일 때만 쓰는 비상 손잡이**라서, 그렇게 다시 썼습니다. -->
 <!-- show:en **A sentence still urging you to run `find` was left in the README.** The previous release dropped `review` from that example, but `find` in the same sentence still read "call the command directly if you want to be sure." The landing page says "you never type these," so the two disagreed. `find`'s real place is an emergency handle for when you notice it didn't fire — not a habit to build — so it now says that. -->

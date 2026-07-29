@@ -30,7 +30,7 @@ python3 skills/repo-xray/scripts/audit.py scan --root .   # 구조 스캔
 - `commands/` — 10개 슬래시 명령(사용자용 버튼). 각 명령이 스킬을 호출.
 - `agents/` — `fresh-eyes`(설계 판단, `review`가 기본 소환) · `proof-eyes`(스캔 결과 검증, `check`가 기본 소환). 둘의 차이는 **의심 대상**이다: fresh-eyes는 코드를, proof-eyes는 스캐너를 의심한다.
 - `scripts/` — `doctor.py`(런타임: `/hi-vibe:doctor` + 스킬이 부르는 `--quick` 생존 확인) · 저장소 자동화(build-showcase·build-release-notes).
-- `tests/` — 회귀 테스트(훅·스캐너·리뷰범위·무결성). CI가 3.8·3.9·3.12로 실행.
+- `tests/` — 회귀 테스트(훅·스캐너·리뷰범위·무결성·명령 분류). CI가 3.8·3.9·3.12로 실행. `test_command_modes.py`의 `COMMAND_MODE`가 **자동/직접 분류의 단일 기준**이다 — 새 명령을 만들면 거기 먼저 적고, 문서는 그것과 맞춘다.
 - `docs/` — 랜딩 페이지(`index.html`). 업데이트 타임라인은 CHANGELOG에서 자동 생성.
 
 ## 결정 기록
