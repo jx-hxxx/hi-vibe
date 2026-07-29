@@ -128,12 +128,14 @@ That's it. From now on, code with Claude as usual in that project.
 whether the AI remembers the instructions.
 
 **🤖 AI** is Claude recognizing natural-language intent and running a skill.
-Powerful, but not 100% guaranteed. If you want it for sure, call the command
-directly — e.g. `/hi-vibe:find`.
+**You don't type these day to day.** They aren't 100% guaranteed, though, so
+it's worth knowing you *can* latch one by hand — `/hi-vibe:find` — when you
+notice it didn't fire. That's an emergency handle, not a habit to build.
 
-`review` is the exception. The AI can trigger it from what you say, but if it
-doesn't, the **Stop hook catches the turn and runs it anyway**. The half that
-doesn't depend on the AI's memory is the one backing it up.
+`review` doesn't even need the handle. The AI can trigger it from what you say,
+but if it doesn't, the **Stop hook catches the turn and runs it anyway** — the
+half that doesn't depend on the AI's memory is the one backing it up. A
+safeguard you have to remember isn't a safeguard.
 
 ---
 

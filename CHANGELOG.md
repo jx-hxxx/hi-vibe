@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.20.7] - 2026-07-29
+<!-- show:ko **`find`를 치라고 권하는 문장이 README에 남아 있었어요.** 앞 릴리스에서 `review`를 예시에서 뺐는데, 같은 문장의 `find`가 "확실히 하려면 직접 호출하세요"라는 권유형 그대로였습니다. 랜딩은 "칠 일이 없어요"라고 적어둔 자리라 두 문서가 어긋나 있었어요. `find`의 실제 위치는 평소 습관이 아니라 **AI가 놓친 게 눈에 보일 때만 쓰는 비상 손잡이**라서, 그렇게 다시 썼습니다. -->
+<!-- show:en **A sentence still urging you to run `find` was left in the README.** The previous release dropped `review` from that example, but `find` in the same sentence still read "call the command directly if you want to be sure." The landing page says "you never type these," so the two disagreed. `find`'s real place is an emergency handle for when you notice it didn't fire — not a habit to build — so it now says that. -->
+
+### Fixed
+- **README가 `find`를 권장 습관처럼 안내** (2026-07-29) — "확실히 실행하고 싶다면 `/hi-vibe:find`처럼 직접 호출하세요"는 평소에 치라는 말로 읽힌다. 랜딩(`말하면 걸리는 것 — 칠 일이 없어요`)과 어긋나 있었다. **평소엔 안 친다**를 먼저 말하고, 명령은 "안 걸린 게 보일 때 쓰는 비상 손잡이"로 위치를 낮췄다. `review`는 그 손잡이조차 필요 없다는 것(Stop 훅이 받침)도 같은 자리에서 밝힌다. 한·영 양쪽.
+
 ## [0.20.6] - 2026-07-29
 <!-- show:ko **"뭘 치면 되나"를 말하는 자리를 전부 다시 맞췄어요.** 앞 릴리스에서 `review`만 자동으로 옮겼는데, `find`도 치는 게 아니었습니다. 랜딩의 3단 설명이 "켜지는 방식"으로 나눈 목록인데 한 칸에 AI가 알아서 거는 것(`find`)과 사람이 직접 치는 것(`check`)이 섞여 있었어요. 이제 훅 / 말하면 걸리는 것 / 내가 치는 것으로 갈라서, **평소에 치는 건 `check` 하나**가 그 목록에서도 바로 읽힙니다. 두 README도 `review`를 "AI라 보장이 안 되니 직접 치세요" 예시로 들고 있어서 고쳤고, 기능 카드 하나가 자동인데 "직접 점검" 칸에 들어가 있던 것도 바로잡았어요. -->
 <!-- show:en **Every place that says what you actually type is now consistent.** The last release moved only `review` to automatic, but `find` isn't something you type either. The landing page's three tiers are meant to split things by *how they turn on*, yet one tier mixed what the AI triggers for you (`find`) with what you type yourself (`check`). They're now split into hooks / triggered by talking / what you type, so "day to day it's just `check`" reads straight off the list. Both READMEs also cited `review` as an example of "the AI might miss it, so run it yourself" — fixed. And one feature card marked automatic was sitting under the "manual checks" heading. -->
