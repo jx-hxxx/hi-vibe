@@ -597,5 +597,85 @@ class NearDupPrefilterTest(unittest.TestCase):
         self.assertTrue(found_big, "큰 함수 near-dup 쌍이 리포트돼야 한다(size-cap 금지)")
 
 
+
+class FalsePositiveFromRealRepoTest(unittest.TestCase):
+    """실제 남의 저장소(Python 301파일)에서 관측된 오탐 두 가지를 고정한다.
+
+    스캐너는 "놓치지 않되 헛짚는" 쪽이지만, **헛짚는 이유가 뻔한 것**은
+    줄여야 한다. 후보가 시끄러우면 사용자가 전부 무시하고, 그러면 진짜도
+    같이 묻힌다."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp(prefix="xray-fp-")
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def _write(self, rel, text):
+        path = os.path.join(self.root, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+
+    def _scan(self):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            audit.cmd_scan(self.root)
+        with open(os.path.join(self.root, ".repo-xray", "report.json"),
+                  encoding="utf-8") as fh:
+            return json.load(fh)
+
+    def test_shell_script_call_counts_as_a_reference(self):
+        """셸에서 문자열로 부르는 진입점은 죽은 코드가 아니다.
+
+        `.sh`를 참조 대상에서 빼두면 배포·데모 스크립트에서만 불리는
+        함수가 전부 미참조 후보로 잡힌다 — 실제로 관측된 오탐이다."""
+        self._write("app.py", "def create_demo_app():\n    return 1\n")
+        self._write("scripts/run.sh", "#!/bin/sh\npython -c 'from app import create_demo_app; create_demo_app()'\n")
+        dead = {d["name"] for d in self._scan()["dead_candidates"]}
+        self.assertNotIn("create_demo_app", dead)
+
+    def test_makefile_call_counts_as_a_reference(self):
+        self._write("app.py", "def build_release():\n    return 1\n")
+        self._write("Makefile", "release:\n\tpython -c 'import app; app.build_release()'\n")
+        dead = {d["name"] for d in self._scan()["dead_candidates"]}
+        self.assertNotIn("build_release", dead)
+
+    def test_shell_script_is_not_scanned_for_size(self):
+        """참조로는 세되 **정리 후보로는 올리지 않는다** — 긴 배포
+        스크립트를 "너무 큰 파일"이라 지적할 이유가 없다."""
+        self._write("app.py", "x = 1\n")
+        self._write("deploy.sh", "#!/bin/sh\n" + "echo step\n" * 600)
+        big = {b["file"] for b in self._scan()["oversized_files"]}
+        self.assertNotIn("deploy.sh", big)
+
+    def test_protocol_stubs_are_not_duplicates(self):
+        """선언은 구현이 아니다.
+
+        Protocol/ABC의 스텁은 서로 같아 보이는 게 당연하다. 그걸 중복
+        구현으로 올리면 인터페이스가 많은 저장소일수록 후보가 쏟아진다."""
+        self._write("proto.py",
+                    "from typing import Protocol\n\n"
+                    "class Repo(Protocol):\n"
+                    "    def save(self, item: str) -> None:\n"
+                    '        """Persist one item."""\n'
+                    "        ...\n\n"
+                    "    def load(self, key: str) -> str:\n"
+                    '        """Fetch one item."""\n'
+                    "        ...\n")
+        names = [sorted(f["name"] for f in g["functions"])
+                 for g in self._scan()["duplicate_functions"]]
+        self.assertEqual(names, [], f"스텁을 중복으로 잡았다: {names}")
+
+    def test_real_duplicates_are_still_found(self):
+        """스텁을 빼느라 진짜 중복까지 놓치면 안 된다."""
+        self._write("a.py",
+                    "def total(items):\n    n = 0\n    for i in items:\n        n += i\n    return n\n")
+        self._write("b.py",
+                    "def summed(values):\n    acc = 0\n    for v in values:\n        acc += v\n    return acc\n")
+        names = [sorted(f["name"] for f in g["functions"])
+                 for g in self._scan()["duplicate_functions"]]
+        self.assertEqual(names, [["summed", "total"]])
+
 if __name__ == "__main__":
     unittest.main()

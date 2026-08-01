@@ -22,6 +22,13 @@ user-invocable: false   # 사용자 표면은 /hi-vibe:* 명령 10개다. 스킬
    `package.json`/`tsconfig.json` → JS/TS; 둘 다면 둘 다.
 2. **기존 설정 읽기**: ruff/mypy/eslint/import-linter 설정이 이미
    있으면 먼저 읽는다. 절대 덮어쓰지 않는다.
+   **이미 같은 일을 하는 도구가 있으면 그 항목을 아예 빼고 제안한다.**
+   타입 검사는 `mypy` 말고도 `basedpyright`·`pyright`가 흔하다
+   (`pyproject.toml`의 `[tool.basedpyright]`/`[tool.pyright]`,
+   `pyrightconfig.json`, `package.json`의 pyright 스크립트). 있으면
+   mypy를 권하지 마라 — 타입체커 둘을 돌리면 서로 다른 소리를 한다.
+   비밀키도 `gitleaks`·`detect-secrets` 설정이 있으면 마찬가지다.
+   **겹치는 걸 또 깔아주는 건 도움이 아니라 짐이다.**
 3. **묻기 (AskUserQuestion, 필수)**: 설치할 가드를 multiSelect로 고르게
    한다. 사용자는 대개 입문자다 — 아래를 지켜라.
    - **쉬운 말로.** 전문용어(complexity·max-depth·dpdm·exit 1·no-any·
@@ -84,7 +91,8 @@ user-invocable: false   # 사용자 표면은 /hi-vibe:* 명령 10개다. 스킬
 **Python** (`templates/ruff-snippet.toml`, `mypy-snippet.toml`,
 `importlinter-snippet.toml`):
 - ruff: C901 복잡도 ≤10, PLR0913 인자 수, E/F 기본
-- mypy: strict (입문자 프로젝트면 단계 적용 제안)
+- mypy: strict (입문자 프로젝트면 단계 적용 제안). **`basedpyright`·`pyright`가
+  이미 있으면 이 항목은 목록에서 뺀다** — 이유를 한 줄로 밝히고 넘어간다.
 - import-linter: 레이어 계약 — **실제 디렉터리와 import 관계를 보고**
   레이어 초안을 만들어 사용자와 확인한다(CLAUDE.md에 폴더 목록을 두지
   않으므로 거기서 읽지 않는다). 순환·경계 위반 시 실패.

@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.29.0] - 2026-08-01
+<!-- show:ko **남의 실제 저장소에서 처음으로 오탐 두 가지가 드러났어요.** Python 파일 301개짜리 프로젝트에 돌려본 결과인데, ①셸 스크립트에서만 불리는 진입점이 전부 "안 쓰는 코드"로 잡혔고 ②`Protocol` 인터페이스 선언이 "중복 구현"으로 잡혔습니다. 둘 다 스캐너가 헛짚은 것이고, 이유가 뻔한 종류라 고쳤어요. 후보가 시끄러우면 사용자가 전부 무시하고, 그러면 진짜도 같이 묻힙니다. 그리고 `gate`가 `basedpyright`를 몰라서 이미 타입체커가 있는 프로젝트에 mypy를 또 권하던 것도 고쳤습니다. -->
+<!-- show:en **Two false positives showed up the first time someone ran this on a real outside repository.** On a project with 301 Python files: (1) entry points only ever called from shell scripts were all reported as unused code, and (2) `Protocol` interface declarations were reported as duplicate implementations. Both are the scanner guessing wrong for an obvious reason, so both are fixed — noisy candidates get ignored wholesale, and the real ones get buried with them. `gate` also learned about `basedpyright`, so it stops offering mypy to projects that already type-check. -->
+
+### Fixed
+- **셸·Makefile에서만 불리는 코드를 죽은 코드로 오판** (2026-08-01) — 증상: 배포·데모 스크립트가 문자열로 호출하는 진입점이 미참조 후보로 잡혔다. 원인: 참조를 세는 파일 목록(`TEXT_EXT`)에 `.sh`가 없었다 — 파이썬이 아니라서 심볼은 못 뽑지만 **이름이 나오면 그건 진짜 참조**다. `REFERENCE_ONLY_EXT`(`.sh`·`.bash`·`.zsh`·`.fish`·`.mk`·`.sql`·`.cfg`·`.ini`·`.txt`)와 `REFERENCE_ONLY_NAMES`(`Makefile`·`Dockerfile`·`Procfile`·`justfile`)를 추가했다. **참조로만 세고 크기·비밀키 검사 대상에는 넣지 않는다** — 긴 배포 스크립트를 "정리 후보"로 올릴 이유가 없다. `find`(이미 있나 검색)도 같이 본다: 거기서만 불리는 걸 못 찾으면 "없다"고 답하고 같은 걸 또 만들게 된다.
+- **`Protocol`·ABC 선언을 중복 구현으로 오판** (2026-08-01) — 증상: 인터페이스가 많은 저장소일수록 중복 후보가 쏟아졌다. 원인: 스텁(`...`·`pass`·`raise NotImplementedError`)도 정규화 AST가 같으면 중복으로 셌다. **선언은 구현이 아니다** — 스텁 둘이 같은 건 당연하다. 이미 있던 `_looks_wip()` 판정을 중복 탐지에서도 재사용한다(규칙을 두 벌 두지 않는다). 진짜 중복은 그대로 잡히는지 회귀 테스트로 고정했다.
+- **`gate`가 `basedpyright`를 모름** (2026-08-01) — 스킬은 "기존 설정을 먼저 읽는다"고 하면서 타입체커는 mypy만 봤다. `basedpyright`·`pyright` 설정(`[tool.basedpyright]`·`pyrightconfig.json` 등)이 있으면 **mypy를 목록에서 빼고 이유를 밝힌다** — 타입체커 둘을 돌리면 서로 다른 소리를 한다. 비밀키도 `gitleaks`·`detect-secrets`가 있으면 같다. **겹치는 걸 또 깔아주는 건 도움이 아니라 짐이다.**
+
+### Added
+- **실제 저장소에서 나온 오탐 회귀 테스트 5개** (2026-08-01) — 셸/Makefile 참조가 dead 판정을 구제하는지, 셸 스크립트가 크기 검사에는 안 걸리는지, Protocol 스텁이 중복에서 빠지는지, **그리고 진짜 중복은 여전히 잡히는지**. 마지막 게 중요하다 — 오탐을 줄이다 놓치는 게 늘면 그건 개선이 아니다.
+
 ## [0.28.3] - 2026-08-01
 <!-- show:ko **새로 쓴 문구가 가르치는 말투였어요.** "안 맞는 분을 붙잡아 두는 것보다 여기서 걸러지는 게 서로 낫습니다" — 방문자를 걸러낼 대상으로 부르고, 뭐가 나은지까지 제가 단정하고 있었습니다. "제 말 말고, 코드를 보고 판단하세요"도 방어적이고 명령조였고요. 페이지 나머지는 "…돼요", "…잡아 줘요"처럼 부드러운데 이 둘만 튀었어요. 같은 말투로 맞췄습니다. -->
 <!-- show:en **The new copy came out lecturing.** "Better you rule it out here than find out three days in" cast the reader as something to be filtered, and decided for them what's better. "Don't take my word for it. Read the code." was defensive and commanding. The rest of the page is warm and explanatory; these two lines stuck out. They now match. -->

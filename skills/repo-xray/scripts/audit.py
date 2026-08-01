@@ -29,6 +29,12 @@ EXCLUDE_DIRS = {
 PY_EXT = {".py"}
 JS_EXT = {".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx", ".mts", ".cts"}
 TEXT_EXT = PY_EXT | JS_EXT | {".html", ".htm", ".css", ".json", ".md", ".yml", ".yaml", ".toml"}
+
+# 이름을 **문자열로** 부르는 자리들. 파이썬이 아니라서 심볼을 뽑지는 않지만,
+# 여기 이름이 나오면 그건 실제 참조다 — 안 세면 셸에서만 불리는 진입점이
+# 전부 "미참조 후보"로 잡힌다(실제 저장소에서 관측된 오탐).
+REFERENCE_ONLY_EXT = {".sh", ".bash", ".zsh", ".fish", ".mk", ".sql", ".cfg", ".ini", ".txt"}
+REFERENCE_ONLY_NAMES = {"Makefile", "makefile", "GNUmakefile", "Dockerfile", "Procfile", "justfile"}
 # Prose/style files. A mention here is documentation, not a call site — it
 # must never rescue a symbol from dead candidacy (otherwise the MODULE.md /
 # CHANGELOG.md this plugin mandates would mask dead code forever).
@@ -97,18 +103,26 @@ def is_minified(path):
 
 def collect_files(root):
     """Walk repo, return {ext_group: [paths]} and the full list of text files."""
-    py_files, js_files, text_files = [], [], []
+    py_files, js_files, text_files, ref_files = [], [], [], []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS and not d.startswith(".")]
         for fn in filenames:
             path = os.path.join(dirpath, fn)
             ext = os.path.splitext(fn)[1].lower()
-            if ext not in TEXT_EXT or is_minified(path):
+            ref_only = (ext in REFERENCE_ONLY_EXT
+                        or fn in REFERENCE_ONLY_NAMES
+                        or fn.startswith("Dockerfile."))
+            if (ext not in TEXT_EXT and not ref_only) or is_minified(path):
                 continue
             try:
                 if os.path.getsize(path) > 2_000_000:  # skip huge data blobs
                     continue
             except OSError:
+                continue
+            if ref_only:
+                # 참조 세기에만 쓴다 — 크기·비밀키 검사 대상은 그대로 둔다
+                # (셸 스크립트가 길다고 "정리 후보"로 올릴 이유는 없다).
+                ref_files.append(path)
                 continue
             text_files.append(path)
             if ext in PY_EXT:
@@ -117,7 +131,7 @@ def collect_files(root):
                 # .d.ts are ambient declarations (often generated) — count
                 # them as reference text but don't extract symbols from them
                 js_files.append(path)
-    return py_files, js_files, text_files
+    return py_files, js_files, text_files, ref_files
 
 
 def read_text(path):
@@ -467,8 +481,14 @@ def analyze_python(root, py_files):
                     "looks_wip": _looks_wip(node, src_lines),
                 })
                 # duplicate detection: same AST shape ignoring the function
-                # name AND local variable names (normalized dump)
-                if kind != "class" and length >= 4:
+                # name AND local variable names (normalized dump).
+                #
+                # **선언은 구현이 아니다.** Protocol·ABC의 스텁(`...`,
+                # `pass`, `raise NotImplementedError`)은 서로 같아 보이는 게
+                # 당연하고, 그걸 "중복 구현"으로 올리면 인터페이스가 많은
+                # 저장소일수록 후보가 쏟아진다(실제 저장소에서 관측). 같은
+                # 판정(`_looks_wip`)을 dead 후보 쪽과 공유한다.
+                if kind != "class" and length >= 4 and not symbols[-1]["looks_wip"]:
                     dump = normalized_dump(node)
                     meta = {
                         "name": node.name, "file": rel(root, path),
@@ -697,8 +717,10 @@ def test_coverage_report(root, code_files):
 # ---------- commands ----------
 
 def cmd_scan(root):
-    py_files, js_files, text_files = collect_files(root)
-    per_file, _total_counts = build_word_index(root, text_files)
+    py_files, js_files, text_files, ref_files = collect_files(root)
+    # 참조는 셸·Makefile까지 세고(문자열 호출도 진짜 참조다), 크기·비밀키
+    # 검사는 원래 대상만 본다.
+    per_file, _total_counts = build_word_index(root, text_files + ref_files)
     code_totals = code_counts(per_file)
 
     py_symbols, duplicates, near_dups, near_truncated, parse_errors = analyze_python(root, py_files)
@@ -816,10 +838,12 @@ def cmd_scan(root):
 
 
 def cmd_find(root, query):
-    py_files, js_files, text_files = collect_files(root)
+    py_files, js_files, text_files, ref_files = collect_files(root)
     pattern = re.compile(r"\b" + re.escape(query) + r"\b")
     hits = []
-    for path in text_files:
+    # "이미 있나" 검색은 셸·Makefile까지 본다 — 거기서만 불리는 진입점을
+    # 못 찾으면 "없다"고 답하고 같은 걸 또 만들게 된다.
+    for path in text_files + ref_files:
         for i, line in enumerate(read_text(path).splitlines(), 1):
             if pattern.search(line):
                 hits.append({"file": rel(root, path), "line": i, "text": line.strip()[:160]})

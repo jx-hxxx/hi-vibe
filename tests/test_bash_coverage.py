@@ -152,7 +152,7 @@ class SecretScanTest(unittest.TestCase):
         거짓 경보로 오염된다 — "우리 도구로 우리를 검사하면 11건"은
         그 자체로 신뢰 문제다."""
         finder, exts = audit.load_secret_finder()
-        _py, _js, text_files = audit.collect_files(REPO)
+        _py, _js, text_files, _ref = audit.collect_files(REPO)
         found = audit.secret_report(REPO, text_files, finder, exts)
         self.assertEqual(
             found, [],
