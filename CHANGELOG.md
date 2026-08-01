@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.26.1] - 2026-08-01
+<!-- show:ko **리뷰가 스스로 스코프 크립을 만들고 있었어요.** 자기 점검 루프가 "⚠️는 그 자리에서 고쳐라"라고만 해서, 명백한 버그든 새로운 정책이든 가리지 않고 다 고쳤습니다. 실제 사용에서 "권한이 없으면 회의당 한 번 안내 메시지를 보내자"처럼 **사용자가 요청한 적 없는 동작**을 리뷰가 만들어 넣었어요. 이 플러그인이 막으려는 증상("헷갈리는 결정을 묻지 않고 임의 진행")을 리뷰가 직접 저지른 겁니다. 이제 고치기 전에 "이걸 고치면 여태 없던 화면·메시지·규칙이 생기는가"를 묻고, 생기면 확인받습니다. 보고가 길어지던 것도 같이 줄였어요. -->
+<!-- show:en **The review was generating its own scope creep.** The self-fix loop just said "fix every ⚠️ on the spot", so it made no distinction between a plain bug and a brand-new product policy. In real use it invented behaviour nobody asked for — "send one notice per meeting when permissions are missing". That is precisely the symptom this plugin exists to prevent (deciding something ambiguous without asking), committed by the review itself. It now asks first: does fixing this create a screen, message or rule the user has never seen? If so, it reports and waits. Report length is trimmed too. -->
+
+### Fixed
+- **자동 수정 루프가 기능 확장으로 번짐** (2026-08-01) — 증상: 디스코드 봇 도그푸딩에서, 리뷰가 버그 수정과 함께 **새 사용자 알림 정책**까지 만들어 넣었다. 원인: 자기 점검 루프 지시가 "⚠️는 그 자리에서 고쳐 ✅로 만든다"뿐이라 **결함과 새 정책을 가르는 기준이 없었다.** 이제 고치기 전에 둘로 나눈다 — ①원래 요구사항을 어긴 결함(예: 일부만 저장됐는데 전부 성공으로 표시) → 바로 수정 ②새 동작·알림·정책이 필요한 것(예: 권한 없을 때 안내 메시지 신설) → 발견 사실과 대안을 보고하고 확인. 기준 한 줄: **"이걸 고치면 사용자가 여태 못 보던 화면·메시지·규칙이 새로 생기는가"**. `fresh-eyes`가 잡으라고 있는 스코프 크립을 같은 리뷰가 만들어내던 자기모순을 끊었다.
+
+### Changed
+- **리뷰 보고 길이** (2026-08-01) — 같은 결함이 체크리스트·`👋` 줄·요약에서 반복 설명되고, **묻지도 않은 소요 시간 해명**이 붙었다(스킬에 없는 지시인데 에이전트가 스스로 변명한 것). 규칙을 넣었다: 같은 내용은 가장 구체적인 자리 한 곳에만 · ✅는 나열하지 말고 "그 외 항목 통과"로 묶기 · 시간은 변명 말고 사실 한 줄 · 끝에 "가볍게 봐줘" 안내 한 번. **줄이는 건 중복과 변명이지 내용이 아니다** — ⚠️가 많거나 fresh-eyes가 재고를 권하면 당연히 길어진다. `👋` catch 줄은 남긴다(뒤에서 조용히 잡으면 체감이 안 된다는 이유로 넣은 것이라, 짧게 만든다고 없앨 자리가 아니다).
+
 ## [0.26.0] - 2026-08-01
 <!-- show:ko **파일을 통째로 지운 변경이 리뷰를 그냥 통과했어요.** 리뷰 범위를 "지금 존재하는 파일"로만 잡고 있어서, AI가 파일을 삭제하면 아무것도 안 걸렸습니다. 부르던 곳이 남아 있으면 런타임에 터지는데도요. 이제 지운 파일도 범위에 넣고, "이 파일들을 부르던 곳이 남아 있는지 확인하라"고 리뷰에 지시합니다. 그리고 슬래시 메뉴에 hi-vibe 항목이 16개 나오던 것을 10개로 줄였어요 — 내부 스킬 6개는 엔진이지 버튼이 아니라서 숨겼습니다(Claude는 여전히 알아서 부릅니다). -->
 <!-- show:en **Deleting a file whole slipped past the review entirely.** Review scope only ever looked at files that currently exist, so when the AI removed one, nothing caught it — even though leftover callers blow up at runtime. Deleted files are now part of the scope, and the review is told to go looking for callers that survived. Also, hi-vibe was showing 16 entries in the slash menu; it's 10 now — the 6 internal skills are engines, not buttons, so they're hidden (Claude still loads them on its own). -->
