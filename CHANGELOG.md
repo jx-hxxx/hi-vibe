@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.24.2] - 2026-08-01
+<!-- show:ko **랜딩 "세 겹" 설명에 handover 과장이 한 군데 남아 있었어요.** 앞 릴리스에서 "맥락을 안 잃게 해준다"를 "이어갈 단서를 남긴다"로 고쳤는데, 세 겹 설명 안의 "대화가 새로 시작돼도 앞 내용을 까먹지 않아요"는 그대로였습니다. 자동 기록은 최근 요청 5개(각 120자)와 파일·Git·테스트 상태라 "안 까먹는다"는 사실이 아니에요. -->
+<!-- show:en **One handover overstatement was still sitting in the landing page's three-layer section.** The previous release changed "never loses your context" to "leaves enough to pick up from," but the three-layer copy still said "a fresh chat never loses the thread." What's auto-recorded is your last 5 requests (120 chars each) plus file, Git and test state — "never loses" isn't true. -->
+
+### Fixed
+- **랜딩 세 겹 설명의 handover 과장** (2026-08-01) — 한국어 "대화가 새로 시작돼도 앞 내용을 까먹지 않아요", 영어 "a fresh chat never loses the thread"가 남아 있었다. v0.23.0에서 문서 설명은 고쳤지만 이 섹션은 다른 문구라 검색에 안 걸렸다. "이어갈 단서가 남아 있어요" / "has enough to pick up from"으로 교체.
+
+### Verified
+- **README·랜딩 전면 재점검** (2026-08-01) — 오늘 제거한 것들의 잔재 0건: CLAUDE.md 폴더 지도, CHANGELOG 지연 생성, 없앤 플래그(`--all`·`--deep`·`--ci`), 옛 에이전트 이름. 구조 개수(명령 10·스킬 6·에이전트 2·훅 4) 실제와 일치. 한/영 대칭 전 항목 동일(기능 카드 9·빠른시작 7·정직함 노트 5·펼침 노트 4·카드 그룹 3·계층 3·자동 배지 5·직접 배지 5), README 헤딩 35개 동일. 카드 그룹별 성격 대조에서 AUTO 그룹의 `직접` 0건·MANUAL 그룹의 `자동` 0건. 목차 링크·랜딩 앵커·표 행 깨짐 0건, HTML 태그 균형 정상, 테스트 142개 통과.
+
 ## [0.24.1] - 2026-08-01
 <!-- show:ko **문서 정합성을 내세우는 플러그인이 자기 문서에서 모순을 냈어요.** 앞 릴리스에서 CLAUDE.md의 폴더 지도를 없앴는데, **세션마다 주입되는 규율 문구**에는 "구조가 바뀌면 CLAUDE.md 지도 동기화"가 그대로 남아 있었습니다. 없앤 기능을 훅이 매 세션 다시 요구하고 있었던 거예요. README·랜딩의 CLAUDE.md 설명도 여전히 "폴더 구조"라고 적혀 있었고요. 그리고 우리 도구로 우리 저장소를 검사하면 **"비밀키 11건"**이 떴습니다 — 전부 테스트용 가짜 키인데, 한 줄이 두 패턴에 걸려 6곳이 11건으로 부풀려진 것이었어요. 이제 0건입니다. -->
 <!-- show:en **A plugin that sells doc consistency contradicted its own docs.** The previous release dropped the folder map from CLAUDE.md, but the discipline text injected at every session start still said "keep the CLAUDE.md map in sync when structure changes" — a hook asking, every session, for the thing we just removed. The README and landing page still described CLAUDE.md as holding the folder structure too. And scanning our own repo with our own tool reported **11 hardcoded secrets** — all test fixtures, and 6 real locations inflated to 11 because a single line matched two patterns. It reports 0 now. -->
