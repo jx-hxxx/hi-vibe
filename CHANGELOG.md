@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.29.1] - 2026-08-01
+<!-- show:ko **기능 카드 세 열의 높이가 안 맞던 것을 고쳤어요.** 가운데 열만 아래로 길게 내려가고 좌우는 비어 보였는데, 원인은 레이아웃이 아니라 **카드 하나가 너무 길어서**였습니다. 짧은 카드는 95자인데 긴 건 213자였어요. 한 카드에 네 가지를 설명하고 있어서, 다른 데 이미 적힌 것들을 덜어냈습니다. 이제 세 열이 288·330·330자로 비슷해요. 히어로 문장과 제목 두 개의 줄바꿈도 같이 다듬었습니다. -->
+<!-- show:en **The three feature columns no longer end at wildly different heights.** The middle one ran far past the others, and the cause wasn't the layout — one card was simply too long (213 characters against 95 for the short ones). It was explaining four separate things, so the parts already covered elsewhere were cut. The columns now sit at comparable lengths. Hero and two headings had their line breaks tidied at the same time. -->
+
+### Fixed
+- **기능 카드 열 높이 불균형** (2026-08-01) — 증상: 가운데 열만 아래로 길게 내려가 좌우가 비어 보였다. 원인: CSS가 아니라 **본문 길이**였다 — `안전벨트가 풀리면 알려줘요` 213자, `딴 클로드가 설계 재검토` 190자, `구조 점검` 180자 대 나머지 91~111자. 긴 카드들이 **한 자리에서 네 가지를 설명**하고 있었다(fail-open·heartbeat·CI·doctor). 다른 데 이미 적힌 것(doctor 동작, "GitHub 알림함은 쌓이면 신호가 못 된다"는 이유, "붙잡는 건 기계" 단서)을 덜어 117·122·119자로 줄였다. 열 합계 288·330·330자. **카드는 요약이고 상세는 아래 섹션에 있다** — 카드에 다 넣으려 하면 이렇게 된다. 영문도 같이(573·710·600).
+- **히어로 문장이 어중간하게 끊기던 것** (2026-08-01) — `…입문자·1인 개발자를 / 위한 안전벨트예요.`로 넘어가 마지막 조각만 남았다. `만드는 / 입문자·1인 개발자를 위한 안전벨트예요.`로 끊었다. 한·영 모두.
+- **제목 두 개를 한 줄로** (2026-08-01) — `이런 불편을<br>겪고 있다면`, `내 프로젝트에서는<br>무엇을 도와줄까요?`의 강제 줄바꿈 제거.
+
 ## [0.29.0] - 2026-08-01
 <!-- show:ko **남의 실제 저장소에서 처음으로 오탐 두 가지가 드러났어요.** Python 파일 301개짜리 프로젝트에 돌려본 결과인데, ①셸 스크립트에서만 불리는 진입점이 전부 "안 쓰는 코드"로 잡혔고 ②`Protocol` 인터페이스 선언이 "중복 구현"으로 잡혔습니다. 둘 다 스캐너가 헛짚은 것이고, 이유가 뻔한 종류라 고쳤어요. 후보가 시끄러우면 사용자가 전부 무시하고, 그러면 진짜도 같이 묻힙니다. 그리고 `gate`가 `basedpyright`를 몰라서 이미 타입체커가 있는 프로젝트에 mypy를 또 권하던 것도 고쳤습니다. -->
 <!-- show:en **Two false positives showed up the first time someone ran this on a real outside repository.** On a project with 301 Python files: (1) entry points only ever called from shell scripts were all reported as unused code, and (2) `Protocol` interface declarations were reported as duplicate implementations. Both are the scanner guessing wrong for an obvious reason, so both are fixed — noisy candidates get ignored wholesale, and the real ones get buried with them. `gate` also learned about `basedpyright`, so it stops offering mypy to projects that already type-check. -->
