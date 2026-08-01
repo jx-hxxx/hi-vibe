@@ -50,10 +50,24 @@ SCOPE_LABELS = {
 
 
 def _code_files(root, names):
-    """이름 집합에서 실제로 존재하는 코드 파일만 (삭제분 제외)."""
+    """이름 집합에서 **지금 존재하는** 코드 파일만."""
     out = []
     for f in names:
         if f and f.lower().endswith(CODE_EXT) and os.path.isfile(os.path.join(root, f)):
+            out.append(f)
+    return sorted(out)
+
+
+def _deleted_code_files(root, names):
+    """이름 집합 중 **사라진** 코드 파일.
+
+    예전엔 존재하는 파일만 보느라 삭제가 리뷰를 그냥 통과했다. AI가 파일을
+    통째로 지운 경우가 오히려 위험한데(호출부가 남아 있으면 런타임에 터진다)
+    아무도 안 봤다. 지운 건 열어볼 수 없으므로 "무엇이 사라졌나"만 넘기고,
+    남은 호출부 확인은 리뷰가 한다."""
+    out = []
+    for f in names:
+        if f and f.lower().endswith(CODE_EXT) and not os.path.isfile(os.path.join(root, f)):
             out.append(f)
     return sorted(out)
 
@@ -76,32 +90,29 @@ def scope(root):
     names = _diff_names(root, "HEAD")
     for line in _git(["ls-files", "--others", "--exclude-standard"], root).splitlines():
         names.add(line.strip())
-    files = _code_files(root, names)
-    if files:
-        return "uncommitted", "HEAD", files
+    files, gone = _code_files(root, names), _deleted_code_files(root, names)
+    if files or gone:
+        return "uncommitted", "HEAD", files, gone
 
     if _rev_exists(root, "@{upstream}"):
-        files = _code_files(root, _diff_names(root, "@{upstream}"))
-        if files:
-            return "unpushed", "@{upstream}", files
+        names = _diff_names(root, "@{upstream}")
+        files, gone = _code_files(root, names), _deleted_code_files(root, names)
+        if files or gone:
+            return "unpushed", "@{upstream}", files, gone
 
     if _rev_exists(root, "HEAD~1"):
-        files = _code_files(root, _diff_names(root, "HEAD~1"))
-        if files:
-            return "last_commit", "HEAD~1", files
+        names = _diff_names(root, "HEAD~1")
+        files, gone = _code_files(root, names), _deleted_code_files(root, names)
+        if files or gone:
+            return "last_commit", "HEAD~1", files, gone
     elif _rev_exists(root, "HEAD"):
         # 커밋이 하나뿐 = 그 커밋이 저장소 전체다 (비교 대상이 없음).
         tracked = {ln.strip() for ln in _git(["ls-files"], root).splitlines()}
         files = _code_files(root, tracked)
         if files:
-            return "last_commit", None, files
+            return "last_commit", None, files, []
 
-    return "none", None, []
-
-
-def changed_code_files(root):
-    """현재 계단에서 리뷰 대상이 되는 코드 파일 (하위호환 진입점)."""
-    return scope(root)[2]
+    return "none", None, [], []
 
 
 def content_hash(path):
@@ -160,19 +171,24 @@ def _split_reviewed(root, files):
 
 def _pending(root):
     """아직/다시 봐야 할 코드 파일 + 줄 수를 셀 기준점."""
-    _, base, files = scope(root)
+    _, base, files, _gone = scope(root)
     return _split_reviewed(root, files)[0], base
 
 
-def _fingerprint(root, files):
+def _fingerprint(root, files, deleted=()):
     """리뷰 대상의 내용 지문. Stop 훅이 "같은 변경으로 두 번 막지 않기"에
-    쓴다 — 사용자가 한 번 넘겼으면 코드가 실제로 바뀌기 전엔 조용해야 한다."""
-    if not files:
+    쓴다 — 사용자가 한 번 넘겼으면 코드가 실제로 바뀌기 전엔 조용해야 한다.
+
+    삭제된 파일도 지문에 넣는다. 안 넣으면 "파일만 지운 변경"이 빈 지문이
+    되어 훅이 아예 막지 못한다."""
+    if not files and not deleted:
         return ""
     h = hashlib.sha1()
     for f in sorted(files):
         h.update(f.encode("utf-8"))
         h.update(content_hash(os.path.join(root, f)).encode("utf-8"))
+    for f in sorted(deleted):
+        h.update(("deleted:" + f).encode("utf-8"))
     return h.hexdigest()
 
 
@@ -195,18 +211,21 @@ def save_state(root, data):
 
 
 def cmd_list(root):
-    tier, base, files = scope(root)
+    tier, base, files, deleted = scope(root)
     to_review, skipped = _split_reviewed(root, files)
     sizes = changed_lines(root, set(to_review), base)
     print(json.dumps({
         "scope": tier,                 # 어느 계단에서 잡았나
         "scope_label": SCOPE_LABELS[tier],   # 사용자에게 그대로 보여줄 말
-        "fingerprint": _fingerprint(root, to_review),  # 훅의 재차단 방지용
+        "fingerprint": _fingerprint(root, to_review, deleted),  # 훅의 재차단 방지용
         "to_review": to_review,        # 파일명 배열 (하위호환 유지)
         "skipped": skipped,
         "sizes": sizes,                # {파일: 변경 줄 수} — 병렬 판단 근거
         "total_changed_lines": sum(sizes.values()),
+        # 지운 파일은 열어볼 수 없다 — 남은 호출부가 있는지만 확인하면 된다.
+        "deleted": deleted,
         "file_count": len(to_review),
+        "deleted_count": len(deleted),
     }, ensure_ascii=False, indent=2))
     return 0
 

@@ -51,6 +51,43 @@ class ReviewScopeTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.root, ignore_errors=True)
 
+    def test_deleted_file_is_reported(self):
+        """지운 파일도 리뷰 대상이다.
+
+        예전엔 "지금 존재하는 파일"만 봐서 삭제가 리뷰를 그냥 통과했다.
+        AI가 파일을 통째로 지운 경우가 오히려 위험한데(호출부가 남아 있으면
+        런타임에 터진다) 아무도 안 봤다."""
+        os.remove(os.path.join(self.root, "base.py"))
+        out = _list(self.root)
+        self.assertEqual(out["deleted"], ["base.py"])
+        self.assertEqual(out["deleted_count"], 1)
+
+    def test_deletion_only_still_has_a_fingerprint(self):
+        """지문이 비면 Stop 훅이 아예 막지 못한다 — 삭제만 있는 변경의 함정."""
+        os.remove(os.path.join(self.root, "base.py"))
+        out = _list(self.root)
+        self.assertEqual(out["to_review"], [])
+        self.assertTrue(out["fingerprint"], "삭제만 있는데 지문이 비었다")
+
+    def test_deleting_more_changes_the_fingerprint(self):
+        """지운 파일이 늘면 다른 변경이므로 다시 막아야 한다."""
+        _write(self.root, "second.py", "y = 2\n")
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "second")
+        os.remove(os.path.join(self.root, "base.py"))
+        one = _list(self.root)["fingerprint"]
+        os.remove(os.path.join(self.root, "second.py"))
+        two = _list(self.root)["fingerprint"]
+        self.assertNotEqual(one, two)
+
+    def test_deleted_non_code_file_is_ignored(self):
+        """문서를 지운 건 코드 리뷰 대상이 아니다."""
+        _write(self.root, "notes.md", "hi\n")
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "doc")
+        os.remove(os.path.join(self.root, "notes.md"))
+        self.assertEqual(_list(self.root)["deleted"], [])
+
     def test_new_code_file_needs_review(self):
         _write(self.root, "feat.py", "def a():\n    return 1\n")
         out = _list(self.root)

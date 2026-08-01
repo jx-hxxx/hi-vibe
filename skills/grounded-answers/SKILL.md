@@ -11,6 +11,7 @@ description: >-
   API, or platform-behavior facts from memory (training data goes stale).
   Applies in casual chat and troubleshooting too, not only coding tasks.
   Prevents silent unilateral decisions and fabricated authoritative figures.
+user-invocable: false   # 사용자 표면은 /hi-vibe:* 명령 10개다. 스킬까지 슬래시 메뉴에 나오면 16개가 되어 "외울 게 적다"는 약속이 깨진다. Claude의 자동 호출은 그대로 유지된다.
 ---
 
 # grounded-answers

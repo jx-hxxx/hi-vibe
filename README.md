@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 163 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 167 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -219,7 +219,7 @@ itself will keep improving in `/code-review` — that's the right place for it.
 
 ## Why is it trustworthy?
 
-### 163 automated tests
+### 167 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
@@ -236,6 +236,13 @@ is missing or something is misconfigured, a disabled feature can go unnoticed.
 
 Instead of only checking whether files exist, `/hi-vibe:doctor` actually runs the
 4 hooks and the scanner and shows the result as ✅/❌.
+
+**The automatic check is shallower than this.** What runs by itself when you
+start coding only looks at three things: whether hi-vibe is on here, whether
+the SessionStart hook's heartbeat is recent, and whether any `.env` is tracked
+by Git. If SessionStart is alive, a broken PostToolUse or Stop hook can still
+read as fine. **Run `/hi-vibe:doctor` yourself right after install, and
+whenever something feels off.**
 
 ### Per-project opt-in
 
@@ -364,9 +371,12 @@ treat them as review leads, not reimplementation bugs.
 ## Optional quality gate: `gate`
 
 ```text
-/hi-vibe:gate       # install local checkers
-/hi-vibe:gate  # local checkers + a push gate when the project is on GitHub
+/hi-vibe:gate
 ```
+
+Run it once. It installs the local checkers and, **when the project is on
+GitHub**, offers a push-time gate as well — there's no flag to choose between
+them.
 
 `check` is a **diagnostic** you run when needed; `gate` is a **standing gate**
 you install once per project.

@@ -86,13 +86,21 @@ def _remember_block(flag_dir, fingerprint):
 def review_reason(scope):
     """차단 사유 = 에이전트가 받을 지시. 무엇을·왜·어떻게 끝내는지까지 담는다."""
     files = scope.get("to_review", [])
-    shown = ", ".join(files[:8])
+    gone = scope.get("deleted", [])
+    shown = ", ".join(files[:8]) if files else "(수정된 파일 없음)"
     more = "" if len(files) <= 8 else f" 외 {len(files) - 8}개"
+    deleted_line = ""
+    if gone:
+        # 지운 파일은 열어볼 수 없다 — 남은 호출부가 진짜 위험이다.
+        deleted_line = ("삭제된 코드 파일: " + ", ".join(gone[:8]) +
+                        ("" if len(gone) <= 8 else f" 외 {len(gone) - 8}개") +
+                        ". 이 파일들을 부르던 곳이 남아 있는지 반드시 확인하세요.\n")
     return (
         "hi-vibe: 아직 리뷰 안 받은 코드 변경이 있습니다 "
         f"({scope.get('scope_label', '')}, {scope.get('file_count', 0)}파일 "
         f"{scope.get('total_changed_lines', 0)}줄): {shown}{more}.\n"
-        "지금 write-gate 스킬의 `Mode: review`를 그대로 수행하세요 "
+        + deleted_line
+        + "지금 write-gate 스킬의 `Mode: review`를 그대로 수행하세요 "
         "(범위 계산 → 체크리스트 → fresh-eyes → mark).\n"
         "리뷰를 마치면 review_scope.py mark 로 표시해야 이 알림이 멈춥니다.\n"
         "단, 사용자가 방금 '넘어가'/'나중에'/'가볍게'라고 했으면 그 뜻을 "
@@ -123,7 +131,7 @@ def main(payload):
     #    으로 지나갔다 (리뷰도, 삼킨 에러·비밀키 감지도 전부 건너뜀).
     if code_edits or _common.bash_wrote_files(transcript):
         scope = review_scope(cwd)
-        if scope and scope.get("to_review"):
+        if scope and (scope.get("to_review") or scope.get("deleted")):
             fingerprint = scope.get("fingerprint") or ""
             if fingerprint and not _already_blocked(flag_dir, fingerprint):
                 _remember_block(flag_dir, fingerprint)

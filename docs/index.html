@@ -350,7 +350,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>163</b><span>자동 회귀 테스트</span></div>
+      <div><b>167</b><span>자동 회귀 테스트</span></div>
       <div><b>4종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -606,10 +606,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
           <tr><td><code>root-cause-first</code></td><td>(자동) 버그·에러 고칠 때</td><td>땜빵 대신 근본 원인</td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>스킬은 Claude Code가 <code>/스킬이름</code> 슬래시로도 자동 노출해요.</b><br>
-        hi-vibe가 제공하는 건 <code>check</code>·<code>find</code> 같은 <b>쉬운 명령어 10개</b>예요.<br>
-        여기에 Claude Code가 <b>스킬 6개를 각각 <code>/repo-xray</code>처럼</b> 슬래시로 자동으로 열어둬요.<br>
-        그래서 같은 엔진(repo-xray)을 세 갈래로 부를 수 있어요 — <b>① <code>check</code> 명령어 · ② <code>/repo-xray</code> 슬래시 · ③ “중복 찾아줘”라고 말하면 AI가 <code>Skill()</code>로.</b><br>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>슬래시 메뉴에는 명령어 10개만 나와요.</b><br>
+        스킬 6개는 엔진이지 버튼이 아니라서, <b>메뉴에서 일부러 숨겨놨어요</b>(<code>user-invocable: false</code>). 안 그러면 메뉴에 16개가 뜨는데, 그건 "외울 게 적다"는 이 플러그인의 약속과 정반대예요.<br>
+        <b>숨겼다고 안 도는 건 아닙니다</b> — Claude는 여전히 알아서 불러요. 같은 엔진(repo-xray)을 부르는 길은 둘이에요: <b>① <code>check</code> 명령어 · ② “중복 찾아줘”라고 말하면 AI가 알아서.</b><br>
         <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표라, 명령어든 스킬이든 다 그 밑에 붙어요.<br>
         참고: <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌리는 진단 명령이에요.</div></div>
     </section>
@@ -620,9 +619,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.26.0<small>2026-08-01</small></div><div class="h"><b>파일을 통째로 지운 변경이 리뷰를 그냥 통과했어요.</b> <span>리뷰 범위를 "지금 존재하는 파일"로만 잡고 있어서, AI가 파일을 삭제하면 아무것도 안 걸렸습니다. 부르던 곳이 남아 있으면 런타임에 터지는데도요. 이제 지운 파일도 범위에 넣고, "이 파일들을 부르던 곳이 남아 있는지 확인하라"고 리뷰에 지시합니다. 그리고 슬래시 메뉴에 hi-vibe 항목이 16개 나오던 것을 10개로 줄였어요 — 내부 스킬 6개는 엔진이지 버튼이 아니라서 숨겼습니다(Claude는 여전히 알아서 부릅니다).</span></div></div>
         <div class="rel"><div class="v">v0.25.1<small>2026-08-01</small></div><div class="h"><b>어제 넣은 `.env` 검사가 경계에서 틀렸어요.</b> <span>`.env`로 시작하는 이름을 전부 잡느라 direnv 설정 파일인 `.envrc`까지 "키를 폐기하세요"라고 했고, `.gitignore`에서는 `.env`라는 글자만 찾아서 주석(`# .env`)이나 무시 해제(`!.env`)까지 안전하다고 판정했습니다. 둘 다 실제로는 정반대예요. 이제 파일명은 정확히 `.env`이거나 `.env.`으로 시작하는 것만 보고, 무시 여부 판정은 **Git에게 직접 물어봅니다**. 테스트가 없어서 들어온 버그라 경계값 17개를 고정했어요. 그리고 이 검사는 전체 doctor에서만 돌아서 **이미 쓰던 프로젝트는 영영 모를 수 있었는데**, 이제 세션 시작 때 자동으로 확인합니다.</span></div></div>
         <div class="rel"><div class="v">v0.25.0<small>2026-08-01</small></div><div class="h"><b>`.env`가 Git에 올라가면 아무도 못 잡던 구멍을 막았어요.</b> <span>비밀키 검사는 `.env`를 "키를 둬도 되는 자리"로 보고 검사에서 뺍니다. 그런데 그 파일을 `.gitignore`에 안 넣고 커밋해버리면 훅도 스캐너도 안 봐요 — 입문자가 실제로 자주 밟는 자리인데 검사망 자체가 없었습니다. 이제 `doctor`가 추적 중인 `.env`를 찾아 실패로 알리고(이미 push했으면 키를 폐기하라고 함께), `init`이 `.gitignore`에 넣습니다. 파일 내용은 읽지 않아요 — 이름만 봅니다. 그리고 **한 번 과장으로 판명된 문장이 다시 못 들어오게** 테스트로 막았습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.24.4<small>2026-08-01</small></div><div class="h"><b>문서를 주장 단위로 한 번에 훑었어요.</b> <span>지금까지는 틀린 걸 발견할 때마다 하나씩 고쳤고, 그래서 계속 나왔습니다. 이번엔 hi-vibe가 하는 주장(handover는 무엇을 남기나 · CHANGELOG는 언제 생기나 · 훅은 무엇을 보나 …)을 목록으로 만들어, 각 주장이 적힌 자리를 전부 모아 코드와 대조했어요. 마지막 과장 하나가 나왔습니다 — "코드 쓸 때마다 에러 삼킴·비밀키를 잡아요"는 사실이 아닙니다. 훅은 Write/Edit만 보고, Bash로 쓴 파일은 못 봐요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -682,7 +681,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>163</b><span>automated regression tests</span></div>
+      <div><b>167</b><span>automated regression tests</span></div>
       <div><b>4</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -938,10 +937,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
           <tr><td><code>root-cause-first</code></td><td>(auto) when fixing a bug/error</td><td>Root cause, not a band-aid</td></tr>
         </tbody>
       </table></div></div>
-      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>Claude Code also exposes each skill as a <code>/skill-name</code> slash.</b><br>
-        hi-vibe ships <b>10 friendly commands</b> (<code>check</code>, <code>find</code>…).<br>
-        On top of that, Claude Code auto-opens <b>each of the 6 skills as a slash like <code>/repo-xray</code></b>.<br>
-        So the same engine (repo-xray) can be reached three ways — <b>① the <code>check</code> command · ② the <code>/repo-xray</code> slash · ③ saying “find duplicates” so the AI loads it with <code>Skill()</code>.</b><br>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>Only the 10 commands show up in the slash menu.</b><br>
+        The 6 skills are engines, not buttons, so they're <b>deliberately hidden</b> from the menu (<code>user-invocable: false</code>). Otherwise you'd see 16 hi-vibe entries — the opposite of this plugin's promise that there's little to remember.<br>
+        <b>Hidden doesn't mean off</b> — Claude still loads them on its own. There are two ways to reach the same engine (repo-xray): <b>① the <code>check</code> command · ② saying “find duplicates” and letting the AI pick it up.</b><br>
         The <code>hi-vibe:</code> prefix just means “belongs to this plugin”, so commands and skills both sit under it.<br>
         Note: <code>doctor</code> is a diagnostic that runs the hooks/scanner directly, with no skill.</div></div>
     </section>
@@ -952,9 +950,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.26.0<small>2026-08-01</small></div><div class="h"><b>Deleting a file whole slipped past the review entirely.</b> <span>Review scope only ever looked at files that currently exist, so when the AI removed one, nothing caught it — even though leftover callers blow up at runtime. Deleted files are now part of the scope, and the review is told to go looking for callers that survived. Also, hi-vibe was showing 16 entries in the slash menu; it's 10 now — the 6 internal skills are engines, not buttons, so they're hidden (Claude still loads them on its own).</span></div></div>
         <div class="rel"><div class="v">v0.25.1<small>2026-08-01</small></div><div class="h"><b>The `.env` check added yesterday was wrong at the edges.</b> <span>It matched anything starting with `.env`, so direnv's `.envrc` got told to rotate its keys, and it looked for the literal string `.env` in `.gitignore`, so a comment (`# .env`) or an un-ignore rule (`!.env`) both read as safe. Both are the exact opposite of safe. Filenames are now matched as exactly `.env` or a `.env.` prefix, and whether Git ignores it is a question **asked of Git itself**. These slipped in because there were no tests, so 17 edge cases are now pinned. The check also only ran in the full doctor, meaning **an existing project could never find out** — it now runs automatically at session start.</span></div></div>
         <div class="rel"><div class="v">v0.25.0<small>2026-08-01</small></div><div class="h"><b>Closed the gap where a committed `.env` was invisible to everything.</b> <span>The secret scan treats `.env` as a legitimate place to keep keys, so it skips it. But if that file never makes it into `.gitignore` and gets committed, neither the hook nor the scanner ever looks at it — a mistake beginners actually make, with no net under it at all. `doctor` now reports tracked `.env` files as a failure (and says to rotate the keys if you already pushed), and `init` adds them to `.gitignore`. It never reads the contents — only the names. Also: sentences already found to be overstatements are now blocked by a test.</span></div></div>
-        <div class="rel"><div class="v">v0.24.4<small>2026-08-01</small></div><div class="h"><b>Swept the docs one claim at a time, in a single pass.</b> <span>Until now each wrong line was fixed as it surfaced, which is why they kept surfacing. This time every claim hi-vibe makes (what handover records, when CHANGELOG appears, what the hooks see, …) was listed, every place it is stated was gathered, and each was checked against the code. One last overstatement fell out: "every code write is checked for swallowed errors and secrets" isn't true. The hook only sees Write/Edit; files written through Bash are invisible to it.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

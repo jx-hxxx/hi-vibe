@@ -13,6 +13,7 @@ description: >-
   이렇게 했지?", "저번에 뭐까지 했더라", "이거 언제 바꿨지", "왜 이
   방식으로 결정했었지", why did we choose X — search the handover/archive/
   CHANGELOG records instead of guessing from memory.
+user-invocable: false   # 사용자 표면은 /hi-vibe:* 명령 10개다. 스킬까지 슬래시 메뉴에 나오면 16개가 되어 "외울 게 적다"는 약속이 깨진다. Claude의 자동 호출은 그대로 유지된다.
 ---
 
 # docs-keeper

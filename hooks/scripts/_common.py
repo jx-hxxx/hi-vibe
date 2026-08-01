@@ -321,6 +321,7 @@ _BASH_WRITE_RE = re.compile(
     r">>?\s*[^\s|&]"                     # > file, >> file
     r"|\btee\b|\bsed\b[^|]*\s-i"
     r"|\b(?:cp|mv|touch|install)\b"
+    r"|\brm\b"                          # 삭제도 코드 변경이다
     r"|<<-?\s*['\"]?\w+"                 # heredoc
     r"|\b(?:python3?|node|deno)\b[^|]*\s-[ce]\b"
 )

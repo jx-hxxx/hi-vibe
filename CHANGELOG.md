@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-08-01
+<!-- show:ko **파일을 통째로 지운 변경이 리뷰를 그냥 통과했어요.** 리뷰 범위를 "지금 존재하는 파일"로만 잡고 있어서, AI가 파일을 삭제하면 아무것도 안 걸렸습니다. 부르던 곳이 남아 있으면 런타임에 터지는데도요. 이제 지운 파일도 범위에 넣고, "이 파일들을 부르던 곳이 남아 있는지 확인하라"고 리뷰에 지시합니다. 그리고 슬래시 메뉴에 hi-vibe 항목이 16개 나오던 것을 10개로 줄였어요 — 내부 스킬 6개는 엔진이지 버튼이 아니라서 숨겼습니다(Claude는 여전히 알아서 부릅니다). -->
+<!-- show:en **Deleting a file whole slipped past the review entirely.** Review scope only ever looked at files that currently exist, so when the AI removed one, nothing caught it — even though leftover callers blow up at runtime. Deleted files are now part of the scope, and the review is told to go looking for callers that survived. Also, hi-vibe was showing 16 entries in the slash menu; it's 10 now — the 6 internal skills are engines, not buttons, so they're hidden (Claude still loads them on its own). -->
+
+### Fixed
+- **삭제된 파일이 리뷰 범위에서 빠짐** (2026-08-01) — 증상: AI가 `lib.py`를 지워도 Stop 훅이 안 막았다. 원인: `_code_files`가 `os.path.isfile`로 **존재하는 파일만** 걸렀고(주석에 "삭제분 제외"라고 명시돼 있었다), 삭제만 있는 변경은 지문까지 비어 훅이 판단할 근거가 없었다. `_deleted_code_files`를 만들어 `scope`가 삭제분도 돌려주고, 지문에도 넣는다(안 넣으면 "파일만 지운 변경"이 영영 안 막힌다). Stop 훅의 차단 사유에 **"이 파일들을 부르던 곳이 남아 있는지 반드시 확인하라"**를 넣었고, `write-gate`도 지운 파일은 열 수 없으니 **남은 호출부를 찾으라**고 지시한다. `rm`도 Bash 쓰기 신호에 추가했다. 회귀 테스트 4개.
+- **`gate` 예시가 같은 명령 두 줄** (2026-08-01) — 한/영 README 모두 `--ci` 시절 잔재로 두 줄이 동일했다. 한 줄로 합치고 "GitHub 프로젝트면 push 관문까지 같이 제안한다(고를 플래그 없음)"로 설명했다.
+- **미사용 호환 함수 제거** (2026-08-01) — `changed_code_files()`.
+
+### Changed
+- **내부 스킬 6개를 슬래시 메뉴에서 숨김** (2026-08-01) — 명령 10개 + 스킬 6개가 전부 노출돼 메뉴에 hi-vibe 항목이 **16개** 보였다. "외울 게 적다"는 약속과 정반대라, 스킬에 `user-invocable: false`를 넣었다(Claude의 자동 호출은 그대로). 랜딩의 "같은 엔진을 세 갈래로 부를 수 있다"도 실제와 맞게 두 갈래로 고쳤다 — 숨긴 뒤에도 그 문장을 두면 그게 거짓말이 된다.
+- **자동 확인과 전체 doctor의 경계를 문서에 명시** (2026-08-01) — 자동으로 도는 `--quick`은 ①hi-vibe 활성 ②SessionStart heartbeat ③추적된 `.env` 셋만 본다. **SessionStart가 살아 있으면 나머지 훅이 고장 나도 "정상"으로 보인다.** 설치 직후와 이상할 때는 `/hi-vibe:doctor`를 직접 돌려야 한다는 것을 한/영 README에 적었다.
+- 테스트 163 → 167개.
+
 ## [0.25.1] - 2026-08-01
 <!-- show:ko **어제 넣은 `.env` 검사가 경계에서 틀렸어요.** `.env`로 시작하는 이름을 전부 잡느라 direnv 설정 파일인 `.envrc`까지 "키를 폐기하세요"라고 했고, `.gitignore`에서는 `.env`라는 글자만 찾아서 주석(`# .env`)이나 무시 해제(`!.env`)까지 안전하다고 판정했습니다. 둘 다 실제로는 정반대예요. 이제 파일명은 정확히 `.env`이거나 `.env.`으로 시작하는 것만 보고, 무시 여부 판정은 **Git에게 직접 물어봅니다**. 테스트가 없어서 들어온 버그라 경계값 17개를 고정했어요. 그리고 이 검사는 전체 doctor에서만 돌아서 **이미 쓰던 프로젝트는 영영 모를 수 있었는데**, 이제 세션 시작 때 자동으로 확인합니다. -->
 <!-- show:en **The `.env` check added yesterday was wrong at the edges.** It matched anything starting with `.env`, so direnv's `.envrc` got told to rotate its keys, and it looked for the literal string `.env` in `.gitignore`, so a comment (`# .env`) or an un-ignore rule (`!.env`) both read as safe. Both are the exact opposite of safe. Filenames are now matched as exactly `.env` or a `.env.` prefix, and whether Git ignores it is a question **asked of Git itself**. These slipped in because there were no tests, so 17 edge cases are now pinned. The check also only ran in the full doctor, meaning **an existing project could never find out** — it now runs automatically at session start. -->

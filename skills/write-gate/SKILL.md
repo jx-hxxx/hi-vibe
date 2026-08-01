@@ -8,6 +8,7 @@ description: >-
   Prevents duplicate reimplementation and enforces the review checklist
   including run-verification (scaled to change size/runtime surface — no
   full verification for small mechanical changes) and doc sync.
+user-invocable: false   # 사용자 표면은 /hi-vibe:* 명령 10개다. 스킬까지 슬래시 메뉴에 나오면 16개가 되어 "외울 게 적다"는 약속이 깨진다. Claude의 자동 호출은 그대로 유지된다.
 ---
 
 # write-gate
@@ -96,8 +97,12 @@ JSON `state` 하나로 갈린다. **`alive`면 아무 말도 하지 마라** —
 파일), `skipped`(이미 봤고 그 뒤로 안 바뀐 것), `sizes`·`total_changed_lines`·
 `file_count`(규모), `fingerprint`.
 
-- **`to_review`가 비었으면** "새로 리뷰할 변경이 없습니다 (이미 본 것 N개는
-  그대로)"만 알리고 끝낸다 — 억지로 훑지 않는다.
+- **`deleted`가 비어 있지 않으면** 그 파일들은 열어볼 수 없다. 대신
+  **남은 호출부**를 찾아라 — `import`·호출·문자열 경로. AI가 파일을 통째로
+  지우고 부르던 곳을 안 고친 경우가 실제 위험이고, 지운 코드는 리뷰 대상에서
+  빠지기 쉬워 아무도 안 본다. 남은 참조가 있으면 그 자리에서 고친다.
+- **`to_review`가 비었으면**(그리고 `deleted`도 비었으면) "새로 리뷰할 변경이
+  없습니다 (이미 본 것 N개는 그대로)"만 알리고 끝낸다 — 억지로 훑지 않는다.
 - **`scope`가 `uncommitted`가 아니면** 무엇을 보고 있는지 한 줄로 밝힌다:
   "안 커밋한 변경이 없어서 <scope_label>을 봅니다." 커밋·푸시했다고 리뷰가
   죽지 않게 계단으로 내려가지만, 사용자는 지금 뭘 보는지 알아야 한다.
