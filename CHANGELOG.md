@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.27.1] - 2026-08-01
+<!-- show:ko **명령어 표를 실제로 치는 순서대로 다시 놨어요.** 직전 릴리스에서 `init` → `doctor`로 순서를 뒤집었는데 표는 그대로여서, 표만 보면 여전히 `doctor`가 먼저였습니다. 이제 `welcome → init → doctor → gate → check` 순이에요 — 뭔지 모를 때 · 켜기 · 확인 · (선택) 관문 설치 · 평소 점검. 위에서 아래로 읽으면 그게 곧 순서입니다. -->
+<!-- show:en **Reordered the command table to match the order you actually run things.** The previous release flipped setup to `init` → `doctor`, but the table still listed `doctor` first, so the table alone told you the opposite. It now reads `welcome → init → doctor → gate → check`: don't know where to start, turn it on, confirm it, optionally install the gate, then the everyday check. Top to bottom is the sequence. -->
+
+### Changed
+- **명령어 표 정렬을 사용 순서로** (2026-08-01) — 한/영 랜딩 표 모두 `welcome · init · doctor · gate · check`(직접) 다음에 `find · review · handover · log · recall`(자동) 순으로 재정렬. 직전 릴리스에서 `doctor`의 설명은 "`init` 직후, 제대로 도는지 확인"으로 바꿨는데 **표에서는 `init`보다 위에 있어** 서로 어긋나 있었다. `gate`(프로젝트당 1회)를 `check`(평소 반복)보다 앞에 둔 것도 같은 이유 — 세팅이 먼저다.
+
 ## [0.27.0] - 2026-08-01
 <!-- show:ko **설치 순서를 뒤집었어요 — `init` 먼저, 그다음 `doctor`.** 여태 `doctor` → `init`로 안내했는데, `doctor`는 **이 프로젝트의 훅이 제대로 매여 있나**를 보는 명령입니다. `init`을 안 했으면 훅이 안 도는 게 정상이라, 켜지도 않은 걸 검사시키고 있었어요. 실제로 재보니 `doctor`를 먼저 치면 경고 2개가 뜨는데 **둘 다 `init`이 해결할 것들**이었습니다(아직 init 안 함 · .env가 gitignore에 없음). 처음 설치한 사람이 첫 화면에서 읽고 무시해야 할 경고를 보게 되죠. `init`을 먼저 하면 경고 0개, 통과 9개로 깨끗하게 끝납니다. -->
 <!-- show:en **Flipped the setup order — `init` first, then `doctor`.** The docs said `doctor` → `init`, but `doctor` checks whether the hooks are actually armed *in this project*. Before `init` they legitimately aren't, so we were asking people to inspect something they hadn't switched on yet. Measured: running `doctor` first produces two warnings, and **both are things `init` fixes** (not initialised here; `.env` not in `.gitignore`). A first-time user meets two warnings they're told to ignore. Run `init` first and it comes back 0 warnings, 9 passes. -->
