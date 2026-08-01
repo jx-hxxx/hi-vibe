@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.28.1] - 2026-08-01
+<!-- show:ko **평가 질문을 다시 넣었어요 — 자리와 내용을 바꿔서.** 직전 릴리스에서 통째로 뺐는데, 설치 직전에 "말 말고 코드를 보라"고 할 수 있는 건 그대로 두는 게 낫습니다. 대신 **"이런 분께 맞아요" 뒤로** 옮겨서, 방문자가 hi-vibe가 뭔지 알고 난 다음에 만나게 했어요. 질문 내용도 새로 썼습니다 — 예전엔 hi-vibe를 10점 만점으로 채점시켰는데, 그건 이 플러그인 평판을 묻는 거지 **내 프로젝트에 맞는지**를 묻는 게 아니었어요. 이제 "내 저장소에서 무엇을 찾아줄지"를 구체적 사례로 답하게 합니다. -->
+<!-- show:en **The evaluation prompt is back — in a different place, with different content.** The previous release cut it entirely, but "don't take my word for it, read the code" is worth keeping right before someone installs. It now sits **after the fit section**, so visitors meet it once they know what hi-vibe is. The question itself was rewritten: it used to ask for scores out of 10, which measures the plugin's reputation rather than **whether it suits your project**. It now asks what hi-vibe would concretely find in your repository, with examples. -->
+
+### Added
+- **`verify` 섹션 — 적합성 판단 뒤에 검증 질문** (2026-08-01) — 새 질문은 채점(`/10`)을 없애고 여섯 가지를 묻는다: 중복 방지 도움 여부 · 자동 리뷰가 여기서 실제로 잡을 것 · 세션 맥락과 트러블슈팅 기록의 활용도 · 저장소 전체 점검이 필요한 규모인지 · 지금 쓰는 도구와 겹치는 부분 · 기대할 장점과 한계. **내 프로젝트의 실제 파일에서 사례를 들라**고 요구하고, 못 본 건 추측 말고 확인 불가라고 밝히라고 한다(grounded-answers와 같은 계약). 마지막에 가장 유용할 기능·필요 없을 기능·설치 추천 여부를 정리시킨다.
+- **복사 버튼 복원** (2026-08-01) — v0.28.0에서 섹션과 함께 지웠던 클립보드 JS만 다시 넣었다. 없앤 폼(`js-fit`)과 높이 동기화(`syncAuditHeights`)는 복원하지 않는다 — 링크는 프롬프트 안의 `[내 프로젝트 GitHub 링크]` 자리를 직접 채우면 되고, 그게 코드도 짧다.
+- **`docs/internal/eval-prompt.md`를 새 질문으로 갱신** (2026-08-01) — 랜딩과 같은 내용임을 파일 첫머리에 명시했다. 두 벌이 갈리면 그 파일이 거짓말이 된다.
+
 ## [0.28.0] - 2026-08-01
 <!-- show:ko **첫 화면 다음 자리를 "AI한테 물어보세요"에서 "나한테 맞나 보세요"로 바꿨어요.** 거기엔 다른 AI에 붙여넣을 긴 평가 질문이 있었는데, 방문자가 hi-vibe가 뭔지 알기도 전에 자리를 떠나게 만드는 자리였습니다. 이제 **잘 맞는 경우 4개와 효과가 작은 경우 4개**를 나란히 놓습니다. JS/TS가 주력이거나 이미 리뷰·CI 절차가 있는 팀이면 여기서 걸러져요 — 붙잡아 두는 것보다 그게 서로 낫습니다. 평가 질문은 버리지 않고 저장소 안에 보관했어요. -->
 <!-- show:en **The slot right after the hero changed from "go ask an AI" to "see if this fits you".** It used to hold a long evaluation prompt to paste into another AI — a section that sent visitors away before they knew what hi-vibe was. It now shows **four cases where it fits and four where it doesn't**, side by side. If JS/TS is your main language, or your team already has review and CI, you'll rule it out right there — better than being talked into it. The prompt itself is kept in the repo. -->

@@ -271,6 +271,10 @@
   .fitcard li + li { margin-top:6px; }
   .fitcard.weak { background:var(--surface-2); }
   @media (max-width:760px){ .fitgrid { grid-template-columns:1fr; } }
+  .promptbox { margin-top:26px; border:1px solid var(--border); border-radius:var(--r); padding:20px; background:var(--surface-2); }
+  .promptbox pre { margin:0 0 16px; max-height:340px; overflow:auto; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--muted); }
+  .promptbox pre::-webkit-scrollbar { width:8px; }
+  .promptbox pre::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:8px; }
 
   .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:pre; border:0; }
 
@@ -388,6 +392,40 @@
             <li>Claude Code를 주된 개발 도구로 쓰지 않는 경우</li>
           </ul>
         </div>
+      </div>
+    </section>
+
+    <section id="verify-ko">
+      <p class="eyebrow">그래도 확실히 하고 싶다면</p>
+      <h2>제 말 말고, 코드를 보고 판단하세요.</h2>
+      <p class="lead" style="max-width:none">아래 질문을 복사해 Claude·Codex·Gemini에 붙여넣으면, hi-vibe의 실제 구현과 <b>내 프로젝트</b>를 같이 보고 답해줍니다. <code>[내 프로젝트 GitHub 링크]</code> 자리만 채우세요.</p>
+      <div class="promptbox">
+        <pre id="audit-prompt-ko">https://github.com/jx-hxxx/hi-vibe
+
+hi-vibe는 Python 프로젝트를 Claude Code로 개발하는 개인 개발자를 위한 플러그인입니다.
+
+아래 프로젝트 저장소를 가능하면 실제 코드까지 확인하고, hi-vibe가 제 프로젝트의 개발 과정에 실질적으로 도움이 될지 분석해 주세요.
+
+제 프로젝트:
+[내 프로젝트 GitHub 링크]
+
+README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고, 다음 내용을 평가해 주세요.
+
+1. 기존 구현 탐색과 중복 작업 방지에 도움이 되는지
+2. 기능 구현 후 자동 리뷰가 발견할 수 있는 문제
+3. 세션 간 작업 맥락과 트러블슈팅 기록 관리의 활용도
+4. 프로젝트 전체 점검 기능이 필요한 규모와 구조인지
+5. 현재 사용 중인 도구나 작업 방식과 겹치는 부분
+6. 이 프로젝트에서 기대할 수 있는 장점과 한계
+
+가능하면 제 프로젝트의 실제 파일이나 코드에서 확인한 구체적인 사례를 들어 설명해 주세요. 직접 확인하지 못한 내용은 추측하지 말고 확인 불가라고 밝혀 주세요.
+
+마지막에는 다음 내용을 간단히 정리해 주세요.
+
+- 가장 유용할 것으로 예상되는 기능
+- 활용도가 낮거나 필요하지 않은 기능
+- 이 프로젝트에 설치를 추천하는지와 그 이유</pre>
+        <button class="btn ghost js-copy" type="button" data-target="audit-prompt-ko">질문 복사</button>
       </div>
     </section>
 
@@ -611,9 +649,9 @@
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않습니다. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.28.1<small>2026-08-01</small></div><div class="h"><b>평가 질문을 다시 넣었어요 — 자리와 내용을 바꿔서.</b> <span>직전 릴리스에서 통째로 뺐는데, 설치 직전에 "말 말고 코드를 보라"고 할 수 있는 건 그대로 두는 게 낫습니다. 대신 **"이런 분께 맞아요" 뒤로** 옮겨서, 방문자가 hi-vibe가 뭔지 알고 난 다음에 만나게 했어요. 질문 내용도 새로 썼습니다 — 예전엔 hi-vibe를 10점 만점으로 채점시켰는데, 그건 이 플러그인 평판을 묻는 거지 **내 프로젝트에 맞는지**를 묻는 게 아니었어요. 이제 "내 저장소에서 무엇을 찾아줄지"를 구체적 사례로 답하게 합니다.</span></div></div>
         <div class="rel"><div class="v">v0.28.0<small>2026-08-01</small></div><div class="h"><b>첫 화면 다음 자리를 "AI한테 물어보세요"에서 "나한테 맞나 보세요"로 바꿨어요.</b> <span>거기엔 다른 AI에 붙여넣을 긴 평가 질문이 있었는데, 방문자가 hi-vibe가 뭔지 알기도 전에 자리를 떠나게 만드는 자리였습니다. 이제 **잘 맞는 경우 4개와 효과가 작은 경우 4개**를 나란히 놓습니다. JS/TS가 주력이거나 이미 리뷰·CI 절차가 있는 팀이면 여기서 걸러져요 — 붙잡아 두는 것보다 그게 서로 낫습니다. 평가 질문은 버리지 않고 저장소 안에 보관했어요.</span></div></div>
         <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>줄바꿈이 지저분하던 것을 정리했어요.</b> <span>긴 문장이 넘어가면서 마지막에 단어 하나만 다음 줄에 덩그러니 남는 자리가 있었습니다("…약속과 정반대예요." / "…알아서."). 브라우저가 알아서 피하게 하는 설정(`text-wrap: pretty`)을 긴 글이 들어가는 자리에 전부 넣고, 문장 자체도 짧게 줄였어요. 스킬 숨김 안내는 다섯 줄에서 네 줄로 줄었습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.27.1<small>2026-08-01</small></div><div class="h"><b>명령어 표를 실제로 치는 순서대로 다시 놨어요.</b> <span>직전 릴리스에서 `init` → `doctor`로 순서를 뒤집었는데 표는 그대로여서, 표만 보면 여전히 `doctor`가 먼저였습니다. 이제 `welcome → init → doctor → gate → check` 순이에요 — 뭔지 모를 때 · 켜기 · 확인 · (선택) 관문 설치 · 평소 점검. 위에서 아래로 읽으면 그게 곧 순서입니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -702,6 +740,40 @@
             <li>Claude Code isn't your primary development tool</li>
           </ul>
         </div>
+      </div>
+    </section>
+
+    <section id="verify-en">
+      <p class="eyebrow">If you'd rather check for yourself</p>
+      <h2>Don't take my word for it.<br>Read the code.</h2>
+      <p class="lead" style="max-width:none">Paste the question below into Claude, Codex or Gemini. It reads hi-vibe's real implementation alongside <b>your own project</b> and answers from both. Just fill in <code>[my project's GitHub link]</code>.</p>
+      <div class="promptbox">
+        <pre id="audit-prompt-en">https://github.com/jx-hxxx/hi-vibe
+
+hi-vibe is a plugin for solo developers building Python projects with Claude Code.
+
+Please look at the repository below — the actual code where you can — and analyse whether hi-vibe would genuinely help how I develop this project.
+
+My project:
+[my project's GitHub link]
+
+Read hi-vibe's real implementation, not just what the README claims, and assess:
+
+1. Whether it helps find existing implementations and avoid duplicate work
+2. What the automatic post-change review would realistically catch here
+3. How useful cross-session context and troubleshooting records would be
+4. Whether this project is large or structured enough to need the repo-wide check
+5. What overlaps with tools or habits I already use
+6. The concrete benefits and limits I should expect in this project
+
+Cite specific files or code from my project wherever you can. If you could not verify something, say so rather than guessing.
+
+Finish with a short summary:
+
+- The feature likely to be most useful
+- Features I probably don't need
+- Whether you'd recommend installing it here, and why</pre>
+        <button class="btn ghost js-copy" type="button" data-target="audit-prompt-en">Copy the question</button>
       </div>
     </section>
 
@@ -925,9 +997,9 @@
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.28.1<small>2026-08-01</small></div><div class="h"><b>The evaluation prompt is back — in a different place, with different content.</b> <span>The previous release cut it entirely, but "don't take my word for it, read the code" is worth keeping right before someone installs. It now sits **after the fit section**, so visitors meet it once they know what hi-vibe is. The question itself was rewritten: it used to ask for scores out of 10, which measures the plugin's reputation rather than **whether it suits your project**. It now asks what hi-vibe would concretely find in your repository, with examples.</span></div></div>
         <div class="rel"><div class="v">v0.28.0<small>2026-08-01</small></div><div class="h"><b>The slot right after the hero changed from "go ask an AI" to "see if this fits you".</b> <span>It used to hold a long evaluation prompt to paste into another AI — a section that sent visitors away before they knew what hi-vibe was. It now shows **four cases where it fits and four where it doesn't**, side by side. If JS/TS is your main language, or your team already has review and CI, you'll rule it out right there — better than being talked into it. The prompt itself is kept in the repo.</span></div></div>
         <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>Cleaned up ragged line breaks.</b> <span>Long sentences were wrapping so that a single word ended up alone on the last line. Every long-prose container now uses `text-wrap: pretty` so the browser avoids that, and the sentences themselves were shortened. The note about hidden skills went from five lines to four.</span></div></div>
-        <div class="rel"><div class="v">v0.27.1<small>2026-08-01</small></div><div class="h"><b>Reordered the command table to match the order you actually run things.</b> <span>The previous release flipped setup to `init` → `doctor`, but the table still listed `doctor` first, so the table alone told you the opposite. It now reads `welcome → init → doctor → gate → check`: don't know where to start, turn it on, confirm it, optionally install the gate, then the everyday check. Top to bottom is the sequence.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1188,6 +1260,32 @@
     }, { threshold:0.3 });
     var strips = document.querySelectorAll('.instrip');
     for (var s = 0; s < strips.length; s++){ tio.observe(strips[s]); }
+  }
+
+  // 프롬프트 복사 (버튼 하나짜리 — 폼·높이 동기화는 v0.28.0에서 없앴다)
+  function flashBtn(btn, done){
+    var o = btn.textContent; btn.textContent = done;
+    setTimeout(function(){ btn.textContent = o; }, 1400);
+  }
+  function legacyCopy(el){
+    var r = document.createRange(); r.selectNodeContents(el);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    try { document.execCommand('copy'); } catch (e) {}
+    s.removeAllRanges();
+  }
+  var copyBtns = document.querySelectorAll('.js-copy');
+  for (var cb=0; cb<copyBtns.length; cb++){
+    copyBtns[cb].addEventListener('click', function(){
+      var el = document.getElementById(this.getAttribute('data-target'));
+      if (!el) return;
+      var text = el.textContent.replace(/^\s+|\s+$/g, '');
+      var done = (document.documentElement.getAttribute('lang') === 'en') ? 'Copied \u2713' : '\ubcf5\uc0ac\ub428 \u2713';
+      var btn = this;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function(){ flashBtn(btn, done); },
+                                                 function(){ legacyCopy(el); flashBtn(btn, done); });
+      } else { legacyCopy(el); flashBtn(btn, done); }
+    });
   }
 })();
 </script>
