@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.26.5] - 2026-08-01
+<!-- show:ko **자기가 정직하다고 자랑하는 문장을 뺐어요.** "꽤 겹쳐요. **먼저 밝히는 게 맞다고 봅니다.**" — 뒷문장이 겹친다는 사실보다 그걸 밝히는 자신을 칭찬하고 있었습니다. 겹친다고 말하는 것 자체가 정직한 거지, 정직하다고 덧붙이는 건 오히려 약해져요. 그냥 "꽤 겹쳐요."로 끝냅니다. 섹션 눈썹 문구 `정직함이 곧 기능이에요`도 같은 종류라 `무엇이 보장되나`로 바꿨어요 — 다른 눈썹은 전부 중립적인 안내인데 이것만 튀었습니다. -->
+<!-- show:en **Cut the lines that congratulate us for being honest.** "Quite a bit, yes. **Better to say so up front.**" — that second sentence praises the act of admitting rather than just admitting. Saying it overlaps *is* the honest part; announcing your honesty on top only weakens it. It now stops at "Quite a bit, yes." The section eyebrow "Honesty is the feature" was the same species and is now "What's guaranteed" — every other eyebrow on the page is a plain descriptor, and that one stuck out. -->
+
+### Changed
+- **자기 칭찬 문구 제거** (2026-08-01) — 랜딩·README 한/영 네 곳의 "먼저 밝히는 게 맞다고 봅니다 / Better to say so up front"를 뺐다. 겹침을 인정하는 문장 뒤에 그걸 인정하는 자신을 칭찬하는 문장이 붙어 있었다. **보여주는 게 말하는 것보다 세다.** 섹션 눈썹 `정직함이 곧 기능이에요` → `무엇이 보장되나`(영문 `Honesty is the feature` → `What's guaranteed`) — 바로 아래 제목 "여기까진 기계가. 여기서부턴 AI가."가 이미 그걸 증명하고 있어 덧붙일 필요가 없었다.
+
 ## [0.26.4] - 2026-08-01
 <!-- show:ko **"옵션이 없어요"라는 설명을 걷어냈어요.** 예전에 `--deep` 같은 옵션이 있었고 그걸 없앤 건 맞지만, 처음 보는 사람은 그런 게 있었는지도 모릅니다. "옵션이 없다"고 굳이 말하면 오히려 **"무슨 옵션이 있었는데?"** 하고 헷갈려요. CHANGELOG에 있어야 할 말이 제품 설명에 새어 나온 겁니다. 이제 없는 걸 설명하지 않고 **하는 일만** 적습니다. 표의 `발동` 배지가 좁은 화면에서 잘려 보이던 것도 고쳤어요. -->
 <!-- show:en **Removed the copy that explains what isn't there.** There used to be flags like `--deep`, and removing them was right — but a first-time reader never knew they existed. Telling them "there are no flags" only makes them wonder which flags they're missing. That's changelog material that leaked into product copy. The page now describes what review does, not what it lacks. The `trigger` badge that looked clipped in the command table is fixed too. -->

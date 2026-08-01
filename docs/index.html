@@ -478,7 +478,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
 
     <section id="honest-ko" class="band">
       <div class="wrap">
-      <p class="eyebrow">정직함이 곧 기능이에요</p>
+      <p class="eyebrow">무엇이 보장되나</p>
       <h2>여기까진 기계가.<br>여기서부턴 AI가.</h2>
       <p class="lead" style="max-width:none">”전부 자동!”이라고 뭉뚱그리지 않아요. <b>기계가 확실히</b> 하는 것과 <b>AI가 알아서</b> 하는 것을 나눠서 보여줘요.<br>왼쪽은 설치하면 늘 돌아가고, 오른쪽은 Claude가 판단해서 해요.</p>
       <div class="split">
@@ -603,7 +603,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Claude Code 기본 기능이랑 겹치지 않나요?</summary>
         <div class="tbody">
-          <b>꽤 겹쳐요.</b> 먼저 밝히는 게 맞다고 봅니다.<br><br>
+          <b>꽤 겹쳐요.</b><br><br>
           <b>겹치는 것</b> — <code>/init</code>(CLAUDE.md 생성) · auto memory(기억) · <code>/code-review</code>(리뷰 내용) · <code>/verify</code>(실행 검증) · <code>/doctor</code>(이름만 같고 검사 대상은 달라요)<br>
           <b>hi-vibe만 하는 것</b> — 에러 삼킴·비밀키 즉시 감지 · 저장소 전체 중복·미참조 스캔 · 증상과 원인 중심 CHANGELOG · 프로젝트별 opt-in<br><br>
           <b>가장 큰 차이는 “언제 도느냐”예요.</b> Claude Code 공식 문서에 이렇게 적혀 있어요 — <i>“<code>/verify</code>와 <code>/code-review</code>는 직접 부를 때만 돕니다. v2.1.215 전에는 Claude가 알아서 돌리기도 했습니다.”</i> 자동 실행이 있었다가 빠진 자리예요. hi-vibe는 <b>리뷰 안 받은 변경이 있으면 훅이 대화를 붙잡고 리뷰를 시킵니다</b>(같은 변경으로 두 번 막진 않아요). 기계가 보장하는 건 <i>리뷰를 요구하는 시점</i>이고, 리뷰 자체는 Claude가 해요.<br><br>
@@ -637,9 +637,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않습니다. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.26.5<small>2026-08-01</small></div><div class="h"><b>자기가 정직하다고 자랑하는 문장을 뺐어요.</b> <span>"꽤 겹쳐요. **먼저 밝히는 게 맞다고 봅니다.**" — 뒷문장이 겹친다는 사실보다 그걸 밝히는 자신을 칭찬하고 있었습니다. 겹친다고 말하는 것 자체가 정직한 거지, 정직하다고 덧붙이는 건 오히려 약해져요. 그냥 "꽤 겹쳐요."로 끝냅니다. 섹션 눈썹 문구 `정직함이 곧 기능이에요`도 같은 종류라 `무엇이 보장되나`로 바꿨어요 — 다른 눈썹은 전부 중립적인 안내인데 이것만 튀었습니다.</span></div></div>
         <div class="rel"><div class="v">v0.26.4<small>2026-08-01</small></div><div class="h"><b>"옵션이 없어요"라는 설명을 걷어냈어요.</b> <span>예전에 `--deep` 같은 옵션이 있었고 그걸 없앤 건 맞지만, 처음 보는 사람은 그런 게 있었는지도 모릅니다. "옵션이 없다"고 굳이 말하면 오히려 **"무슨 옵션이 있었는데?"** 하고 헷갈려요. CHANGELOG에 있어야 할 말이 제품 설명에 새어 나온 겁니다. 이제 없는 걸 설명하지 않고 **하는 일만** 적습니다. 표의 `발동` 배지가 좁은 화면에서 잘려 보이던 것도 고쳤어요.</span></div></div>
         <div class="rel"><div class="v">v0.26.3<small>2026-08-01</small></div><div class="h"><b>공유하기 전에 랜딩을 마지막으로 손봤어요.</b> <span>링크 미리보기 태그(og·twitter)가 아예 없어서, 카카오톡이나 슬랙에 붙이면 제목만 덩그러니 나왔습니다. 그리고 첫 화면만 보면 범용 AI 코딩 도구처럼 읽혔어요 — 실제로는 Python 프로젝트를 만드는 입문자·1인 개발자용인데 "python3만 있으면 돼요"가 지원 대상이 아니라 설치 조건처럼 보였거든요. 사실과 다른 문구 넷도 같이 고쳤습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.26.2<small>2026-08-01</small></div><div class="h"><b>직전 릴리스에서 규칙 하나를 잘못 넣었습니다.</b> <span>"걸린 시간을 해명하지 마라"고 썼는데, 문제가 됐던 그 답변은 사용자가 **"15분이나 걸렸는데 뭐 때문이냐"고 직접 물어서** 실제 시각을 재서 답한 것이었어요. 추측 안 하고 측정한 좋은 답변인데 제가 반대로 막아버렸습니다. 이제 "안 물으면 말하지 말고, 물으면 재서 답하라"로 바로잡았어요. 그리고 그 대화에서 15분의 진짜 원인이 드러났습니다 — 리뷰가 아니라 **만들 때 범위가 커진 것**이었어요. "사이트에 적어줘"로 시작해 봇 기능 신설까지 번졌거든요. 요청 밖에서 발견한 건 고치지 말고 물어보게 했습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -809,7 +809,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
 
     <section id="honest-en" class="band">
       <div class="wrap">
-      <p class="eyebrow">Honesty is the feature</p>
+      <p class="eyebrow">What&#39;s guaranteed</p>
       <h2>Machine up to here.<br>AI beyond.</h2>
       <p class="lead">We don’t hand-wave “it’s all automatic.” We split what the <b>machine guarantees</b> from what the <b>AI does on its own</b>.<br>The left runs the moment it’s installed; the right is Claude’s judgment.</p>
       <div class="split">
@@ -934,7 +934,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Doesn't this overlap with Claude Code's built-ins?</summary>
         <div class="tbody">
-          <b>Quite a bit, yes.</b> Better to say so up front.<br><br>
+          <b>Quite a bit, yes.</b><br><br>
           <b>Overlaps</b> — <code>/init</code> (writes CLAUDE.md) · auto memory · <code>/code-review</code> (the review itself) · <code>/verify</code> · <code>/doctor</code> (same name, different subject)<br>
           <b>Only hi-vibe</b> — instant swallowed-error &amp; secret detection · repo-wide duplicate / unreferenced scan · symptom-and-cause CHANGELOG · per-project opt-in<br><br>
           <b>The real difference is when things run.</b> From Claude Code's own docs — <i>“<code>/verify</code> and <code>/code-review</code> run only when you invoke them. Before v2.1.215, Claude could also run them on its own.”</i> Auto-invocation existed and was removed. hi-vibe's Stop hook <b>holds the turn open and demands a review when changes nobody reviewed are still sitting in the tree</b> (and won't block twice on the same change). The machine guarantees <i>when</i> a review is demanded; Claude does the reviewing.<br><br>
@@ -968,9 +968,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.26.5<small>2026-08-01</small></div><div class="h"><b>Cut the lines that congratulate us for being honest.</b> <span>"Quite a bit, yes. **Better to say so up front.**" — that second sentence praises the act of admitting rather than just admitting. Saying it overlaps *is* the honest part; announcing your honesty on top only weakens it. It now stops at "Quite a bit, yes." The section eyebrow "Honesty is the feature" was the same species and is now "What's guaranteed" — every other eyebrow on the page is a plain descriptor, and that one stuck out.</span></div></div>
         <div class="rel"><div class="v">v0.26.4<small>2026-08-01</small></div><div class="h"><b>Removed the copy that explains what isn't there.</b> <span>There used to be flags like `--deep`, and removing them was right — but a first-time reader never knew they existed. Telling them "there are no flags" only makes them wonder which flags they're missing. That's changelog material that leaked into product copy. The page now describes what review does, not what it lacks. The `trigger` badge that looked clipped in the command table is fixed too.</span></div></div>
         <div class="rel"><div class="v">v0.26.3<small>2026-08-01</small></div><div class="h"><b>Last pass on the landing page before sharing it.</b> <span>There were no link-preview tags at all (og / twitter), so pasting the URL into KakaoTalk or Slack showed a bare title. The hero also read like a general-purpose AI coding tool — it's for beginners and solo devs building Python projects, but "just needs python3" looked like an install requirement rather than the target audience. Four inaccurate lines were fixed alongside.</span></div></div>
-        <div class="rel"><div class="v">v0.26.2<small>2026-08-01</small></div><div class="h"><b>The previous release added one rule that was simply wrong.</b> <span>It said "don't account for how long things took" — but the answer that prompted it came from the user asking directly, "it took 15 minutes; was that hi-vibe or the feature?" The reply measured real timestamps instead of guessing, which is exactly right, and the new rule discouraged it. It now reads: don't volunteer timing, but if asked, measure and answer. That same conversation also revealed where the 15 minutes actually went — not the review, but scope growing during the build: a request to "write it on the site" turned into shipping a new bot feature. Findings outside the request are now reported, not fixed.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
