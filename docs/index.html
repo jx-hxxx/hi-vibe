@@ -271,10 +271,25 @@
   .fitcard li + li { margin-top:6px; }
   .fitcard.weak { background:var(--surface-2); }
   @media (max-width:760px){ .fitgrid { grid-template-columns:1fr; } }
-  .promptbox { margin-top:26px; border:1px solid var(--border); border-radius:var(--r); padding:20px; background:var(--surface-2); }
-  .promptbox pre { margin:0 0 16px; max-height:340px; overflow:auto; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--muted); }
-  .promptbox pre::-webkit-scrollbar { width:8px; }
-  .promptbox pre::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:8px; }
+  .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:start; margin-top:26px; }
+  .audit .promptbox { display:flex; flex-direction:column; align-items:flex-start; }
+  .audit .promptbox pre { align-self:stretch; }
+  .audit .card { border:1px solid var(--border); border-radius:var(--r); padding:24px; background:var(--surface); }
+  .audit .card h3 { margin:0 0 9px; font-size:19px; }
+  .audit .card p { margin:0; color:var(--muted); font-size:14px; text-wrap:pretty; }
+  .audit .promptbox { border:1px solid var(--border); border-radius:var(--r); padding:20px; background:var(--surface-2); }
+  .audit .promptbox pre { margin:0 0 16px; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--text); overflow-y:auto; padding-right:8px; }
+  .audit .promptbox pre::-webkit-scrollbar { width:8px; }
+  .audit .promptbox pre::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:8px; }
+  .audit .promptbox pre span { color:var(--accent-ink); font-weight:600; }
+  .fitform { display:grid; gap:10px; margin-top:18px; }
+  .fitform label { display:grid; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; }
+  .fitform .hint { font-weight:400; font-size:11.5px; color:var(--faint); line-height:1.5; }
+  .fitform input { font:inherit; font-size:13.5px; font-weight:400; color:var(--text); background:var(--bg); border:1px solid var(--border-2); border-radius:8px; padding:8px 11px; }
+  .fitform input:focus { outline:none; border-color:var(--accent); }
+  .fitform input::placeholder { color:var(--faint); }
+  .fitform .btn { margin-top:2px; justify-content:center; }
+  @media (max-width:760px){ .audit { grid-template-columns:1fr; } }
 
   .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:pre; border:0; }
 
@@ -398,16 +413,25 @@
     <section id="verify-ko">
       <p class="eyebrow">그래도 확실히 하고 싶다면</p>
       <h2>제 말 말고, 코드를 보고 판단하세요.</h2>
-      <p class="lead" style="max-width:none">아래 질문을 복사해 Claude·Codex·Gemini에 붙여넣으면, hi-vibe의 실제 구현과 <b>내 프로젝트</b>를 같이 보고 답해줍니다. <code>[내 프로젝트 GitHub 링크]</code> 자리만 채우세요.</p>
-      <div class="promptbox">
-        <pre id="audit-prompt-ko">https://github.com/jx-hxxx/hi-vibe
+      <p class="lead" style="max-width:none">hi-vibe의 실제 구현과 <b>내 프로젝트</b>를 같이 보고 답해주는 질문이에요.<br>아래 질문을 복사하여 Claude·Codex·Gemini에 그대로 붙여넣어 보세요.</p>
+      <div class="audit">
+        <div class="card">
+          <h3>2분이면 되는 설치 전 적합성 확인</h3>
+          <p>README뿐 아니라 <b>실제 훅·스캐너·테스트</b>를 확인해, 이&nbsp;플러그인이 내&nbsp;프로젝트에 어떤 도움을 주고 어디까지 지원하는지 알아보세요.</p>
+          <div class="fitform">
+            <label>내 프로젝트 GitHub 링크<span class="hint">공개 저장소면 AI가 실제 코드를 스캔해 “내 프로젝트에서 뭘 찾는지”까지 봐줘요 (선택)</span><input type="text" id="fit-repo-ko" placeholder="예: https://github.com/나/내프로젝트"></label>
+            <button class="btn primary js-fit" type="button" data-lang="ko">내 저장소로 확인 →</button>
+          </div>
+        </div>
+        <div class="promptbox">
+          <pre id="audit-prompt-ko">https://github.com/jx-hxxx/hi-vibe
 
 hi-vibe는 Python 프로젝트를 Claude Code로 개발하는 개인 개발자를 위한 플러그인입니다.
 
 아래 프로젝트 저장소를 가능하면 실제 코드까지 확인하고, hi-vibe가 제 프로젝트의 개발 과정에 실질적으로 도움이 될지 분석해 주세요.
 
 제 프로젝트:
-[내 프로젝트 GitHub 링크]
+<span id="proj-ko">[내 프로젝트 GitHub 링크]</span>
 
 README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고, 다음 내용을 평가해 주세요.
 
@@ -425,7 +449,8 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
 - 가장 유용할 것으로 예상되는 기능
 - 활용도가 낮거나 필요하지 않은 기능
 - 이 프로젝트에 설치를 추천하는지와 그 이유</pre>
-        <button class="btn ghost js-copy" type="button" data-target="audit-prompt-ko">질문 복사</button>
+          <button class="btn ghost js-copy" type="button" data-target="audit-prompt-ko">평가 질문 복사</button>
+        </div>
       </div>
     </section>
 
@@ -649,9 +674,9 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않습니다. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.28.2<small>2026-08-01</small></div><div class="h"><b>평가 질문 자리를 원래 화면으로 되돌렸어요.</b> <span>직전 릴리스에서 프롬프트만 덩그러니 놓인 형태로 다시 넣었는데, 보기에도 나빴고 **GitHub 링크 입력칸이 빠져 있었습니다**. 그 칸에 저장소 주소를 넣고 버튼을 누르면 질문 안의 `[내 프로젝트 GitHub 링크]` 자리가 자동으로 채워지는데, 그게 없으면 AI가 hi-vibe만 보고 답해요. 원래의 2단 화면(왼쪽 안내 카드 + 오른쪽 질문)으로 되돌렸고, 질문 내용은 새로 쓴 것을 그대로 씁니다.</span></div></div>
         <div class="rel"><div class="v">v0.28.1<small>2026-08-01</small></div><div class="h"><b>평가 질문을 다시 넣었어요 — 자리와 내용을 바꿔서.</b> <span>직전 릴리스에서 통째로 뺐는데, 설치 직전에 "말 말고 코드를 보라"고 할 수 있는 건 그대로 두는 게 낫습니다. 대신 **"이런 분께 맞아요" 뒤로** 옮겨서, 방문자가 hi-vibe가 뭔지 알고 난 다음에 만나게 했어요. 질문 내용도 새로 썼습니다 — 예전엔 hi-vibe를 10점 만점으로 채점시켰는데, 그건 이 플러그인 평판을 묻는 거지 **내 프로젝트에 맞는지**를 묻는 게 아니었어요. 이제 "내 저장소에서 무엇을 찾아줄지"를 구체적 사례로 답하게 합니다.</span></div></div>
         <div class="rel"><div class="v">v0.28.0<small>2026-08-01</small></div><div class="h"><b>첫 화면 다음 자리를 "AI한테 물어보세요"에서 "나한테 맞나 보세요"로 바꿨어요.</b> <span>거기엔 다른 AI에 붙여넣을 긴 평가 질문이 있었는데, 방문자가 hi-vibe가 뭔지 알기도 전에 자리를 떠나게 만드는 자리였습니다. 이제 **잘 맞는 경우 4개와 효과가 작은 경우 4개**를 나란히 놓습니다. JS/TS가 주력이거나 이미 리뷰·CI 절차가 있는 팀이면 여기서 걸러져요 — 붙잡아 두는 것보다 그게 서로 낫습니다. 평가 질문은 버리지 않고 저장소 안에 보관했어요.</span></div></div>
-        <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>줄바꿈이 지저분하던 것을 정리했어요.</b> <span>긴 문장이 넘어가면서 마지막에 단어 하나만 다음 줄에 덩그러니 남는 자리가 있었습니다("…약속과 정반대예요." / "…알아서."). 브라우저가 알아서 피하게 하는 설정(`text-wrap: pretty`)을 긴 글이 들어가는 자리에 전부 넣고, 문장 자체도 짧게 줄였어요. 스킬 숨김 안내는 다섯 줄에서 네 줄로 줄었습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -745,17 +770,26 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
 
     <section id="verify-en">
       <p class="eyebrow">If you'd rather check for yourself</p>
-      <h2>Don't take my word for it.<br>Read the code.</h2>
-      <p class="lead" style="max-width:none">Paste the question below into Claude, Codex or Gemini. It reads hi-vibe's real implementation alongside <b>your own project</b> and answers from both. Just fill in <code>[my project's GitHub link]</code>.</p>
-      <div class="promptbox">
-        <pre id="audit-prompt-en">https://github.com/jx-hxxx/hi-vibe
+      <h2>Don't take my word for it. Read the code.</h2>
+      <p class="lead" style="max-width:none">A question that reads hi-vibe's real implementation alongside <b>your own project</b>.<br>Copy it and paste it straight into Claude, Codex or Gemini.</p>
+      <div class="audit">
+        <div class="card">
+          <h3>A 2-minute fit check before you install</h3>
+          <p>It reads the <b>actual hooks, scanner and tests</b> — not just the README — and tells you what this plugin would do for your project and where its support ends.</p>
+          <div class="fitform">
+            <label>Your project's GitHub link<span class="hint">If it's public, the AI scans the real code and shows what hi-vibe would find in <i>your</i> project (optional)</span><input type="text" id="fit-repo-en" placeholder="e.g. https://github.com/you/your-project"></label>
+            <button class="btn primary js-fit" type="button" data-lang="en">Check with my repo →</button>
+          </div>
+        </div>
+        <div class="promptbox">
+          <pre id="audit-prompt-en">https://github.com/jx-hxxx/hi-vibe
 
 hi-vibe is a plugin for solo developers building Python projects with Claude Code.
 
 Please look at the repository below — the actual code where you can — and analyse whether hi-vibe would genuinely help how I develop this project.
 
 My project:
-[my project's GitHub link]
+<span id="proj-en">[my project's GitHub link]</span>
 
 Read hi-vibe's real implementation, not just what the README claims, and assess:
 
@@ -773,7 +807,8 @@ Finish with a short summary:
 - The feature likely to be most useful
 - Features I probably don't need
 - Whether you'd recommend installing it here, and why</pre>
-        <button class="btn ghost js-copy" type="button" data-target="audit-prompt-en">Copy the question</button>
+          <button class="btn ghost js-copy" type="button" data-target="audit-prompt-en">Copy the question</button>
+        </div>
       </div>
     </section>
 
@@ -997,9 +1032,9 @@ Finish with a short summary:
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.28.2<small>2026-08-01</small></div><div class="h"><b>Put the evaluation section back to its original layout.</b> <span>The previous release re-added it as a bare prompt block — it looked worse, and it **dropped the GitHub link field**. Typing your repository there and pressing the button fills the `[my project's GitHub link]` slot inside the question; without it the AI answers about hi-vibe alone. The two-column layout (guide card on the left, question on the right) is back, with the rewritten question.</span></div></div>
         <div class="rel"><div class="v">v0.28.1<small>2026-08-01</small></div><div class="h"><b>The evaluation prompt is back — in a different place, with different content.</b> <span>The previous release cut it entirely, but "don't take my word for it, read the code" is worth keeping right before someone installs. It now sits **after the fit section**, so visitors meet it once they know what hi-vibe is. The question itself was rewritten: it used to ask for scores out of 10, which measures the plugin's reputation rather than **whether it suits your project**. It now asks what hi-vibe would concretely find in your repository, with examples.</span></div></div>
         <div class="rel"><div class="v">v0.28.0<small>2026-08-01</small></div><div class="h"><b>The slot right after the hero changed from "go ask an AI" to "see if this fits you".</b> <span>It used to hold a long evaluation prompt to paste into another AI — a section that sent visitors away before they knew what hi-vibe was. It now shows **four cases where it fits and four where it doesn't**, side by side. If JS/TS is your main language, or your team already has review and CI, you'll rule it out right there — better than being talked into it. The prompt itself is kept in the repo.</span></div></div>
-        <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>Cleaned up ragged line breaks.</b> <span>Long sentences were wrapping so that a single word ended up alone on the last line. Every long-prose container now uses `text-wrap: pretty` so the browser avoids that, and the sentences themselves were shortened. The note about hidden skills went from five lines to four.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1122,7 +1157,7 @@ Finish with a short summary:
 
   /* ② scroll reveal — structure-aware. Horizontal card rows cascade left→right; other blocks fade up. */
   root.className += ' has-rv';
-  var GROUP_SEL = '.layers, .featgrid, .split, .fitgrid, .trust, .notes'; // card rows / stacked note groups: stagger children (left→right or top→bottom) on reveal
+  var GROUP_SEL = '.layers, .featgrid, .split, .fitgrid, .audit, .trust, .notes'; // card rows / stacked note groups: stagger children (left→right or top→bottom) on reveal
   var groupEls = document.querySelectorAll(GROUP_SEL);
   for (var g = 0; g < groupEls.length; g++){
     var kids = groupEls[g].children;
@@ -1262,31 +1297,61 @@ Finish with a short summary:
     for (var s = 0; s < strips.length; s++){ tio.observe(strips[s]); }
   }
 
-  // 프롬프트 복사 (버튼 하나짜리 — 폼·높이 동기화는 v0.28.0에서 없앴다)
-  function flashBtn(btn, done){
-    var o = btn.textContent; btn.textContent = done;
-    setTimeout(function(){ btn.textContent = o; }, 1400);
-  }
-  function legacyCopy(el){
-    var r = document.createRange(); r.selectNodeContents(el);
-    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-    try { document.execCommand('copy'); } catch (e) {}
-    s.removeAllRanges();
+  function flashBtn(btn, done){ var o = btn.textContent; btn.textContent = done; setTimeout(function(){ btn.textContent = o; }, 1600); }
+  function legacyCopy(el){ try { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); } catch(e){} }
+  function copyFromTarget(btn){
+    var el = document.getElementById(btn.getAttribute('data-target'));
+    if (!el) { return; }
+    var text = el.textContent.replace(/^\s+|\s+$/g, '');
+    var done = (root.getAttribute('lang') === 'en') ? 'Copied ✓' : '복사됨 ✓';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ flashBtn(btn, done); }, function(){ legacyCopy(el); flashBtn(btn, done); });
+    } else { legacyCopy(el); flashBtn(btn, done); }
   }
   var copyBtns = document.querySelectorAll('.js-copy');
-  for (var cb=0; cb<copyBtns.length; cb++){
-    copyBtns[cb].addEventListener('click', function(){
-      var el = document.getElementById(this.getAttribute('data-target'));
-      if (!el) return;
-      var text = el.textContent.replace(/^\s+|\s+$/g, '');
-      var done = (document.documentElement.getAttribute('lang') === 'en') ? 'Copied \u2713' : '\ubcf5\uc0ac\ub428 \u2713';
-      var btn = this;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(function(){ flashBtn(btn, done); },
-                                                 function(){ legacyCopy(el); flashBtn(btn, done); });
-      } else { legacyCopy(el); flashBtn(btn, done); }
+  for (var k=0;k<copyBtns.length;k++){ copyBtns[k].addEventListener('click', function(){ copyFromTarget(this); }); }
+
+  // 적합성 폼: GitHub 링크를 프롬프트의 "제 저장소:" 자리에 반영
+  var FIT_PLACEHOLDER = {
+    ko: '[내 프로젝트 GitHub 링크 — 공개 저장소면 실제 코드를 스캔해 제 프로젝트에서 hi-vibe가 무엇을 찾아주는지 구체적으로 봐 주세요]',
+    en: "[my project's GitHub link — if public, scan the real code and spell out concretely what hi-vibe finds in my project]"
+  };
+  function applyFit(lang){
+    var el = document.getElementById('fit-repo-' + lang);
+    var v = el ? el.value.trim() : '';
+    var span = document.getElementById('proj-' + lang);
+    if (span) { span.textContent = v ? v : FIT_PLACEHOLDER[lang]; }
+  }
+  var fitBtns = document.querySelectorAll('.js-fit');
+  for (var m=0;m<fitBtns.length;m++){
+    fitBtns[m].addEventListener('click', function(){
+      var lang = this.getAttribute('data-lang');
+      applyFit(lang);
+      flashBtn(this, lang === 'en' ? 'Applied ✓' : '반영됨 ✓');
     });
   }
+
+  // 우측 프롬프트 pre의 최대 높이를 좌측 카드 높이에 맞춘다(넘치면 스크롤).
+  function syncAuditHeights(){
+    var sections = [document.getElementById('verify-ko'), document.getElementById('verify-en')];
+    for (var i=0;i<sections.length;i++){
+      var sec = sections[i]; if (!sec) continue;
+      var card = sec.querySelector('.card');
+      var pre = sec.querySelector('.promptbox pre');
+      var box = sec.querySelector('.promptbox');
+      if (!card || !pre || !box) continue;
+      // promptbox 자체 패딩/버튼을 뺀, pre에 허용할 높이
+      var extra = box.offsetHeight - pre.offsetHeight; // 패딩 + 복사버튼 영역
+      var target = card.offsetHeight - extra;
+      pre.style.maxHeight = (target > 160 ? target : 160) + 'px';
+    }
+  }
+  // 폼 반영·리사이즈·언어전환 때 다시 맞춘다.
+  for (var n=0;n<fitBtns.length;n++){ fitBtns[n].addEventListener('click', syncAuditHeights); }
+  window.addEventListener('resize', syncAuditHeights);
+  var langBtns2 = document.querySelectorAll('.js-lang');
+  for (var q=0;q<langBtns2.length;q++){ langBtns2[q].addEventListener('click', function(){ setTimeout(syncAuditHeights, 0); }); }
+  syncAuditHeights();
 })();
 </script>
 

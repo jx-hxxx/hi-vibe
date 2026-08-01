@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.28.2] - 2026-08-01
+<!-- show:ko **평가 질문 자리를 원래 화면으로 되돌렸어요.** 직전 릴리스에서 프롬프트만 덩그러니 놓인 형태로 다시 넣었는데, 보기에도 나빴고 **GitHub 링크 입력칸이 빠져 있었습니다**. 그 칸에 저장소 주소를 넣고 버튼을 누르면 질문 안의 `[내 프로젝트 GitHub 링크]` 자리가 자동으로 채워지는데, 그게 없으면 AI가 hi-vibe만 보고 답해요. 원래의 2단 화면(왼쪽 안내 카드 + 오른쪽 질문)으로 되돌렸고, 질문 내용은 새로 쓴 것을 그대로 씁니다. -->
+<!-- show:en **Put the evaluation section back to its original layout.** The previous release re-added it as a bare prompt block — it looked worse, and it **dropped the GitHub link field**. Typing your repository there and pressing the button fills the `[my project's GitHub link]` slot inside the question; without it the AI answers about hi-vibe alone. The two-column layout (guide card on the left, question on the right) is back, with the rewritten question. -->
+
+### Fixed
+- **평가 섹션 레이아웃과 입력칸 복원** (2026-08-01) — v0.28.1에서 섹션을 되살리면서 **복사 버튼 JS만** 넣고 저장소 링크 폼(`js-fit`)과 높이 동기화(`syncAuditHeights`)는 뺐다. "링크는 프롬프트 안에서 직접 채우면 된다"는 판단이었는데, 그건 **화면에서 한 단계를 없애 놓고 사용자에게 떠넘긴 것**이다. 원래의 `.audit` 2단 레이아웃·`.fitform` 입력칸·CSS·JS를 v0.27.2 기준으로 전부 되돌리고, 질문 내용만 새로 쓴 것으로 유지했다. 섹션 id가 `audit-*` → `verify-*`로 바뀌었으므로 높이 동기화가 찾는 id와 스크롤 애니메이션 대상(`GROUP_SEL`)도 같이 맞췄다.
+
 ## [0.28.1] - 2026-08-01
 <!-- show:ko **평가 질문을 다시 넣었어요 — 자리와 내용을 바꿔서.** 직전 릴리스에서 통째로 뺐는데, 설치 직전에 "말 말고 코드를 보라"고 할 수 있는 건 그대로 두는 게 낫습니다. 대신 **"이런 분께 맞아요" 뒤로** 옮겨서, 방문자가 hi-vibe가 뭔지 알고 난 다음에 만나게 했어요. 질문 내용도 새로 썼습니다 — 예전엔 hi-vibe를 10점 만점으로 채점시켰는데, 그건 이 플러그인 평판을 묻는 거지 **내 프로젝트에 맞는지**를 묻는 게 아니었어요. 이제 "내 저장소에서 무엇을 찾아줄지"를 구체적 사례로 답하게 합니다. -->
 <!-- show:en **The evaluation prompt is back — in a different place, with different content.** The previous release cut it entirely, but "don't take my word for it, read the code" is worth keeping right before someone installs. It now sits **after the fit section**, so visitors meet it once they know what hi-vibe is. The question itself was rewritten: it used to ask for scores out of 10, which measures the plugin's reputation rather than **whether it suits your project**. It now asks what hi-vibe would concretely find in your repository, with examples. -->
