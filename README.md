@@ -406,8 +406,8 @@ type is created, it searches for an existing implementation first.
 
 ### After writing: `review` — automatic
 
-When a turn ends with code you changed, the Stop hook runs it right there. It
-never nags twice for the same change.
+When a turn ends with code you changed, the Stop hook holds the turn open and
+asks Claude to review right there. It never nags twice for the same change.
 
 **No flags.** Scope, depth and parallelism are decided from what actually
 changed — a flag you have to remember is a feature that never runs.

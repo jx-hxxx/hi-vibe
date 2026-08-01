@@ -46,8 +46,11 @@ BANNED = [
      "훅은 fail-open이라 조용히 죽을 수 있고, 죽었는지는 heartbeat를 보는 "
      "스킬 층이 돌아야 알 수 있다 → '자동으로 매여 있고, 풀리면 알려주는'."),
 
+    # "runs the review"만 잡다가 **"the hook runs it"을 놓쳤다** — 목적어를
+    # 대명사로 쓰면 빠져나간다. 대명사까지 포함한다.
     (r"(훅|hook)[^.\n]{0,40}"
-     r"((리뷰|review)를?\s*직접\s*(돌|실행)|runs? (the )?review\s*(itself|right there))",
+     r"((리뷰|review)를?\s*직접\s*(돌|실행)"
+     r"|runs? (the )?(review|it)\b(?![^.\n]{0,20}\bhold)|runs? it right there)",
      "Stop 훅은 `decision:block`으로 턴을 막고 reason으로 리뷰를 지시할 뿐, "
      "리뷰를 수행하는 건 Claude다 → '턴을 막고 리뷰를 지시한다'."),
 

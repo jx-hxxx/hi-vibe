@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.26.4] - 2026-08-01
+<!-- show:ko **"옵션이 없어요"라는 설명을 걷어냈어요.** 예전에 `--deep` 같은 옵션이 있었고 그걸 없앤 건 맞지만, 처음 보는 사람은 그런 게 있었는지도 모릅니다. "옵션이 없다"고 굳이 말하면 오히려 **"무슨 옵션이 있었는데?"** 하고 헷갈려요. CHANGELOG에 있어야 할 말이 제품 설명에 새어 나온 겁니다. 이제 없는 걸 설명하지 않고 **하는 일만** 적습니다. 표의 `발동` 배지가 좁은 화면에서 잘려 보이던 것도 고쳤어요. -->
+<!-- show:en **Removed the copy that explains what isn't there.** There used to be flags like `--deep`, and removing them was right — but a first-time reader never knew they existed. Telling them "there are no flags" only makes them wonder which flags they're missing. That's changelog material that leaked into product copy. The page now describes what review does, not what it lacks. The `trigger` badge that looked clipped in the command table is fixed too. -->
+
+### Fixed
+- **`발동` 배지가 잘려 보임** (2026-08-01) — 증상: 명령어 표 오른쪽 배지의 알약 배경이 오른쪽에서 잘렸다. 원인: `.fire`가 기본 `display:inline`이라 아이콘과 글자가 좁은 셀에서 줄바꿈되고, 그 지점에서 배경이 끊겼다. `inline-flex` + `white-space:nowrap`으로 한 줄에 묶고, 마지막 열이 줄지 않게 고정했다.
+- **영문 3곳에 남아 있던 "훅이 리뷰를 직접 실행"** (2026-08-01) — `test_no_overclaim`의 정규식이 `runs the review`만 잡고 **`runs it`(목적어가 대명사)을 놓쳤다.** 정규식을 넓히자 바로 3곳이 나왔다 — README의 `review` 절, 랜딩 fresh-eyes 카드, 그리고 뜻이 흐리던 열 제목(`MACHINE · hooks run it` → `hooks execute these`). **금지 검사도 표현 하나에만 맞춰 두면 같은 주장이 다른 말로 빠져나간다**는 것을 또 확인했다.
+
+### Changed
+- **"옵션이 없다"는 설명 제거** (2026-08-01) — 명령어 표의 `(옵션 없음 — …)`, 펼침 노트 제목 `review는 옵션이 없어요`, 본문의 `옵션이 아니라 기본이에요`·`외울 옵션이 없어요`, `gate`의 `옵션 없이 알아서 판단`을 전부 걷어냈다. 없앤 기능을 설명하는 건 **그 기능을 알던 사람에게만 의미**가 있고, 새 사용자에게는 없는 옵션을 찾게 만든다. 노트 제목은 `review가 알아서 정하는 것들`로, 내용은 그대로 두되 **하는 일**만 말한다. "가볍게 봐줘"로 조절할 수 있다는 안내는 유용하므로 유지.
+
 ## [0.26.3] - 2026-08-01
 <!-- show:ko **공유하기 전에 랜딩을 마지막으로 손봤어요.** 링크 미리보기 태그(og·twitter)가 아예 없어서, 카카오톡이나 슬랙에 붙이면 제목만 덩그러니 나왔습니다. 그리고 첫 화면만 보면 범용 AI 코딩 도구처럼 읽혔어요 — 실제로는 Python 프로젝트를 만드는 입문자·1인 개발자용인데 "python3만 있으면 돼요"가 지원 대상이 아니라 설치 조건처럼 보였거든요. 사실과 다른 문구 넷도 같이 고쳤습니다. -->
 <!-- show:en **Last pass on the landing page before sharing it.** There were no link-preview tags at all (og / twitter), so pasting the URL into KakaoTalk or Slack showed a bare title. The hero also read like a general-purpose AI coding tool — it's for beginners and solo devs building Python projects, but "just needs python3" looked like an install requirement rather than the target audience. Four inaccurate lines were fixed alongside. -->
