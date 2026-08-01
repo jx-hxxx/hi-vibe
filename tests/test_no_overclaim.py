@@ -12,11 +12,23 @@ import re
 import unittest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SURFACES = ["README.md", "README.ko.md", "docs/index.html", "CLAUDE.md",
-            "hooks/scripts/session_start.py", "hooks/scripts/stop_nudge.py",
-            "skills/docs-keeper/SKILL.md", "skills/write-gate/SKILL.md",
-            "skills/repo-xray/SKILL.md",
-            "skills/docs-keeper/templates/CLAUDE.md.tpl"]
+
+# 검사 대상을 손으로 나열하면, 금지 문구가 목록에 없는 파일로 들어갈 때
+# 조용히 통과한다. 그래서 **활성 문서를 그때그때 모은다** — 새 명령·새
+# 에이전트·새 스킬을 추가해도 자동으로 검사 범위에 들어온다.
+_SKIP_DIRS = {".git", "__pycache__", ".repo-xray", ".hi-vibe", "node_modules",
+              ".pytest_cache", "tests"}   # tests/ = 금지 문구를 인용하는 자리
+_SKIP_FILES = {"CHANGELOG.md"}            # 과거 릴리스 서술이라 옛 표현을 인용한다
+_SCAN_EXT = (".md", ".html", ".tpl", ".py")
+
+
+def _surfaces():
+    for root, dirs, files in os.walk(REPO):
+        dirs[:] = [d for d in dirs if d not in _SKIP_DIRS and not d.startswith(".")]
+        for name in files:
+            if name in _SKIP_FILES or not name.endswith(_SCAN_EXT):
+                continue
+            yield os.path.relpath(os.path.join(root, name), REPO)
 
 # 랜딩 타임라인은 CHANGELOG에서 자동 생성된 *과거 서술*이라 옛 표현을 인용한다.
 _SHOWCASE = re.compile(r"<!--\s*SHOWCASE:[a-z]+-start\s*-->.*?"
@@ -78,7 +90,7 @@ def _line_at(text, offset):
 class NoOverclaimTest(unittest.TestCase):
     def test_no_known_overclaim_returns(self):
         hits = []
-        for rel in SURFACES:
+        for rel in _surfaces():
             text = _read(rel)
             for pattern, why in BANNED:
                 for m in re.finditer(pattern, text, re.I):
@@ -89,6 +101,20 @@ class NoOverclaimTest(unittest.TestCase):
         self.assertEqual(
             sorted(hits), [],
             "예전에 고쳤던 과장이 다시 들어왔다:\n" + "\n".join(sorted(hits)))
+
+    def test_scan_covers_the_real_surfaces(self):
+        """검사 범위가 조용히 좁아지는 것도 막는다.
+
+        손으로 나열하던 시절엔 목록에 없는 파일로 문구가 들어가면 그냥
+        통과했다. 이제 동적으로 모으므로, 대표 파일이 빠지면 실패한다."""
+        found = set(_surfaces())
+        for must in ["README.md", "README.ko.md", os.path.join("docs", "index.html"),
+                     "CLAUDE.md", os.path.join("commands", "review.md"),
+                     os.path.join("agents", "fresh-eyes.md"),
+                     os.path.join("hooks", "scripts", "session_start.py"),
+                     os.path.join("skills", "write-gate", "SKILL.md")]:
+            self.assertIn(must, found, f"검사 범위에서 빠졌다: {must}")
+        self.assertGreater(len(found), 25, f"검사 대상이 {len(found)}개뿐이다")
 
     def test_guard_actually_fires(self):
         """금지 목록이 조용히 무력해지는 것을 막는다.

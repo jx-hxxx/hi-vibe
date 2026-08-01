@@ -5,6 +5,23 @@
 
 ## [Unreleased]
 
+## [0.25.1] - 2026-08-01
+<!-- show:ko **어제 넣은 `.env` 검사가 경계에서 틀렸어요.** `.env`로 시작하는 이름을 전부 잡느라 direnv 설정 파일인 `.envrc`까지 "키를 폐기하세요"라고 했고, `.gitignore`에서는 `.env`라는 글자만 찾아서 주석(`# .env`)이나 무시 해제(`!.env`)까지 안전하다고 판정했습니다. 둘 다 실제로는 정반대예요. 이제 파일명은 정확히 `.env`이거나 `.env.`으로 시작하는 것만 보고, 무시 여부 판정은 **Git에게 직접 물어봅니다**. 테스트가 없어서 들어온 버그라 경계값 17개를 고정했어요. 그리고 이 검사는 전체 doctor에서만 돌아서 **이미 쓰던 프로젝트는 영영 모를 수 있었는데**, 이제 세션 시작 때 자동으로 확인합니다. -->
+<!-- show:en **The `.env` check added yesterday was wrong at the edges.** It matched anything starting with `.env`, so direnv's `.envrc` got told to rotate its keys, and it looked for the literal string `.env` in `.gitignore`, so a comment (`# .env`) or an un-ignore rule (`!.env`) both read as safe. Both are the exact opposite of safe. Filenames are now matched as exactly `.env` or a `.env.` prefix, and whether Git ignores it is a question **asked of Git itself**. These slipped in because there were no tests, so 17 edge cases are now pinned. The check also only ran in the full doctor, meaning **an existing project could never find out** — it now runs automatically at session start. -->
+
+### Fixed
+- **`.envrc`를 유출로 오인** (2026-08-01) — 증상: direnv 설정 파일 `.envrc`가 추적되면 "키를 폐기하라"는 FAIL이 떴다. 원인: `name.startswith(".env")`가 `.envrc`·`.environment`·`.envoy`까지 잡았다. 정확히 `.env`이거나 `.env.`으로 시작하는 것만 본다(`is_env_secret_file`).
+- **`.gitignore` 판정이 문자열 검색** (2026-08-01) — 증상: `# TODO: 나중에 .env 추가`(주석)와 `!.env`(무시 **해제**) 둘 다 "안전함"으로 나왔다. 원인: 파일 내용에 `".env"`가 있는지만 봤다. 주석·negate·우선순위·전역 설정을 다 아는 건 Git뿐이므로 **`git check-ignore`에 판정을 맡긴다**. 저장소가 아니면 판정 불가로 두고 아무 말도 하지 않는다(없는 경고를 만들지 않는다).
+- **`commands/handover.md`의 handover 과장** (2026-08-01) — "so the next session keeps context". 과장 검사의 대상 파일을 손으로 나열하고 있어서 이 파일이 빠져 있었다 — 아래 변경으로 잡혔다.
+
+### Added
+- **`.env` 검사 회귀 테스트 17개** (2026-08-01) — 위 두 버그는 "주요 경로는 잘 도는데 경계에서 틀리는" 종류라 사람 눈에 안 보인다. 실제 비밀 파일 5종·견본 4종·닮은 이름 7종, `.gitignore`의 평범한 규칙/주석/negate/없음/저장소 아님, 중첩 폴더(`config/.env`), FAIL·WARN·OK·침묵 판정을 전부 고정했다.
+- **세션 시작 때 자동 확인** (2026-08-01) — `doctor --quick`에 `tracked_env`를 실었다. 전체 `doctor`에만 두면 **이미 hi-vibe를 쓰던 프로젝트가 업데이트만 받았을 때 영영 모른다**(init을 다시 칠 일도, doctor를 칠 일도 없다). `write-gate` 스킬이 세션당 한 번 알리게 했다 — 파일은 열지 말고, 지우지도 말고, 알리기만.
+
+### Changed
+- **과장 검사가 활성 문서를 동적으로 수집** (2026-08-01) — 손으로 나열하면 목록에 없는 파일로 문구가 들어갈 때 조용히 통과한다. `commands/`·`agents/`·`skills/`를 포함해 그때그때 모으고(테스트와 CHANGELOG는 제외), 검사 범위가 좁아지면 그것도 실패로 잡는다. 바꾸자마자 위 `commands/handover.md` 한 건을 찾아냈다.
+- 테스트 145 → 163개.
+
 ## [0.25.0] - 2026-08-01
 <!-- show:ko **`.env`가 Git에 올라가면 아무도 못 잡던 구멍을 막았어요.** 비밀키 검사는 `.env`를 "키를 둬도 되는 자리"로 보고 검사에서 뺍니다. 그런데 그 파일을 `.gitignore`에 안 넣고 커밋해버리면 훅도 스캐너도 안 봐요 — 입문자가 실제로 자주 밟는 자리인데 검사망 자체가 없었습니다. 이제 `doctor`가 추적 중인 `.env`를 찾아 실패로 알리고(이미 push했으면 키를 폐기하라고 함께), `init`이 `.gitignore`에 넣습니다. 파일 내용은 읽지 않아요 — 이름만 봅니다. 그리고 **한 번 과장으로 판명된 문장이 다시 못 들어오게** 테스트로 막았습니다. -->
 <!-- show:en **Closed the gap where a committed `.env` was invisible to everything.** The secret scan treats `.env` as a legitimate place to keep keys, so it skips it. But if that file never makes it into `.gitignore` and gets committed, neither the hook nor the scanner ever looks at it — a mistake beginners actually make, with no net under it at all. `doctor` now reports tracked `.env` files as a failure (and says to rotate the keys if you already pushed), and `init` adds them to `.gitignore`. It never reads the contents — only the names. Also: sentences already found to be overstatements are now blocked by a test. -->

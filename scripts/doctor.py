@@ -135,6 +135,18 @@ def check_scanner(python3):
 ENV_SAMPLE_SUFFIXES = (".example", ".sample", ".template", ".dist")
 
 
+def is_env_secret_file(name):
+    """비밀값이 들어 있을 만한 `.env` 파일인가 (파일명만 보고 판단).
+
+    `startswith(".env")`로 잡으면 **direnv의 `.envrc`처럼 커밋해도 되는
+    파일까지** 유출로 몰아붙인다(`.environment`·`.envoy`도 마찬가지).
+    실제 비밀 파일은 정확히 `.env`이거나 `.env.local`처럼 `.env.`으로
+    시작한다 — 그 둘만 본다."""
+    if not (name == ".env" or name.startswith(".env.")):
+        return False
+    return not name.endswith(ENV_SAMPLE_SUFFIXES)
+
+
 def tracked_env_files(root):
     """Git이 추적 중인 `.env` 계열 (견본 제외). git이 없거나 저장소가 아니면 []."""
     try:
@@ -144,12 +156,27 @@ def tracked_env_files(root):
         return []
     if r.returncode != 0:
         return []
-    out = []
-    for line in r.stdout.splitlines():
-        name = os.path.basename(line.strip())
-        if name.startswith(".env") and not name.endswith(ENV_SAMPLE_SUFFIXES):
-            out.append(line.strip())
-    return out
+    return [ln.strip() for ln in r.stdout.splitlines()
+            if ln.strip() and is_env_secret_file(os.path.basename(ln.strip()))]
+
+
+def env_is_ignored(root):
+    """`.env`가 정말로 무시되는가 — **판정은 Git에게 시킨다**.
+
+    `.gitignore` 본문에서 `".env"` 문자열만 찾으면 `# TODO: .env 추가`(주석)나
+    `!.env`(무시 해제)까지 "안전함"으로 읽는다. 둘 다 실제로는 정반대다.
+    `git check-ignore`는 주석·negate·우선순위·전역 설정까지 Git 규칙 그대로
+    판정하므로 여기에 맡긴다. git이 없으면 판정 불가(None)."""
+    try:
+        r = subprocess.run(["git", "check-ignore", "-q", "--no-index", ".env"],
+                           cwd=root, capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if r.returncode == 0:
+        return True
+    if r.returncode == 1:
+        return False
+    return None   # 128 = 저장소 아님 등
 
 
 def check_env_secrets(root):
@@ -169,15 +196,16 @@ def check_env_secrets(root):
             ".gitignore에 넣으세요. **이미 push했다면 히스토리에 남아 있으니 "
             "그 키는 폐기(rotate)해야 합니다.**")
         return
-    gi = os.path.join(root, ".gitignore")
-    if os.path.isfile(gi):
-        with open(gi, encoding="utf-8", errors="replace") as f:
-            if ".env" in f.read():
-                add("OK", ".env 유출", "추적 안 됨 + .gitignore에 있음")
-                return
-    add("WARN", ".env 유출", "추적 중인 .env는 없지만 .gitignore에도 없습니다 "
-        "— 나중에 만들면 그대로 커밋될 수 있습니다. `.env` 한 줄만 넣어두세요 "
-        "(`.env.example`은 커밋해도 됩니다).")
+    ignored = env_is_ignored(root)
+    if ignored is None:
+        return   # git 저장소가 아니면 할 말이 없다 — 없는 경고를 만들지 않는다
+    if ignored:
+        add("OK", ".env 유출", "추적 안 됨 + Git이 실제로 무시함")
+        return
+    add("WARN", ".env 유출", "추적 중인 .env는 없지만 Git이 무시하지도 않습니다 "
+        "— 나중에 만들면 그대로 커밋될 수 있습니다. `.gitignore`에 `.env` 한 "
+        "줄만 넣어두세요 (`.env.example`은 커밋해도 됩니다). 주석(`# .env`)이나 "
+        "`!.env`는 효과가 없습니다.")
 
 
 def check_project(root):
@@ -242,10 +270,15 @@ def cmd_quick(root):
     # SessionStart는 세션마다 반드시 돈다 — 이게 낡았으면 훅 자체가 안 도는 것.
     state = "alive" if "SessionStart" in fresh else ("stale" if beats else "never-ran")
     last = max((v for v in beats.values() if isinstance(v, (int, float))), default=0)
+    # 추적 중인 `.env`도 여기서 본다. 전체 doctor에만 두면 **이미 쓰던
+    # 프로젝트가 업데이트만 받았을 때 영영 모른다** — init을 다시 칠 일도,
+    # doctor를 칠 일도 없기 때문이다. 파일명만 보는 검사라 값이 거의 안 든다
+    # (파일 내용은 읽지 않는다).
     print(json.dumps({
         "state": state,
         "fresh_hooks": fresh,
         "last_seen_hours": round((now - last) / 3600, 1) if last else None,
+        "tracked_env": tracked_env_files(root)[:5],
     }, ensure_ascii=False))
     return 0
 

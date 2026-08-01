@@ -1,5 +1,5 @@
 ---
-description: "Append a session-handover entry to handover.md (so the next session keeps context)"
+description: "Append a session-handover entry to handover.md (so the next session has enough to pick up from)"
 ---
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/docs-keeper/SKILL.md`.
