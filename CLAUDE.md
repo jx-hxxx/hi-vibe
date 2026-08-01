@@ -24,21 +24,21 @@ python3 scripts/doctor.py --root .      # 훅·스캐너 실제 실행 자가진
 python3 skills/repo-xray/scripts/audit.py scan --root .   # 구조 스캔
 ```
 
-## 폴더 지도
-<!-- 한 폴더 = 한 줄. 상세 설계는 각 폴더의 MODULE.md에. -->
-- `hooks/` — Claude Code 생명주기 훅 4종(PostToolUse·PreCompact·SessionStart·Stop)과 공용 `_common.py`. 기계 강제 층.
-- `skills/` — 6개 스킬(repo-xray·write-gate·docs-keeper·guards-setup·grounded-answers·root-cause-first). 명령의 실제 동작 담당.
-- `commands/` — 10개 슬래시 명령(사용자용 버튼). 각 명령이 스킬을 호출.
-- `agents/` — `fresh-eyes`(설계 판단, `review`가 기본 소환) · `proof-eyes`(스캔 결과 검증, `check`가 기본 소환). 둘의 차이는 **의심 대상**이다: fresh-eyes는 코드를, proof-eyes는 스캐너를 의심한다.
-- `scripts/` — `doctor.py`(런타임: `/hi-vibe:doctor` + 스킬이 부르는 `--quick` 생존 확인) · 저장소 자동화(build-showcase·build-release-notes).
-- `tests/` — 회귀 테스트(훅·스캐너·리뷰범위·무결성·명령 분류·Bash 경로). CI가 3.8·3.9·3.12로 실행. `test_command_modes.py`의 `COMMAND_MODE`가 **자동/직접 분류의 단일 기준**이다 — 새 명령을 만들면 거기 먼저 적고, 문서는 그것과 맞춘다.
-- `docs/` — 랜딩 페이지(`index.html`). 업데이트 타임라인은 CHANGELOG에서 자동 생성.
+## 함정
+<!-- 폴더 목록은 여기 없다 — `ls`로 1초면 보이고 금방 낡는다.
+     코드만 봐서는 모르는 것만 적는다. -->
+- **두 에이전트의 차이는 "의심 대상"이다.** `fresh-eyes`는 **코드**를 의심하고(의도가 필요), `proof-eyes`는 **스캐너**를 의심한다(증거가 필요). 이름만 보고 둘을 바꿔 쓰면 리뷰가 헛돈다.
+- **`test_command_modes.py`의 `COMMAND_MODE`가 자동/직접 분류의 단일 기준이다.** 새 명령을 만들면 거기 먼저 적고 문서를 맞춘다. 반대로 하면 문서 네 곳이 조용히 갈린다(실제로 세 번 겪었다).
+- **`doctor.py`는 두 얼굴이다** — 사용자용 `/hi-vibe:doctor`와, 스킬이 세션당 한 번 부르는 생존 확인. 후자는 사용자가 치는 명령이 아니다.
+- **랜딩(`docs/index.html`)의 업데이트 타임라인은 손으로 고치지 마라** — CHANGELOG의 `show:ko`/`show:en`에서 자동 생성된다.
 
 ## 결정 기록
 - **`audit.py`(스캐너)가 자기 스캔에서 oversized 후보(400줄 기준 초과)로 잡히지만 유지한다.** 응집도 높은 단일 책임(저장소 구조 스캔) 파일이고, 60줄 초과 함수는 `find_near_duplicates`(알고리즘)·`cmd_scan` 둘뿐이다. 스캐너는 "삭제 판정"이 아니라 "검토 후보"를 줄 뿐이며 판단은 사람이 한다 — 이건 그 철학의 dogfooding 예다. (테스트 파일 2개도 같은 이유로 후보에 잡히지만 유지.) **다음에 또 "쪼개자"고 하지 말 것.**
 
 ## 문서 규칙
-이 프로젝트는 hi-vibe 문서 시스템을 씁니다. 구조가 바뀌면 해당
-`MODULE.md`와 위 폴더 지도를 같은 턴에 갱신하세요. 세션 맥락은
-`handover.md`, 실질 변경 이력은 `CHANGELOG.md`에 기록합니다.
+이 프로젝트는 hi-vibe 문서 시스템을 씁니다. 폴더의 **책임**이 바뀌면 해당
+`MODULE.md`를 같은 턴에 갱신하세요. 이 파일은 **코드만 봐서는 모를 것**이
+바뀌었을 때만 건드립니다(새 제약·새 함정·기록할 결정). 파일을 옮긴 건
+해당하지 않습니다. 세션 맥락은 `handover.md`, 실질 변경 이력과 트러블슈팅은
+`CHANGELOG.md`에 기록합니다.
 CLAUDE.md는 120줄을 넘기지 않습니다 — 상세는 항상 MODULE.md로.

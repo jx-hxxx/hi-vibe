@@ -180,6 +180,36 @@ Both are good tools, but they cover different ground.
 | Linter | Mechanically checks fixed code rules | Doesn't know design intent, past decisions, or existing features |
 | hi-vibe | Connects docs · AI discipline · hooks · optional CI | Does not automatically detect every bug |
 
+### Doesn't this overlap with Claude Code's built-ins?
+
+**Quite a bit, yes.** Better to say so up front.
+
+| Claude Code built-in | hi-vibe | What's different |
+|---|---|---|
+| `/init` (writes CLAUDE.md) | `init` | **Overlaps.** hi-vibe also creates `handover.md` and `CHANGELOG.md`, and turns the hooks on |
+| auto memory | `handover.md` | Built-in memory is **Claude deciding what to keep**, stored under your Claude config. handover is **a script writing a fixed set** into the project right before compaction — readable by you, shareable with your team if you want |
+| `/code-review` | `review` | **The review itself overlaps.** What differs is when it runs — see below |
+| `/verify` | the run-verification checklist item | Overlaps. hi-vibe's side is closer to a rule: "don't claim it works because the tests passed" |
+| `/doctor` | `/hi-vibe:doctor` | **Same name, different subject.** The built-in checks your CLI install and settings; this one checks hi-vibe's own hooks and scanner |
+| (none) | instant swallowed-error / secret detection | You can write the hooks yourself, but it isn't built in |
+| (none) | repo-wide duplicate / unreferenced scan | Python AST based. `check` |
+| (none) | symptom-and-cause CHANGELOG | Claude will write one if you ask; there's no dedicated flow |
+
+**The real difference is when things run.** From Claude Code's own docs:
+
+> `/verify` and `/code-review` **run only when you invoke them.**
+> Before v2.1.215, Claude could also run them on its own.
+
+Auto-invocation existed and was removed. hi-vibe's Stop hook **runs the review
+right there when changes nobody reviewed are still sitting in the tree** — and
+won't block twice on the same change. Catching what you forgot to run is the
+whole point of this plugin.
+
+**So the accurate framing is this:** not "it adds what Claude Code lacks," but
+**it wires the good features you already have into the moments they're easiest
+to skip, and leaves the result in your project as a record.** Review quality
+itself will keep improving in `/code-review` — that's the right place for it.
+
 ---
 
 ## Why is it trustworthy?

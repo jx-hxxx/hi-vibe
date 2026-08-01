@@ -1,5 +1,5 @@
 ---
-description: "Install self-diagnosis — actually runs the hooks & scanner to confirm they work (catches silent failure)"
+description: "hi-vibe's own health check — actually runs hi-vibe's 4 hooks & scanner to catch silent failure. Not Claude Code's built-in /doctor (that one checks your CLI install)"
 argument-hint: "[--root <project>]"
 ---
 
@@ -13,6 +13,12 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/doctor.py" --root <project>
 
 Then relay the report to the user in kind, plain language — **in whatever
 language the user is speaking** (Korean if they use Korean, English if English).
+
+**If the user seems to have meant Claude Code's built-in `/doctor`** — they ask
+about the CLI install, auto-update failures, PATH problems, or CLAUDE.md
+hygiene — say so in one line and point them there. This command only knows
+about hi-vibe's own hooks and scanner. Two different commands with the same
+name is confusing enough without us pretending otherwise.
 **LEAD WITH THE CONCLUSION, not a wall of warnings:**
 
 1. First line: is hi-vibe ITSELF healthy? (python3 + 훅 4종 + 스캐너가

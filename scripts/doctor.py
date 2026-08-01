@@ -219,7 +219,8 @@ def main():
     check_project(root)
 
     icon = {"OK": "✅", "WARN": "⚠️", "FAIL": "❌"}
-    print("👋 hi-vibe doctor 결과")
+    print("👋 hi-vibe doctor — hi-vibe의 훅·스캐너만 검사합니다")
+    print("   (Claude Code 설치 상태는 기본 `/doctor`가 따로 봅니다)")
     print("=" * 40)
     for status, label, detail in results:
         line = f"{icon[status]} {label}"

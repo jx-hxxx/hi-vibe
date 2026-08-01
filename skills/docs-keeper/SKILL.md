@@ -50,11 +50,16 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
    (AskUserQuestion). `--audit` mode: only report drift, change nothing.
 3. Scaffold the LEAN default only — do NOT create every doc up front. A
    toy project must not start with more management docs than code.
-   - CLAUDE.md: fill 개요/요구사항/실행 방법 by asking the user if not
-     inferable; generate the 폴더 지도 by scanning 2 levels deep — one
-     line per folder. Add the `→ 상세: <folder>/MODULE.md` pointer for a
-     folder ONLY once that folder's MODULE.md actually exists — never
-     write a pointer to a file you didn't create.
+   - CLAUDE.md: fill 개요/요구사항/실행 방법/함정/결정 기록 by asking the
+     user when not inferable. **Write only what the code cannot tell you.**
+     Do NOT generate a folder listing, a dependency list, or an
+     architecture overview — Claude can get those from `ls`/`grep` in one
+     second, they go stale immediately, and they cost context every
+     session. (Claude Code's own `/doctor` trims exactly that kind of
+     derivable content and keeps pitfalls, rationale and conventions —
+     don't generate what the platform will delete.)
+     `상세 문서` lists only MODULE.md files that actually exist — never
+     write a pointer to a file you didn't create. It stays empty at init.
    - handover.md from its template.
    - `CHANGELOG.md` from `templates/CHANGELOG.md.tpl` (skip if it already
      exists — never overwrite). 트러블슈팅 기록이 이 플러그인의 핵심이라
@@ -69,8 +74,10 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
      recording — a structural change lands in it, `review` finds it has
      grown complex, or the user asks "이 폴더 문서 만들어줘". Pre-fill
      주요 파일 from a directory listing, leave 설계 as short TODO prompts,
-     and add the `→ 상세:` pointer into the CLAUDE.md 폴더 지도 in the
-     SAME turn (per the doc-sync contract below).
+     and add a line for it under CLAUDE.md's `상세 문서` in the SAME turn
+     (per the doc-sync contract below). A file listing belongs HERE, next
+     to the design it explains — not in CLAUDE.md, which every session
+     pays for.
    (`CHANGELOG.md`는 더 이상 여기 없다 — init이 만든다. 이미 있는 프로젝트를
    위해 log 모드는 여전히 없으면 만들지만, 정상 경로에서는 그럴 일이 없다.)
 4. **Create the `.hi-vibe/` marker directory** — this is what turns the
@@ -205,5 +212,11 @@ That's the whole welcome — a few lines, nothing more.
 ## Doc-sync contract (applies everywhere)
 
 Structure changed (file added/moved/renamed, folder responsibility
-changed) → the matching MODULE.md AND the CLAUDE.md 폴더 지도 must be
-updated in the same turn. A doc that lies is worse than no doc.
+changed) → the matching MODULE.md must be updated in the same turn.
+A doc that lies is worse than no doc.
+
+CLAUDE.md is touched only when something **not derivable from the code**
+changed — a new constraint, a new pitfall, a decision worth recording, or
+a new MODULE.md to point at. Moving a file is not one of those. Keeping a
+folder listing in CLAUDE.md would mean editing it on every structural
+change, which is exactly how it ends up lying.

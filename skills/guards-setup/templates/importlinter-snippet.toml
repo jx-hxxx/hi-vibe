@@ -1,5 +1,5 @@
 # hi-vibe: pyproject.toml에 병합할 import-linter 설정 (d-2)
-# 레이어는 예시다 — 설치 시 CLAUDE.md 폴더 지도에서 실제 레이어를
+# 레이어는 예시다 — 설치 시 실제 디렉터리와 import 관계를 보고
 # 추론해 사용자와 확인한 뒤 채울 것.
 # 실행: lint-imports  (pip install import-linter)
 

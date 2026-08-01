@@ -84,8 +84,9 @@ description: >-
 `importlinter-snippet.toml`):
 - ruff: C901 복잡도 ≤10, PLR0913 인자 수, E/F 기본
 - mypy: strict (입문자 프로젝트면 단계 적용 제안)
-- import-linter: 레이어 계약 — CLAUDE.md 폴더 지도에서 레이어를
-  추론해 초안을 만들고 사용자와 확인. 순환·경계 위반 시 실패.
+- import-linter: 레이어 계약 — **실제 디렉터리와 import 관계를 보고**
+  레이어 초안을 만들어 사용자와 확인한다(CLAUDE.md에 폴더 목록을 두지
+  않으므로 거기서 읽지 않는다). 순환·경계 위반 시 실패.
 
 **JS/TS** (`templates/eslint-snippet.jsonc`,
 `package-scripts-snippet.json`):
