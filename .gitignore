@@ -4,3 +4,8 @@ __pycache__/
 .hi-vibe/
 .repo-xray/
 node_modules/
+
+# 비밀키는 커밋하지 않는다 (.env는 비밀키 검사 대상 밖이라 커밋되면 아무도 못 잡음)
+.env
+.env.*
+!.env.example

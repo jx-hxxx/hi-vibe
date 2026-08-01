@@ -88,13 +88,24 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
    may already have their own `handover.md`, so we must not key on it
    (that would misfire and could let a hook overwrite their file). Do not
    consider init complete until `.hi-vibe/` exists.
-5. Ensure `.hi-vibe/`, `.repo-xray/`, `handover.md`,
+5. Ensure `.env*` (see below), `.hi-vibe/`, `.repo-xray/`, `handover.md`,
    `handover-archive.md`, and `handover.md.lock` (the transient write-lock
    file for concurrent sessions) are in `.gitignore`. The two dirs are caches;
    `handover*` is a personal session log kept local (not shared to
    GitHub). The other three docs — CLAUDE.md / MODULE.md / CHANGELOG.md —
    ARE committed. CLAUDE.md and CHANGELOG.md exist from init; MODULE.md
    arrives later, per step 3a.
+
+   **`.env*`는 특별히 챙긴다** (`.env.example`·`.env.sample`·`.env.template`은
+   예외 — 값이 아니라 견본이라 커밋하는 게 맞다). 비밀키 검사는 `.env`를
+   "키를 둬도 되는 자리"로 보고 **검사에서 제외**하므로, 그 파일이 Git에
+   올라가면 훅도 스캐너도 못 잡는다. 그래서 여기서 두 가지를 한다:
+   - `.gitignore`에 `.env` 계열이 없으면 추가한다(`.env.example` 등은 negate).
+   - **이미 추적 중이면 그 사실을 알린다** — `git ls-files` 결과에 `.env`
+     계열이 있으면 `.gitignore`에 넣어도 이미 올라간 것은 안 빠진다.
+     `git rm --cached <파일>`이 필요하고, **이미 push했다면 히스토리에 남아
+     있으니 그 키는 폐기(rotate)해야 한다**고 분명히 말한다. 대신 지워주지
+     말고 사용자가 결정하게 한다.
 6. Tell the user the hooks are now active for this project (they gate on
    the `.hi-vibe/` directory existing) and what will happen automatically.
    Say the start is intentionally lean — CLAUDE.md + handover.md +

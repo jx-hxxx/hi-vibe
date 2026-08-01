@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-08-01
+<!-- show:ko **`.env`가 Git에 올라가면 아무도 못 잡던 구멍을 막았어요.** 비밀키 검사는 `.env`를 "키를 둬도 되는 자리"로 보고 검사에서 뺍니다. 그런데 그 파일을 `.gitignore`에 안 넣고 커밋해버리면 훅도 스캐너도 안 봐요 — 입문자가 실제로 자주 밟는 자리인데 검사망 자체가 없었습니다. 이제 `doctor`가 추적 중인 `.env`를 찾아 실패로 알리고(이미 push했으면 키를 폐기하라고 함께), `init`이 `.gitignore`에 넣습니다. 파일 내용은 읽지 않아요 — 이름만 봅니다. 그리고 **한 번 과장으로 판명된 문장이 다시 못 들어오게** 테스트로 막았습니다. -->
+<!-- show:en **Closed the gap where a committed `.env` was invisible to everything.** The secret scan treats `.env` as a legitimate place to keep keys, so it skips it. But if that file never makes it into `.gitignore` and gets committed, neither the hook nor the scanner ever looks at it — a mistake beginners actually make, with no net under it at all. `doctor` now reports tracked `.env` files as a failure (and says to rotate the keys if you already pushed), and `init` adds them to `.gitignore`. It never reads the contents — only the names. Also: sentences already found to be overstatements are now blocked by a test. -->
+
+### Added
+- **`.env` 유출 검사 (`doctor`)** (2026-08-01) — 증상: `.env`에 키를 두고 `.gitignore`에 안 넣은 채 커밋하면 훅도 `check`도 그 파일을 안 본다. 원인: 비밀키 검사가 `.env*`를 **의도적으로 제외**하기 때문 — 구멍이 아니라 검사 대상 밖이라 영영 안 걸린다. `git ls-files`로 추적 중인 `.env` 계열을 찾아 **FAIL**로 알리고, 없으면 `.gitignore`에 있는지까지 본다. **파일 내용은 읽지 않는다** (읽으면 doctor 출력이 유출 통로가 된다). `.env.example`·`.sample`·`.template`·`.dist`는 견본이라 예외. 이미 push했다면 히스토리에 남으므로 **키 폐기(rotate)가 필요하다**는 것도 같이 알린다. 대신 지워주지는 않는다.
+- **`init`이 `.env*`를 `.gitignore`에 추가** (2026-08-01) — 이미 추적 중이면 `git rm --cached`가 필요하다는 것과 rotate 필요성을 알리게 했다.
+- **과장 재발 방지 테스트** (2026-08-01) — `tests/test_no_overclaim.py`. 상상으로 만든 금지어가 아니라 **실제로 문서에 있었고 사실이 아니어서 고친 문장 7종**만 담는다(handover 맥락 보존 · "항상 작동" · 훅이 리뷰를 직접 실행 · 코드 쓸 때마다 감지 · Bash 전수 검사 · CLAUDE.md 폴더 지도 · CHANGELOG 지연 생성). 각 항목에 **왜 과장이고 실제 동작이 무엇인지**를 실패 메시지로 붙였다. 금지 문구를 인용해 금지하는 줄은 `hi-vibe: allow-overclaim` 마커로 뺀다. 옛 문장을 못 잡게 되면 그 자체로 실패하는 자기검사와, 지금 쓰는 정직한 표현을 오탐하지 않는지 보는 검사도 함께 넣었다.
+
+### Fixed
+- **"항상 작동하는 안전벨트"** (2026-08-01) — 훅은 fail-open이라 조용히 죽을 수 있고, 죽었는지는 heartbeat를 보는 스킬 층이 돌아야 안다. "자동으로 매여 있고, 풀리면 알려주는 안전벨트"로 교체. **v0.24.4에서 "절대 표현을 전수 검토했다"고 밝혔는데 이걸 놓쳤다** — 그래서 이번엔 테스트로 고정했다.
+- **"훅이 리뷰를 직접 돌린다"** (2026-08-01) — `stop_nudge.py`는 `decision:block`으로 턴을 막고 reason으로 리뷰를 **지시**할 뿐, 수행하는 건 Claude다. 8곳을 "대화를 붙잡고 리뷰를 시킨다"로 고치고, 기계/AI 표의 보장 방식을 `⚙️ 기계 감지 + 🤖 AI 수행`으로 나눴다. 훅은 리뷰가 **끝났는지까지는 못 본다**는 것도 밝혔다 — 같은 변경으로 두 번 막지 않으므로 중간에 끊기면 그 변경은 넘어간다(잔소리 반복을 피하려는 의도적 선택).
+
 ## [0.24.4] - 2026-08-01
 <!-- show:ko **문서를 주장 단위로 한 번에 훑었어요.** 지금까지는 틀린 걸 발견할 때마다 하나씩 고쳤고, 그래서 계속 나왔습니다. 이번엔 hi-vibe가 하는 주장(handover는 무엇을 남기나 · CHANGELOG는 언제 생기나 · 훅은 무엇을 보나 …)을 목록으로 만들어, 각 주장이 적힌 자리를 전부 모아 코드와 대조했어요. 마지막 과장 하나가 나왔습니다 — "코드 쓸 때마다 에러 삼킴·비밀키를 잡아요"는 사실이 아닙니다. 훅은 Write/Edit만 보고, Bash로 쓴 파일은 못 봐요. -->
 <!-- show:en **Swept the docs one claim at a time, in a single pass.** Until now each wrong line was fixed as it surfaced, which is why they kept surfacing. This time every claim hi-vibe makes (what handover records, when CHANGELOG appears, what the hooks see, …) was listed, every place it is stated was gathered, and each was checked against the code. One last overstatement fell out: "every code write is checked for swallowed errors and secrets" isn't true. The hook only sees Write/Edit; files written through Bash are invisible to it. -->

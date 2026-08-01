@@ -131,6 +131,55 @@ def check_scanner(python3):
                 f"dead 탐지: {'truly_unused_fn' in dead_names}, TS 스캔: {ts_seen}")
 
 
+# 견본 파일은 값이 아니라 형식이라 커밋하는 게 맞다 — 경고 대상이 아니다.
+ENV_SAMPLE_SUFFIXES = (".example", ".sample", ".template", ".dist")
+
+
+def tracked_env_files(root):
+    """Git이 추적 중인 `.env` 계열 (견본 제외). git이 없거나 저장소가 아니면 []."""
+    try:
+        r = subprocess.run(["git", "ls-files"], cwd=root, capture_output=True,
+                           text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return []
+    if r.returncode != 0:
+        return []
+    out = []
+    for line in r.stdout.splitlines():
+        name = os.path.basename(line.strip())
+        if name.startswith(".env") and not name.endswith(ENV_SAMPLE_SUFFIXES):
+            out.append(line.strip())
+    return out
+
+
+def check_env_secrets(root):
+    """`.env`가 Git에 올라가 있는지 본다.
+
+    비밀키 검사는 `.env`를 "키를 둬도 되는 자리"로 보고 **제외**한다. 그래서
+    그 파일이 커밋되면 훅도 스캐너도 못 잡는다 — 검사망에 뚫린 구멍이 아니라
+    검사 대상 밖이라 영영 안 걸린다. 입문자가 실제로 자주 밟는 자리라
+    여기서 따로 본다. **파일 내용은 읽지 않는다** (읽으면 doctor 출력이
+    유출 통로가 된다). 이름만 본다."""
+    tracked = tracked_env_files(root)
+    if tracked:
+        add("FAIL", ".env 유출", ", ".join(tracked[:5]) +
+            (f" 외 {len(tracked)-5}개" if len(tracked) > 5 else "") +
+            " 가 Git에 추적되고 있습니다. 비밀키 검사는 .env를 검사하지 "
+            "않으므로 이건 아무도 안 잡습니다. `git rm --cached <파일>` 후 "
+            ".gitignore에 넣으세요. **이미 push했다면 히스토리에 남아 있으니 "
+            "그 키는 폐기(rotate)해야 합니다.**")
+        return
+    gi = os.path.join(root, ".gitignore")
+    if os.path.isfile(gi):
+        with open(gi, encoding="utf-8", errors="replace") as f:
+            if ".env" in f.read():
+                add("OK", ".env 유출", "추적 안 됨 + .gitignore에 있음")
+                return
+    add("WARN", ".env 유출", "추적 중인 .env는 없지만 .gitignore에도 없습니다 "
+        "— 나중에 만들면 그대로 커밋될 수 있습니다. `.env` 한 줄만 넣어두세요 "
+        "(`.env.example`은 커밋해도 됩니다).")
+
+
 def check_project(root):
     if not os.path.isdir(os.path.join(root, ".hi-vibe")):
         add("WARN", "이 프로젝트", "아직 init 안 함(정상 상태). 여기서 hi-vibe "
@@ -217,6 +266,7 @@ def main():
         check_hooks_live(python3)
         check_scanner(python3)
     check_project(root)
+    check_env_secrets(root)
 
     icon = {"OK": "✅", "WARN": "⚠️", "FAIL": "❌"}
     print("👋 hi-vibe doctor — hi-vibe의 훅·스캐너만 검사합니다")

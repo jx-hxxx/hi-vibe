@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 142 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 145 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -121,7 +121,7 @@ That's it. From now on, code with Claude as usual in that project.
 | Right after session start / compact / clear | Restores recent handover and working discipline | ⚙️ Machine |
 | Session start (only when something's wrong) | Says so if hooks aren't running or CI keeps failing | ⚙️ Machine |
 | “I'm done / review it” | Reviews code, edge cases, and doc sync | 🤖 AI |
-| When a turn ends with unreviewed code | Runs the review right there — you don't type anything | ⚙️ Machine |
+| When a turn ends with unreviewed code | Holds the turn open and demands a review — you don't type anything | ⚙️ Machine detects + 🤖 AI performs |
 | “Why did we do it this way before?” | Searches decision records in handover and archive | 🤖 AI |
 
 **⚙️ Machine** is actually executed by Python hooks. It works regardless of
@@ -133,9 +133,13 @@ it's worth knowing you *can* latch one by hand — `/hi-vibe:find` — when you
 notice it didn't fire. That's an emergency handle, not a habit to build.
 
 `review` doesn't even need the handle. The AI can trigger it from what you say,
-but if it doesn't, the **Stop hook catches the turn and runs it anyway** — the
-half that doesn't depend on the AI's memory is the one backing it up. A
-safeguard you have to remember isn't a safeguard.
+but if it doesn't, the **Stop hook holds the turn open and demands one.**
+A safeguard you have to remember isn't a safeguard.
+
+To be exact: what the machine guarantees is **when a review gets demanded**;
+the review itself is Claude's work. The hook can't tell whether it finished —
+and since it won't block twice on the same change, an interrupted review just
+passes. (Deliberate: repeating the same nag is how a guard gets ignored.)
 
 ---
 
@@ -200,9 +204,10 @@ Both are good tools, but they cover different ground.
 > `/verify` and `/code-review` **run only when you invoke them.**
 > Before v2.1.215, Claude could also run them on its own.
 
-Auto-invocation existed and was removed. hi-vibe's Stop hook **runs the review
-right there when changes nobody reviewed are still sitting in the tree** — and
-won't block twice on the same change. Catching what you forgot to run is the
+Auto-invocation existed and was removed. hi-vibe's Stop hook **holds the turn open and demands a review when changes
+nobody reviewed are still sitting in the tree** — and won't block twice on the
+same change. (The machine guarantees *when* a review is demanded; Claude does
+the reviewing.) Catching what you forgot to run is the
 whole point of this plugin.
 
 **So the accurate framing is this:** not "it adds what Claude Code lacks," but
@@ -214,7 +219,7 @@ itself will keep improving in `/code-review` — that's the right place for it.
 
 ## Why is it trustworthy?
 
-### 142 automated tests
+### 145 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
