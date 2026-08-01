@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 140 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 142 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -214,7 +214,7 @@ itself will keep improving in `/code-review` — that's the right place for it.
 
 ## Why is it trustworthy?
 
-### 140 automated tests
+### 142 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
@@ -269,7 +269,7 @@ project never ends up with more management docs than code. (There's no
 
 | Doc | Role | When it's created |
 |---|---|---|
-| `CLAUDE.md` | Whole-project map — overview, requirements, folder structure | at `init` |
+| `CLAUDE.md` | What the code can't tell you — overview, constraints, pitfalls, rationale, commands (no folder listing) | at `init` |
 | `handover.md` | Progress (auto-recorded) + decisions/context (you or the AI fill in) for the next session | at `init` |
 | `folder/MODULE.md` | That folder's features, models, design, and caveats | when the folder grows complex / "document this folder" |
 | `CHANGELOG.md` | Substantive changes and their reasons. For bug fixes, the **symptom and the cause** too | at init |
@@ -314,8 +314,10 @@ A diagnostic command you run as often as you like once code has piled up.
 **Hardcoded secrets** (surfaced first when present; values are never shown)
 
 The hook only sees code written through Write/Edit. Anything that arrives via
-Bash (heredoc, `sed -i`, a generator script) slips past it, so **this scan is
-the only net**. You get the file, the line and the kind — never the value, not
+Bash slips past it, so **this scan is the only net**. Claude Code's hook
+contract means we can't see every file change made inside a Bash call (we only
+recognise the common writing commands), so the design is **don't trust the
+real-time catch — let this repo-wide scan be the backstop**. You get the file, the line and the kind — never the value, not
 even in the report. If it's intentional, mark that line with a
 `hi-vibe: allow-secret` comment and both the hook and the scan skip it.
 

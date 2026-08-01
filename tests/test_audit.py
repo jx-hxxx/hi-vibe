@@ -465,7 +465,8 @@ class UnfinishedWorkTest(unittest.TestCase):
     def test_line_number_points_at_the_real_match(self):
         hit = next(s for s in self.report["swallowed_errors"]
                    if s["file"] == "old.py")
-        source = open(os.path.join(self.root, "old.py"), encoding="utf-8").read()
+        with open(os.path.join(self.root, "old.py"), encoding="utf-8") as fh:
+            source = fh.read()
         self.assertIn("except", source.splitlines()[hit["line"] - 1])
 
     def test_allow_swallow_marker_is_respected(self):

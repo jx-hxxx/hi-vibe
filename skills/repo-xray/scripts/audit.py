@@ -652,10 +652,18 @@ def secret_report(root, text_files, finder, exts):
         text = read_text(path)
         if not text:
             continue
+        # 한 줄이 여러 패턴에 걸리는 일이 흔하다 (같은 키가 "OpenAI류 키"와
+        # "하드코딩된 시크릿 할당"에 동시에 잡힌다). 그대로 세면 6곳이 11건이
+        # 되어 실제보다 심각해 보인다 — 위치 하나당 한 건으로 묶고 종류만
+        # 합친다. 세는 단위는 "키가 있는 자리"지 "규칙이 걸린 횟수"가 아니다.
+        by_line = {}
         for label, _snippet, offset in finder(text):
-            found.append({"file": rel(root, path),
-                          "line": text.count("\n", 0, offset) + 1,
-                          "kind": label})
+            line = text.count("\n", 0, offset) + 1
+            by_line.setdefault(line, []).append(label)
+        for line in sorted(by_line):
+            kinds = sorted(set(by_line[line]))
+            found.append({"file": rel(root, path), "line": line,
+                          "kind": " / ".join(kinds)})
     return found
 
 

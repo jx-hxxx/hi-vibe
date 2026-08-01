@@ -5,6 +5,24 @@
 
 ## [Unreleased]
 
+## [0.24.1] - 2026-08-01
+<!-- show:ko **문서 정합성을 내세우는 플러그인이 자기 문서에서 모순을 냈어요.** 앞 릴리스에서 CLAUDE.md의 폴더 지도를 없앴는데, **세션마다 주입되는 규율 문구**에는 "구조가 바뀌면 CLAUDE.md 지도 동기화"가 그대로 남아 있었습니다. 없앤 기능을 훅이 매 세션 다시 요구하고 있었던 거예요. README·랜딩의 CLAUDE.md 설명도 여전히 "폴더 구조"라고 적혀 있었고요. 그리고 우리 도구로 우리 저장소를 검사하면 **"비밀키 11건"**이 떴습니다 — 전부 테스트용 가짜 키인데, 한 줄이 두 패턴에 걸려 6곳이 11건으로 부풀려진 것이었어요. 이제 0건입니다. -->
+<!-- show:en **A plugin that sells doc consistency contradicted its own docs.** The previous release dropped the folder map from CLAUDE.md, but the discipline text injected at every session start still said "keep the CLAUDE.md map in sync when structure changes" — a hook asking, every session, for the thing we just removed. The README and landing page still described CLAUDE.md as holding the folder structure too. And scanning our own repo with our own tool reported **11 hardcoded secrets** — all test fixtures, and 6 real locations inflated to 11 because a single line matched two patterns. It reports 0 now. -->
+
+### Fixed
+- **SessionStart charter가 없앤 기능을 다시 요구함** (2026-08-01) — 증상: v0.24.0에서 CLAUDE.md 폴더 지도를 제거했는데, 매 세션 주입되는 규율에 "구조가 바뀌면 MODULE.md와 CLAUDE.md 지도 동기화"가 남아 있었다. 원인: 스킬·템플릿·README만 고치고 **훅 안의 문자열 상수**를 빠뜨렸다. 문서 정합성을 강제하는 플러그인이 정작 자기 지시문을 놓친 자리다. "폴더 책임이 바뀌면 MODULE.md, CLAUDE.md는 코드만 봐선 모를 것이 바뀔 때만"으로 교체.
+- **docs-keeper에 남은 CHANGELOG 지연 생성 설명** (2026-08-01) — v0.23.0에서 init이 만들도록 바꿨는데 `.gitignore` 안내와 init 완료 메시지, log 모드 3번에 옛 설명이 남아 있었다. 문서 정의 표의 CLAUDE.md 행도 "폴더/요구사항이 바뀔 때"로 낡아 있었다.
+- **README·랜딩의 CLAUDE.md 설명이 옛 구조** (2026-08-01) — 한/영 모두 "프로젝트 전체 지도 — 개요·요구사항·폴더 구조"였다. 폴더 목록을 넣지 않는다는 것과 그 이유를 명시했다.
+- **자기 저장소 스캔에서 비밀키 11건** (2026-08-01) — 증상: `check` 스캐너를 hi-vibe 자신에게 돌리면 `hardcoded secrets: 11`이 떴다. 원인 두 가지 — ①테스트 픽스처의 가짜 키에 `allow-secret` 마커가 없었다 ②**한 줄이 여러 패턴에 걸리면 그만큼 중복 집계**돼서 고유 위치 6곳이 11건이 됐다. 세는 단위를 "키가 있는 자리"로 바꾸고(종류는 합쳐서 표시), 픽스처는 마커 붙인 상수 하나로 모았다. **부풀린 숫자는 검사 자체의 신뢰도를 깎는다.** 이제 0건.
+- **테스트에서 닫히지 않은 파일** (2026-08-01) — `test_audit.py`의 `open(...).read()`가 `ResourceWarning`을 냈다. `with`로 감쌌다. `python3 -W error::ResourceWarning`로 0건 확인.
+
+### Added
+- **자기 저장소 비밀키 0건 회귀 테스트** (2026-08-01) — "우리 도구로 우리를 검사하면 11건"은 그 자체로 신뢰 문제라 기계로 고정했다. 한 줄이 여러 패턴에 걸려도 한 건으로 세는 것도 같이 검사한다.
+
+### Changed
+- **Bash 대응 범위를 정확하게 표현** (2026-08-01) — `bash_wrote_files`는 대표적인 쓰기 명령(리다이렉트·heredoc·`sed -i`·`cp`/`mv`/`tee`·`python -c`)을 **추정할 뿐 완전하지 않다**. `perl -pi`·`git apply`·빌드 도구·프로젝트 전용 CLI는 빠진다. 문서를 "Bash 수정도 전부 즉시 검사한다"가 아니라 "대표적인 것은 Stop 리뷰로 보완하고, 비밀키 전수는 `check`가 받는다"로 고쳤고, CLAUDE.md에 그렇게 쓰지 말라고 못 박았다.
+- 테스트 140 → 142개.
+
 ## [0.24.0] - 2026-08-01
 <!-- show:ko **Claude Code 기본 기능과 부딪히던 자리를 정리했어요.** ①CLAUDE.md에 폴더 지도를 만들어 넣고 있었는데, Claude Code의 기본 `/doctor`는 그런 내용(디렉터리 목록·의존성 목록·아키텍처 개요)을 "코드에서 알 수 있는 것"이라며 정리 대상으로 봅니다. 플랫폼이 지울 걸 계속 만들 이유가 없어서, 이제 함정·결정 이유·실행 명령만 남깁니다. ②`/hi-vibe:doctor`와 기본 `/doctor`가 이름만 같고 하는 일이 다른데 구분이 없었어요. 첫 줄에 명시하고, 사용자가 기본 doctor를 찾는 것 같으면 그쪽을 알려주게 했습니다. ③README와 랜딩에 기본 기능과 뭐가 겹치고 뭐가 다른지 표로 넣었어요. 겹치는 게 꽤 있고, 먼저 밝히는 게 맞습니다. -->
 <!-- show:en **Cleaned up where this collided with Claude Code's own features.** (1) We were generating a folder map into CLAUDE.md, but Claude Code's built-in `/doctor` treats exactly that (directory layouts, dependency lists, architecture overviews) as derivable content to trim. No reason to keep producing what the platform deletes, so CLAUDE.md now holds only pitfalls, rationale and commands. (2) `/hi-vibe:doctor` and the built-in `/doctor` share a name but check different things, with nothing saying so. The first line now spells it out, and if you seem to want the built-in one, it points you there. (3) The README and landing page now carry a table of what overlaps with the built-ins and what doesn't. A fair amount overlaps, and saying so first is the honest move. -->

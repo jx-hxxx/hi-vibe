@@ -350,7 +350,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>140</b><span>자동 회귀 테스트</span></div>
+      <div><b>142</b><span>자동 회귀 테스트</span></div>
       <div><b>4종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -429,7 +429,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <div class="docmap">
         <div class="dm-head"><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> 내 프로젝트/ — <code>/hi-vibe:init</code>은 가볍게 시작하고, 나머지 문서는 필요할 때 알아서 생겨요</div>
         <ul class="dm-list">
-          <li><code>CLAUDE.md</code><span>프로젝트 전체 지도 — 개요·요구사항·폴더 구조 <b>(init 때)</b></span></li>
+          <li><code>CLAUDE.md</code><span>코드만 봐서는 모를 것 — 개요·제약·<b>함정</b>·결정 이유·실행 명령. 폴더 목록은 안 넣어요(<code>ls</code>로 1초면 보이고 금방 낡으니까) <b>(init 때)</b></span></li>
           <li><code>handover.md</code><span>세션 인수인계 — 다음 대화가 <b>이어갈 단서</b>를 남겨요(최근 요청·수정 파일·Git·테스트 상태). 대화 정리(compact) 직전에 자동 기록돼요 <b>(init 때)</b></span></li>
           <li class="sub"><code>api/MODULE.md</code><span>그 폴더의 상세 설계·데이터·주의점 — <b>폴더가 복잡해질 때</b> 생겨요 (폴더마다 하나씩)</span></li>
           <li><code>CHANGELOG.md</code><span>트러블슈팅 기록 — 뭐가 언제 왜 바뀌었나. 버그를 고쳤으면 <b>증상과 원인</b>까지 남겨요("고쳤다"만 있으면 나중에 소용없으니까). <b>(init 때)</b></span></li>
@@ -620,9 +620,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.24.1<small>2026-08-01</small></div><div class="h"><b>문서 정합성을 내세우는 플러그인이 자기 문서에서 모순을 냈어요.</b> <span>앞 릴리스에서 CLAUDE.md의 폴더 지도를 없앴는데, **세션마다 주입되는 규율 문구**에는 "구조가 바뀌면 CLAUDE.md 지도 동기화"가 그대로 남아 있었습니다. 없앤 기능을 훅이 매 세션 다시 요구하고 있었던 거예요. README·랜딩의 CLAUDE.md 설명도 여전히 "폴더 구조"라고 적혀 있었고요. 그리고 우리 도구로 우리 저장소를 검사하면 **"비밀키 11건"**이 떴습니다 — 전부 테스트용 가짜 키인데, 한 줄이 두 패턴에 걸려 6곳이 11건으로 부풀려진 것이었어요. 이제 0건입니다.</span></div></div>
         <div class="rel"><div class="v">v0.24.0<small>2026-08-01</small></div><div class="h"><b>Claude Code 기본 기능과 부딪히던 자리를 정리했어요.</b> <span>①CLAUDE.md에 폴더 지도를 만들어 넣고 있었는데, Claude Code의 기본 `/doctor`는 그런 내용(디렉터리 목록·의존성 목록·아키텍처 개요)을 "코드에서 알 수 있는 것"이라며 정리 대상으로 봅니다. 플랫폼이 지울 걸 계속 만들 이유가 없어서, 이제 함정·결정 이유·실행 명령만 남깁니다. ②`/hi-vibe:doctor`와 기본 `/doctor`가 이름만 같고 하는 일이 다른데 구분이 없었어요. 첫 줄에 명시하고, 사용자가 기본 doctor를 찾는 것 같으면 그쪽을 알려주게 했습니다. ③README와 랜딩에 기본 기능과 뭐가 겹치고 뭐가 다른지 표로 넣었어요. 겹치는 게 꽤 있고, 먼저 밝히는 게 맞습니다.</span></div></div>
         <div class="rel"><div class="v">v0.23.0<small>2026-08-01</small></div><div class="h"><b>외부 리뷰에서 나온 구멍 세 개를 막았어요.</b> <span>①`doctor`는 CHANGELOG가 없다고 `init`을 안내하는데 `init`은 그 파일을 안 만들었습니다. 몇 번을 다시 쳐도 경고가 안 없어지는 막다른 길이었고, 정작 중요하게 여긴 트러블슈팅 기록이 시작조차 안 됐어요. 이제 `init`이 만듭니다. ②Bash로 쓴 파일이 안전망을 통째로 빠져나갔습니다. 훅이 Write/Edit만 보는 건 Claude Code 계약이라 어쩔 수 없지만, 그 탓에 **리뷰까지 건너뛰고** 비밀키는 전체 스캔에도 없어서 영영 안 잡혔어요. Stop 훅이 Bash 명령까지 보게 하고, `check`에 저장소 전체 비밀키 검사를 붙였습니다. ③handover가 "맥락을 안 잃게 해준다"고 쓰여 있었는데, 실제로는 최근 요청 5개(각 120자)와 파일·Git·테스트 상태입니다. "이어갈 단서를 남긴다"로 고쳤어요.</span></div></div>
-        <div class="rel"><div class="v">v0.22.0<small>2026-08-01</small></div><div class="h"><b>CHANGELOG가 "고쳤다"만 남기고 있었어요.</b> <span>이 파일은 원래 트러블슈팅을 기록하려고 넣은 건데, `log`가 시키는 건 "무엇이 바뀌었나"까지였습니다. 나중에 `recall`로 찾는 사람이 궁금한 건 고쳤다는 사실이 아니라 **"왜 그랬더라"**인데 그게 안 남았어요. 이제 `Fixed`에는 증상과 원인을 같이 적습니다. 원인을 모른 채 고쳤으면 모른다고 적게 했어요 — 틀린 원인은 기록이 없느니만 못하니까요(다음 사람이 그걸 믿고 엉뚱한 데를 팝니다).</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -682,7 +682,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>140</b><span>automated regression tests</span></div>
+      <div><b>142</b><span>automated regression tests</span></div>
       <div><b>4</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -761,7 +761,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <div class="docmap">
         <div class="dm-head"><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> my-project/ — <code>/hi-vibe:init</code> starts lean; the rest appear when they're actually needed</div>
         <ul class="dm-list">
-          <li><code>CLAUDE.md</code><span>The whole-project map — overview, requirements, folder layout <b>(at init)</b></span></li>
+          <li><code>CLAUDE.md</code><span>What the code can't tell you — overview, constraints, <b>pitfalls</b>, rationale, commands. No folder listing (<code>ls</code> shows that in a second, and it goes stale fast) <b>(at init)</b></span></li>
           <li><code>handover.md</code><span>Session handover — it leaves the next chat <b>enough to pick up from</b> (recent requests, edited files, Git &amp; test state). Auto-recorded right before compaction <b>(at init)</b></span></li>
           <li class="sub"><code>api/MODULE.md</code><span>A folder's design, data &amp; gotchas — created <b>when the folder grows complex</b> (one per folder)</span></li>
           <li><code>CHANGELOG.md</code><span>Troubleshooting log — what changed, when, and why. For bug fixes it keeps the <b>symptom and the cause</b> too ("fixed it" alone is useless later). <b>(at init)</b></span></li>
@@ -952,9 +952,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.24.1<small>2026-08-01</small></div><div class="h"><b>A plugin that sells doc consistency contradicted its own docs.</b> <span>The previous release dropped the folder map from CLAUDE.md, but the discipline text injected at every session start still said "keep the CLAUDE.md map in sync when structure changes" — a hook asking, every session, for the thing we just removed. The README and landing page still described CLAUDE.md as holding the folder structure too. And scanning our own repo with our own tool reported **11 hardcoded secrets** — all test fixtures, and 6 real locations inflated to 11 because a single line matched two patterns. It reports 0 now.</span></div></div>
         <div class="rel"><div class="v">v0.24.0<small>2026-08-01</small></div><div class="h"><b>Cleaned up where this collided with Claude Code's own features.</b> <span>(1) We were generating a folder map into CLAUDE.md, but Claude Code's built-in `/doctor` treats exactly that (directory layouts, dependency lists, architecture overviews) as derivable content to trim. No reason to keep producing what the platform deletes, so CLAUDE.md now holds only pitfalls, rationale and commands. (2) `/hi-vibe:doctor` and the built-in `/doctor` share a name but check different things, with nothing saying so. The first line now spells it out, and if you seem to want the built-in one, it points you there. (3) The README and landing page now carry a table of what overlaps with the built-ins and what doesn't. A fair amount overlaps, and saying so first is the honest move.</span></div></div>
         <div class="rel"><div class="v">v0.23.0<small>2026-08-01</small></div><div class="h"><b>Three gaps an outside review found are now closed.</b> <span>(1) `doctor` warned that CHANGELOG.md was missing and told you to run `init` — but `init` never created it. Re-running it changed nothing, and the troubleshooting log this plugin cares most about never even started. `init` creates it now. (2) Files written through Bash slipped past everything. The hook only seeing Write/Edit is Claude Code's contract, but the knock-on effect was that **the review was skipped too**, and hardcoded secrets were absent from the repo-wide scan as well, so they were never caught at all. The Stop hook now reads Bash commands, and `check` scans the whole repo for secrets. (3) The docs said handover keeps your context from being lost; what it actually keeps is your last 5 requests (120 chars each) plus file, Git and test state. It now says "leaves the next chat enough to pick up from."</span></div></div>
-        <div class="rel"><div class="v">v0.22.0<small>2026-08-01</small></div><div class="h"><b>The CHANGELOG was only recording "fixed it."</b> <span>This file exists to capture troubleshooting, but `log` only ever asked for *what changed*. What someone actually wants when they come back with `recall` isn't that it was fixed — it's **why it broke**, and that wasn't being kept. `Fixed` entries now carry the symptom and the cause. If the cause was never found, it says so: a wrong cause is worse than no record, because the next person trusts it and digs in the wrong place.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

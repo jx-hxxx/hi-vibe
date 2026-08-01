@@ -725,7 +725,7 @@ class SecretGuardTest(TempProject):
     def test_generic_secret_assignment_flagged(self):
         out = self.run_guard("Write", {
             "file_path": "/p/settings.py",
-            "content": 'api_key = "abcd1234efgh5678ijkl"\n',
+            "content": 'api_key = "abcd1234efgh5678ijkl"\n',  # hi-vibe: allow-secret
         })
         self.assertIn("비밀키", out)
 

@@ -20,7 +20,7 @@ You maintain four documents. Each has one job — never blur them:
 
 | 문서 | 한 줄 정의 | 갱신 시점 |
 |---|---|---|
-| `CLAUDE.md` | 프로젝트 지도 (얇게!) | 폴더/요구사항이 바뀔 때 |
+| `CLAUDE.md` | 코드만 봐선 모를 것 — 제약·함정·결정 (얇게!) | 그것들이 바뀔 때 (파일 이동은 해당 없음) |
 | `<folder>/MODULE.md` | 그 폴더의 상세 설계 | 폴더 내용이 바뀔 때 |
 | `handover.md` | 세션 맥락 (왜/어디까지 했나) | 세션 끝·compact 직전 |
 | `CHANGELOG.md` | 결과 (무엇이 바뀌었나) | 실질 변경 직후 |
@@ -92,14 +92,14 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
    file for concurrent sessions) are in `.gitignore`. The two dirs are caches;
    `handover*` is a personal session log kept local (not shared to
    GitHub). The other three docs — CLAUDE.md / MODULE.md / CHANGELOG.md —
-   ARE committed (each once it exists; MODULE.md and CHANGELOG.md arrive
-   lazily per step 3a).
+   ARE committed. CLAUDE.md and CHANGELOG.md exist from init; MODULE.md
+   arrives later, per step 3a.
 6. Tell the user the hooks are now active for this project (they gate on
    the `.hi-vibe/` directory existing) and what will happen automatically.
-   Say the start is intentionally lean — CLAUDE.md + handover.md for now —
-   and that MODULE.md and CHANGELOG.md appear on their own when the project
-   first needs them (a folder grows complex / the first `/hi-vibe:log`).
-   Do not frame this as a missing step the user must complete.
+   Say the start is intentionally lean — CLAUDE.md + handover.md +
+   CHANGELOG.md, nothing else — and that per-folder MODULE.md appears on
+   its own once a folder grows complex enough to need it. Do not frame
+   this as a missing step the user must complete.
 
 ## Mode: handover
 
@@ -138,12 +138,11 @@ Rotation: if the file has more than 20 entries, move the older half to
 2. Filter: substantive = behavior, API, schema, dependency, or config
    changes. Typos, formatting, comments, pure refactors with identical
    behavior → do NOT log (say so instead of logging filler).
-3. If `CHANGELOG.md` does not exist yet (init creates it lazily, not up
-   front), create it first from `templates/CHANGELOG.md.tpl` — this is the
-   moment it earns its keep. Then append under `## [Unreleased]` in the
-   right category (Added / Changed / Fixed / Removed), one bullet per
-   change, each bullet prefixed `YYYY-MM-DD HH:MM` (run `date`, never
-   guess).
+3. `CHANGELOG.md`는 init이 만들므로 보통 이미 있다. hi-vibe를 깔기 전부터
+   있던 프로젝트라 없으면 `templates/CHANGELOG.md.tpl`로 만든다. 그 다음
+   append under `## [Unreleased]` in the right category (Added / Changed /
+   Fixed / Removed), one bullet per change, each bullet prefixed
+   `YYYY-MM-DD HH:MM` (run `date`, never guess).
 4. **`Fixed`는 증상과 원인을 같이 적는다.** 나머지 칸(Added/Changed/Removed)은
    "무엇이 바뀌었나"로 충분하지만, 버그 기록은 그것만으론 쓸모가 없다 —
    나중에 `recall`로 찾는 사람이 궁금한 건 "고쳤다"가 아니라 **"왜 그랬더라"**다.
