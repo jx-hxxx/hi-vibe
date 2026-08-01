@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.26.6] - 2026-08-01
+<!-- show:ko **빠른 시작의 두 줄이 서로 반대 순서였어요.** "내 컴퓨터에 방금 설치"는 `doctor → init`인데 바로 아래 "이미 만들던 프로젝트에 설치"는 `init → doctor`로 적혀 있었습니다. 맞는 건 `doctor → init`이에요 — `doctor`가 "아직 init 안 함 → 지금 `/hi-vibe:init` 실행하세요"라고 다음 단계를 알려주는 구조라, 순서가 뒤집히면 그 안내가 쓸모없어집니다. -->
+<!-- show:en **Two rows in the quick start gave opposite orders.** "Just installed on your machine" said `doctor → init`, while the row right below it said `init → doctor`. `doctor → init` is the correct one: `doctor` reports "not initialised here → run `/hi-vibe:init` now", so reversing the order throws that guidance away. -->
+
+### Fixed
+- **빠른 시작의 설치 순서가 줄마다 달랐다** (2026-08-01) — 한/영 모두 `이미 만들던 프로젝트에 설치` 줄만 `init → doctor → check`로 뒤집혀 있었다. README의 `1분 설치`(`doctor` 다음 `init`)와도 어긋났다. `doctor → init → check`로 통일. 저장소 전체에 같은 어긋남이 더 없는지 훑어 0건 확인.
+
 ## [0.26.5] - 2026-08-01
 <!-- show:ko **자기가 정직하다고 자랑하는 문장을 뺐어요.** "꽤 겹쳐요. **먼저 밝히는 게 맞다고 봅니다.**" — 뒷문장이 겹친다는 사실보다 그걸 밝히는 자신을 칭찬하고 있었습니다. 겹친다고 말하는 것 자체가 정직한 거지, 정직하다고 덧붙이는 건 오히려 약해져요. 그냥 "꽤 겹쳐요."로 끝냅니다. 섹션 눈썹 문구 `정직함이 곧 기능이에요`도 같은 종류라 `무엇이 보장되나`로 바꿨어요 — 다른 눈썹은 전부 중립적인 안내인데 이것만 튀었습니다. -->
 <!-- show:en **Cut the lines that congratulate us for being honest.** "Quite a bit, yes. **Better to say so up front.**" — that second sentence praises the act of admitting rather than just admitting. Saying it overlaps *is* the honest part; announcing your honesty on top only weakens it. It now stops at "Quite a bit, yes." The section eyebrow "Honesty is the feature" was the same species and is now "What's guaranteed" — every other eyebrow on the page is a plain descriptor, and that one stuck out. -->
