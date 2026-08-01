@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+## [0.26.3] - 2026-08-01
+<!-- show:ko **공유하기 전에 랜딩을 마지막으로 손봤어요.** 링크 미리보기 태그(og·twitter)가 아예 없어서, 카카오톡이나 슬랙에 붙이면 제목만 덩그러니 나왔습니다. 그리고 첫 화면만 보면 범용 AI 코딩 도구처럼 읽혔어요 — 실제로는 Python 프로젝트를 만드는 입문자·1인 개발자용인데 "python3만 있으면 돼요"가 지원 대상이 아니라 설치 조건처럼 보였거든요. 사실과 다른 문구 넷도 같이 고쳤습니다. -->
+<!-- show:en **Last pass on the landing page before sharing it.** There were no link-preview tags at all (og / twitter), so pasting the URL into KakaoTalk or Slack showed a bare title. The hero also read like a general-purpose AI coding tool — it's for beginners and solo devs building Python projects, but "just needs python3" looked like an install requirement rather than the target audience. Four inaccurate lines were fixed alongside. -->
+
+### Added
+- **링크 미리보기 태그** (2026-08-01) — `og:title`·`og:description`·`og:image`·`og:url`·`og:type`·`og:site_name`·`og:locale`과 `twitter:card` 일습. 크롤러가 상대경로를 못 읽는 경우가 있어 이미지는 절대 URL로 뒀다. `<title>`도 `hi-vibe`에서 `hi-vibe — Python 바이브 코딩 안전벨트`로 바꿨다(검색 결과·탭·공유에 모두 쓰인다).
+
+### Fixed
+- **명령어 표의 `review` 설명** (2026-08-01) — "훅이 직접 돌려요"가 남아 있었다. v0.26.1에서 여러 곳을 고쳤는데 이 표를 빠뜨렸다. "훅이 대화를 붙잡고 Claude에게 리뷰를 시켜요"로 교체.
+- **`handover` 발동 시점이 틀림** (2026-08-01) — "세션 끝"이라고 적혀 있었지만 PreCompact 훅은 **대화가 정리(compact)되기 직전**에 돈다. 세션이 그냥 끝날 땐 안 돈다.
+- **"코드가 바뀌면 자동으로 따라 갱신"** (2026-08-01) — 기계가 항상 보장하는 것처럼 읽힌다. 실제로는 리뷰(AI)가 어떤 문서를 고쳐야 하는지 확인하는 것이다. "문서를 역할별로 나눠 두고, 코드를 바꾸면 리뷰가 같이 확인한다"로.
+- **"이 페이지가 안 낡는다는 게 증거예요"** (2026-08-01) — 자동 생성되는 건 업데이트 목록뿐이고 페이지의 나머지는 손으로 쓴다. 제목을 "업데이트 기록은 CHANGELOG에서 자동으로 가져와요"로 바꾸고, 본문에 **"자동인 건 이 목록이고 나머지는 손으로 쓴다"**를 명시했다.
+
+### Changed
+- **첫 화면에서 대상을 밝힘** (2026-08-01) — "hi-vibe가 AI가 대충 못 하게 잡아 줘요"는 언어·규모를 안 밝혀 범용 도구로 읽혔다. "Claude Code로 **Python** 프로젝트를 만드는 **입문자·1인 개발자**를 위한 안전벨트"로 바꾸고, 배지도 "python3만 있으면 돼요"(설치 조건) → "**Python 3.8+ 프로젝트에 최적화**"(지원 대상)로. JS/TS 부분 지원은 이미 아래에 밝혀져 있다.
+
 ## [0.26.2] - 2026-08-01
 <!-- show:ko **직전 릴리스에서 규칙 하나를 잘못 넣었습니다.** "걸린 시간을 해명하지 마라"고 썼는데, 문제가 됐던 그 답변은 사용자가 **"15분이나 걸렸는데 뭐 때문이냐"고 직접 물어서** 실제 시각을 재서 답한 것이었어요. 추측 안 하고 측정한 좋은 답변인데 제가 반대로 막아버렸습니다. 이제 "안 물으면 말하지 말고, 물으면 재서 답하라"로 바로잡았어요. 그리고 그 대화에서 15분의 진짜 원인이 드러났습니다 — 리뷰가 아니라 **만들 때 범위가 커진 것**이었어요. "사이트에 적어줘"로 시작해 봇 기능 신설까지 번졌거든요. 요청 밖에서 발견한 건 고치지 말고 물어보게 했습니다. -->
 <!-- show:en **The previous release added one rule that was simply wrong.** It said "don't account for how long things took" — but the answer that prompted it came from the user asking directly, "it took 15 minutes; was that hi-vibe or the feature?" The reply measured real timestamps instead of guessing, which is exactly right, and the new rule discouraged it. It now reads: don't volunteer timing, but if asked, measure and answer. That same conversation also revealed where the 15 minutes actually went — not the review, but scope growing during the build: a request to "write it on the site" turned into shipping a new bot feature. Findings outside the request are now reported, not fixed. -->

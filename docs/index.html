@@ -3,8 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="hi-vibe — 바이브코딩 안전벨트. AI 코딩 실수를 문서 자동화·AI 규율·기계 강제로 막는 Claude Code 플러그인.">
-<title>hi-vibe</title>
+<meta name="description" content="hi-vibe — Python 바이브 코딩 안전벨트. Claude Code로 Python 프로젝트를 만드는 입문자와 1인 개발자를 위한 플러그인.">
+<title>hi-vibe — Python 바이브 코딩 안전벨트</title>
+
+<!-- 링크 미리보기(카카오톡·슬랙·트위터). og:image는 크롤러가 상대경로를
+     못 읽는 경우가 있어 절대 URL로 둔다. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="hi-vibe">
+<meta property="og:url" content="https://jx-hxxx.github.io/hi-vibe/">
+<meta property="og:title" content="hi-vibe — Python 바이브 코딩 안전벨트">
+<meta property="og:description" content="Claude Code로 Python 프로젝트를 만드는 입문자와 1인 개발자를 위한 플러그인. 있는 코드를 또 만들고, 에러를 덮고, 어제 결정을 잊는 걸 막아요.">
+<meta property="og:image" content="https://jx-hxxx.github.io/hi-vibe/images/favicon-v4.png?v=4">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hi-vibe — Python 바이브 코딩 안전벨트">
+<meta name="twitter:description" content="Claude Code로 Python 프로젝트를 만드는 입문자와 1인 개발자를 위한 플러그인.">
+<meta name="twitter:image" content="https://jx-hxxx.github.io/hi-vibe/images/favicon-v4.png?v=4">
 <link rel="icon" type="image/png" href="images/favicon-v4.png?v=4">
 <link rel="apple-touch-icon" href="images/favicon-v4.png?v=4">
 <style>
@@ -336,12 +350,12 @@
         <div>
           <p class="eyebrow">AI 코딩 안전벨트 · Claude Code에 설치</p>
           <h1 class="tag-ko">AI랑 <span class="amber">과속</span>해도,<br>안전벨트는 <span class="amber">hi-vibe</span>가.</h1>
-          <p class="say">hi-vibe가 <b>AI가 대충 못 하게</b> 옆에서 잡아 줘요.<br>어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
+          <p class="say">Claude Code로 <b>Python</b> 프로젝트를 만드는 <b>입문자·1인 개발자</b>를 위한 안전벨트예요.<br>어려운 명령어 외울 필요 없이 <b>평소처럼 말만 하면</b> 돼요.</p>
           <div class="cta">
             <a class="btn primary" href="#install-ko">설치하기</a>
             <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">GitHub에서 보기 ↗</a>
           </div>
-          <p class="micro"><span>python3만 있으면 돼요</span><span>핵심 훅은 외부 패키지 0</span><span>기존 설정 안 덮어써요</span></p>
+          <p class="micro"><span><b>Python 3.8+</b> 프로젝트에 최적화</span><span>핵심 훅은 외부 패키지 0</span><span>기존 설정 안 덮어써요</span></p>
         </div>
         <div class="clcol">
           <div class="hero-cube"><div id="cube-ko" aria-hidden="true"></div></div>
@@ -424,7 +438,7 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
     <section id="features-ko">
       <p class="eyebrow">기능 하나하나</p>
       <h2>설치하면, 프로젝트에 이런 게 생겨요.</h2>
-      <p class="lead" style="max-width:none">추상적인 "좋아져요"가 아니라, 실제로 만들어지고 봐주는 것들이에요.<br>핵심은 <b>문서를 한 파일에 몰아넣지 않고 여러 곳에 나눠 두고, 코드가 바뀌면 자동으로 따라 갱신</b>한다는 거예요.</p>
+      <p class="lead" style="max-width:none">추상적인 "좋아져요"가 아니라, 실제로 만들어지고 봐주는 것들이에요.<br>핵심은 <b>문서를 한 파일에 몰아넣지 않고 역할별로 나눠 둔다</b>는 거예요. 코드를 바꾸면 <b>리뷰가 어떤 문서를 고쳐야 하는지 같이 확인</b>해요.</p>
 
       <div class="docmap">
         <div class="dm-head"><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> 내 프로젝트/ — <code>/hi-vibe:init</code>은 가볍게 시작하고, 나머지 문서는 필요할 때 알아서 생겨요</div>
@@ -539,8 +553,8 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
           <tr><td><code>/hi-vibe:check</code></td><td>중복·안 쓰는 코드·큰 파일 + 하다 만 것(에러 삼킴·TODO·테스트 없는 모듈) — 딴 클로드가 후보를 열어봐 오탐을 걸러줘요</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
           <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치 (프로젝트마다 1회 → 자동)</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
           <tr><td><code>/hi-vibe:find</code></td><td>“이 기능 만들어줘” 할 때 (있는지 먼저 검색)</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:review</code></td><td>리뷰 안 받은 변경이 있으면 <b>훅이 직접 돌려요</b> (옵션 없음 — 범위·깊이·병렬을 알아서 정하고, 딴 클로드가 기본으로 재검토)</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
-          <tr><td><code>/hi-vibe:handover</code></td><td>세션 끝 — 어디까지 했는지 진행상황 넘기기</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:review</code></td><td>리뷰 안 받은 변경이 있으면 <b>훅이 대화를 붙잡고 Claude에게 리뷰를 시켜요</b> (옵션 없음 — 범위·깊이·병렬을 알아서 정하고, 딴 클로드가 기본으로 재검토)</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
+          <tr><td><code>/hi-vibe:handover</code></td><td>대화가 정리(compact)되기 <b>직전</b> — 다음 세션이 이어갈 단서 기록</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
           <tr><td><code>/hi-vibe:log</code></td><td>코드가 바뀐 걸 CHANGELOG(변경 이력)에 남기기</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
           <tr><td><code>/hi-vibe:recall</code></td><td>“예전에 왜 이렇게 했지?”</td><td><span class="fire auto"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-2 8 9-12h-7l2-8Z"/></svg> 자동</span></td></tr>
         </tbody>
@@ -615,13 +629,13 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
 
     <section id="living-ko">
       <span class="living-tag"><span class="pulse"></span>이 목록은 자동으로 채워져요</span>
-      <h2>이 페이지가 안 낡는다는 게, 증거예요.</h2>
-      <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 기록에서 자동으로 만들어져요 —<br>새 변경을 기록할 때마다 이 페이지가 알아서 갱신되죠. 이 페이지가 낡지 않는 것 자체가 hi-vibe가 일하고 있다는 산 증거예요.</p>
+      <h2>업데이트 기록은 CHANGELOG에서 자동으로 가져와요.</h2>
+      <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않습니다. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.26.3<small>2026-08-01</small></div><div class="h"><b>공유하기 전에 랜딩을 마지막으로 손봤어요.</b> <span>링크 미리보기 태그(og·twitter)가 아예 없어서, 카카오톡이나 슬랙에 붙이면 제목만 덩그러니 나왔습니다. 그리고 첫 화면만 보면 범용 AI 코딩 도구처럼 읽혔어요 — 실제로는 Python 프로젝트를 만드는 입문자·1인 개발자용인데 "python3만 있으면 돼요"가 지원 대상이 아니라 설치 조건처럼 보였거든요. 사실과 다른 문구 넷도 같이 고쳤습니다.</span></div></div>
         <div class="rel"><div class="v">v0.26.2<small>2026-08-01</small></div><div class="h"><b>직전 릴리스에서 규칙 하나를 잘못 넣었습니다.</b> <span>"걸린 시간을 해명하지 마라"고 썼는데, 문제가 됐던 그 답변은 사용자가 **"15분이나 걸렸는데 뭐 때문이냐"고 직접 물어서** 실제 시각을 재서 답한 것이었어요. 추측 안 하고 측정한 좋은 답변인데 제가 반대로 막아버렸습니다. 이제 "안 물으면 말하지 말고, 물으면 재서 답하라"로 바로잡았어요. 그리고 그 대화에서 15분의 진짜 원인이 드러났습니다 — 리뷰가 아니라 **만들 때 범위가 커진 것**이었어요. "사이트에 적어줘"로 시작해 봇 기능 신설까지 번졌거든요. 요청 밖에서 발견한 건 고치지 말고 물어보게 했습니다.</span></div></div>
         <div class="rel"><div class="v">v0.26.1<small>2026-08-01</small></div><div class="h"><b>리뷰가 스스로 스코프 크립을 만들고 있었어요.</b> <span>자기 점검 루프가 "⚠️는 그 자리에서 고쳐라"라고만 해서, 명백한 버그든 새로운 정책이든 가리지 않고 다 고쳤습니다. 실제 사용에서 "권한이 없으면 회의당 한 번 안내 메시지를 보내자"처럼 **사용자가 요청한 적 없는 동작**을 리뷰가 만들어 넣었어요. 이 플러그인이 막으려는 증상("헷갈리는 결정을 묻지 않고 임의 진행")을 리뷰가 직접 저지른 겁니다. 이제 고치기 전에 "이걸 고치면 여태 없던 화면·메시지·규칙이 생기는가"를 묻고, 생기면 확인받습니다. 보고가 길어지던 것도 같이 줄였어요.</span></div></div>
-        <div class="rel"><div class="v">v0.26.0<small>2026-08-01</small></div><div class="h"><b>파일을 통째로 지운 변경이 리뷰를 그냥 통과했어요.</b> <span>리뷰 범위를 "지금 존재하는 파일"로만 잡고 있어서, AI가 파일을 삭제하면 아무것도 안 걸렸습니다. 부르던 곳이 남아 있으면 런타임에 터지는데도요. 이제 지운 파일도 범위에 넣고, "이 파일들을 부르던 곳이 남아 있는지 확인하라"고 리뷰에 지시합니다. 그리고 슬래시 메뉴에 hi-vibe 항목이 16개 나오던 것을 10개로 줄였어요 — 내부 스킬 6개는 엔진이지 버튼이 아니라서 숨겼습니다(Claude는 여전히 알아서 부릅니다).</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -667,12 +681,12 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
         <div>
           <p class="eyebrow">AI-coding seatbelt · A Claude Code plugin</p>
           <h1 class="tag-ko"><span class="amber">Floor it</span> with AI —<br><span class="amber">hi-vibe</span> is your seatbelt.</h1>
-          <p class="say">hi-vibe keeps AI from cutting corners on your code. No commands to memorize — <b>just talk normally</b>.</p>
+          <p class="say">A seatbelt for <b>beginners and solo devs</b> building <b>Python</b> projects with Claude Code.<br>No commands to memorize — <b>just talk normally</b>.</p>
           <div class="cta">
             <a class="btn primary" href="#install-en">Install</a>
             <a class="btn ghost" href="https://github.com/jx-hxxx/hi-vibe">View on GitHub ↗</a>
           </div>
-          <p class="micro"><span>Just needs python3</span><span>Core hooks need zero external packages</span><span>Never overwrites your config</span></p>
+          <p class="micro"><span>Built for <b>Python 3.8+</b> projects</span><span>Core hooks need zero external packages</span><span>Never overwrites your config</span></p>
         </div>
         <div class="clcol">
           <div class="hero-cube"><div id="cube-en" aria-hidden="true"></div></div>
@@ -755,7 +769,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
     <section id="features-en">
       <p class="eyebrow">Feature by feature</p>
       <h2>Install it, and your project gets this.</h2>
-      <p class="lead" style="max-width:none">Not a vague "things get better" — actual things it creates and watches.<br>The core idea: <b>docs aren't dumped in one file; they're split across the project and auto-updated as the code changes.</b></p>
+      <p class="lead" style="max-width:none">Not a vague "things get better" — actual things it creates and watches.<br>The core idea: <b>docs aren't dumped in one file — they're split by role.</b> When you change code, the review checks which of them need updating too.</p>
 
       <div class="docmap">
         <div class="dm-head"><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg> my-project/ — <code>/hi-vibe:init</code> starts lean; the rest appear when they're actually needed</div>
@@ -946,13 +960,13 @@ Judge fairly based on the actual implementation you verified, and say so for any
 
     <section id="living-en">
       <span class="living-tag"><span class="pulse"></span>This list fills itself in</span>
-      <h2>This page not going stale is the proof.</h2>
-      <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the record hi-vibe maintains itself —<br>every time a change is logged, this page refreshes on its own. The page staying current is living proof hi-vibe is working.</p>
+      <h2>The update log is pulled from the CHANGELOG automatically.</h2>
+      <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.26.3<small>2026-08-01</small></div><div class="h"><b>Last pass on the landing page before sharing it.</b> <span>There were no link-preview tags at all (og / twitter), so pasting the URL into KakaoTalk or Slack showed a bare title. The hero also read like a general-purpose AI coding tool — it's for beginners and solo devs building Python projects, but "just needs python3" looked like an install requirement rather than the target audience. Four inaccurate lines were fixed alongside.</span></div></div>
         <div class="rel"><div class="v">v0.26.2<small>2026-08-01</small></div><div class="h"><b>The previous release added one rule that was simply wrong.</b> <span>It said "don't account for how long things took" — but the answer that prompted it came from the user asking directly, "it took 15 minutes; was that hi-vibe or the feature?" The reply measured real timestamps instead of guessing, which is exactly right, and the new rule discouraged it. It now reads: don't volunteer timing, but if asked, measure and answer. That same conversation also revealed where the 15 minutes actually went — not the review, but scope growing during the build: a request to "write it on the site" turned into shipping a new bot feature. Findings outside the request are now reported, not fixed.</span></div></div>
         <div class="rel"><div class="v">v0.26.1<small>2026-08-01</small></div><div class="h"><b>The review was generating its own scope creep.</b> <span>The self-fix loop just said "fix every ⚠️ on the spot", so it made no distinction between a plain bug and a brand-new product policy. In real use it invented behaviour nobody asked for — "send one notice per meeting when permissions are missing". That is precisely the symptom this plugin exists to prevent (deciding something ambiguous without asking), committed by the review itself. It now asks first: does fixing this create a screen, message or rule the user has never seen? If so, it reports and waits. Report length is trimmed too.</span></div></div>
-        <div class="rel"><div class="v">v0.26.0<small>2026-08-01</small></div><div class="h"><b>Deleting a file whole slipped past the review entirely.</b> <span>Review scope only ever looked at files that currently exist, so when the AI removed one, nothing caught it — even though leftover callers blow up at runtime. Deleted files are now part of the scope, and the review is told to go looking for callers that survived. Also, hi-vibe was showing 16 entries in the slash menu; it's 10 now — the 6 internal skills are engines, not buttons, so they're hidden (Claude still loads them on its own).</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
