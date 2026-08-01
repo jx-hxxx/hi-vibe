@@ -5,6 +5,23 @@
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-08-01
+<!-- show:ko **외부 리뷰에서 나온 구멍 세 개를 막았어요.** ①`doctor`는 CHANGELOG가 없다고 `init`을 안내하는데 `init`은 그 파일을 안 만들었습니다. 몇 번을 다시 쳐도 경고가 안 없어지는 막다른 길이었고, 정작 중요하게 여긴 트러블슈팅 기록이 시작조차 안 됐어요. 이제 `init`이 만듭니다. ②Bash로 쓴 파일이 안전망을 통째로 빠져나갔습니다. 훅이 Write/Edit만 보는 건 Claude Code 계약이라 어쩔 수 없지만, 그 탓에 **리뷰까지 건너뛰고** 비밀키는 전체 스캔에도 없어서 영영 안 잡혔어요. Stop 훅이 Bash 명령까지 보게 하고, `check`에 저장소 전체 비밀키 검사를 붙였습니다. ③handover가 "맥락을 안 잃게 해준다"고 쓰여 있었는데, 실제로는 최근 요청 5개(각 120자)와 파일·Git·테스트 상태입니다. "이어갈 단서를 남긴다"로 고쳤어요. -->
+<!-- show:en **Three gaps an outside review found are now closed.** (1) `doctor` warned that CHANGELOG.md was missing and told you to run `init` — but `init` never created it. Re-running it changed nothing, and the troubleshooting log this plugin cares most about never even started. `init` creates it now. (2) Files written through Bash slipped past everything. The hook only seeing Write/Edit is Claude Code's contract, but the knock-on effect was that **the review was skipped too**, and hardcoded secrets were absent from the repo-wide scan as well, so they were never caught at all. The Stop hook now reads Bash commands, and `check` scans the whole repo for secrets. (3) The docs said handover keeps your context from being lost; what it actually keeps is your last 5 requests (120 chars each) plus file, Git and test state. It now says "leaves the next chat enough to pick up from." -->
+
+### Fixed
+- **CHANGELOG가 생기지 않는 막다른 길** (2026-08-01) — 증상: 새로 설치한 사용자가 `doctor` → `init`만 실행하면 CHANGELOG.md가 생기지 않고, `doctor`는 계속 "문서 누락 → init 실행"이라고 안내했다. 원인: `docs-keeper`가 `Do NOT create MODULE.md or CHANGELOG.md at init`으로 지연 생성을 택했는데, `doctor`의 검사 목록에는 CHANGELOG가 있었고 자동 리뷰도 "없으면 만들지 말라"였다. 세 곳이 서로를 기대하며 아무도 안 만들었다. 트러블슈팅 기록은 CLAUDE.md·handover와 같은 급이라 판단해 **`init`이 만드는 쪽**으로 정리했다(MODULE.md는 그대로 지연 생성 — 빈 껍데기가 남으므로).
+- **Bash로 쓴 코드가 리뷰를 통째로 건너뜀** (2026-08-01) — 증상: Claude가 heredoc이나 `sed -i`로 파일을 만들면 Stop 훅이 그 턴을 "코드 안 건드림"으로 보고 리뷰를 안 돌렸다. 원인: `parse_transcript`가 `Write|Edit|MultiEdit|NotebookEdit` tool_use만 세는데, 그 목록을 Stop 훅이 차단 조건으로 그대로 썼다. `_common.bash_wrote_files`로 Bash 명령의 쓰기 신호(리다이렉트·heredoc·`sed -i`·`cp`/`mv`/`tee`·`python -c`)까지 본다. 느슨하게 잡아도 안전하다 — 실제 차단은 git이 본 리뷰 안 받은 코드 변경이 있어야 하므로 없는 변경을 만들어내지 않는다.
+
+### Added
+- **`check`에 저장소 전체 비밀키 스캔** (2026-08-01) — 훅은 새로 쓰는 코드만 보므로 Bash로 들어온 키는 **어디에서도 안 잡혔다**. 판정 규칙은 PostToolUse 훅과 공유한다(`iter_secrets` — 에러 삼킴과 같은 SSOT 방식). `.env*`는 제외하고, `hi-vibe: allow-secret` 마커도 그대로 통한다. **값은 리포트에도 담지 않는다** — 파일·줄·종류만. 리포트가 키 유출 통로가 되면 안 되므로, 스킬에도 값 출력 금지를 명시했다.
+- **Bash 경로 회귀 테스트 11개** (2026-08-01) — `tests/test_bash_coverage.py`. 쓰기 명령 8종은 잡고 조회 명령 7종은 안 잡는 것, 비밀키가 실제 `check` 경로(`cmd_scan` → `report.json`)까지 실리는 것, 리포트에 값이 절대 안 담기는 것, 0건일 때 없는 경고를 만들지 않는 것을 고정한다.
+- **doctor-init 정합성 검사** (2026-08-01) — `doctor`가 "없으니 init 하라"고 안내하는 문서는 `init`이 실제로 만들어야 한다. 이번 막다른 길을 되살려 잡히는 것을 확인했다.
+
+### Changed
+- **handover 설명을 실제 동작에 맞춤** (2026-08-01) — "다음 대화가 맥락 안 잃게"는 과장이었다. 자동 기록은 최근 요청 5개(각 120자)·수정 파일·Git·테스트 상태이며, 설계 이유나 실패한 접근까지 자동 보존하지는 않는다. README 한/영·랜딩을 "이어갈 단서를 남긴다"로 고쳤다.
+- 테스트 128 → 140개. PostToolUse가 Bash를 못 본다는 제약과 그 대응을 CLAUDE.md 핵심 요구사항에 적었다(훅에만 의존하는 안전장치를 새로 만들지 않도록).
+
 ## [0.22.0] - 2026-08-01
 <!-- show:ko **CHANGELOG가 "고쳤다"만 남기고 있었어요.** 이 파일은 원래 트러블슈팅을 기록하려고 넣은 건데, `log`가 시키는 건 "무엇이 바뀌었나"까지였습니다. 나중에 `recall`로 찾는 사람이 궁금한 건 고쳤다는 사실이 아니라 **"왜 그랬더라"**인데 그게 안 남았어요. 이제 `Fixed`에는 증상과 원인을 같이 적습니다. 원인을 모른 채 고쳤으면 모른다고 적게 했어요 — 틀린 원인은 기록이 없느니만 못하니까요(다음 사람이 그걸 믿고 엉뚱한 데를 팝니다). -->
 <!-- show:en **The CHANGELOG was only recording "fixed it."** This file exists to capture troubleshooting, but `log` only ever asked for *what changed*. What someone actually wants when they come back with `recall` isn't that it was fixed — it's **why it broke**, and that wasn't being kept. `Fixed` entries now carry the symptom and the cause. If the cause was never found, it says so: a wrong cause is worse than no record, because the next person trusts it and digs in the wrong place. -->

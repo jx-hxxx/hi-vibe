@@ -105,6 +105,29 @@ class RepoIntegrityTest(unittest.TestCase):
             "공개 문서에 개인 이름이 들어갔다 (일반 표현으로 바꿔라):\n"
             + "\n".join(sorted(leaked)))
 
+    def test_doctor_only_points_at_docs_init_creates(self):
+        """doctor가 "없으니 init 하라"고 안내하는 문서는 init이 실제로 만들어야 한다.
+
+        실제로 깨졌던 자리다: doctor는 `CHANGELOG.md`가 없다고 경고하면서
+        `/hi-vibe:init`을 안내했는데, docs-keeper는 init에서 CHANGELOG를
+        만들지 않았다. **몇 번을 다시 쳐도 경고가 안 없어지는 막다른 길**이
+        됐고, 정작 중요하게 여긴 트러블슈팅 기록이 시작되지 않았다."""
+        doctor = _read(os.path.join(REPO, "scripts", "doctor.py"))
+        m = re.search(r'docs\s*=\s*\[d for d in \(([^)]*)\)', doctor)
+        self.assertIsNotNone(
+            m, "doctor.py에서 문서 검사 목록을 찾지 못했다 — 코드가 바뀌었으면 "
+               "이 테스트의 추출 방식도 같이 고쳐라(조용히 통과시키지 말 것).")
+        checked = re.findall(r'"([^"]+\.md)"', m.group(1))
+        self.assertTrue(checked, "doctor가 검사하는 문서 이름을 못 읽었다")
+
+        skill = _read(os.path.join(REPO, "skills", "docs-keeper", "SKILL.md"))
+        bad = [d for d in checked
+               if re.search(r"Do NOT create[^\n]*\b%s\b" % re.escape(d), skill)]
+        self.assertEqual(
+            bad, [],
+            "doctor는 이 문서가 없다고 init을 안내하는데, docs-keeper는 init에서 "
+            "만들지 않는다 (다시 쳐도 안 생기는 막다른 길): " + ", ".join(bad))
+
     def test_advertised_test_count_matches_reality(self):
         """정해진 몇 곳이 아니라 **활성 문서 전체**를 훑는다.
 

@@ -312,8 +312,51 @@ def parse_transcript(path):
     return prompts[-5:], edited
 
 
+# Bash 안에서 파일을 쓰는 흔한 방법들. PostToolUse 훅은 Write/Edit만 보므로
+# heredoc·리다이렉트·`sed -i`로 들어온 코드는 훅에 안 잡힌다 — 그런 턴을
+# "코드 안 건드린 턴"으로 오해하면 리뷰까지 통째로 건너뛴다.
+# 진단용 리다이렉트는 먼저 지운다 — `2>&1`, `>/dev/null`은 파일 쓰기가 아니다.
+_BASH_NOISE_RE = re.compile(r"\d?>&\d|>\s*/dev/null")
+_BASH_WRITE_RE = re.compile(
+    r">>?\s*[^\s|&]"                     # > file, >> file
+    r"|\btee\b|\bsed\b[^|]*\s-i"
+    r"|\b(?:cp|mv|touch|install)\b"
+    r"|<<-?\s*['\"]?\w+"                 # heredoc
+    r"|\b(?:python3?|node|deno)\b[^|]*\s-[ce]\b"
+)
+
 _DOC_SUFFIXES = (".md", ".txt", ".rst")
 _CATCH_MARK = "👋 hi-vibe"  # 마커 접두사(고정) — 세션에서 이 문자열로 grep
+
+
+def bash_wrote_files(path):
+    """이 세션이 Bash로 파일을 썼을 가능성이 있나.
+
+    PostToolUse 훅은 `Write|Edit|MultiEdit`만 본다. Claude가 heredoc이나
+    `sed -i`, 생성 스크립트로 파일을 만들면 훅에도 안 잡히고 트랜스크립트의
+    `edited` 목록에도 안 남는다. 그 턴을 "코드 안 건드림"으로 보면 리뷰까지
+    통째로 건너뛴다 — 이 함수는 그 구멍을 막는다.
+
+    느슨하게 잡아도 안전하다: 실제로 막을지는 git이 본 **리뷰 안 받은 코드
+    변경**이 있느냐로 정해지므로, 여기서 조금 넓게 봐도 없는 변경을 만들어
+    내지는 않는다."""
+    for line in tail_lines(path):
+        try:
+            entry = json.loads(line)
+        except Exception:
+            continue
+        content = (entry.get("message") or {}).get("content")
+        if not isinstance(content, list):
+            continue
+        for c in content:
+            if not isinstance(c, dict) or c.get("type") != "tool_use":
+                continue
+            if c.get("name") != "Bash":
+                continue
+            cmd = (c.get("input") or {}).get("command") or ""
+            if _BASH_WRITE_RE.search(_BASH_NOISE_RE.sub("", cmd)):
+                return True
+    return False
 
 
 def session_activity(path):

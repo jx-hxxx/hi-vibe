@@ -56,10 +56,14 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
      folder ONLY once that folder's MODULE.md actually exists — never
      write a pointer to a file you didn't create.
    - handover.md from its template.
-   - Do NOT create MODULE.md or CHANGELOG.md at init. They are created
-     lazily, the moment they first earn their keep (step 3a). This is a
-     deliberate default, not a flag — there is no `--lite`/`--full`, so
-     the beginner never has to choose; the docs simply grow with the code.
+   - `CHANGELOG.md` from `templates/CHANGELOG.md.tpl` (skip if it already
+     exists — never overwrite). 트러블슈팅 기록이 이 플러그인의 핵심이라
+     CLAUDE.md·handover.md와 같은 급으로 처음부터 만든다. 지연 생성은
+     "첫 실질 변경 전까진 필요 없다"는 이유였지만, 그 결과 **doctor는
+     없다고 경고하는데 init을 다시 쳐도 안 생기는** 막다른 길이 됐다.
+   - Do NOT create MODULE.md at init. 폴더별 상세 설계는 그 폴더가 실제로
+     복잡해졌을 때 생긴다 (step 3a). 처음부터 빈 MODULE.md를 뿌리면
+     아무도 안 채운 껍데기만 남는다.
 3a. Lazy docs — create each one the moment it is first needed, not before:
    - `<folder>/MODULE.md`: create when that folder's design first needs
      recording — a structural change lands in it, `review` finds it has
@@ -67,9 +71,8 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
      주요 파일 from a directory listing, leave 설계 as short TODO prompts,
      and add the `→ 상세:` pointer into the CLAUDE.md 폴더 지도 in the
      SAME turn (per the doc-sync contract below).
-   - `CHANGELOG.md`: created on the first `/hi-vibe:log` (log mode creates
-     it from the template if missing). Until there is a substantive change
-     to record, the project does not need one.
+   (`CHANGELOG.md`는 더 이상 여기 없다 — init이 만든다. 이미 있는 프로젝트를
+   위해 log 모드는 여전히 없으면 만들지만, 정상 경로에서는 그럴 일이 없다.)
 4. **Create the `.hi-vibe/` marker directory** — this is what turns the
    hooks ON for this project (the gate). Write `.hi-vibe/initialized`
    with a one-line note (date + "hi-vibe initialized"), which also

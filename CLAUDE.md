@@ -10,6 +10,7 @@ Claude Code용 "바이브 코딩 안전벨트" 플러그인. AI가 자주 생략
 - **핵심 훅·스캐너는 Python 표준 라이브러리만** 쓴다 (외부 패키지 0). 이걸 깨면 설치 부담 약속이 무너진다.
 - **훅은 항상 fail-open(exit 0)** — 어떤 예외도 호스트(Claude Code)를 중단시키면 안 된다.
 - **프로젝트별 opt-in** — 훅은 `.hi-vibe/`가 있는 프로젝트에서만 동작한다.
+- **PostToolUse는 `Write|Edit|MultiEdit`만 본다(Claude Code 계약).** Bash로 들어온 변경은 훅에 안 잡히므로, 그 구멍은 다른 층에서 메운다 — Stop 훅이 Bash 명령까지 보고(`_common.bash_wrote_files`), 비밀키는 `check`의 저장소 전체 스캔이 유일한 그물이다. **훅에만 의존하는 안전장치를 새로 만들지 말 것.**
 - **안전장치를 사람 주의력에 기대지 않는다.** 알림은 쌓이면 신호가 아니다. 할 수 있으면 대신 하고(Stop 훅이 리뷰를 직접 실행), 못 하면 사용자가 있는 자리로 가져온다(CI 실패·훅 사망을 대화창에서 알림). "알려줬는데 안 봤다"는 설계 실패지 사용자 잘못이 아니다.
 - **과장 금지** — README·랜딩은 구현이 실제로 하는 것만 말한다. 기계 강제와 AI 규율을 뭉뚱그리지 않는다.
 - **중복·유사 함수 탐지는 Python(AST) 전용.** JS/TS는 심볼·이름 충돌·파일 크기만. 이 경계를 넓게 읽히게 쓰지 말 것.
@@ -30,7 +31,7 @@ python3 skills/repo-xray/scripts/audit.py scan --root .   # 구조 스캔
 - `commands/` — 10개 슬래시 명령(사용자용 버튼). 각 명령이 스킬을 호출.
 - `agents/` — `fresh-eyes`(설계 판단, `review`가 기본 소환) · `proof-eyes`(스캔 결과 검증, `check`가 기본 소환). 둘의 차이는 **의심 대상**이다: fresh-eyes는 코드를, proof-eyes는 스캐너를 의심한다.
 - `scripts/` — `doctor.py`(런타임: `/hi-vibe:doctor` + 스킬이 부르는 `--quick` 생존 확인) · 저장소 자동화(build-showcase·build-release-notes).
-- `tests/` — 회귀 테스트(훅·스캐너·리뷰범위·무결성·명령 분류). CI가 3.8·3.9·3.12로 실행. `test_command_modes.py`의 `COMMAND_MODE`가 **자동/직접 분류의 단일 기준**이다 — 새 명령을 만들면 거기 먼저 적고, 문서는 그것과 맞춘다.
+- `tests/` — 회귀 테스트(훅·스캐너·리뷰범위·무결성·명령 분류·Bash 경로). CI가 3.8·3.9·3.12로 실행. `test_command_modes.py`의 `COMMAND_MODE`가 **자동/직접 분류의 단일 기준**이다 — 새 명령을 만들면 거기 먼저 적고, 문서는 그것과 맞춘다.
 - `docs/` — 랜딩 페이지(`index.html`). 업데이트 타임라인은 CHANGELOG에서 자동 생성.
 
 ## 결정 기록

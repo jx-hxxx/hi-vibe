@@ -591,10 +591,8 @@ TODO_RE = re.compile(
     r"(?:#|//|/\*|\*|<!--)\s*(TODO|FIXME|XXX|HACK)\b[:\s]*(.{0,120})")
 
 
-def load_swallow_finder():
-    """에러 삼킴 판정은 PostToolUse 훅과 **같은 정의**를 쓴다 (SSOT).
-    규칙을 두 벌 두면 한쪽만 고쳐져 "훅은 잡는데 스캔은 못 잡는" 상태가 된다.
-    훅 파일이 없으면 None — 호출부가 그 사실을 리포트에 밝힌다(조용한 생략 금지)."""
+def _load_guard():
+    """PostToolUse 훅 모듈. 없으면 None."""
     hooks_dir = os.path.join(PLUGIN_ROOT, "hooks", "scripts")
     if not os.path.isfile(os.path.join(hooks_dir, "post_write_guard.py")):
         return None
@@ -604,7 +602,25 @@ def load_swallow_finder():
         import post_write_guard
     except ImportError:
         return None
-    return post_write_guard.iter_swallows
+    return post_write_guard
+
+
+def load_swallow_finder():
+    """에러 삼킴 판정은 PostToolUse 훅과 **같은 정의**를 쓴다 (SSOT).
+    규칙을 두 벌 두면 한쪽만 고쳐져 "훅은 잡는데 스캔은 못 잡는" 상태가 된다.
+    훅 파일이 없으면 None — 호출부가 그 사실을 리포트에 밝힌다(조용한 생략 금지)."""
+    guard = _load_guard()
+    return guard.iter_swallows if guard else None
+
+
+def load_secret_finder():
+    """비밀키 판정도 훅과 같은 정의를 쓴다 (SSOT).
+
+    훅은 Write/Edit로 **새로 쓰는** 코드만 본다. Bash(heredoc·`sed -i`·생성
+    스크립트)로 들어온 키는 훅을 통과하므로, 저장소 전체 스캔이 유일한
+    그물이다. 여기 없으면 그런 키는 영영 안 잡힌다."""
+    guard = _load_guard()
+    return (guard.iter_secrets, guard.SECRET_EXT) if guard else (None, None)
 
 
 def swallow_report(root, code_files, finder):
@@ -619,6 +635,27 @@ def swallow_report(root, code_files, finder):
         for label, snippet, offset in finder(text, path):
             found.append({"file": relpath, "line": text.count("\n", 0, offset) + 1,
                           "kind": label, "code": snippet})
+    return found
+
+
+def secret_report(root, text_files, finder, exts):
+    """저장소 전체의 하드코딩 비밀키.
+
+    `.env*`는 원래 키를 두는 자리라 제외한다(훅과 같은 규칙). 값은 절대
+    담지 않는다 — 리포트가 키를 유출하는 통로가 되면 안 되므로 파일·줄·
+    종류만 준다."""
+    found = []
+    for path in text_files:
+        name = os.path.basename(path)
+        if not path.lower().endswith(tuple(exts)) or name.startswith(".env"):
+            continue
+        text = read_text(path)
+        if not text:
+            continue
+        for label, _snippet, offset in finder(text):
+            found.append({"file": rel(root, path),
+                          "line": text.count("\n", 0, offset) + 1,
+                          "kind": label})
     return found
 
 
@@ -694,6 +731,14 @@ def cmd_scan(root):
             "에러 삼킴 검사를 건너뜀 (규칙 중복을 만들지 않으려 대체 구현을 두지 않음)")
     else:
         swallows = swallow_report(root, code_files, finder)
+    secret_finder, secret_exts = load_secret_finder()
+    if secret_finder is None:
+        secrets = []
+        unavailable.append(
+            "hardcoded_secrets: hooks/scripts/post_write_guard.py 를 못 읽어 "
+            "비밀키 검사를 건너뜀 (규칙 중복을 만들지 않으려 대체 구현을 두지 않음)")
+    else:
+        secrets = secret_report(root, text_files, secret_finder, secret_exts)
     todos = todo_report(root, code_files)
 
     report = {
@@ -725,6 +770,9 @@ def cmd_scan(root):
         "python_parse_errors": parse_errors,
         "symbol_count": {"python": len(py_symbols), "js": len(js_symbols)},
         # 하다 만 흔적 (정리 대상과 다른 버킷 — 지울 것이 아니라 마저 할 것)
+        # 훅이 못 보는 경로(Bash로 쓴 파일)로 들어온 키를 잡는 유일한 그물.
+        # 값은 담지 않는다 — 리포트가 유출 통로가 되면 안 된다.
+        "hardcoded_secrets": secrets,
         "swallowed_errors": swallows,
         "todos": todos,
         "test_coverage": test_coverage_report(root, code_files),
@@ -748,6 +796,11 @@ def cmd_scan(root):
     print(f"swallowed errors: {len(swallows)}  todos: {len(todos)}  "
           f"tests: {tests['test_file_count']} test files / "
           f"{tests['module_count']} modules")
+    if secrets:
+        # 다른 항목과 달리 "검토 후보"가 아니라 지금 조치해야 하는 것이라
+        # 0건일 땐 줄을 만들지 않고, 있을 때만 눈에 띄게 올린다.
+        print(f"!! hardcoded secrets: {len(secrets)} "
+              f"(파일·줄만 표시 — 값은 리포트에도 안 담김)")
     for line in unavailable:
         print(f"unavailable: {line}")
     print(f"report: {out_path}")

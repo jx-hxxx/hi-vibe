@@ -92,20 +92,27 @@ def find_swallows(text, path):
     return [(label, snippet) for label, snippet, _ in iter_swallows(text, path)]
 
 
-def find_secrets(text):
-    """(라벨, 정규화된 매치 텍스트) 리스트. allow-secret 표시·자리표시자 줄 제외."""
+def iter_secrets(text):
+    """(라벨, 정규화된 매치 텍스트, 시작 오프셋) 리스트.
+
+    `iter_swallows`와 같은 이유로 오프셋까지 준다 — 저장소 전체를 훑는
+    스캐너는 위치가 필요하고, 판정 규칙은 여기 한 곳에만 둔다. 훅은 새로
+    쓰는 코드만 보므로, Bash로 들어온 키는 스캐너 쪽에서만 잡힌다."""
     if not text:
         return []
     found = []
     for label, rx in SECRET_PATTERNS:
         for m in rx.finditer(text):
-            start = text.rfind("\n", 0, m.start()) + 1
-            end = text.find("\n", m.end())
-            line = text[start: end if end != -1 else len(text)]
-            if ALLOW_SECRET_MARK in line or SECRET_FALSE_ALARM_RE.search(line):
+            if ALLOW_SECRET_MARK in _match_region(text, m) \
+                    or SECRET_FALSE_ALARM_RE.search(_match_region(text, m)):
                 continue
-            found.append((label, " ".join(m.group(0).split())))
+            found.append((label, " ".join(m.group(0).split()), m.start()))
     return found
+
+
+def find_secrets(text):
+    """(라벨, 정규화된 매치 텍스트) 리스트. allow-secret 표시·자리표시자 줄 제외."""
+    return [(label, snippet) for label, snippet, _ in iter_secrets(text)]
 
 
 def main(payload):

@@ -117,7 +117,11 @@ def main(payload):
     # 1) 리뷰 안 받은 코드 변경이 있으면 → 안내가 아니라 실행으로 넘긴다.
     #    이 세션에 실제로 코드를 썼을 때만 — 남이 남긴 오래된 변경으로
     #    남의 세션을 붙잡지 않는다.
-    if code_edits:
+    #
+    #    Bash도 함께 본다: heredoc·`sed -i`·생성 스크립트로 쓴 파일은
+    #    Write/Edit 목록에 안 남아서, 예전엔 그런 턴이 통째로 "코드 안 건드림"
+    #    으로 지나갔다 (리뷰도, 삼킨 에러·비밀키 감지도 전부 건너뜀).
+    if code_edits or _common.bash_wrote_files(transcript):
         scope = review_scope(cwd)
         if scope and scope.get("to_review"):
             fingerprint = scope.get("fingerprint") or ""
