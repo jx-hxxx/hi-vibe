@@ -274,7 +274,7 @@ project never ends up with more management docs than code. (There's no
 | `folder/MODULE.md` | That folder's features, models, design, and caveats | when the folder grows complex / "document this folder" |
 | `CHANGELOG.md` | Substantive changes and their reasons. For bug fixes, the **symptom and the cause** too | at init |
 
-It doesn't cram everything into one file. `CLAUDE.md` stays a thin overall map,
+It doesn't cram everything into one file. `CLAUDE.md` stays thin project guidance,
 and details live in each folder's `MODULE.md`.
 
 ### What's committed vs. gitignored

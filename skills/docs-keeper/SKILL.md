@@ -2,7 +2,8 @@
 name: docs-keeper
 description: >-
   Maintains the four living documents of a hi-vibe project: CLAUDE.md
-  (lean project map), per-folder MODULE.md (detailed design), handover.md
+  (lean project context — constraints, pitfalls, rationale), per-folder
+  MODULE.md (detailed design), handover.md
   (session-to-session context log), CHANGELOG.md (substantive change
   history, Keep a Changelog). Use for /hi-vibe:init, :handover, :log,
   :recall, :welcome, and whenever the user asks to 문서 정리, 인수인계

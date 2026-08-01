@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.24.3] - 2026-08-01
+<!-- show:ko **handover 과장의 마지막 한 군데와 "전체 지도"라는 옛 이름을 정리했어요.** 세션마다 주입되는 규율에 아직 "handover가 자동 기록되니 맥락이 안 끊긴다"가 남아 있었습니다. 실제로 남는 건 최근 요청·수정 파일·Git·테스트 상태라, 이제 그것을 그대로 적습니다. 그리고 CLAUDE.md에서 폴더 목록을 뺐는데도 여전히 "얇은 전체 지도"라고 부르고 있었어요 — 지도가 아니라 지침이라 "얇은 프로젝트 지침"으로 바꿨습니다. -->
+<!-- show:en **The last handover overstatement and the outdated "map" wording are gone.** The discipline injected at every session start still said handover keeps your context unbroken. What it actually keeps is your recent requests, edited files, Git and test state — so that's what it says now. And although the folder listing was removed from CLAUDE.md, the docs still called it a "thin overall map." It isn't a map, it's guidance, so it now reads "thin project guidance." -->
+
+### Fixed
+- **SessionStart 규율의 handover 과장** (2026-08-01) — "직전에 handover가 자동 기록되니 **맥락이 안 끊긴다**"가 남아 있었다. 자동 기록은 최근 요청 5개(각 120자)·수정 파일·Git·테스트 상태이며 설계 이유나 실패한 접근까지 보존하지 않는다. "handover에 **이어갈 단서**(최근 요청·수정 파일·Git·테스트 상태)가 자동 기록된다"로 교체 — 매 세션 주입되는 문장이라 여기가 가장 오래 남는 과장이었다.
+- **CLAUDE.md를 여전히 "전체 지도"라 부름** (2026-08-01) — v0.24.0에서 폴더 목록을 뺐는데 이름은 그대로였다. 표에서는 "폴더 목록을 넣지 않는다"고 하면서 바로 아래 문단은 "얇은 전체 지도"라 불러 서로 어긋났다. README 한/영과 docs-keeper 스킬 설명을 "얇은 프로젝트 지침 / thin project guidance"로 통일했다.
+
 ## [0.24.2] - 2026-08-01
 <!-- show:ko **랜딩 "세 겹" 설명에 handover 과장이 한 군데 남아 있었어요.** 앞 릴리스에서 "맥락을 안 잃게 해준다"를 "이어갈 단서를 남긴다"로 고쳤는데, 세 겹 설명 안의 "대화가 새로 시작돼도 앞 내용을 까먹지 않아요"는 그대로였습니다. 자동 기록은 최근 요청 5개(각 120자)와 파일·Git·테스트 상태라 "안 까먹는다"는 사실이 아니에요. -->
 <!-- show:en **One handover overstatement was still sitting in the landing page's three-layer section.** The previous release changed "never loses your context" to "leaves enough to pick up from," but the three-layer copy still said "a fresh chat never loses the thread." What's auto-recorded is your last 5 requests (120 chars each) plus file, Git and test state — "never loses" isn't true. -->
