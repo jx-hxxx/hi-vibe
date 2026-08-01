@@ -242,7 +242,7 @@ project never ends up with more management docs than code. (There's no
 | `CLAUDE.md` | Whole-project map — overview, requirements, folder structure | at `init` |
 | `handover.md` | Progress (auto-recorded) + decisions/context (you or the AI fill in) for the next session | at `init` |
 | `folder/MODULE.md` | That folder's features, models, design, and caveats | when the folder grows complex / "document this folder" |
-| `CHANGELOG.md` | Substantive changes and their reasons | on the first `/hi-vibe:log` |
+| `CHANGELOG.md` | Substantive changes and their reasons. For bug fixes, the **symptom and the cause** too | on the first `/hi-vibe:log` |
 
 It doesn't cram everything into one file. `CLAUDE.md` stays a thin overall map,
 and details live in each folder's `MODULE.md`.

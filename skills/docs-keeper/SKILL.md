@@ -134,7 +134,22 @@ Rotation: if the file has more than 20 entries, move the older half to
    right category (Added / Changed / Fixed / Removed), one bullet per
    change, each bullet prefixed `YYYY-MM-DD HH:MM` (run `date`, never
    guess).
-4. Do not renumber or edit released sections.
+4. **`Fixed`는 증상과 원인을 같이 적는다.** 나머지 칸(Added/Changed/Removed)은
+   "무엇이 바뀌었나"로 충분하지만, 버그 기록은 그것만으론 쓸모가 없다 —
+   나중에 `recall`로 찾는 사람이 궁금한 건 "고쳤다"가 아니라 **"왜 그랬더라"**다.
+   한 줄이라도 이 세 가지가 들어가게 쓴다:
+
+   - **증상** — 무엇이 어떻게 잘못 보였나 (에러 메시지·재현 조건)
+   - **원인** — 실제로 뭐가 문제였나. 증상과 원인이 다른 곳인 경우가 많다.
+   - **왜 이 방법으로** — 다른 길을 버렸다면 그 이유. 없으면 생략해도 된다.
+
+   예: `- 2026-07-29 14:20 로그인 후 새로고침하면 로그아웃됨 — 쿠키는 남아
+   있는데 세션 검증이 UTC 기준이라 KST 자정 직후 만료로 판정. 서버 TZ를
+   바꾸는 대신 검증 시점에 ZoneInfo를 명시(다른 곳도 같은 함정).`
+
+   **원인을 모른 채 고쳤으면 모른다고 적는다.** 추측을 원인으로 쓰지 마라 —
+   틀린 원인은 기록이 없느니만 못하다(다음 사람이 그걸 믿고 엉뚱한 데를 판다).
+5. Do not renumber or edit released sections.
 
 ## Mode: recall
 

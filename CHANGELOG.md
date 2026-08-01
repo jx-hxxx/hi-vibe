@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-08-01
+<!-- show:ko **CHANGELOG가 "고쳤다"만 남기고 있었어요.** 이 파일은 원래 트러블슈팅을 기록하려고 넣은 건데, `log`가 시키는 건 "무엇이 바뀌었나"까지였습니다. 나중에 `recall`로 찾는 사람이 궁금한 건 고쳤다는 사실이 아니라 **"왜 그랬더라"**인데 그게 안 남았어요. 이제 `Fixed`에는 증상과 원인을 같이 적습니다. 원인을 모른 채 고쳤으면 모른다고 적게 했어요 — 틀린 원인은 기록이 없느니만 못하니까요(다음 사람이 그걸 믿고 엉뚱한 데를 팝니다). -->
+<!-- show:en **The CHANGELOG was only recording "fixed it."** This file exists to capture troubleshooting, but `log` only ever asked for *what changed*. What someone actually wants when they come back with `recall` isn't that it was fixed — it's **why it broke**, and that wasn't being kept. `Fixed` entries now carry the symptom and the cause. If the cause was never found, it says so: a wrong cause is worse than no record, because the next person trusts it and digs in the wrong place. -->
+
+### Changed
+- **`log`의 `Fixed` 항목에 증상·원인 요구** (2026-08-01) — Added/Changed/Removed는 "무엇이 바뀌었나"로 충분하지만 버그 기록은 그것만으론 쓸모가 없다. 증상(무엇이 어떻게 잘못 보였나) · 원인(실제로 뭐가 문제였나 — 증상과 다른 곳인 경우가 많다) · 왜 이 방법으로(다른 길을 버렸다면 그 이유)를 한 줄에 담게 했고, 예시를 붙였다. **원인을 모른 채 고쳤으면 모른다고 적는다** — 추측을 원인으로 쓰면 다음 사람이 그걸 믿고 엉뚱한 데를 판다.
+- **CHANGELOG 템플릿·문서에 그 역할 명시** (2026-08-01) — 새 프로젝트가 받는 템플릿 머리말과 README 한/영·랜딩의 파일 설명이 전부 "변경 이력"이라고만 했다. 이 파일이 왜 있는지가 안 적혀 있으면 첫 줄부터 "고쳤음"으로 채워진다.
+
 ## [0.21.0] - 2026-07-29
 <!-- show:ko **같은 실수를 세 번 놓쳐서, 이번엔 기계가 막게 했어요.** `review`를 훅이 직접 실행하도록 바꾼 뒤로 "이 명령은 자동인가 직접 치는 건가"가 문서마다 어긋났는데, 세 번 다 사람 눈으로는 뒤늦게 발견했습니다. 문장 하나만 보고 그 문장이 속한 분류를 안 봤기 때문이에요. 이제 명령별 자동/직접이 코드 한 곳에 적혀 있고, README 한/영과 랜딩 한/영이 그것과 어긋나면 CI가 실패합니다. 자동으로 도는 명령을 "직접 치세요"라고 권하는 문장도 잡아요. 과거 실수 세 개를 실제로 되살려 전부 잡히는 것까지 확인했습니다. -->
 <!-- show:en **The same mistake slipped through three times, so a machine now blocks it.** Ever since the hook started running `review` itself, "is this command automatic or something you type?" drifted apart across the docs — and all three times a human caught it late. Each time the fix looked at one sentence without looking at the category that sentence belonged to. Now each command's mode lives in one place in code, and CI fails if either README or either half of the landing page disagrees. It also catches sentences urging you to run an automatic command yourself. All three past mistakes were resurrected and verified to be caught. -->
