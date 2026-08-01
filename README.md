@@ -77,8 +77,8 @@ Run these commands in order inside Claude Code.
 Once installed, in each project folder where you want to use hi-vibe:
 
 ```text
-/hi-vibe:doctor
 /hi-vibe:init
+/hi-vibe:doctor
 ```
 
 That's it. From now on, code with Claude as usual in that project.
@@ -100,8 +100,8 @@ That's it. From now on, code with Claude as usual in that project.
 | Situation | What to run | How often |
 |---|---|---:|
 | First install on your machine | marketplace → install → reload | Once |
-| Confirm the install worked | `/hi-vibe:doctor` | Right after install, or when something's off |
 | Start using it in a new project | `/hi-vibe:init` | Once per project |
+| Confirm the init worked | `/hi-vibe:doctor` | Right after init, or when something's off |
 | Curious about the structure | `/hi-vibe:check` | Whenever you need it |
 | Need a lint / CI gate | `/hi-vibe:gate` | Optional, once per project |
 | Everyday coding | Ask in natural language | Automatic, or a command when needed |
@@ -454,8 +454,8 @@ It looks like a lot, but **you only type three during setup and one day to day.*
 | Command | When | How often |
 |---|---|---|
 | `/hi-vibe:welcome` | You're unsure what any of this is | Optional |
-| `/hi-vibe:doctor` | Confirm the install worked | Once |
 | `/hi-vibe:init` | Start using it in this project | Once per project |
+| `/hi-vibe:doctor` | Confirm the init worked | Once per project |
 | `/hi-vibe:gate` | Install lint / type / cyclic-dep checks (optional) | Once per project |
 
 **Day to day**

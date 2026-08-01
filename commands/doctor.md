@@ -21,16 +21,20 @@ about hi-vibe's own hooks and scanner. Two different commands with the same
 name is confusing enough without us pretending otherwise.
 **LEAD WITH THE CONCLUSION, not a wall of warnings:**
 
-1. First line: is hi-vibe ITSELF healthy? (python3 + 훅 4종 + 스캐너가
-   ✅면 "hi-vibe는 정상이에요"로 단언). ❌(실패)가 있을 때만 그걸 먼저.
-2. Then the single next action in one line — usually just
-   "이 프로젝트에서 쓰려면 /hi-vibe:init 하면 됩니다".
+이 명령은 보통 **`/hi-vibe:init` 다음에** 실행된다 — init으로 이 프로젝트에
+hi-vibe를 켠 뒤, 그게 실제로 도는지 확인하는 자리다. 그러니 정상 결과는
+"전부 ✅"이고, 그때는 **짧게 끝내라.**
+
+1. First line: 이 프로젝트에서 hi-vibe가 제대로 도나? (python3 + 훅 4종 +
+   스캐너 + 이 프로젝트 항목이 ✅면 "잘 돌고 있어요"로 단언). ❌가 있을
+   때만 그걸 먼저.
+2. **아직 init을 안 한 폴더라면** — 그건 결함이 아니라 순서가 바뀐 것이다.
+   "이 폴더는 아직 안 켰어요. `/hi-vibe:init` 하면 됩니다" 한 줄로 끝내고,
+   그 상태에서 나오는 다른 경고(gitignore·문서 누락)는 **init이 해결할
+   것들이므로 나열하지 마라** — 겁줄 이유가 없다.
 3. THEN, briefly and separately, list only what genuinely needs the
-   user's DECISION (e.g. "gitignore 정비할까요?"). Frame "이 프로젝트"
-   경고 as next-step guidance, NOT as defects — hi-vibe being fine and the
-   project just needing init is the normal, expected result. Don't dump
-   every ⚠️ line as a paragraph; keep it short and end with a clear
-   "그래서 지금 /hi-vibe:init 하면 돼요" (or the relevant one action).
+   user's DECISION (예: 추적 중인 `.env`가 있을 때). Don't dump every ⚠️
+   line as a paragraph; keep it short and end with one clear next action.
 
 Special case — if the command itself fails with "python3: command not
 found" (or similar), that IS the diagnosis: every hi-vibe hook is

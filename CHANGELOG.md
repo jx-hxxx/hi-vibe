@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-08-01
+<!-- show:ko **설치 순서를 뒤집었어요 — `init` 먼저, 그다음 `doctor`.** 여태 `doctor` → `init`로 안내했는데, `doctor`는 **이 프로젝트의 훅이 제대로 매여 있나**를 보는 명령입니다. `init`을 안 했으면 훅이 안 도는 게 정상이라, 켜지도 않은 걸 검사시키고 있었어요. 실제로 재보니 `doctor`를 먼저 치면 경고 2개가 뜨는데 **둘 다 `init`이 해결할 것들**이었습니다(아직 init 안 함 · .env가 gitignore에 없음). 처음 설치한 사람이 첫 화면에서 읽고 무시해야 할 경고를 보게 되죠. `init`을 먼저 하면 경고 0개, 통과 9개로 깨끗하게 끝납니다. -->
+<!-- show:en **Flipped the setup order — `init` first, then `doctor`.** The docs said `doctor` → `init`, but `doctor` checks whether the hooks are actually armed *in this project*. Before `init` they legitimately aren't, so we were asking people to inspect something they hadn't switched on yet. Measured: running `doctor` first produces two warnings, and **both are things `init` fixes** (not initialised here; `.env` not in `.gitignore`). A first-time user meets two warnings they're told to ignore. Run `init` first and it comes back 0 warnings, 9 passes. -->
+
+### Changed
+- **`init` → `doctor` 순서로 통일** (2026-08-01) — 근거는 실측이다. `init` 전 `doctor`: **실패 0 · 경고 2 · 통과 7**, `init` 후: **실패 0 · 경고 0 · 통과 9**. 두 경고 모두 `init`이 없애는 것이라, 먼저 치면 "무시해도 되는 경고"를 굳이 보여주는 셈이었다. 검증은 셋업 **뒤**에 해야 한 번에 깨끗한 답이 나온다. README 한/영의 `1분 설치`·명령어 표·`언제 무엇을` 표, 랜딩 한/영의 설치 코드블록·명령어 표·빠른 시작 두 줄까지 **여덟 자리** 전부 바꿨다.
+- **`doctor` 명령의 보고 규칙도 새 순서에 맞춤** (2026-08-01) — 이제 `init` 다음에 도는 것이 정상 경로이므로, **아직 init 안 한 폴더는 결함이 아니라 순서가 바뀐 것**으로 다루게 했다. 그 상태에서 딸려 나오는 경고(gitignore·문서 누락)는 init이 해결하므로 **나열하지 말라**고 명시 — 겁줄 이유가 없다.
+
 ## [0.26.6] - 2026-08-01
 <!-- show:ko **빠른 시작의 두 줄이 서로 반대 순서였어요.** "내 컴퓨터에 방금 설치"는 `doctor → init`인데 바로 아래 "이미 만들던 프로젝트에 설치"는 `init → doctor`로 적혀 있었습니다. 맞는 건 `doctor → init`이에요 — `doctor`가 "아직 init 안 함 → 지금 `/hi-vibe:init` 실행하세요"라고 다음 단계를 알려주는 구조라, 순서가 뒤집히면 그 안내가 쓸모없어집니다. -->
 <!-- show:en **Two rows in the quick start gave opposite orders.** "Just installed on your machine" said `doctor → init`, while the row right below it said `init → doctor`. `doctor → init` is the correct one: `doctor` reports "not initialised here → run `/hi-vibe:init` now", so reversing the order throws that guidance away. -->

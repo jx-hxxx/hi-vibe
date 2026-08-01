@@ -76,8 +76,8 @@ Claude Code 안에서 아래 명령을 차례대로 실행하세요.
 설치가 끝나면 hi-vibe를 사용할 프로젝트 폴더에서:
 
 ```text
-/hi-vibe:doctor
 /hi-vibe:init
+/hi-vibe:doctor
 ```
 
 끝입니다. 이제 이 프로젝트에서는 평소처럼 Claude와 코딩하면 됩니다.
@@ -99,8 +99,8 @@ Claude Code 안에서 아래 명령을 차례대로 실행하세요.
 | 상황 | 실행할 것 | 횟수 |
 |---|---|---:|
 | 내 컴퓨터에 처음 설치 | marketplace → install → reload | 한 번 |
-| 설치가 제대로 됐는지 확인 | `/hi-vibe:doctor` | 설치 직후 또는 문제 있을 때 |
 | 새 프로젝트에서 사용 시작 | `/hi-vibe:init` | 프로젝트마다 한 번 |
+| init이 잘 됐는지 확인 | `/hi-vibe:doctor` | init 직후 또는 문제 있을 때 |
 | 구조가 궁금할 때 | `/hi-vibe:check` | 필요할 때마다 |
 | lint·CI 관문이 필요할 때 | `/hi-vibe:gate` | 선택, 프로젝트마다 한 번 |
 | 평소 코딩 | 자연어로 요청 | 자동 또는 필요 시 명령어 |
@@ -440,8 +440,8 @@ fresh-eyes는 체크리스트만으로 잡기 어려운 과잉설계, 불필요�
 | 명령 | 언제 | 횟수 |
 |---|---|---|
 | `/hi-vibe:welcome` | 뭐가 뭔지 모를 때 | 안 쳐도 됨 |
-| `/hi-vibe:doctor` | 설치가 됐는지 확인 | 한 번 |
 | `/hi-vibe:init` | 이 프로젝트에서 쓰기 시작 | 프로젝트마다 한 번 |
+| `/hi-vibe:doctor` | init이 잘 됐는지 확인 | 프로젝트마다 한 번 |
 | `/hi-vibe:gate` | lint·타입·순환 의존 검사 설치 (선택) | 프로젝트마다 한 번 |
 
 **평소에**
