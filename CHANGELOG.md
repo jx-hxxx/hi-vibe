@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.28.3] - 2026-08-01
+<!-- show:ko **새로 쓴 문구가 가르치는 말투였어요.** "안 맞는 분을 붙잡아 두는 것보다 여기서 걸러지는 게 서로 낫습니다" — 방문자를 걸러낼 대상으로 부르고, 뭐가 나은지까지 제가 단정하고 있었습니다. "제 말 말고, 코드를 보고 판단하세요"도 방어적이고 명령조였고요. 페이지 나머지는 "…돼요", "…잡아 줘요"처럼 부드러운데 이 둘만 튀었어요. 같은 말투로 맞췄습니다. -->
+<!-- show:en **The new copy came out lecturing.** "Better you rule it out here than find out three days in" cast the reader as something to be filtered, and decided for them what's better. "Don't take my word for it. Read the code." was defensive and commanding. The rest of the page is warm and explanatory; these two lines stuck out. They now match. -->
+
+### Changed
+- **새 섹션 두 곳의 말투를 페이지에 맞춤** (2026-08-01) — `나한테 맞는 도구인지 먼저 보세요` → `이 도구가 나한테 맞을까요?`(명령 → 질문), `안 맞는 분을 붙잡아 두는 것보다 여기서 걸러지는 게 서로 낫습니다` → `도움이 되는 경우와 그렇지 않은 경우를 먼저 적어뒀어요`, `그래도 확실히 하고 싶다면 / 제 말 말고, 코드를 보고 판단하세요` → `더 확인하고 싶다면 / AI에게 대신 확인시켜 보세요`. 한·영 모두. **읽는 사람을 걸러낼 대상으로 부르거나, 무엇이 나은지 대신 정해주지 않는다.**
+
 ## [0.28.2] - 2026-08-01
 <!-- show:ko **평가 질문 자리를 원래 화면으로 되돌렸어요.** 직전 릴리스에서 프롬프트만 덩그러니 놓인 형태로 다시 넣었는데, 보기에도 나빴고 **GitHub 링크 입력칸이 빠져 있었습니다**. 그 칸에 저장소 주소를 넣고 버튼을 누르면 질문 안의 `[내 프로젝트 GitHub 링크]` 자리가 자동으로 채워지는데, 그게 없으면 AI가 hi-vibe만 보고 답해요. 원래의 2단 화면(왼쪽 안내 카드 + 오른쪽 질문)으로 되돌렸고, 질문 내용은 새로 쓴 것을 그대로 씁니다. -->
 <!-- show:en **Put the evaluation section back to its original layout.** The previous release re-added it as a bare prompt block — it looked worse, and it **dropped the GitHub link field**. Typing your repository there and pressing the button fills the `[my project's GitHub link]` slot inside the question; without it the AI answers about hi-vibe alone. The two-column layout (guide card on the left, question on the right) is back, with the rewritten question. -->
