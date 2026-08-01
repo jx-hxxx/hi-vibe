@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.24.4] - 2026-08-01
+<!-- show:ko **문서를 주장 단위로 한 번에 훑었어요.** 지금까지는 틀린 걸 발견할 때마다 하나씩 고쳤고, 그래서 계속 나왔습니다. 이번엔 hi-vibe가 하는 주장(handover는 무엇을 남기나 · CHANGELOG는 언제 생기나 · 훅은 무엇을 보나 …)을 목록으로 만들어, 각 주장이 적힌 자리를 전부 모아 코드와 대조했어요. 마지막 과장 하나가 나왔습니다 — "코드 쓸 때마다 에러 삼킴·비밀키를 잡아요"는 사실이 아닙니다. 훅은 Write/Edit만 보고, Bash로 쓴 파일은 못 봐요. -->
+<!-- show:en **Swept the docs one claim at a time, in a single pass.** Until now each wrong line was fixed as it surfaced, which is why they kept surfacing. This time every claim hi-vibe makes (what handover records, when CHANGELOG appears, what the hooks see, …) was listed, every place it is stated was gathered, and each was checked against the code. One last overstatement fell out: "every code write is checked for swallowed errors and secrets" isn't true. The hook only sees Write/Edit; files written through Bash are invisible to it. -->
+
+### Fixed
+- **"코드 쓸 때마다 잡는다"는 과장** (2026-08-01) — 랜딩의 3단 설명(한/영)이 `init` 후 "every code write is checked" / "코드 쓸 때마다 잡고"라고 했다. PostToolUse는 `Write|Edit|MultiEdit`만 보므로 Bash로 쓴 파일은 검사되지 않는다. "Write/Edit로 쓸 때마다"로 좁히고, Bash로 쓴 것은 `check`가 저장소 전체를 훑어 받는다는 것을 같은 자리에 밝혔다.
+
+### Added
+- **주장이 사는 자리를 CLAUDE.md에 명시** (2026-08-01) — 동작 하나를 설명하는 문장은 **최대 8곳**에 산다(README 한/영 · 랜딩 한/영 · 스킬 · 템플릿 · **훅 안의 문자열 상수** · 명령 `.md`). `handover`가 무엇을 남기나 하나를 고치는 데 세 릴리스가 걸린 이유가 이것이다. 함께 적었다: **문구가 아니라 주장으로 찾아라** — 같은 주장이 자리마다 다른 말로 적혀 있어("맥락 안 잃게"/"까먹지 않아요"/"맥락이 안 끊긴다"/"never loses the thread"), 방금 고친 문구로 grep하면 나머지가 안 걸린다.
+
+### Verified
+- **전 주장 대조** (2026-08-01) — 20개 표면(문서 4 · 스킬 4 · 템플릿 2 · 에이전트 2 · 명령 6 · 훅 2)에서 주장을 주어별로 모아 코드와 대조했다. handover(무엇을 기록하나)·CHANGELOG(언제 생기나)·CLAUDE.md(무엇을 담나)·훅 대상 도구·`gate` 설치 항목·두 에이전트 역할 전부 일치. 없앤 플래그(`--all`·`--deep`·`--ci`)는 "이제 없다"는 설명 외에 잔존 0건. 구조 개수(명령 10·스킬 6·에이전트 2·훅 4·테스트 142) 실제와 일치. 절대 표현(모든·전부·항상·never·always·every) 전수 검토 — 위 1건 외 과장 없음. 한/영 대칭·앵커·목차·HTML 태그 균형 정상.
+
 ## [0.24.3] - 2026-08-01
 <!-- show:ko **handover 과장의 마지막 한 군데와 "전체 지도"라는 옛 이름을 정리했어요.** 세션마다 주입되는 규율에 아직 "handover가 자동 기록되니 맥락이 안 끊긴다"가 남아 있었습니다. 실제로 남는 건 최근 요청·수정 파일·Git·테스트 상태라, 이제 그것을 그대로 적습니다. 그리고 CLAUDE.md에서 폴더 목록을 뺐는데도 여전히 "얇은 전체 지도"라고 부르고 있었어요 — 지도가 아니라 지침이라 "얇은 프로젝트 지침"으로 바꿨습니다. -->
 <!-- show:en **The last handover overstatement and the outdated "map" wording are gone.** The discipline injected at every session start still said handover keeps your context unbroken. What it actually keeps is your recent requests, edited files, Git and test state — so that's what it says now. And although the folder listing was removed from CLAUDE.md, the docs still called it a "thin overall map." It isn't a map, it's guidance, so it now reads "thin project guidance." -->
