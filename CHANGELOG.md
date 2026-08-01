@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.26.2] - 2026-08-01
+<!-- show:ko **직전 릴리스에서 규칙 하나를 잘못 넣었습니다.** "걸린 시간을 해명하지 마라"고 썼는데, 문제가 됐던 그 답변은 사용자가 **"15분이나 걸렸는데 뭐 때문이냐"고 직접 물어서** 실제 시각을 재서 답한 것이었어요. 추측 안 하고 측정한 좋은 답변인데 제가 반대로 막아버렸습니다. 이제 "안 물으면 말하지 말고, 물으면 재서 답하라"로 바로잡았어요. 그리고 그 대화에서 15분의 진짜 원인이 드러났습니다 — 리뷰가 아니라 **만들 때 범위가 커진 것**이었어요. "사이트에 적어줘"로 시작해 봇 기능 신설까지 번졌거든요. 요청 밖에서 발견한 건 고치지 말고 물어보게 했습니다. -->
+<!-- show:en **The previous release added one rule that was simply wrong.** It said "don't account for how long things took" — but the answer that prompted it came from the user asking directly, "it took 15 minutes; was that hi-vibe or the feature?" The reply measured real timestamps instead of guessing, which is exactly right, and the new rule discouraged it. It now reads: don't volunteer timing, but if asked, measure and answer. That same conversation also revealed where the 15 minutes actually went — not the review, but scope growing during the build: a request to "write it on the site" turned into shipping a new bot feature. Findings outside the request are now reported, not fixed. -->
+
+### Fixed
+- **"시간을 해명하지 마라"가 과했다** (2026-08-01) — 증상: 도그푸딩 피드백을 확인 없이 받아, 소요 시간 설명 자체를 노이즈로 규정했다. 실제로는 사용자가 **"15분이나 걸렸는데 hi-vibe 때문이냐"고 먼저 물었고**, 답변은 `git` 시각으로 구간을 실측해 "리뷰 1분 22초, 나머지는 버그 수정"이라고 답한 것이었다 — 추측을 금지하는 `grounded-answers`가 제대로 작동한 자리다. **"안 물으면 붙이지 말고, 물으면 재서 답하라"**로 고쳤다. 일을 키운 쪽이 자신이면 그렇게 말하고 리뷰 탓으로 돌리지 말라는 것도 같이 적었다. (같은 결함을 두 번 설명하지 말라는 규칙은 유효해 유지 — 그 대화에서 실제로 두 번 설명됐다.)
+
+### Added
+- **요청 범위 밖 발견은 고치지 말고 묻는다 (`find` 모드)** (2026-08-01) — v0.26.1은 **리뷰 단계**의 스코프 크립만 막았는데, 실제 15분의 원인은 **만들 때** 번진 것이었다: "사이트에 적어줘"라는 요청으로 시작해 코드를 보다가 다른 문제를 발견하고 기능 신설까지 갔고, 그 새 기능의 버그를 잡느라 작업이 배로 늘었다. 이제 요청 밖에서 발견한 것은 **한 줄로 보고하고 사용자가 정한다**. 예외는 요청한 것을 하려면 반드시 통과해야 하는 경우뿐. **발견하지 말라는 게 아니라, 범위를 넓히는 결정이 사용자 것**이라는 규칙이다.
+
 ## [0.26.1] - 2026-08-01
 <!-- show:ko **리뷰가 스스로 스코프 크립을 만들고 있었어요.** 자기 점검 루프가 "⚠️는 그 자리에서 고쳐라"라고만 해서, 명백한 버그든 새로운 정책이든 가리지 않고 다 고쳤습니다. 실제 사용에서 "권한이 없으면 회의당 한 번 안내 메시지를 보내자"처럼 **사용자가 요청한 적 없는 동작**을 리뷰가 만들어 넣었어요. 이 플러그인이 막으려는 증상("헷갈리는 결정을 묻지 않고 임의 진행")을 리뷰가 직접 저지른 겁니다. 이제 고치기 전에 "이걸 고치면 여태 없던 화면·메시지·규칙이 생기는가"를 묻고, 생기면 확인받습니다. 보고가 길어지던 것도 같이 줄였어요. -->
 <!-- show:en **The review was generating its own scope creep.** The self-fix loop just said "fix every ⚠️ on the spot", so it made no distinction between a plain bug and a brand-new product policy. In real use it invented behaviour nobody asked for — "send one notice per meeting when permissions are missing". That is precisely the symptom this plugin exists to prevent (deciding something ambiguous without asking), committed by the review itself. It now asks first: does fixing this create a screen, message or rule the user has never seen? If so, it reports and waits. Report length is trimmed too. -->
