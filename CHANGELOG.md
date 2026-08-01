@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-08-01
+<!-- show:ko **첫 화면 다음 자리를 "AI한테 물어보세요"에서 "나한테 맞나 보세요"로 바꿨어요.** 거기엔 다른 AI에 붙여넣을 긴 평가 질문이 있었는데, 방문자가 hi-vibe가 뭔지 알기도 전에 자리를 떠나게 만드는 자리였습니다. 이제 **잘 맞는 경우 4개와 효과가 작은 경우 4개**를 나란히 놓습니다. JS/TS가 주력이거나 이미 리뷰·CI 절차가 있는 팀이면 여기서 걸러져요 — 붙잡아 두는 것보다 그게 서로 낫습니다. 평가 질문은 버리지 않고 저장소 안에 보관했어요. -->
+<!-- show:en **The slot right after the hero changed from "go ask an AI" to "see if this fits you".** It used to hold a long evaluation prompt to paste into another AI — a section that sent visitors away before they knew what hi-vibe was. It now shows **four cases where it fits and four where it doesn't**, side by side. If JS/TS is your main language, or your team already has review and CI, you'll rule it out right there — better than being talked into it. The prompt itself is kept in the repo. -->
+
+### Changed
+- **`설치 전 적합성 확인` 섹션 → `이런 분께 맞아요 / 효과가 작아요`** (2026-08-01) — 평가 프롬프트는 방문자를 **다른 AI에게 보내는** 자리였다. 첫 화면 바로 다음이라 흐름이 끊기고, 무엇보다 **hi-vibe가 뭔지 알기 전에** 판단을 남에게 미루게 했다. 대신 10초 만에 스스로 판단할 기준을 준다: 맞는 경우(Python 입문자·리뷰 부탁할 동료 없는 1인·중복과 맥락 유실이 잦은 사람·테스트·문서를 알지만 못 챙기는 사람) / 안 맞는 경우(일회용 스크립트·이미 절차가 갖춰진 팀·JS/TS 주력·Claude Code를 주 도구로 안 씀). **안 맞는 사람을 먼저 돌려보내는 게 붙잡는 것보다 정직하다.**
+- **평가 프롬프트는 `docs/internal/eval-prompt.md`에 보관** (2026-08-01) — 지우지 않았다. 실제로 이 프롬프트로 받은 외부 평가가 v0.22~v0.27의 상당수를 만들었다(`.env` 구멍, 삭제 파일 리뷰 누락, 리뷰의 스코프 크립). 공개 소개에서만 뺀다.
+
+### Removed
+- **딸려 있던 죽은 코드** (2026-08-01) — 섹션이 없어지면서 쓰이지 않게 된 JS 55줄(`js-fit` 폼 처리·`js-copy` 클립보드·`flashBtn`·`syncAuditHeights` 높이 동기화)과 CSS 19줄(`.audit`·`.promptbox`·`.fitform`)을 지웠다. 화면에서 사라진 기능의 코드를 남겨두면 다음 사람이 "이건 뭘 하는 거지" 하고 시간을 쓴다. 페이지 155k → 149k자.
+
 ## [0.27.2] - 2026-08-01
 <!-- show:ko **줄바꿈이 지저분하던 것을 정리했어요.** 긴 문장이 넘어가면서 마지막에 단어 하나만 다음 줄에 덩그러니 남는 자리가 있었습니다("…약속과 정반대예요." / "…알아서."). 브라우저가 알아서 피하게 하는 설정(`text-wrap: pretty`)을 긴 글이 들어가는 자리에 전부 넣고, 문장 자체도 짧게 줄였어요. 스킬 숨김 안내는 다섯 줄에서 네 줄로 줄었습니다. -->
 <!-- show:en **Cleaned up ragged line breaks.** Long sentences were wrapping so that a single word ended up alone on the last line. Every long-prose container now uses `text-wrap: pretty` so the browser avoids that, and the sentences themselves were shortened. The note about hidden skills went from five lines to four. -->

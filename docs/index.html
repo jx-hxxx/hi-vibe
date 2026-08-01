@@ -261,25 +261,16 @@
   .trust span { display:block; margin-top:5px; color:var(--muted); font-size:13px; }
   @media (max-width:640px){ .trust { grid-template-columns:1fr 1fr; } .trust > div:nth-child(3){ border-left:none; } .trust > div:nth-child(3), .trust > div:nth-child(4){ border-top:1px solid var(--border); } }
 
-  .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:start; margin-top:26px; }
-  .audit .promptbox { display:flex; flex-direction:column; align-items:flex-start; }
-  .audit .promptbox pre { align-self:stretch; }
-  .audit .card { border:1px solid var(--border); border-radius:var(--r); padding:24px; background:var(--surface); }
-  .audit .card h3 { margin:0 0 9px; font-size:19px; }
-  .audit .card p { margin:0; color:var(--muted); font-size:14px; text-wrap:pretty; }
-  .audit .promptbox { border:1px solid var(--border); border-radius:var(--r); padding:20px; background:var(--surface-2); }
-  .audit .promptbox pre { margin:0 0 16px; font-family:var(--mono); font-size:13px; line-height:1.75; white-space:pre-wrap; word-break:break-word; color:var(--text); overflow-y:auto; padding-right:8px; }
-  .audit .promptbox pre::-webkit-scrollbar { width:8px; }
-  .audit .promptbox pre::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:8px; }
-  .audit .promptbox pre span { color:var(--accent-ink); font-weight:600; }
-  .fitform { display:grid; gap:10px; margin-top:18px; }
-  .fitform label { display:grid; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; }
-  .fitform .hint { font-weight:400; font-size:11.5px; color:var(--faint); line-height:1.5; }
-  .fitform input { font:inherit; font-size:13.5px; font-weight:400; color:var(--text); background:var(--bg); border:1px solid var(--border-2); border-radius:8px; padding:8px 11px; }
-  .fitform input:focus { outline:none; border-color:var(--accent); }
-  .fitform input::placeholder { color:var(--faint); }
-  .fitform .btn { margin-top:2px; justify-content:center; }
-  @media (max-width:760px){ .audit { grid-template-columns:1fr; } }
+  .fitgrid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:26px; }
+  .fitcard { border:1px solid var(--border); border-radius:var(--r); padding:24px 26px; background:var(--surface); }
+  .fitcard h3 { margin:0 0 14px; font-size:18px; display:flex; align-items:center; gap:8px; }
+  .fitcard h3::before { content:''; width:9px; height:9px; border-radius:50%; flex:none; }
+  .fitcard.good h3::before { background:var(--good); }
+  .fitcard.weak h3::before { background:var(--border-2); }
+  .fitcard ul { margin:0; padding-left:20px; color:var(--muted); font-size:14.5px; line-height:1.85; word-break:keep-all; text-wrap:pretty; }
+  .fitcard li + li { margin-top:6px; }
+  .fitcard.weak { background:var(--surface-2); }
+  @media (max-width:760px){ .fitgrid { grid-template-columns:1fr; } }
 
   .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:pre; border:0; }
 
@@ -375,43 +366,27 @@
     </div>
 
     <section id="audit-ko">
-      <p class="eyebrow">이 플러그인을 설치하기 전에</p>
-      <h2>내 프로젝트에 잘 맞는지 AI에게 확인해보세요.</h2>
-      <p class="lead" style="max-width:none">실제 구현과 테스트를 살펴보고, 얻을 수 있는 도움과 지원 범위를 솔직하게 알려주는 질문이에요.<br>아래 질문을 복사하여 Claude·Codex·Gemini에 그대로 붙여넣어 보세요.</p>
-      <div class="audit">
-        <div class="card">
-          <h3>2분이면 되는 설치 전 적합성 확인</h3>
-          <p>README뿐 아니라 <b>실제 훅·스캐너·테스트</b>를 확인해, 이&nbsp;플러그인이 내&nbsp;프로젝트에 어떤 도움을 주고 어디까지 지원하는지 알아보세요.</p>
-          <div class="fitform">
-            <label>내 프로젝트 GitHub 링크<span class="hint">공개 저장소면 AI가 실제 코드를 스캔해 “내 프로젝트에서 뭘 찾는지”까지 봐줘요 (선택)</span><input type="text" id="fit-repo-ko" placeholder="예: https://github.com/나/내프로젝트"></label>
-            <button class="btn primary js-fit" type="button" data-lang="ko">내 저장소로 확인 →</button>
-          </div>
+      <p class="eyebrow">설치하기 전에</p>
+      <h2>나한테 맞는 도구인지<br>먼저 보세요.</h2>
+      <p class="lead" style="max-width:none">안 맞는 분을 붙잡아 두는 것보다, 여기서 걸러지는 게 서로 낫습니다.</p>
+      <div class="fitgrid">
+        <div class="fitcard good">
+          <h3>이런 분께 잘 맞아요</h3>
+          <ul>
+            <li>Claude Code로 <b>Python</b> 프로젝트를 만드는 입문자</li>
+            <li>코드 리뷰를 부탁할 동료가 없는 <b>1인 개발자</b></li>
+            <li>기능 중복·세션 전환·트러블슈팅 기록이 자주 불편한 사람</li>
+            <li>테스트와 문서화를 알지만 <b>매번 직접 챙기기 어려운</b> 사람</li>
+          </ul>
         </div>
-        <div class="promptbox">
-          <pre id="audit-prompt-ko">https://github.com/jx-hxxx/hi-vibe
-
-hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러그인입니다.
-제 프로젝트에 hi-vibe가 실질적인 도움이 되는지 중심으로 평가해 주세요.
-
-제 저장소(가능하면 실제 코드를 확인해 주세요): <span id="proj-ko">[내 프로젝트 GitHub 링크 — 공개 저장소면 실제 코드를 스캔해 제 프로젝트에서 hi-vibe가 무엇을 찾아주는지 구체적으로 봐 주세요]</span>
-
-평가할 때 README가 약속한 범위가 실제 구현에서 얼마나 충실하게 제공되는지를 중심으로 판단해 주세요.
-확인된 장점과 한계, 제 프로젝트 같은 핵심 타깃에게 실제로 도움이 되는 부분을 구분해서 설명해 주세요.
-
-다음을 평가해 주세요.
-1. 바이브 코딩에 주는 도움
-2. 제품·기술 설계
-3. 제 프로젝트와의 적합성, 덜 맞는 사용자
-4. 주요 장점과 한계
-5. 테스트·자동화 신뢰도
-6. 현재 완성도
-
-- 제 프로젝트 기준 설치 가치: /10
-- 개인용 Claude Code 플러그인으로서 현재 성숙도: /10
-- 종합점수: /10
-
-확인한 실제 구현에 근거해 공정하게 평가하고, 직접 확인하지 못한 내용은 확인 불가라고 밝혀 주세요.</pre>
-          <button class="btn ghost js-copy" type="button" data-target="audit-prompt-ko">평가 질문 복사</button>
+        <div class="fitcard weak">
+          <h3>이런 경우엔 효과가 작아요</h3>
+          <ul>
+            <li>문법 연습이나 일회용 스크립트처럼 <b>아주 작은 작업</b></li>
+            <li>이미 리뷰·CI·문서 관리 절차가 갖춰진 팀</li>
+            <li><b>JS/TS가 주력</b>인 프로젝트 (중복 탐지는 Python 전용)</li>
+            <li>Claude Code를 주된 개발 도구로 쓰지 않는 경우</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -636,9 +611,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않습니다. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.28.0<small>2026-08-01</small></div><div class="h"><b>첫 화면 다음 자리를 "AI한테 물어보세요"에서 "나한테 맞나 보세요"로 바꿨어요.</b> <span>거기엔 다른 AI에 붙여넣을 긴 평가 질문이 있었는데, 방문자가 hi-vibe가 뭔지 알기도 전에 자리를 떠나게 만드는 자리였습니다. 이제 **잘 맞는 경우 4개와 효과가 작은 경우 4개**를 나란히 놓습니다. JS/TS가 주력이거나 이미 리뷰·CI 절차가 있는 팀이면 여기서 걸러져요 — 붙잡아 두는 것보다 그게 서로 낫습니다. 평가 질문은 버리지 않고 저장소 안에 보관했어요.</span></div></div>
         <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>줄바꿈이 지저분하던 것을 정리했어요.</b> <span>긴 문장이 넘어가면서 마지막에 단어 하나만 다음 줄에 덩그러니 남는 자리가 있었습니다("…약속과 정반대예요." / "…알아서."). 브라우저가 알아서 피하게 하는 설정(`text-wrap: pretty`)을 긴 글이 들어가는 자리에 전부 넣고, 문장 자체도 짧게 줄였어요. 스킬 숨김 안내는 다섯 줄에서 네 줄로 줄었습니다.</span></div></div>
         <div class="rel"><div class="v">v0.27.1<small>2026-08-01</small></div><div class="h"><b>명령어 표를 실제로 치는 순서대로 다시 놨어요.</b> <span>직전 릴리스에서 `init` → `doctor`로 순서를 뒤집었는데 표는 그대로여서, 표만 보면 여전히 `doctor`가 먼저였습니다. 이제 `welcome → init → doctor → gate → check` 순이에요 — 뭔지 모를 때 · 켜기 · 확인 · (선택) 관문 설치 · 평소 점검. 위에서 아래로 읽으면 그게 곧 순서입니다.</span></div></div>
-        <div class="rel"><div class="v">v0.27.0<small>2026-08-01</small></div><div class="h"><b>설치 순서를 뒤집었어요 — `init` 먼저, 그다음 `doctor`.</b> <span>여태 `doctor` → `init`로 안내했는데, `doctor`는 **이 프로젝트의 훅이 제대로 매여 있나**를 보는 명령입니다. `init`을 안 했으면 훅이 안 도는 게 정상이라, 켜지도 않은 걸 검사시키고 있었어요. 실제로 재보니 `doctor`를 먼저 치면 경고 2개가 뜨는데 **둘 다 `init`이 해결할 것들**이었습니다(아직 init 안 함 · .env가 gitignore에 없음). 처음 설치한 사람이 첫 화면에서 읽고 무시해야 할 경고를 보게 되죠. `init`을 먼저 하면 경고 0개, 통과 9개로 깨끗하게 끝납니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -705,43 +680,27 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
     </div>
 
     <section id="audit-en">
-      <p class="eyebrow">Before you install this plugin</p>
-      <h2>Ask an AI whether it fits your project.</h2>
-      <p class="lead" style="max-width:none">A question that has it inspect the real implementation and tests, then honestly lay out the help you'd get and the scope of support.<br>Copy the question below and paste it straight into Claude, Codex, or Gemini.</p>
-      <div class="audit">
-        <div class="card">
-          <h3>A 2-minute fit check before you install</h3>
-          <p>It inspects the <b>actual hooks, scanner, and tests</b> — not just the README — to find out how this plugin helps your project and how far its support goes.</p>
-          <div class="fitform">
-            <label>My project's GitHub link<span class="hint">If it's public, the AI scans your real code to see what it finds in YOUR project (optional)</span><input type="text" id="fit-repo-en" placeholder="e.g. https://github.com/you/your-project"></label>
-            <button class="btn primary js-fit" type="button" data-lang="en">Check with my repo →</button>
-          </div>
+      <p class="eyebrow">Before you install</p>
+      <h2>See whether it fits you<br>before you bother.</h2>
+      <p class="lead" style="max-width:none">Better you rule it out here than find out three days in.</p>
+      <div class="fitgrid">
+        <div class="fitcard good">
+          <h3>A good fit if you're</h3>
+          <ul>
+            <li>New to coding, building <b>Python</b> projects with Claude Code</li>
+            <li>A <b>solo dev</b> with nobody to ask for a code review</li>
+            <li>Tired of duplicate features, lost context, and untraceable bug fixes</li>
+            <li>Someone who knows about tests and docs but <b>can't keep up with them</b></li>
+          </ul>
         </div>
-        <div class="promptbox">
-          <pre id="audit-prompt-en">https://github.com/jx-hxxx/hi-vibe
-
-hi-vibe is a personal plugin an individual developer uses inside Claude Code.
-Please judge it centered on whether hi-vibe actually helps MY project.
-
-My repo (please inspect the real code if you can): <span id="proj-en">[my project's GitHub link — if public, scan the real code and spell out concretely what hi-vibe finds in my project]</span>
-
-Judge how faithfully the scope the README promises is actually delivered in the real implementation.
-Separate the confirmed strengths from the limits, and spell out what actually helps a core target like my project.
-
-Evaluate:
-1. Help for vibe coding
-2. Product / technical design
-3. Fit with my project, and who it fits less
-4. Key strengths and limits
-5. Test / automation reliability
-6. Current maturity
-
-- Install value for my project: /10
-- Current maturity as a personal Claude Code plugin: /10
-- Overall: /10
-
-Judge fairly based on the actual implementation you verified, and say so for anything you couldn't verify directly.</pre>
-          <button class="btn ghost js-copy" type="button" data-target="audit-prompt-en">Copy the question</button>
+        <div class="fitcard weak">
+          <h3>Less useful if</h3>
+          <ul>
+            <li>Your work is <b>tiny</b> — syntax practice, throwaway scripts</li>
+            <li>Your team already has review, CI and doc processes</li>
+            <li><b>JS/TS is your main language</b> (duplicate detection is Python-only)</li>
+            <li>Claude Code isn't your primary development tool</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -966,9 +925,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.28.0<small>2026-08-01</small></div><div class="h"><b>The slot right after the hero changed from "go ask an AI" to "see if this fits you".</b> <span>It used to hold a long evaluation prompt to paste into another AI — a section that sent visitors away before they knew what hi-vibe was. It now shows **four cases where it fits and four where it doesn't**, side by side. If JS/TS is your main language, or your team already has review and CI, you'll rule it out right there — better than being talked into it. The prompt itself is kept in the repo.</span></div></div>
         <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>Cleaned up ragged line breaks.</b> <span>Long sentences were wrapping so that a single word ended up alone on the last line. Every long-prose container now uses `text-wrap: pretty` so the browser avoids that, and the sentences themselves were shortened. The note about hidden skills went from five lines to four.</span></div></div>
         <div class="rel"><div class="v">v0.27.1<small>2026-08-01</small></div><div class="h"><b>Reordered the command table to match the order you actually run things.</b> <span>The previous release flipped setup to `init` → `doctor`, but the table still listed `doctor` first, so the table alone told you the opposite. It now reads `welcome → init → doctor → gate → check`: don't know where to start, turn it on, confirm it, optionally install the gate, then the everyday check. Top to bottom is the sequence.</span></div></div>
-        <div class="rel"><div class="v">v0.27.0<small>2026-08-01</small></div><div class="h"><b>Flipped the setup order — `init` first, then `doctor`.</b> <span>The docs said `doctor` → `init`, but `doctor` checks whether the hooks are actually armed *in this project*. Before `init` they legitimately aren't, so we were asking people to inspect something they hadn't switched on yet. Measured: running `doctor` first produces two warnings, and **both are things `init` fixes** (not initialised here; `.env` not in `.gitignore`). A first-time user meets two warnings they're told to ignore. Run `init` first and it comes back 0 warnings, 9 passes.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1032,61 +991,6 @@ Judge fairly based on the actual implementation you verified, and say so for any
     if (!cur) { cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
     setTheme(cur === 'dark' ? 'light' : 'dark');
   }); }
-  function flashBtn(btn, done){ var o = btn.textContent; btn.textContent = done; setTimeout(function(){ btn.textContent = o; }, 1600); }
-  function legacyCopy(el){ try { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); } catch(e){} }
-  function copyFromTarget(btn){
-    var el = document.getElementById(btn.getAttribute('data-target'));
-    if (!el) { return; }
-    var text = el.textContent.replace(/^\s+|\s+$/g, '');
-    var done = (root.getAttribute('lang') === 'en') ? 'Copied ✓' : '복사됨 ✓';
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function(){ flashBtn(btn, done); }, function(){ legacyCopy(el); flashBtn(btn, done); });
-    } else { legacyCopy(el); flashBtn(btn, done); }
-  }
-  var copyBtns = document.querySelectorAll('.js-copy');
-  for (var k=0;k<copyBtns.length;k++){ copyBtns[k].addEventListener('click', function(){ copyFromTarget(this); }); }
-
-  // 적합성 폼: GitHub 링크를 프롬프트의 "제 저장소:" 자리에 반영
-  var FIT_PLACEHOLDER = {
-    ko: '[내 프로젝트 GitHub 링크 — 공개 저장소면 실제 코드를 스캔해 제 프로젝트에서 hi-vibe가 무엇을 찾아주는지 구체적으로 봐 주세요]',
-    en: "[my project's GitHub link — if public, scan the real code and spell out concretely what hi-vibe finds in my project]"
-  };
-  function applyFit(lang){
-    var el = document.getElementById('fit-repo-' + lang);
-    var v = el ? el.value.trim() : '';
-    var span = document.getElementById('proj-' + lang);
-    if (span) { span.textContent = v ? v : FIT_PLACEHOLDER[lang]; }
-  }
-  var fitBtns = document.querySelectorAll('.js-fit');
-  for (var m=0;m<fitBtns.length;m++){
-    fitBtns[m].addEventListener('click', function(){
-      var lang = this.getAttribute('data-lang');
-      applyFit(lang);
-      flashBtn(this, lang === 'en' ? 'Applied ✓' : '반영됨 ✓');
-    });
-  }
-
-  // 우측 프롬프트 pre의 최대 높이를 좌측 카드 높이에 맞춘다(넘치면 스크롤).
-  function syncAuditHeights(){
-    var sections = [document.getElementById('audit-ko'), document.getElementById('audit-en')];
-    for (var i=0;i<sections.length;i++){
-      var sec = sections[i]; if (!sec) continue;
-      var card = sec.querySelector('.card');
-      var pre = sec.querySelector('.promptbox pre');
-      var box = sec.querySelector('.promptbox');
-      if (!card || !pre || !box) continue;
-      // promptbox 자체 패딩/버튼을 뺀, pre에 허용할 높이
-      var extra = box.offsetHeight - pre.offsetHeight; // 패딩 + 복사버튼 영역
-      var target = card.offsetHeight - extra;
-      pre.style.maxHeight = (target > 160 ? target : 160) + 'px';
-    }
-  }
-  // 폼 반영·리사이즈·언어전환 때 다시 맞춘다.
-  for (var n=0;n<fitBtns.length;n++){ fitBtns[n].addEventListener('click', syncAuditHeights); }
-  window.addEventListener('resize', syncAuditHeights);
-  var langBtns2 = document.querySelectorAll('.js-lang');
-  for (var q=0;q<langBtns2.length;q++){ langBtns2[q].addEventListener('click', function(){ setTimeout(syncAuditHeights, 0); }); }
-  syncAuditHeights();
 })();
 </script>
 
@@ -1146,7 +1050,7 @@ Judge fairly based on the actual implementation you verified, and say so for any
 
   /* ② scroll reveal — structure-aware. Horizontal card rows cascade left→right; other blocks fade up. */
   root.className += ' has-rv';
-  var GROUP_SEL = '.layers, .featgrid, .split, .audit, .trust, .notes'; // card rows / stacked note groups: stagger children (left→right or top→bottom) on reveal
+  var GROUP_SEL = '.layers, .featgrid, .split, .fitgrid, .trust, .notes'; // card rows / stacked note groups: stagger children (left→right or top→bottom) on reveal
   var groupEls = document.querySelectorAll(GROUP_SEL);
   for (var g = 0; g < groupEls.length; g++){
     var kids = groupEls[g].children;
