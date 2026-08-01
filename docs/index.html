@@ -71,7 +71,7 @@
   .eyebrow { font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); margin:0 0 18px; display:flex; align-items:center; gap:10px; }
   .eyebrow::before { content:""; width:22px; height:1px; background:var(--border-2); }
   h2 { font-size:clamp(26px,3.4vw,38px); line-height:1.15; letter-spacing:-.02em; font-weight:800; margin:0 0 16px; text-wrap:balance; }
-  .lead { color:var(--muted); font-size:17px; max-width:60ch; margin:0; }
+  .lead { color:var(--muted); font-size:17px; max-width:60ch; margin:0;text-wrap:pretty; }
 
   header.bar { position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
   .bar .wrap { display:flex; align-items:center; justify-content:space-between; height:60px; gap:16px; }
@@ -94,7 +94,7 @@
   .tag-ko { font-size:clamp(30px,5.2vw,52px); line-height:1.2; font-weight:850; letter-spacing:-.03em; margin:14px 0 0; text-wrap:balance; }
   .tag-ko .amber { color:var(--accent); }
   .tag-en { font-family:var(--mono); font-size:13px; color:var(--faint); letter-spacing:.02em; margin:20px 0 0; }
-  .hero p.say { color:var(--muted); font-size:17.5px; margin:16px 0 0; max-width:530px; }
+  .hero p.say { color:var(--muted); font-size:17.5px; margin:16px 0 0; max-width:530px;  text-wrap:pretty; }
   .hero .cta { display:flex; gap:12px; margin-top:20px; flex-wrap:wrap; }
   .btn { font-family:var(--mono); font-size:13.5px; text-decoration:none; padding:11px 18px; border-radius:10px; border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; background:transparent; cursor:pointer; }
   .btn.primary { background:var(--accent); color:#1a1204; font-weight:700; }
@@ -153,9 +153,9 @@
   .fhead .ftitle { font-size:14.5px; font-weight:700; letter-spacing:-.01em; }
   .fhead .ftag { font-family:var(--mono); font-size:10.5px; color:var(--faint); letter-spacing:.02em; margin-left:auto; white-space:nowrap; }
   .fhead .ftag b { color:var(--accent-ink); font-weight:400; }
-  .fdesc { margin:0; color:var(--muted); font-size:12.8px; line-height:1.6; max-width:none; }
+  .fdesc { margin:0; color:var(--muted); font-size:12.8px; line-height:1.6; max-width:none;  text-wrap:pretty; }
   .fdesc code { font-family:var(--mono); font-size:.86em; background:var(--surface-2); color:var(--text); padding:1px 5px; border-radius:5px; }
-  .honest-note { display:flex; gap:12px; margin-top:20px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-size:14.5px; word-break:keep-all; line-height:1.75; }
+  .honest-note { display:flex; gap:12px; margin-top:20px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-size:14.5px; word-break:keep-all; line-height:1.75; text-wrap:pretty; }
   .honest-note b { color:var(--text); }
   .honest-note code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); white-space:nowrap; }
   .honest-note .dim { color:var(--faint); }
@@ -165,7 +165,7 @@
   /* 빠른 시작 팸플릿 */
   .quickstart { margin-top:28px; border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:12px; background:var(--surface); padding:20px 22px; }
   .quickstart h4 { margin:0 0 4px; font-size:16px; }
-  .quickstart .qs-sub { color:var(--muted); font-size:13.5px; margin:0 0 14px; }
+  .quickstart .qs-sub { color:var(--muted); font-size:13.5px; margin:0 0 14px;  text-wrap:pretty; }
   .qs-row { display:grid; grid-template-columns:190px 1fr; gap:10px 18px; align-items:baseline; padding:11px 0; border-top:1px solid var(--border); }
   .qs-row:first-of-type { border-top:none; }
   .qs-when { font-weight:700; font-size:14px; color:var(--text); }
@@ -179,7 +179,7 @@
   details.note-toggle > summary::-webkit-details-marker { display:none; }
   details.note-toggle > summary::after { content:"▾"; margin-left:auto; color:var(--faint); font-size:12px; transition:transform .15s; }
   details.note-toggle[open] > summary::after { transform:rotate(180deg); }
-  details.note-toggle .tbody { padding:0 18px 16px; color:var(--muted); font-size:14px; line-height:1.75; word-break:keep-all; }
+  details.note-toggle .tbody { padding:0 18px 16px; color:var(--muted); font-size:14px; line-height:1.75; word-break:keep-all;  text-wrap:pretty; }
   details.note-toggle .tbody code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); white-space:nowrap; }
   details.note-toggle .tbody b { color:var(--text); }
   details.note-toggle .tbody .dim { color:var(--faint); }
@@ -625,10 +625,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
         </tbody>
       </table></div></div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>슬래시 메뉴에는 명령어 10개만 나와요.</b><br>
-        스킬 6개는 엔진이지 버튼이 아니라서, <b>메뉴에서 일부러 숨겨놨어요</b>(<code>user-invocable: false</code>). 안 그러면 메뉴에 16개가 뜨는데, 그건 "외울 게 적다"는 이 플러그인의 약속과 정반대예요.<br>
-        <b>숨겼다고 안 도는 건 아닙니다</b> — Claude는 여전히 알아서 불러요. 같은 엔진(repo-xray)을 부르는 길은 둘이에요: <b>① <code>check</code> 명령어 · ② “중복 찾아줘”라고 말하면 AI가 알아서.</b><br>
-        <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표라, 명령어든 스킬이든 다 그 밑에 붙어요.<br>
-        참고: <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌리는 진단 명령이에요.</div></div>
+        스킬 6개는 엔진이지 버튼이 아니라서 메뉴에서 숨겼어요(<code>user-invocable: false</code>). 안 그러면 16개가 뜹니다.<br>
+        <b>숨겼다고 안 도는 건 아니에요</b> — Claude는 알아서 불러요. 같은 엔진(repo-xray)을 부르는 길은 둘입니다: <b>① <code>check</code> 명령어 · ② “중복 찾아줘”라고 말하기.</b><br>
+        <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표예요. <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌립니다.</div></div>
     </section>
 
     <section id="living-ko">
@@ -637,9 +636,9 @@ hi-vibe는 개인 개발자가 Claude Code에서 사용하는 개인용 플러�
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않습니다. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>줄바꿈이 지저분하던 것을 정리했어요.</b> <span>긴 문장이 넘어가면서 마지막에 단어 하나만 다음 줄에 덩그러니 남는 자리가 있었습니다("…약속과 정반대예요." / "…알아서."). 브라우저가 알아서 피하게 하는 설정(`text-wrap: pretty`)을 긴 글이 들어가는 자리에 전부 넣고, 문장 자체도 짧게 줄였어요. 스킬 숨김 안내는 다섯 줄에서 네 줄로 줄었습니다.</span></div></div>
         <div class="rel"><div class="v">v0.27.1<small>2026-08-01</small></div><div class="h"><b>명령어 표를 실제로 치는 순서대로 다시 놨어요.</b> <span>직전 릴리스에서 `init` → `doctor`로 순서를 뒤집었는데 표는 그대로여서, 표만 보면 여전히 `doctor`가 먼저였습니다. 이제 `welcome → init → doctor → gate → check` 순이에요 — 뭔지 모를 때 · 켜기 · 확인 · (선택) 관문 설치 · 평소 점검. 위에서 아래로 읽으면 그게 곧 순서입니다.</span></div></div>
         <div class="rel"><div class="v">v0.27.0<small>2026-08-01</small></div><div class="h"><b>설치 순서를 뒤집었어요 — `init` 먼저, 그다음 `doctor`.</b> <span>여태 `doctor` → `init`로 안내했는데, `doctor`는 **이 프로젝트의 훅이 제대로 매여 있나**를 보는 명령입니다. `init`을 안 했으면 훅이 안 도는 게 정상이라, 켜지도 않은 걸 검사시키고 있었어요. 실제로 재보니 `doctor`를 먼저 치면 경고 2개가 뜨는데 **둘 다 `init`이 해결할 것들**이었습니다(아직 init 안 함 · .env가 gitignore에 없음). 처음 설치한 사람이 첫 화면에서 읽고 무시해야 할 경고를 보게 되죠. `init`을 먼저 하면 경고 0개, 통과 9개로 깨끗하게 끝납니다.</span></div></div>
-        <div class="rel"><div class="v">v0.26.6<small>2026-08-01</small></div><div class="h"><b>빠른 시작의 두 줄이 서로 반대 순서였어요.</b> <span>"내 컴퓨터에 방금 설치"는 `doctor → init`인데 바로 아래 "이미 만들던 프로젝트에 설치"는 `init → doctor`로 적혀 있었습니다. 맞는 건 `doctor → init`이에요 — `doctor`가 "아직 init 안 함 → 지금 `/hi-vibe:init` 실행하세요"라고 다음 단계를 알려주는 구조라, 순서가 뒤집히면 그 안내가 쓸모없어집니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -956,10 +955,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
         </tbody>
       </table></div></div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>Only the 10 commands show up in the slash menu.</b><br>
-        The 6 skills are engines, not buttons, so they're <b>deliberately hidden</b> from the menu (<code>user-invocable: false</code>). Otherwise you'd see 16 hi-vibe entries — the opposite of this plugin's promise that there's little to remember.<br>
-        <b>Hidden doesn't mean off</b> — Claude still loads them on its own. There are two ways to reach the same engine (repo-xray): <b>① the <code>check</code> command · ② saying “find duplicates” and letting the AI pick it up.</b><br>
-        The <code>hi-vibe:</code> prefix just means “belongs to this plugin”, so commands and skills both sit under it.<br>
-        Note: <code>doctor</code> is a diagnostic that runs the hooks/scanner directly, with no skill.</div></div>
+        The 6 skills are engines, not buttons, so they're hidden from the menu (<code>user-invocable: false</code>). Otherwise you'd see 16 entries.<br>
+        <b>Hidden doesn't mean off</b> — Claude still loads them itself. Two ways reach the same engine (repo-xray): <b>① the <code>check</code> command · ② saying “find duplicates”.</b><br>
+        The <code>hi-vibe:</code> prefix just means “belongs to this plugin”. <code>doctor</code> runs the hooks and scanner directly, with no skill.</div></div>
     </section>
 
     <section id="living-en">
@@ -968,9 +966,9 @@ Judge fairly based on the actual implementation you verified, and say so for any
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.27.2<small>2026-08-01</small></div><div class="h"><b>Cleaned up ragged line breaks.</b> <span>Long sentences were wrapping so that a single word ended up alone on the last line. Every long-prose container now uses `text-wrap: pretty` so the browser avoids that, and the sentences themselves were shortened. The note about hidden skills went from five lines to four.</span></div></div>
         <div class="rel"><div class="v">v0.27.1<small>2026-08-01</small></div><div class="h"><b>Reordered the command table to match the order you actually run things.</b> <span>The previous release flipped setup to `init` → `doctor`, but the table still listed `doctor` first, so the table alone told you the opposite. It now reads `welcome → init → doctor → gate → check`: don't know where to start, turn it on, confirm it, optionally install the gate, then the everyday check. Top to bottom is the sequence.</span></div></div>
         <div class="rel"><div class="v">v0.27.0<small>2026-08-01</small></div><div class="h"><b>Flipped the setup order — `init` first, then `doctor`.</b> <span>The docs said `doctor` → `init`, but `doctor` checks whether the hooks are actually armed *in this project*. Before `init` they legitimately aren't, so we were asking people to inspect something they hadn't switched on yet. Measured: running `doctor` first produces two warnings, and **both are things `init` fixes** (not initialised here; `.env` not in `.gitignore`). A first-time user meets two warnings they're told to ignore. Run `init` first and it comes back 0 warnings, 9 passes.</span></div></div>
-        <div class="rel"><div class="v">v0.26.6<small>2026-08-01</small></div><div class="h"><b>Two rows in the quick start gave opposite orders.</b> <span>"Just installed on your machine" said `doctor → init`, while the row right below it said `init → doctor`. `doctor → init` is the correct one: `doctor` reports "not initialised here → run `/hi-vibe:init` now", so reversing the order throws that guidance away.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

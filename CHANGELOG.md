@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.27.2] - 2026-08-01
+<!-- show:ko **줄바꿈이 지저분하던 것을 정리했어요.** 긴 문장이 넘어가면서 마지막에 단어 하나만 다음 줄에 덩그러니 남는 자리가 있었습니다("…약속과 정반대예요." / "…알아서."). 브라우저가 알아서 피하게 하는 설정(`text-wrap: pretty`)을 긴 글이 들어가는 자리에 전부 넣고, 문장 자체도 짧게 줄였어요. 스킬 숨김 안내는 다섯 줄에서 네 줄로 줄었습니다. -->
+<!-- show:en **Cleaned up ragged line breaks.** Long sentences were wrapping so that a single word ended up alone on the last line. Every long-prose container now uses `text-wrap: pretty` so the browser avoids that, and the sentences themselves were shortened. The note about hidden skills went from five lines to four. -->
+
+### Fixed
+- **긴 문단 끝에 단어 하나만 남던 줄바꿈** (2026-08-01) — 원인 둘. ①문장이 길어 마지막 단어가 홀로 넘어갔다 ②고아 줄을 막는 설정이 일부 자리(`.rel .h span`·`.audit .card p`)에만 있었다. `.lead`·`.honest-note`·`.tbody`·`.fdesc`·`.qs-sub`·`.say`까지 `text-wrap:pretty`를 통일하고(구형 브라우저는 무시하므로 안전), 스킬 숨김 안내 문장을 한/영 모두 짧게 다듬었다(5줄 → 4줄).
+
 ## [0.27.1] - 2026-08-01
 <!-- show:ko **명령어 표를 실제로 치는 순서대로 다시 놨어요.** 직전 릴리스에서 `init` → `doctor`로 순서를 뒤집었는데 표는 그대로여서, 표만 보면 여전히 `doctor`가 먼저였습니다. 이제 `welcome → init → doctor → gate → check` 순이에요 — 뭔지 모를 때 · 켜기 · 확인 · (선택) 관문 설치 · 평소 점검. 위에서 아래로 읽으면 그게 곧 순서입니다. -->
 <!-- show:en **Reordered the command table to match the order you actually run things.** The previous release flipped setup to `init` → `doctor`, but the table still listed `doctor` first, so the table alone told you the opposite. It now reads `welcome → init → doctor → gate → check`: don't know where to start, turn it on, confirm it, optionally install the gate, then the everyday check. Top to bottom is the sequence. -->
