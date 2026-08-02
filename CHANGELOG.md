@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.29.6] - 2026-08-02
+<!-- show:ko **첫 화면의 "평소처럼 말만 하면 돼요"를 "평소처럼 개발하면 돼요"로 바꿨어요.** 달라지는 건 명령어를 외울 필요가 없다는 것뿐이고 개발은 그대로 하는 건데, "말만 하면"은 개발자가 하는 일을 말하는 것으로 줄여 버립니다. README는 처음부터 "평소처럼 Claude와 코딩하면 됩니다"였으니, 첫 화면만 혼자 어긋나 있던 셈이에요. -->
+<!-- show:en **The hero line "just talk normally" became "just build the way you already do".** The only thing that changes is not having to memorize commands; the development itself is unchanged, and "just talk" shrinks the developer's work down to talking. The README had said it correctly all along, so the hero was the one surface out of step. -->
+
+### Changed
+- **히어로 문장: "평소처럼 말만 하면" → "평소처럼 개발하면"** (2026-08-02) — hi-vibe가 바꾸는 건 **명령어를 외울 필요가 없다**는 것뿐이다. "말만 하면"은 그걸 넘어 개발 행위 자체를 말하기로 축소한다. README 한국어는 이미 "평소처럼 Claude와 코딩하면 됩니다"(83줄)라 랜딩 히어로만 어긋나 있었다. 영문도 `just talk normally` → `just build the way you already do`. **3단 설명과 빠른 시작의 "평소처럼 말하면"은 그대로 둔다** — 거기서는 실제로 *말이 스킬을 걸리게 한다*는 다른 주장이라 정확한 표현이다.
+
 ## [0.29.5] - 2026-08-02
 <!-- show:ko **"훅 4종이 돌아요"라고 해놓고 둘만 설명하고 있었어요.** 코드 쓸 때 검사하는 것과 리뷰를 붙잡는 것만 적혀 있고, 대화가 compact되기 직전에 handover를 남기는 것과 새 세션에서 그걸 다시 읽는 것은 이름조차 안 나왔습니다. 둘 다 넣었어요. 그리고 리뷰는 훅으로만 걸리는 것처럼 써놨는데, 실제로는 "다 했어" 한마디에도 걸립니다 — 훅은 말 안 했을 때의 마지막 그물이지 유일한 통로가 아니에요. 마지막으로 "AI가 깜빡하면 명령어를 직접 누르세요"를 "평소에 치는 건 check 하나면 돼요"로 바꿨습니다. 뭘 쳐야 하는지가 이제 하나로 좁혀져요. -->
 <!-- show:en **The note said "4 hooks run automatically" and then described two of them.** Writing the handover just before a compact, and reading it back into a new session, were not mentioned at all. Both are in now. Review was also presented as hook-only when a plain "done" triggers it just as well — the hook is the net for when you say nothing, not the only route. And "press a command yourself when the AI forgets" became "day to day, check is the one you type", which narrows the answer to a single command. -->
