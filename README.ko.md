@@ -190,7 +190,7 @@ Claude Code 이벤트
 | Claude Code 기본 | hi-vibe | 무엇이 다른가 |
 |---|---|---|
 | `/init` (CLAUDE.md 생성) | `init` | **겹칩니다.** hi-vibe는 여기에 `handover.md`·`CHANGELOG.md`를 같이 만들고 훅을 켭니다 |
-| auto memory | `handover.md` | 기본 기억은 **Claude가 무엇을 남길지 판단**하고 사용자 컴퓨터에 저장합니다. handover는 compact 직전에 **정해진 것을 기계가** 프로젝트 안에 남깁니다 — 사람이 열어 읽고, 원하면 팀과 공유합니다 |
+| auto memory | `handover.md` | 기본 기억은 **Claude가 무엇을 남길지 판단**하고 사용자 컴퓨터에 저장합니다. handover는 compact 직전·`/clear`·창을 닫을 때 **정해진 것을 기계가** 프로젝트 안에 남깁니다 — 사람이 열어 읽고, 원하면 팀과 공유합니다 |
 | `/code-review` | `review` | **목적이 겹칩니다. 구현은 다릅니다** — hi-vibe는 `/code-review`를 부르지 않고 자기 체크리스트와 `fresh-eyes` 에이전트로 봅니다. 아래 참고 |
 | `/verify` | 리뷰의 실행 검증 항목 | 겹칩니다. hi-vibe 쪽은 "테스트 통과했다고 단정하지 마라"는 규율에 가깝습니다 |
 | `/doctor` | `/hi-vibe:doctor` | **이름만 같고 검사 대상이 다릅니다.** 기본은 CLI 설치·설정, hi-vibe는 자기 훅·스캐너 |

@@ -46,15 +46,24 @@ BANNED = [
      "훅은 fail-open이라 조용히 죽을 수 있고, 죽었는지는 heartbeat를 보는 "
      "스킬 층이 돌아야 알 수 있다 → '자동으로 매여 있고, 풀리면 알려주는'."),
 
-    # "runs the review"만 잡다가 **"the hook runs it"을 놓쳤다** — 목적어를
-    # 대명사로 쓰면 빠져나간다. 대명사까지 포함한다.
-    (r"(훅|hook)[^.\n]{0,40}"
-     r"((리뷰|review)를?\s*직접\s*(돌|실행)"
-     r"|runs? (the )?(review|it)\b(?![^.\n]{0,20}\bhold)|runs? it right there)"
-     # 훅 이름이 주어일 때도 같은 주장이다. 다이어그램의
-     # `└─ Stop ── run the review on unreviewed changes`가 이 형태로
-     # 살아남았다 — 앞뒤 25자 안에 "훅/hook"이라는 낱말이 없었다.
-     r"|Stop[^.\n]{0,25}(그 자리에서\s*리뷰|runs? the review)",
+    # 이 항목만 세 번 뚫렸다. 그때마다 문구를 하나씩 막았더니
+    # ①`runs it`(대명사) ②`└─ Stop ── run the review`(훅 이름이 주어)
+    # ③`훅이 리뷰를 돌린 뒤`(`직접`이 없음)가 차례로 빠져나갔다.
+    # 그래서 **주어(훅·hook·Stop) + 수행 동사**로 바꾸고, 정확한 표현
+    # (지시·시키다·붙잡다·hold·demand)은 뒤의 부정 조건으로 뺀다.
+    # 한국어는 "리뷰를 돌린"(목적어→동사), 영어는 "runs the review"(동사→목적어)라
+    # 어순이 반대다. 한 정규식에 욱여넣으면 한쪽이 샌다.
+    (r"(훅|hook|Stop)[^.\n]{0,40}(리뷰|review)[^.\n]{0,12}"
+     # 어미까지 적으면("실행하") "실행한다"가 빠져나간다 — 어간만 쓴다.
+     r"(직접\s*)?(돌린|돌려|돌리|실행|수행)"
+     # "리뷰를 수행하는 건 Claude다"는 **정확한 문장**이다. 주어가 뒤에
+     # 오는 한국어 특성상 동사만 보면 못 가리므로 Claude를 뺀다.
+     r"(?![^.\n]{0,20}(지시|시키|시킨|맡기|Claude|AI))"
+     r"|(훅|hook|Stop)[^.\n]{0,40}\b(runs?|ran|performs?|executes?|executed)\b\s*"
+     r"(the\s+)?(review|it)\b(?![^.\n]{0,20}(hold|demand))"
+     # 동사 없이 "그 자리에서 리뷰"만으로도 같은 주장이 된다(다이어그램).
+     # 단 "…리뷰를 시켜요"는 정확한 표현이라 뺀다.
+     r"|(훅|hook|Stop)[^.\n]{0,40}그 자리에서\s*리뷰(?![^.\n]{0,10}(를)?\s*(시키|시켜|지시))",
      "Stop 훅은 `decision:block`으로 턴을 막고 reason으로 리뷰를 지시할 뿐, "
      "리뷰를 수행하는 건 Claude다 → '턴을 막고 리뷰를 지시한다'."),
 
@@ -156,6 +165,9 @@ class NoOverclaimTest(unittest.TestCase):
             "Review quality itself will keep improving in /code-review",
             "└─ Stop ───────── run the review on unreviewed changes",
             "└─ Stop ───────── 리뷰 안 받은 변경을 그 자리에서 리뷰",
+            "돌아온 리뷰 결과를 읽고 뭘 고칠지 판단하기 — 훅이 리뷰를 돌린 뒤",
+            "after the hook ran the review",
+            "Stop 훅이 리뷰를 실행한다",
         ]
         for sentence in past:
             caught = any(re.search(p, sentence, re.I) for p, _ in BANNED)
@@ -178,6 +190,11 @@ class NoOverclaimTest(unittest.TestCase):
             "hi-vibe does not press the built-in /code-review for you.",
             "└─ Stop ───────── hold the turn and demand a review of unreviewed changes",
             "└─ Stop ───────── 리뷰 안 받은 변경이 있으면 대화를 붙잡고 리뷰를 지시",
+            "훅이 턴을 막고 리뷰를 지시한 뒤",
+            "after the hook held the turn and demanded a review",
+            "훅이 대화를 붙잡고 Claude에게 리뷰를 시켜요",
+            "막는 것까지가 이 훅의 일이고 리뷰를 수행하는 건 Claude다.",
+            "Stop 훅이 턴을 막고 리뷰를 지시 — 수행은 AI",
         ]
         for sentence in fine:
             hit = [why for p, why in BANNED if re.search(p, sentence, re.I)]

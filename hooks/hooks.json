@@ -39,7 +39,7 @@
     ],
     "SessionEnd": [
       {
-        "matcher": "clear|prompt_input_exit",
+        "matcher": "clear|prompt_input_exit|resume|logout",
         "hooks": [
           {
             "type": "command",

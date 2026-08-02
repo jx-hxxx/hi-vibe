@@ -6,6 +6,7 @@ run()이 모든 예외를 삼키고 exit 0 한다. 넓은 except는 원칙적으
 계약인 유일한 지점이 여기다.
 """
 import contextlib
+import hashlib
 import json
 import os
 import re
@@ -79,12 +80,16 @@ def read_heartbeat(cwd):
         return {}
 
 
-def _run_git(args, cwd):
+def _run_git(args, cwd, timeout=3):
     """git 명령 실행 후 stdout(성공) 또는 None(실패/git 없음/타임아웃).
-    handover 보강은 부가 정보이므로 어떤 실패도 조용히 생략(fail-open)."""
+    handover 보강은 부가 정보이므로 어떤 실패도 조용히 생략(fail-open).
+
+    `timeout`은 호출부가 줄일 수 있다 — SessionEnd 훅은 **전체가 1.5초
+    예산을 나눠 쓰므로** 여기서 3초를 기다리면 handover를 쓰기도 전에
+    죽는다. 느린 저장소·네트워크 파일시스템에서 실제로 위험하다."""
     try:
         r = subprocess.run(["git"] + args, cwd=cwd, capture_output=True,
-                           text=True, timeout=3)
+                           text=True, timeout=timeout)
     except Exception:
         return None
     if r.returncode != 0:
@@ -92,18 +97,18 @@ def _run_git(args, cwd):
     return r.stdout
 
 
-def git_status(cwd):
+def git_status(cwd, timeout=3):
     """현재 브랜치 + 작업트리 요약(수정/신규/삭제 개수)을 한 줄로.
     git 저장소가 아니거나 실패하면 None — 호출부가 조용히 생략한다.
     다음 세션이 재개할 수 있는 '객관적 상태'만 남긴다(의미 판정 없음)."""
     # status --short 로 git 저장소인지 판별(빈 출력도 유효 — 변경 없음).
-    porcelain = _run_git(["status", "--short"], cwd)
+    porcelain = _run_git(["status", "--short"], cwd, timeout)
     if porcelain is None:
         return None
     # 브랜치: 커밋이 아직 없으면 rev-parse가 실패하므로 symbolic-ref로 폴백.
-    branch = _run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd)
+    branch = _run_git(["rev-parse", "--abbrev-ref", "HEAD"], cwd, timeout)
     if not branch or branch.strip() == "HEAD":
-        sym = _run_git(["symbolic-ref", "--short", "HEAD"], cwd)
+        sym = _run_git(["symbolic-ref", "--short", "HEAD"], cwd, timeout)
         branch = sym if sym else "(detached)"
     branch = branch.strip() or "(detached)"
     mod = new = deleted = 0
@@ -476,17 +481,23 @@ def last_test_result(path):
     return found
 
 
-def handover_body(cwd, transcript):
-    """handover 자동 항목의 본문 줄, "건질 게 있었나", 고친 파일 수를 돌려준다.
+def handover_body(cwd, transcript, git_timeout=3):
+    """handover 자동 항목의 본문 줄, "이 세션에 활동이 있었나", 활동 서명.
 
     PreCompact와 SessionEnd가 **같은 형식**을 써야 한다. 두 벌로 두면
     한쪽만 고쳐져 항목 모양이 갈린다(이 저장소가 문서에서 여러 번 겪은 일).
 
-    두 번째 값이 중요하다 — compact는 대화가 길어야 일어나니 빈 항목이
-    드물지만, `/clear`는 **열자마자 칠 수도** 있다. 부르는 쪽이 빈 세션을
-    건너뛸지 스스로 정한다."""
+    **Git 상태는 활동으로 세지 않는다.** 세어봤더니 git 저장소에서는
+    `git_status`가 늘 문자열을 돌려주므로 **모든 빈 세션이 "활동 있음"이
+    됐다** — 열자마자 `/clear`를 쳐도 `- Git: master, 변경 없음` 한 줄짜리
+    항목이 쌓였다. 그 줄은 이 세션이 뭘 했는지 말해주지 않는다. 활동은
+    **대화에서 나온 것**(요청·수정·검증)만으로 판단하고, Git은 부가정보로만
+    싣는다. (비-git 임시 폴더에서만 테스트해서 이 결함을 놓쳤었다.)
+
+    세 번째 값은 **본문 서명**이다 — 같은 내용을 두 번 쓰지 않기 위한 것으로,
+    개수가 아니라 내용이라야 한다(뒤의 `handover_already_written` 참고)."""
     prompts, edited = parse_transcript(transcript) if transcript else ([], [])
-    git = git_status(cwd)
+    git = git_status(cwd, git_timeout)
     test = last_test_result(transcript) if transcript else None
 
     lines = []
@@ -503,31 +514,40 @@ def handover_body(cwd, transcript):
         lines += ["  - `%s`" % fp for fp in edited[:15]]
         if len(edited) > 15:
             lines.append("  - …외 %d개" % (len(edited) - 15))
-    return lines, bool(prompts or edited or git or test), len(edited)
+    active = bool(prompts or edited or test)      # Git은 활동이 아니다
+    sig = hashlib.sha1(
+        json.dumps([prompts, edited, test], ensure_ascii=False,
+                   sort_keys=True).encode("utf-8")).hexdigest()
+    return lines, active, sig
 
 
 WRITTEN_FILE = "handover-written.json"
 
 
-def note_handover_written(cwd, session_id, edited_count):
-    """이 세션에서 자동 항목을 어디까지 남겼는지 적어둔다.
+def note_handover_written(cwd, session_id, signature):
+    """이 세션에서 **무엇을** 남겼는지 서명으로 적어둔다.
 
-    `/compact` 직후 `/clear`를 치면 거의 같은 내용이 두 번 들어간다. 세션과
-    진행량을 적어두면 뒤에 오는 훅이 "그 뒤로 늘어난 게 없다"를 알 수 있다."""
+    `/compact` 직후 `/clear`를 치면 거의 같은 내용이 두 번 들어간다.
+
+    처음엔 "수정 파일 **개수**"로 비교했는데, 그러면 compact 뒤에 한 일이
+    통째로 사라졌다 — 같은 파일을 또 고치거나, Bash로 고치거나, 파일은
+    안 건드리고 중요한 결정만 논의한 경우 개수가 그대로여서 "새 게 없다"로
+    읽혔다. **중복을 막다 진짜 작업을 버리는 쪽이 훨씬 나쁘다.** 그래서
+    본문 내용의 서명으로 비교한다 — 요청 한 줄만 늘어도 서명이 달라진다."""
     if not os.path.isdir(os.path.join(cwd or "", ".hi-vibe")):
         return
     path = os.path.join(cwd, ".hi-vibe", "state", WRITTEN_FILE)
     try:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as fh:
-            json.dump({"session": str(session_id or ""), "edited": int(edited_count)},
+            json.dump({"session": str(session_id or ""), "sig": str(signature)},
                       fh, ensure_ascii=False)
     except OSError:
         pass
 
 
-def handover_already_written(cwd, session_id, edited_count):
-    """같은 세션에서 이미 남겼고 그 뒤로 고친 파일이 안 늘었나."""
+def handover_already_written(cwd, session_id, signature):
+    """같은 세션에서 **똑같은 내용**을 이미 남겼나."""
     try:
         with open(os.path.join(cwd, ".hi-vibe", "state", WRITTEN_FILE),
                   encoding="utf-8") as fh:
@@ -537,7 +557,7 @@ def handover_already_written(cwd, session_id, edited_count):
     if not isinstance(data, dict):
         return False
     return (data.get("session") == str(session_id or "")
-            and int(data.get("edited", -1)) >= int(edited_count))
+            and data.get("sig") == str(signature))
 
 
 def prepend_entry(handover_path, entry_text):

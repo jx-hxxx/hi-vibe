@@ -55,6 +55,13 @@ class SessionEndHandoverTest(unittest.TestCase):
         self._dir = tempfile.TemporaryDirectory(prefix="vibe-sessend-")
         self.root = self._dir.name
         os.makedirs(os.path.join(self.root, ".hi-vibe"))
+        # **실제 git 저장소로 만든다.** 처음엔 그냥 임시 폴더로 두었더니
+        # "빈 세션엔 안 쓴다"가 거짓 통과했다 — git 저장소에서는
+        # `git_status`가 늘 값을 돌려줘 모든 빈 세션이 "활동 있음"이 됐는데,
+        # 비-git 폴더에서는 None이라 테스트만 통과했다. 사용자의 프로젝트는
+        # 거의 항상 git 저장소다. 테스트 환경이 실제와 다르면 통과는 거짓이다.
+        subprocess.run(["git", "init", "-q"], cwd=self.root,
+                       capture_output=True, timeout=30)
         self.tr = None
 
     def tearDown(self):
@@ -96,11 +103,13 @@ class SessionEndHandoverTest(unittest.TestCase):
 
         compact은 대화가 길어야 일어나지만 `/clear`는 아무 때나 칠 수 있다.
         PreCompact를 그대로 붙였으면 여기서 빈 항목이 남았을 것이다."""
+        self.assertTrue(os.path.isdir(os.path.join(self.root, ".git")),
+                        "이 테스트는 git 저장소에서 돌아야 의미가 있다")
         self.tr = _transcript([])
         r = _run(SESSION_END, self._payload())
         self.assertEqual(r.returncode, 0)
         self.assertFalse(os.path.exists(os.path.join(self.root, "handover.md")),
-                         "빈 세션인데 handover를 만들었다")
+                         "빈 세션인데 handover를 만들었다 — Git 상태를 활동으로 세지 마라")
 
     def test_compact_then_clear_writes_once(self):
         """`/compact` 하고 바로 `/clear`를 치는 흐름 — 두 번 남기지 않는다."""
@@ -112,18 +121,34 @@ class SessionEndHandoverTest(unittest.TestCase):
         self.assertEqual(self._handover().count("결제 붙여줘"), 1,
                          "compact과 clear가 같은 내용을 두 번 남겼다")
 
-    def test_more_work_after_compact_is_recorded(self):
-        """중복을 막다가 **진짜 새 작업**까지 버리면 그게 더 나쁘다."""
-        self.tr = _transcript([_user("결제 붙여줘"), _edit("pay.py")])
+    def _compact_then_more(self, extra):
+        """compact 한 번 → `extra`만큼 더 일함 → /clear."""
+        base = [_user("결제 붙여줘"), _edit("pay.py")]
+        self.tr = _transcript(base)
         _run(PRE_COMPACT, {"cwd": self.root, "transcript_path": self.tr,
                            "hook_event_name": "PreCompact", "trigger": "manual",
                            "session_id": "abc12345"})
         os.unlink(self.tr)
-        self.tr = _transcript([_user("결제 붙여줘"), _edit("pay.py"),
-                               _user("환불도"), _edit("refund.py")])
+        self.tr = _transcript(base + extra)
         _run(SESSION_END, self._payload())
-        self.assertIn("refund.py", self._handover(),
-                      "compact 뒤에 한 일이 사라졌다")
+        return self._handover()
+
+    def test_more_work_after_compact_is_recorded(self):
+        """중복을 막다가 **진짜 새 작업**까지 버리면 그게 더 나쁘다.
+
+        처음엔 "수정 파일 개수"로 중복을 판정했다. 그래서 아래 세 경우가
+        전부 조용히 사라졌다 — 개수가 안 늘었기 때문이다. 실제로 겪은
+        결함이라 세 가지를 각각 고정한다."""
+        with self.subTest("새 파일까지 고친 경우"):
+            self.assertIn("refund.py",
+                          self._compact_then_more([_user("환불도"), _edit("refund.py")]))
+        with self.subTest("같은 파일을 또 고친 경우 — 개수가 안 는다"):
+            self.assertIn("환불 정책은 30일",
+                          self._compact_then_more([_user("환불 정책은 30일로 하자"),
+                                                   _edit("pay.py")]))
+        with self.subTest("파일은 안 건드리고 결정만 논의한 경우"):
+            self.assertIn("결제 방식은 PG로 가자",
+                          self._compact_then_more([_user("결제 방식은 PG로 가자")]))
 
     def test_other_session_is_not_deduped(self):
         """세션이 다르면 남겨야 한다 — 표식은 세션마다다."""

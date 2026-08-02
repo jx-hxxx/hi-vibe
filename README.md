@@ -192,7 +192,7 @@ Both are good tools, but they cover different ground.
 | Claude Code built-in | hi-vibe | What's different |
 |---|---|---|
 | `/init` (writes CLAUDE.md) | `init` | **Overlaps.** hi-vibe also creates `handover.md` and `CHANGELOG.md`, and turns the hooks on |
-| auto memory | `handover.md` | Built-in memory is **Claude deciding what to keep**, stored under your Claude config. handover is **a script writing a fixed set** into the project right before compaction — readable by you, shareable with your team if you want |
+| auto memory | `handover.md` | Built-in memory is **Claude deciding what to keep**, stored under your Claude config. handover is **a script writing a fixed set** into the project right before a compact, on `/clear`, and when you close the window — readable by you, shareable with your team if you want |
 | `/code-review` | `review` | **The purpose overlaps; the implementation does not** — hi-vibe never calls `/code-review`; it runs its own checklist and the `fresh-eyes` agent. See below |
 | `/verify` | the run-verification checklist item | Overlaps. hi-vibe's side is closer to a rule: "don't claim it works because the tests passed" |
 | `/doctor` | `/hi-vibe:doctor` | **Same name, different subject.** The built-in checks your CLI install and settings; this one checks hi-vibe's own hooks and scanner |

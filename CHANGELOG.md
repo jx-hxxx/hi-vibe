@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-08-02
+<!-- show:ko **어제 만든 `/clear` 기록 기능에 결함 두 개가 있었어요. 제 테스트가 거짓으로 통과시켰습니다.** ①"빈 세션엔 안 쓴다"가 git 저장소에서는 안 먹혔습니다. Git 상태를 "활동 있음"으로 세고 있었는데 git 프로젝트에서는 그 값이 늘 있어서, 열자마자 `/clear`를 쳐도 `- Git: master, 변경 없음` 한 줄짜리 항목이 쌓였어요. 테스트를 git 아닌 임시 폴더에서 돌려서 못 봤습니다. ②중복 방지가 "수정 파일 개수"만 비교해서, compact 뒤에 같은 파일을 또 고치거나 파일 없이 중요한 결정만 논의하면 그게 통째로 사라졌습니다. 이제 내용 서명으로 비교해요. 그리고 나가는 길의 Git 조회를 0.3초로 묶었고, `/resume`·로그아웃도 기록 대상에 넣었습니다. -->
+<!-- show:en **Two defects in yesterday's `/clear` recording, both of which my tests passed falsely.** (1) "Empty sessions write nothing" did not hold in a git repository: Git status counted as activity, and in a git project that value is always present, so hitting `/clear` right after opening still left a one-line entry. The test ran in a non-git temp folder, which hid it. (2) Duplicate suppression compared only the *number* of edited files, so work after a compact vanished whenever the count did not grow — re-editing the same file, or discussing a decision without touching one. It now compares a content signature. Git lookups on the way out are capped at 0.3s, and `/resume` and logout are covered too. -->
+
+### Fixed
+- **git 저장소에서 빈 세션이 기록되던 것** (2026-08-02) — `handover_body`가 `git_status`를 활동 판정에 넣었다. **git 프로젝트에서는 항상 문자열이 나오므로 모든 빈 세션이 "활동 있음"이 된다.** 활동은 대화에서 나온 것(요청·수정·검증)만으로 판단하고 Git은 부가정보로만 싣는다. **제 테스트는 비-git 임시 폴더에서 돌아 거짓 통과했다** — 사용자 프로젝트는 거의 항상 git 저장소다. 테스트 픽스처를 `git init`으로 바꾸고, git 저장소인지 확인하는 단언을 넣었다.
+- **중복 방지가 compact 이후의 새 작업을 버리던 것** (2026-08-02) — 판정 기준이 `session_id + 수정 파일 **개수**`였다. 개수가 안 느는 경우가 흔하다: 같은 파일 재수정 · Bash 수정 · 파일 없이 결정만 논의 · 테스트만 실행. 그 세션의 새 요청이 통째로 사라졌다. **중복을 막다 진짜 작업을 버리는 쪽이 훨씬 나쁘다.** 이제 본문 내용의 SHA1 서명으로 비교한다 — 요청 한 줄만 늘어도 서명이 달라진다. 실제로 사라졌던 세 경우를 각각 테스트로 고정했다.
+- **`SessionEnd`에서 Git 조회가 예산을 넘길 수 있던 것** (2026-08-02) — `_run_git` 기본 타임아웃이 3초인데 `SessionEnd`는 **훅 전체가 1.5초 예산을 나눠 쓴다.** 느린 저장소·네트워크 파일시스템에서 handover를 쓰기도 전에 죽을 수 있었다. `git_status(cwd, timeout)`로 호출부가 줄일 수 있게 하고 `session_end.py`는 0.3초를 쓴다. Git은 부가정보라 못 얻어도 기록은 남는다.
+- **랜딩·README에 남은 옛 설명 다섯 곳** (2026-08-02) — `handover.md` 문서 카드(한·영)·명령어 표(한·영)·README auto memory 비교(한·영)가 아직 compact만 말했다. 그리고 랜딩 AI 영역의 `훅이 리뷰를 돌린 뒤`(영문 `after the hook ran the review`)는 **이번에 막으려던 바로 그 주장**이었다.
+
+### Changed
+- **`SessionEnd` 매처에 `resume`·`logout` 추가** (2026-08-02) — `clear|prompt_input_exit`만 받고 있었다. 랜딩이 "세션이 바뀌며 맥락을 잃는 문제"를 다룬다고 말하는 이상 `/resume`으로 넘어가는 경로도 덮는 게 맞다. `other`는 어떤 경우인지 문서에 없어 제목을 정할 수 없으므로 계속 제외.
+- **과장 검사를 문구 차단에서 주장 모델로** (2026-08-02) — 이 항목만 세 번 뚫렸다: `runs it`(대명사) → `└─ Stop ── run the review`(훅 이름이 주어) → `훅이 리뷰를 돌린 뒤`(`직접`이 없음). **문구를 하나씩 막는 구조라 표현이 조금만 바뀌면 계속 빠져나간다.** 이제 **주어(훅·hook·Stop) + 수행 동사(돌리다·실행·수행·runs·ran·performs)**로 잡고, 정확한 표현(지시·시키다·hold·demand)과 **수행자를 밝힌 문장**(`…수행하는 건 Claude다`, `수행은 AI`)은 부정 조건으로 뺀다. 한국어는 목적어→동사, 영어는 동사→목적어라 어순별로 나눠 썼다(`\b`가 한글 앞에서 경계로 안 잡히는 것도 여기서 드러났다). 잡아야 할 9문장·놓치면 안 될 7문장으로 양쪽을 고정했다.
+
 ## [0.31.3] - 2026-08-02
 <!-- show:ko **"이제 옛 문장 없나?"를 주장별로 전수 확인해 여섯 군데를 더 고쳤어요.** 영문 README와 랜딩 신뢰 바에 "훅 4종"이 남아 있었고(제 검색이 `4 hooks`만 찾아서 `4 real Claude Code hooks`를 놓쳤습니다), 영문 훅 다이어그램에는 새 훅이 아예 빠져 있었어요. 기계가 하는 일 목록의 "진행상황 저장" 시점도 compact만 적혀 있어 `/clear`와 창 닫기가 빠져 있었고요. 그리고 한·영 다이어그램의 Stop 줄이 "훅이 리뷰를 직접 한다"로 읽혀서, 이 형태도 금지 목록에 넣었습니다. -->
 <!-- show:en **A claim-by-claim sweep for stale sentences turned up six more.** The English README and the landing trust bar still said four hooks (a search for "4 hooks" missed "4 real Claude Code hooks"), and the English hook diagram was missing the new hook entirely. The machine-guarantees list still named only compact as the moment progress is saved. The Stop line in both diagrams read as though the hook performs the review, so that shape is now in the regression list too. -->
