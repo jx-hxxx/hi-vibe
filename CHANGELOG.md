@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.29.9] - 2026-08-02
+<!-- show:ko **"설치는 전역 한 번, init은 프로젝트마다" 안내의 줄바꿈을 고쳤어요.** 한 문장 한가운데에 강제 줄바꿈이 들어가 있어서, 뒷부분이 새 항목처럼 다음 줄에서 시작했습니다. 일곱 조각으로 흩어져 보이던 것이 네 문장으로 정리됐어요. 글은 그대로고 줄이 끊기는 자리만 바뀝니다. -->
+<!-- show:en **Fixed the line breaks in the "install once, init per project" note.** A hard break sat in the middle of a sentence, so the second half started on its own line and read like a separate item. What looked like seven fragments is now four sentences. The wording is unchanged; only where the lines break.  -->
+
+### Fixed
+- **전역/프로젝트 안내의 줄바꿈** (2026-08-02) — `…init을 해야 켜져요<br>— .hi-vibe/ 마커가 만들어진 폴더에서만 돌아요.` 처럼 **한 문장 중간에 `<br>`**이 있었다. 뒤 절이 새 항목처럼 보여 일곱 조각으로 읽혔다. `<br>`을 빼고 마침표로 끊어 네 문장으로 만들었다. 한·영 모두.
+
 ## [0.29.8] - 2026-08-02
 <!-- show:ko **"겹치지 않나요?" 답에서 핵심이 맨 아래 흐린 글씨에 있었어요.** 기본 `/code-review`가 아니라 hi-vibe가 직접 만든 서브에이전트가 본다는 것 — 그게 이 질문의 진짜 답인데 곁들이는 말 자리에 있었습니다. 차이를 둘로 나눠 나란히 세웠어요. 하나는 "언제 도느냐", 둘은 "누가 보느냐". 그리고 리뷰가 두 겹이라는 것도 처음 적었습니다. 체크리스트가 빠뜨린 것을 훑고(에러를 조용히 넘겼는지, 실제로 돌려는 봤는지), 그다음 코드를 짠 기억이 없는 딴 클로드가 잘 만들었는지를 봐요. 이 둘은 담당이 다릅니다. -->
 <!-- show:en **The real answer to "doesn't this overlap?" was sitting in the faint text at the bottom.** That the review is done by an agent hi-vibe wrote, not the built-in `/code-review`, is the actual answer to that question — it was placed as an aside. The answer now names two differences side by side: when it runs, and who does the looking. It also says for the first time that the review has two layers with different jobs: a checklist for what got skipped, then a second Claude that never wrote the code judging how well it was built. -->

@@ -629,10 +629,8 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
       </div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><div><b>설치는 전역 한 번, <code>init</code>은 프로젝트마다.</b><br>
         <code>/plugin install</code>은 기본이 <b>유저 스코프(전역)</b>라 한 번 설치하면 모든 프로젝트에서 <code>/hi-vibe:</code> 명령어를 써요(프로젝트마다 재설치 X).<br>
-        하지만 자동 기능(훅)은 <b>쓰고 싶은 프로젝트마다, 그 최상위 폴더에서</b> <code>/hi-vibe:init</code>을 해야 켜져요<br>
-        — <code>.hi-vibe/</code> 마커가 만들어진 폴더에서만 돌아요.<br>
-        <b>init 안 한 다른 프로젝트엔 전혀 개입하지 않아요</b><br>
-        — 전역 설치인데도 원하지 않는 곳에서 훅이 도는 걸 막는 <b>안전장치</b>예요.<br>
+        하지만 자동 기능(훅)은 <b>쓰고 싶은 프로젝트마다, 그 최상위 폴더에서</b> <code>/hi-vibe:init</code>을 해야 켜져요. <code>.hi-vibe/</code> 마커가 만들어진 폴더에서만 돌거든요.<br>
+        <b>init 안 한 다른 프로젝트엔 전혀 개입하지 않아요.</b> 전역 설치인데도 원하지 않는 곳에서 훅이 도는 걸 막는 <b>안전장치</b>예요.<br>
         <span class="dim">(새 프로젝트에서 쓰려면 그 폴더에서 <code>/hi-vibe:init</code> 한 번.)</span></div></div>
       <div class="tbl"><div class="tscroll"><table>
         <thead><tr><th>명령어</th><th>언제 쓰나</th><th>발동</th></tr></thead>
@@ -1008,10 +1006,8 @@ Finish with a short summary:
       </div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><div><b>Install once (global); <code>init</code> per project.</b><br>
         <code>/plugin install</code> defaults to <b>user scope (global)</b>, so a single install makes the <code>/hi-vibe:</code> commands available everywhere (no per-project reinstall).<br>
-        But the automatic features (hooks) only turn on when you run <code>/hi-vibe:init</code> <b>from each project's top-level folder</b><br>
-        — they run only in folders where the <code>.hi-vibe/</code> marker was created.<br>
-        <b>It never touches other projects you didn't init</b><br>
-        — even with a global install, that's the <b>safety guard</b> against hooks running where you don't want them.<br>
+        But the automatic features (hooks) only turn on when you run <code>/hi-vibe:init</code> <b>from each project's top-level folder</b>. They run only in folders where the <code>.hi-vibe/</code> marker was created.<br>
+        <b>It never touches other projects you didn't init.</b> Even with a global install, that is the <b>safety guard</b> against hooks running where you don't want them.<br>
         <span class="dim">(To use it in a new project, just <code>/hi-vibe:init</code> once in that folder.)</span></div></div>
       <div class="tbl"><div class="tscroll"><table>
         <thead><tr><th>Command</th><th>When</th><th>Fires</th></tr></thead>
