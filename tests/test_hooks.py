@@ -140,6 +140,34 @@ class CommonTest(TempProject):
         fail = self._transcript_with("pytest", "2 failed, 5 passed")
         self.assertEqual(_common.last_test_result(fail), ("pytest", "실패 2"))
 
+    def test_records_the_test_command_not_whatever_came_before_it(self):
+        """이어 붙인 명령에서 **실제로 돌린 것**을 적는다.
+
+        예전엔 명령 전체의 앞 80자를 적었다. 테스트를 뒤에 붙이는 일이
+        흔한데(`python3 - <<'PY' … PY` 다음 줄에 unittest), 그러면 판정은
+        뒤를 보고 기록은 앞을 적어 **돌린 적 없는 명령이 handover에 검증
+        기록으로 남았다.** 결과("통과")는 맞아서 딱 봐서는 안 이상한 게
+        더 나쁘다 — 다음 세션이 그걸 믿는다."""
+        cases = [
+            ("python3 - <<'PY'\np='README.md'\nPY\n"
+             "python3 -m unittest discover -s tests 2>&1 | grep -E \"^OK\"",
+             "python3 -m unittest discover -s tests 2>&1"),
+            ("cd /repo && pytest -q", "pytest -q"),
+            ("ruff check . ; python3 -m pytest tests/ -x", "python3 -m pytest tests/ -x"),
+            ("go test ./... | tee out.txt", "go test ./..."),
+        ]
+        for cmd, expected in cases:
+            got = _common.last_test_result(
+                self._transcript_with(cmd, "Ran 3 tests in 1s\n\nOK"))
+            self.assertEqual(got, (expected, "통과"), f"명령: {cmd!r}")
+
+    def test_plain_command_is_unchanged(self):
+        """구간을 자르다 멀쩡한 단독 명령까지 깎으면 안 된다."""
+        for cmd in ("pytest", "npm test", "python3 -m unittest discover -s tests"):
+            got = _common.last_test_result(
+                self._transcript_with(cmd, "Ran 1 test in 0s\n\nOK"))
+            self.assertEqual(got, (cmd, "통과"))
+
     def test_last_test_result_none_when_ambiguous_or_nontest(self):
         # 테스트 명령이 아니면 무시
         self.assertIsNone(_common.last_test_result(

@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.31.1] - 2026-08-02
+<!-- show:ko **handover의 "최근 검증" 줄에 돌린 적 없는 명령이 적히던 것을 고쳤어요.** 명령을 이어 붙여 치면(예: 문서 고치는 파이썬 다음 줄에 테스트) 판정은 뒤쪽 테스트 명령을 보고 하면서 기록은 맨 앞 80자를 적었습니다. 그래서 "이 명령으로 검증했다"고 남는데 실제로는 그 명령을 돌린 적이 없었어요. 결과("통과")는 맞아서 딱 봐서는 안 이상한 게 더 나쁩니다 — 다음 세션이 그걸 믿으니까요. 이제 실제로 돌린 구간만 잘라서 적습니다. -->
+<!-- show:en **Fixed the "last verified" line in handover naming a command that was never run.** When commands are chained (say, a Python heredoc that edits docs, then a test run on the next line), the match was found in the later test command while the recorded text was the first 80 characters of the whole thing. The record claimed a verification command that had not been executed — and since the result ("passed") was correct, nothing looked wrong. The segment that actually ran is now the one recorded. -->
+
+### Fixed
+- **`last_test_result`가 엉뚱한 명령을 기록하던 것** (2026-08-02) — `pending_cmd = " ".join(cmd.split())[:80]`이 **명령 전체의 앞 80자**를 적었다. 테스트를 뒤에 붙이는 일이 흔한데(`python3 - <<'PY' … PY` 다음 줄에 unittest, `cd x && pytest`, `ruff check . ; pytest`), 그러면 **판정은 뒤를 보고 기록은 앞을 적는다.** handover는 다음 세션이 읽는 기록이라 "이 명령으로 검증했다"를 그대로 믿는다. `test_command_segment()`로 매치가 속한 구간만(`\n`·`;`·`&&`·`||`·`|` 기준) 잘라 적는다. 파이프 뒤(`| grep …`)가 잘리는 건 덤이다.
+  - 단독 명령(`pytest`, `npm test`)이 깎이지 않는지도 같이 고정했다 — **오탐을 줄이다 멀쩡한 걸 망가뜨리면 개선이 아니다.**
+
 ## [0.31.0] - 2026-08-02
 <!-- show:ko **`/clear`를 쳐도 이제 무엇을 하던 중이었는지 남습니다.** 지금까지 자동 기록은 compact 직전 하나뿐이었어요. 그런데 `/clear`는 대화를 요약해 이어가는 게 아니라 **통째로 버리는** 것이라, 정작 기록이 제일 필요한 쪽인데 아무것도 안 남았습니다. Anthropic 공식 권장이 "관련 없는 작업 사이에는 `/clear`"라서, 권장대로 쓰는 사람일수록 더 많이 잃는 구조였고요. 창을 닫고 나갈 때도 같이 남습니다. 대신 조심한 게 둘 있어요 — 열자마자 `/clear`를 쳐도 **빈 항목은 안 쌓이고**, `/compact` 하고 바로 `/clear`를 쳐도 **같은 내용을 두 번 안 씁니다.** -->
 <!-- show:en **`/clear` no longer throws away what you were in the middle of.** Until now the only automatic writer was the one that runs just before a compact. But `/clear` discards the conversation instead of summarising it, so it is exactly where a record matters most — and nothing was written. Anthropic's own guidance is to run `/clear` between unrelated tasks, so following best practice cost you the most. Closing the window is covered too. Two things were guarded: an empty session writes nothing, and a `/compact` followed by `/clear` does not record the same work twice. -->

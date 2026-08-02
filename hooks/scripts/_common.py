@@ -398,6 +398,33 @@ def session_activity(path):
 _TEST_CMD_RE = re.compile(
     r"\b(pytest|python[0-9.]*\s+-m\s+(?:unittest|pytest)|unittest|jest|vitest|"
     r"npm\s+(?:run\s+)?test|yarn\s+test|pnpm\s+test|go\s+test|cargo\s+test)\b")
+
+# 명령을 이어 붙이는 경계. 여기서 잘라야 "무엇을 돌렸나"가 정확해진다.
+_CMD_SPLIT_RE = re.compile(r"\n|&&|\|\||[;|]")
+
+
+def test_command_segment(cmd, at):
+    """`at` 위치가 속한 명령 구간만 잘라낸다.
+
+    예전엔 명령 **전체의 앞 80자**를 적었다. 그런데 테스트를 뒤에 붙이는 일이
+    흔하다 — `python3 - <<'PY' … PY` 다음 줄에 `python3 -m unittest …`처럼.
+    그러면 정규식은 뒤쪽을 보고 "테스트 맞다"고 판정하는데 기록은 앞부분이
+    들어가, **돌린 적 없는 명령이 handover에 검증 기록으로 남았다.**
+    결과("통과")는 맞아서 딱 봐서는 안 이상한 게 더 나쁘다.
+
+    파이프 뒤(`| grep …`)가 잘리는 것은 덤이다 — 무엇을 돌렸는지만 남는다."""
+    start = 0
+    for m in _CMD_SPLIT_RE.finditer(cmd):
+        if m.end() > at:
+            break
+        start = m.end()
+    end = len(cmd)
+    for m in _CMD_SPLIT_RE.finditer(cmd, at):
+        end = m.start()
+        break
+    return cmd[start:end]
+
+
 def _result_from_output(text):
     """테스트 출력 텍스트에서 명확한 결과 한 줄. 없으면 None."""
     if not text:
@@ -435,7 +462,8 @@ def last_test_result(path):
                 cmd = (c.get("input") or {}).get("command", "")
                 m = _TEST_CMD_RE.search(cmd)
                 if m:
-                    pending_cmd = " ".join(cmd.split())[:80]
+                    seg = test_command_segment(cmd, m.start())
+                    pending_cmd = " ".join(seg.split())[:80]
             elif c.get("type") == "tool_result" and pending_cmd:
                 out = c.get("content")
                 if isinstance(out, list):
