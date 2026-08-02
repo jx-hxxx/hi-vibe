@@ -534,7 +534,7 @@ class CiHealthTest(TempProject):
 
 
 class SessionStartTest(TempProject):
-    """SessionStart 주입 — 훅 4종 중 유일하게 미테스트였던 것."""
+    """SessionStart 주입 — 한때 유일하게 테스트가 없던 훅."""
 
     def run_start(self, source):
         buf = io.StringIO()

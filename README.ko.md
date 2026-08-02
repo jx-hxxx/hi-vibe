@@ -162,7 +162,7 @@ Claude Code 이벤트
 ├─ PreCompact ─── handover 자동 기록 (compact 직전)
 ├─ SessionEnd ─── handover 자동 기록 (/clear · 세션 종료)
 ├─ SessionStart ─ 기억·규율 복원 + 훅·CI가 죽었으면 알림
-└─ Stop ───────── 리뷰 안 받은 변경을 그 자리에서 리뷰
+└─ Stop ───────── 리뷰 안 받은 변경이 있으면 대화를 붙잡고 리뷰를 지시
 
 자연어 요청
 ├─ “만들어줘” ─── 기존 구현 검색

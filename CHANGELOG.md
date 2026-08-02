@@ -5,6 +5,26 @@
 
 ## [Unreleased]
 
+## [0.31.3] - 2026-08-02
+<!-- show:ko **"이제 옛 문장 없나?"를 주장별로 전수 확인해 여섯 군데를 더 고쳤어요.** 영문 README와 랜딩 신뢰 바에 "훅 4종"이 남아 있었고(제 검색이 `4 hooks`만 찾아서 `4 real Claude Code hooks`를 놓쳤습니다), 영문 훅 다이어그램에는 새 훅이 아예 빠져 있었어요. 기계가 하는 일 목록의 "진행상황 저장" 시점도 compact만 적혀 있어 `/clear`와 창 닫기가 빠져 있었고요. 그리고 한·영 다이어그램의 Stop 줄이 "훅이 리뷰를 직접 한다"로 읽혀서, 이 형태도 금지 목록에 넣었습니다. -->
+<!-- show:en **A claim-by-claim sweep for stale sentences turned up six more.** The English README and the landing trust bar still said four hooks (a search for "4 hooks" missed "4 real Claude Code hooks"), and the English hook diagram was missing the new hook entirely. The machine-guarantees list still named only compact as the moment progress is saved. The Stop line in both diagrams read as though the hook performs the review, so that shape is now in the regression list too. -->
+
+### Fixed
+- **영문 표면에 남아 있던 "훅 4종"** (2026-08-02) — `README.md`의 `4 real Claude Code hooks`와 랜딩 영문 신뢰 바 `<b>4</b> real lifecycle hooks`. **`4 hooks`로 검색해서 놓쳤다** — CLAUDE.md에 적힌 "문구가 아니라 주장으로 찾아라"를 그대로 어겼다.
+- **영문 훅 다이어그램에 `SessionEnd` 누락** (2026-08-02) — 한국어에만 넣었다. `PreCompact` 설명도 언제인지(compact 직전)를 빠뜨리고 있었다.
+- **"기계가 하는 일"의 저장 시점** (2026-08-02) — `자동 정리·/compact 직전`만 적혀 있었다. `/clear`·창 닫을 때를 더했다(한·영).
+- **영문 README가 스킬이 모르는 문구를 안내** (2026-08-02) — `just a light pass`라고 적혀 있었는데 `write-gate`가 아는 영어 표현은 `keep it light`·`light review`다. 랜딩에서 같은 문제를 고치면서 README를 안 봤다.
+- **`stop_nudge.py` 첫 줄의 애매한 표현** (2026-08-02) — `그 자리에서 리뷰하게 한다`는 뜻은 맞지만, **여기서 문구가 문서로 여러 번 새어 나갔다**. `턴을 막고 리뷰를 지시한다`로 고치고 구분을 한 줄 덧붙였다.
+- **`CLAUDE.md`의 자기모순** (2026-08-02) — 같은 줄에서 `열 곳까지 산다`고 해놓고 `이 여덟 곳을 다 봐야 한다`로 끝났다. 앞 숫자만 고치고 뒤를 놓쳤다.
+
+### Added
+- **다이어그램 형태의 "훅이 리뷰를 직접 한다"를 금지 목록에** (2026-08-02) — `└─ Stop ── run the review on unreviewed changes`는 앞 25자 안에 `훅`·`hook`이라는 낱말이 없어 기존 정규식을 빠져나갔다. **훅 이름이 주어인 형태**를 추가했다. 지운 두 문장으로 실제 탐지를, 고친 두 문장으로 무오탐을 확인했다.
+
+### 전수 확인 결과 (2026-08-02 기준)
+- 훅 5(hooks.json=스크립트=doctor 실행 목록) · 명령 10 · 스킬 6 · 에이전트 2 · 테스트 185 — 문서 주장과 전부 일치.
+- 랜딩 한·영 구성요소 대칭: 기능 카드 9 · 정직함 노트 6 · 펼침 노트 4 · 빠른시작 7 · 3단 3 · 대응표 4행.
+- `doctor` 실행: 실패 0 · 통과 9.
+
 ## [0.31.2] - 2026-08-02
 <!-- show:ko **랜딩에서 고친 사실 오류가 README에 그대로 남아 있었어요.** v0.29.7에서 "hi-vibe는 기본 /code-review를 대신 불러준다"가 사실이 아니라고 고쳤는데, 같은 말이 README 한·영 FAQ에 남아 있었습니다. 하루 만에 같은 문장에 두 번 걸린 셈이라, 이번엔 사람 눈에 다시 맡기지 않고 재발 방지 목록에 등록했습니다. 이제 이 문장이 어느 문서에든 다시 들어오면 테스트가 실패합니다. README FAQ도 랜딩과 같은 내용으로 맞췄어요 — 리뷰가 두 겹이라는 것과, 딴 클로드를 새로 부르는 이유까지. -->
 <!-- show:en **A factual error fixed on the landing page was still sitting in the README.** v0.29.7 corrected the claim that hi-vibe "wires the built-in features for you"; the same sentence survived in both README FAQs. Getting caught twice in one day by the same sentence is a sign not to rely on reading carefully, so it is now in the regression list — the test fails if it reappears in any document. The README FAQ now matches the landing, including the two layers of the review and why a fresh subagent is brought in. -->

@@ -570,7 +570,7 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
           <h3>기계가 확실히 하는 것</h3>
           <ul>
             <li>대표적인 위험 패턴(숨는 에러·비밀키) 경고<small>Claude가 Write/Edit로 코드 쓸 때</small></li>
-            <li>대화가 정리되기 전에 진행상황 저장<small>자동 정리·/compact 직전</small></li>
+            <li>대화가 사라지기 전에 진행상황 저장<small>자동 정리·/compact 직전 · /clear · 창 닫을 때</small></li>
             <li>새로 시작할 때 규칙 다시 챙겨주기<small>새 대화 시작할 때</small></li>
             <li>아무도 안 본 코드 변경이 있으면 대화를 붙잡고 리뷰를 시키기<small>대화가 끝나려 할 때 · 리뷰 <b>수행</b>은 Claude가</small></li>
           </ul>
@@ -788,7 +788,7 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
 
     <div class="trust" aria-label="Evidence">
       <div><b>185</b><span>automated regression tests</span></div>
-      <div><b>4</b><span>real lifecycle hooks</span></div>
+      <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
     </div>
@@ -948,7 +948,7 @@ Finish with a short summary:
           <h3>What the machine guarantees</h3>
           <ul>
             <li>Flag common risky patterns (hidden errors &amp; secrets)<small>when Claude writes code via Write/Edit</small></li>
-            <li>Save your progress before the chat gets compacted<small>on auto-compact or /compact</small></li>
+            <li>Save your progress before the conversation goes away<small>on auto-compact or /compact · on /clear · when you close the window</small></li>
             <li>Re-arm the rules on a fresh start<small>when a new chat begins</small></li>
             <li>Hold the turn open and demand a review when nobody looked at your changes<small>as the chat tries to end · the review itself is Claude's work</small></li>
           </ul>

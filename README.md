@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 185 regression
+It's not just a prompt pack. With **5 real Claude Code hooks · 185 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -161,9 +161,10 @@ safeguards into three layers.
 ```text
 Claude Code events
 ├─ PostToolUse ── swallowed-error / secret detection
-├─ PreCompact ─── auto-record handover
+├─ PreCompact ─── auto-record handover (just before a compact)
+├─ SessionEnd ─── auto-record handover (/clear · closing the window)
 ├─ SessionStart ─ restore memory & discipline + flag dead hooks/CI
-└─ Stop ───────── run the review on unreviewed changes
+└─ Stop ───────── hold the turn and demand a review of unreviewed changes
 
 Natural-language requests
 ├─ “build it” ─── search existing implementations
@@ -440,7 +441,7 @@ changed — a flag you have to remember is a feature that never runs.
 fresh-eyes looks for over-engineering, unnecessary features, hidden coupling,
 and excessive abstraction that a checklist alone struggles to catch.
 
-**To dial it back or narrow it, just say so** — "just a light pass", "only the
+**To dial it back or narrow it, just say so** — "keep it light", "only the
 login part". Nothing to memorise.
 
 <details>

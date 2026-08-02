@@ -50,7 +50,11 @@ BANNED = [
     # 대명사로 쓰면 빠져나간다. 대명사까지 포함한다.
     (r"(훅|hook)[^.\n]{0,40}"
      r"((리뷰|review)를?\s*직접\s*(돌|실행)"
-     r"|runs? (the )?(review|it)\b(?![^.\n]{0,20}\bhold)|runs? it right there)",
+     r"|runs? (the )?(review|it)\b(?![^.\n]{0,20}\bhold)|runs? it right there)"
+     # 훅 이름이 주어일 때도 같은 주장이다. 다이어그램의
+     # `└─ Stop ── run the review on unreviewed changes`가 이 형태로
+     # 살아남았다 — 앞뒤 25자 안에 "훅/hook"이라는 낱말이 없었다.
+     r"|Stop[^.\n]{0,25}(그 자리에서\s*리뷰|runs? the review)",
      "Stop 훅은 `decision:block`으로 턴을 막고 reason으로 리뷰를 지시할 뿐, "
      "리뷰를 수행하는 건 Claude다 → '턴을 막고 리뷰를 지시한다'."),
 
@@ -150,6 +154,8 @@ class NoOverclaimTest(unittest.TestCase):
             "it wires the good features you already have into the moments",
             "리뷰 품질 자체는 앞으로도 기본 /code-review가 더 좋아질 겁니다",
             "Review quality itself will keep improving in /code-review",
+            "└─ Stop ───────── run the review on unreviewed changes",
+            "└─ Stop ───────── 리뷰 안 받은 변경을 그 자리에서 리뷰",
         ]
         for sentence in past:
             caught = any(re.search(p, sentence, re.I) for p, _ in BANNED)
@@ -170,6 +176,8 @@ class NoOverclaimTest(unittest.TestCase):
             "CHANGELOG.md는 init이 만든다.",
             "같은 목적의 검사를 자기 체크리스트와 자기 에이전트로 돌립니다.",
             "hi-vibe does not press the built-in /code-review for you.",
+            "└─ Stop ───────── hold the turn and demand a review of unreviewed changes",
+            "└─ Stop ───────── 리뷰 안 받은 변경이 있으면 대화를 붙잡고 리뷰를 지시",
         ]
         for sentence in fine:
             hit = [why for p, why in BANNED if re.search(p, sentence, re.I)]
