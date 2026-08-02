@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.29.5] - 2026-08-02
+<!-- show:ko **"훅 4종이 돌아요"라고 해놓고 둘만 설명하고 있었어요.** 코드 쓸 때 검사하는 것과 리뷰를 붙잡는 것만 적혀 있고, 대화가 compact되기 직전에 handover를 남기는 것과 새 세션에서 그걸 다시 읽는 것은 이름조차 안 나왔습니다. 둘 다 넣었어요. 그리고 리뷰는 훅으로만 걸리는 것처럼 써놨는데, 실제로는 "다 했어" 한마디에도 걸립니다 — 훅은 말 안 했을 때의 마지막 그물이지 유일한 통로가 아니에요. 마지막으로 "AI가 깜빡하면 명령어를 직접 누르세요"를 "평소에 치는 건 check 하나면 돼요"로 바꿨습니다. 뭘 쳐야 하는지가 이제 하나로 좁혀져요. -->
+<!-- show:en **The note said "4 hooks run automatically" and then described two of them.** Writing the handover just before a compact, and reading it back into a new session, were not mentioned at all. Both are in now. Review was also presented as hook-only when a plain "done" triggers it just as well — the hook is the net for when you say nothing, not the only route. And "press a command yourself when the AI forgets" became "day to day, check is the one you type", which narrows the answer to a single command. -->
+
+### Fixed
+- **훅 4종 중 둘이 설명에서 빠져 있던 것** (2026-08-02) — PreCompact(handover 기록)와 SessionStart(새 세션에 다시 읽힘)가 3단 설명에 없었다. "4종이 돌아요"라고 써놓고 PostToolUse·Stop만 설명하니, 숫자와 내용이 어긋난다. 둘 다 1단에 넣었다.
+- **리뷰가 훅 전용인 것처럼 읽히던 것** (2026-08-02) — `write-gate` 스킬 설명에 트리거로 `다 했어, 리뷰해줘, 검토, review my change`가 명시돼 있다. 말해도 걸리고, **말 안 해도** 훅이 붙잡는다. 2단 목록에 `review`를 넣고 그 관계를 한 줄로 적었다.
+
+### Changed
+- **"AI가 깜빡하면 직접 누르세요" → "평소에 치는 건 check 하나"** (2026-08-02) — `/hi-vibe:find`를 예로 들면 바로 아래 "칠 일이 없어요"와 부딪혀 보이고, 뭘 쳐야 하는지도 안 좁혀진다. 3단의 "평소에 내가 치는 것"과 답을 하나로 맞췄다.
+- **랜딩에서 Bash 사각지대 주석 제거** (2026-08-02) — 바로 앞 문장이 이미 "**Write/Edit로** 코드를 쓸 때마다"로 범위를 좁히므로 빼도 과장이 되지 않는다. 마지막 줄이 `check`(저장소 전체 스캔)를 가리키면서 같은 정보를 쉬운 말로 전달한다. **상세 설명은 README 한·영에 그대로 있다** — 랜딩에서 지운 것이지 감춘 것이 아니다.
+
 ## [0.29.4] - 2026-08-02
 <!-- show:ko **"켜지는 방식이 3단이에요" 설명이 글자 벽처럼 읽히던 것을 고쳤어요.** 세 항목이 줄바꿈으로만 나뉘어 있어서, 앞 항목이 길어 넘어간 줄이 다음 항목의 아이콘 자리와 똑같은 왼쪽 끝에서 시작했습니다. 그래서 어디가 새 항목이고 어디가 이어지는 줄인지 눈으로 구분이 안 됐어요. 넘어간 줄을 아이콘 너비만큼 안쪽으로 밀어 넣어, 맨 왼쪽에서 시작하는 건 항상 새 항목이 되게 했습니다. 그리고 "내가 치는 것"을 "평소에 내가 치는 것"으로 고쳤어요 — 아래 명령어 표에는 직접 치는 게 다섯 개인데 여기는 둘이라 어긋나 보였거든요. "침습적"이라는 말도 뜻이 드러나게 풀었습니다. -->
 <!-- show:en **The "three tiers" note no longer reads as a wall of text.** The three items were separated by line breaks alone, so a wrapped line began at exactly the same left edge as the next item's icon — there was no way to see where one item ended and the next began. Wrapped lines are now indented past the icon, so anything starting at the far left is a new item. "What you type" became "What you type day to day", since the command table below lists five commands you type and this note named two. "Invasive" was replaced with what it actually means. -->
