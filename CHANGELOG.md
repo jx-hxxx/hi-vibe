@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.29.8] - 2026-08-02
+<!-- show:ko **"겹치지 않나요?" 답에서 핵심이 맨 아래 흐린 글씨에 있었어요.** 기본 `/code-review`가 아니라 hi-vibe가 직접 만든 서브에이전트가 본다는 것 — 그게 이 질문의 진짜 답인데 곁들이는 말 자리에 있었습니다. 차이를 둘로 나눠 나란히 세웠어요. 하나는 "언제 도느냐", 둘은 "누가 보느냐". 그리고 리뷰가 두 겹이라는 것도 처음 적었습니다. 체크리스트가 빠뜨린 것을 훑고(에러를 조용히 넘겼는지, 실제로 돌려는 봤는지), 그다음 코드를 짠 기억이 없는 딴 클로드가 잘 만들었는지를 봐요. 이 둘은 담당이 다릅니다. -->
+<!-- show:en **The real answer to "doesn't this overlap?" was sitting in the faint text at the bottom.** That the review is done by an agent hi-vibe wrote, not the built-in `/code-review`, is the actual answer to that question — it was placed as an aside. The answer now names two differences side by side: when it runs, and who does the looking. It also says for the first time that the review has two layers with different jobs: a checklist for what got skipped, then a second Claude that never wrote the code judging how well it was built. -->
+
+### Changed
+- **FAQ 구조: 차이를 둘로 분리** (2026-08-02) — `가장 큰 차이는 "언제 도느냐"` 하나만 굵게 세우고 **누가 보느냐를 맨 아래 `dim`에** 뒀다. "기본 기능이 아니라 hi-vibe가 만든 에이전트가 본다"가 이 질문의 핵심인데 자리가 곁다리였다. `차이 하나 — 언제 도느냐` / `차이 둘 — 누가 보느냐`로 나란히 세웠다.
+- **리뷰가 두 겹이라는 것을 처음 명시** (2026-08-02) — 체크리스트(빠뜨림: 에러 삼킴·실행 검증·문서 동기화, 자기 점검 루프로 그 자리에서 고침)와 `fresh-eyes`(판단: 과잉설계·더 단순한 길)는 **담당이 다르다**. `agents/fresh-eyes.md`에 `Not for ... bug hunting (tests and the checklist own those)`로 명시돼 있는데, 랜딩은 이 구분을 어디에도 안 적어 "서브에이전트가 에러를 잡는다"로 읽힐 여지가 있었다.
+- **왜 새로 부르는지를 한 줄 추가** (2026-08-02) — `같은 대화를 이어온 Claude는 자기가 쓴 코드를 제대로 의심하지 않거든요.` 이 이유가 없으면 fresh-eyes가 자랑거리가 아니라 군더더기로 읽힌다. (`잘 못 의심한다`는 능력 부족으로 읽혀 `제대로 의심하지 않는다`로.)
+
 ## [0.29.7] - 2026-08-02
 <!-- show:ko **"겹치지 않나요?" 답에 사실이 아닌 문장이 있었어요.** "이미 있는 좋은 기능을 놓치기 쉬운 순간에 연결한다"고 적혀 있었는데, 확인해 보니 hi-vibe의 리뷰는 Claude Code 기본 `/code-review`를 부르지 않습니다. 자기 체크리스트를 돌리고, 코드를 짠 기억이 없는 딴 클로드(fresh-eyes)를 새로 불러 설계를 다시 보게 해요. 겹치는 건 "리뷰를 한다"는 목적이지 구현이 아니었습니다. 그 자리에 실제로 하는 일을 적었어요. 나머지 문장들도 "기계가 보장하는 시점" 같은 말을 쉬운 말로 풀고, 방문자에게 필요 없는 로드맵 얘기는 뺐습니다. -->
 <!-- show:en **The "doesn't this overlap?" answer contained a claim that wasn't true.** It said hi-vibe "wires the good features you already have into the moments they're easiest to skip" — but hi-vibe's review never calls the built-in `/code-review`. It runs its own checklist and brings in a second Claude (fresh-eyes) that never wrote the code. What overlaps is the purpose, not the implementation. The answer now says what actually happens, in plainer words, and drops a roadmap aside that visitors did not need. -->
