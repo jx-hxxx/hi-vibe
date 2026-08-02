@@ -261,26 +261,31 @@
   .trust span { display:block; margin-top:5px; color:var(--muted); font-size:13px; }
   @media (max-width:640px){ .trust { grid-template-columns:1fr 1fr; } .trust > div:nth-child(3){ border-left:none; } .trust > div:nth-child(3), .trust > div:nth-child(4){ border-top:1px solid var(--border); } }
 
-  /* 불편 → 해결 대응표. 좌우 항목이 원래 1:1로 짝인데 카드 두 개로 갈라놔서
+  /* 클래스 이름은 반드시 `.pairs` 아래로 묶는다. 처음엔 행을 `.prow`로 지었다가
+     아래 "AI에게 코딩을 맡기면" 섹션의 `.prow`(빨간 왼쪽 막대·흰 카드)를 통째로
+     뒤집어썼다 — 그쪽이 홑클래스라 `display`만 덮이고 배경·테두리는 살아남았다.
+     이 파일은 한 페이지에 섹션이 열여덟 개다. 홑클래스 이름을 새로 만들지 말 것.
+
+     불편 → 해결 대응표. 좌우 항목이 원래 1:1로 짝인데 카드 두 개로 갈라놔서
      안 보였다. 같은 행에 붙이면 짝이 읽히고, 행 높이가 저절로 맞아 예전에
      글자 수를 세어가며 맞추던 열 높이 문제도 구조적으로 사라진다. */
   .pairs { margin-top:26px; border:1px solid var(--border); border-radius:var(--r); background:var(--surface); overflow:hidden; }
-  .pairs .phead, .pairs .prow { display:grid; grid-template-columns:1fr 46px 1fr; align-items:stretch; }
+  .pairs .phead, .pairs .pair { display:grid; grid-template-columns:1fr 46px 1fr; align-items:stretch; }
   .pairs .phead > div { padding:15px 24px; font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; background:var(--surface-2); border-bottom:1px solid var(--border); }
-  .pairs .phead .mid { padding:0; }
-  .pairs .phead .l { color:var(--muted); }
-  .pairs .phead .l::before, .pairs .phead .r::before { content:''; width:9px; height:9px; border-radius:50%; flex:none; }
-  .pairs .phead .l::before { background:var(--border-2); }
-  .pairs .phead .r::before { background:var(--good); }
-  .pairs .prow + .prow > * { border-top:1px solid var(--border); }
-  .pairs .prow > div { padding:15px 24px; font-size:14.5px; line-height:1.7; color:var(--muted); text-wrap:pretty; }
-  .pairs .prow .r { background:color-mix(in srgb, var(--good) 4%, transparent); color:var(--text); }
-  .pairs .prow .mid { padding:0; display:flex; align-items:center; justify-content:center; color:var(--border-2); font-size:15px; background:color-mix(in srgb, var(--good) 4%, transparent); }
+  .pairs .phead .arrow { padding:0; }
+  .pairs .phead .pain { color:var(--muted); }
+  .pairs .phead .pain::before, .pairs .phead .fix::before { content:''; width:9px; height:9px; border-radius:50%; flex:none; }
+  .pairs .phead .pain::before { background:var(--border-2); }
+  .pairs .phead .fix::before { background:var(--good); }
+  .pairs .pair + .pair > * { border-top:1px solid var(--border); }
+  .pairs .pair > div { padding:15px 24px; font-size:14.5px; line-height:1.7; color:var(--muted); text-wrap:pretty; }
+  .pairs .pair .fix { background:color-mix(in srgb, var(--good) 4%, transparent); color:var(--text); }
+  .pairs .pair .arrow { padding:0; display:flex; align-items:center; justify-content:center; color:var(--border-2); font-size:15px; background:color-mix(in srgb, var(--good) 4%, transparent); }
   .fitnote { margin:16px 0 0; font-size:13px; line-height:1.75; color:var(--faint); word-break:keep-all; text-wrap:pretty; }
   @media (max-width:760px){
-    .pairs .phead, .pairs .prow { grid-template-columns:1fr; }
-    .pairs .phead .mid { display:none; }
-    .pairs .prow .mid { padding:2px 0; transform:rotate(90deg); }
+    .pairs .phead, .pairs .pair { grid-template-columns:1fr; }
+    .pairs .phead .arrow { display:none; }
+    .pairs .pair .arrow { padding:2px 0; transform:rotate(90deg); }
   }
   .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:start; margin-top:26px; }
   .audit .promptbox { display:flex; flex-direction:column; align-items:flex-start; }
@@ -409,29 +414,29 @@
       <p class="lead" style="max-width:none">hi-vibe는 Claude Code로 개발할 때 자주 빠뜨리는 확인과 기록을 <b>작업 흐름 안에서 자동으로</b> 챙겨줍니다.</p>
       <div class="pairs">
         <div class="phead">
-          <div class="l">혹시 이런 적 있나요?</div>
-          <div class="mid"></div>
-          <div class="r">hi-vibe는 이렇게 도와줍니다</div>
+          <div class="pain">혹시 이런 적 있나요?</div>
+          <div class="arrow"></div>
+          <div class="fix">hi-vibe는 이렇게 도와줍니다</div>
         </div>
-        <div class="prow">
-          <div class="l">이미 있는 기능과 비슷한 코드를 또 만들었다</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">코드를 쓰기 전에 <b>기존 구현부터 찾아봅니다</b></div>
+        <div class="pair">
+          <div class="pain">이미 있는 기능과 비슷한 코드를 또 만들었다</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">코드를 쓰기 전에 <b>기존 구현부터 찾아봅니다</b></div>
         </div>
-        <div class="prow">
-          <div class="l">구현이 끝난 줄 알았는데 나중에 문제를 발견했다</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">기능 구현이 끝나면 <b>자동으로 리뷰를 연결합니다</b></div>
+        <div class="pair">
+          <div class="pain">구현이 끝난 줄 알았는데 나중에 문제를 발견했다</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">기능 구현이 끝나면 <b>자동으로 리뷰를 연결합니다</b></div>
         </div>
-        <div class="prow">
-          <div class="l">컨텍스트가 compact되거나 세션이 바뀌며 작업 맥락을 잃었다</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">다음 세션에 필요한 <b>작업 상태를 기록하고 복원합니다</b></div>
+        <div class="pair">
+          <div class="pain">컨텍스트가 compact되거나 세션이 바뀌며 작업 맥락을 잃었다</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">다음 세션에 필요한 <b>작업 상태를 기록하고 복원합니다</b></div>
         </div>
-        <div class="prow">
-          <div class="l">전에 해결한 오류의 원인과 과정을 다시 찾기 어려웠다</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">변경 이유와 <b>트러블슈팅 과정을 프로젝트에 남깁니다</b></div>
+        <div class="pair">
+          <div class="pain">전에 해결한 오류의 원인과 과정을 다시 찾기 어려웠다</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">변경 이유와 <b>트러블슈팅 과정을 프로젝트에 남깁니다</b></div>
         </div>
       </div>
       <p class="fitnote">Python 프로젝트와 Claude Code 중심의 개인 개발 흐름에 맞춰 만들었습니다. 짧은 실습이나 이미 리뷰·문서 자동화가 갖춰진 팀에서는 효과가 작을 수 있습니다.</p>
@@ -781,29 +786,29 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
       <p class="lead" style="max-width:none">hi-vibe folds the checks and records you tend to skip while coding with Claude Code <b>back into the flow of work</b>.</p>
       <div class="pairs">
         <div class="phead">
-          <div class="l">Ever had this happen?</div>
-          <div class="mid"></div>
-          <div class="r">Here's how hi-vibe helps</div>
+          <div class="pain">Ever had this happen?</div>
+          <div class="arrow"></div>
+          <div class="fix">Here's how hi-vibe helps</div>
         </div>
-        <div class="prow">
-          <div class="l">You wrote code that already existed somewhere in the project</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">It <b>looks for existing implementations</b> before you write code</div>
+        <div class="pair">
+          <div class="pain">You wrote code that already existed somewhere in the project</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">It <b>looks for existing implementations</b> before you write code</div>
         </div>
-        <div class="prow">
-          <div class="l">You thought a feature was done, then found the problem later</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">It <b>hands finished work to a review</b> automatically</div>
+        <div class="pair">
+          <div class="pain">You thought a feature was done, then found the problem later</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">It <b>hands finished work to a review</b> automatically</div>
         </div>
-        <div class="prow">
-          <div class="l">A compact or a new session took the working context with it</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">It <b>records and restores the state</b> your next session needs</div>
+        <div class="pair">
+          <div class="pain">A compact or a new session took the working context with it</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">It <b>records and restores the state</b> your next session needs</div>
         </div>
-        <div class="prow">
-          <div class="l">You struggled to recall how you fixed the same error last time</div>
-          <div class="mid" aria-hidden="true">→</div>
-          <div class="r">It <b>keeps the reasoning and troubleshooting</b> inside the project</div>
+        <div class="pair">
+          <div class="pain">You struggled to recall how you fixed the same error last time</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">It <b>keeps the reasoning and troubleshooting</b> inside the project</div>
         </div>
       </div>
       <p class="fitnote">Built around Python projects and a solo workflow centered on Claude Code. Short exercises, or teams that already automate review and docs, will get less out of it.</p>

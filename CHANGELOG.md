@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.29.3] - 2026-08-02
+<!-- show:ko **방금 만든 대응표에 엉뚱한 스타일이 얹혀 있던 것을 고쳤어요.** 행마다 빨간 세로 막대와 흰 카드 테두리가 생겨 표가 아니라 부서진 목록처럼 보였습니다. 원인은 이름이었어요 — 행에 붙인 `prow`라는 이름을 페이지 아래쪽 "AI에게 코딩을 맡기면" 섹션이 이미 쓰고 있었고, 그쪽 스타일이 그대로 딸려 왔습니다. 이름을 바꾸고, 새 이름은 전부 표 안쪽으로 묶었어요. 한 페이지에 섹션이 열여덟 개라 또 겪을 일이라, 그 이유를 코드에 적어 뒀습니다. -->
+<!-- show:en **The new comparison table was picking up styling that didn't belong to it.** Every row had a red left bar and a white card border, so it read as a broken list rather than a table. The cause was a name: the row class `prow` was already in use by a section further down the page, and that section's styling came along with it. The class is renamed, and every new name is now scoped inside the table. With eighteen sections on one page this will come up again, so the reason is written into the code. -->
+
+### Fixed
+- **대응표가 아래 섹션 스타일을 뒤집어쓰던 것** (2026-08-02) — 증상: 행마다 빨간 왼쪽 막대·흰 카드 테두리·둥근 모서리. 원인: 행 클래스 `prow`가 `#problem-*` 섹션의 홑클래스 `.prow`와 이름이 같았다. 내 규칙은 `.pairs .prow`(0,2,0)라 `display`·`align-items`만 덮었고 **`background`·`border`·`border-left:3px solid var(--danger)`·`border-radius`·`padding`은 그대로 살아남았다**. `.pair`로 바꾸고 `.l`/`.mid`/`.r`도 뜻이 드러나는 `.pain`/`.arrow`/`.fix`로 바꿔 전부 `.pairs` 아래로 묶었다. **한 페이지에 섹션이 열여덟 개다 — 홑클래스 이름을 새로 만들지 말 것.** 이유를 CSS 주석에 남겼다.
+
 ## [0.29.2] - 2026-08-02
 <!-- show:ko **"이런 불편을 겪고 있다면" 섹션을 대응표로 바꿨어요.** 원래 왼쪽 불편 4개와 오른쪽 해결 4개가 순서대로 짝이었는데, 회색 상자 두 개로 갈라놔서 그게 안 보였습니다. 같은 줄에 붙이니 "이 문제는 이게 푼다"가 바로 읽혀요. 덤으로 행 높이가 저절로 맞아서, 글자 수를 세어가며 맞추던 열 높이 문제가 구조적으로 사라졌습니다. 그리고 "내 프로젝트에서는 무엇을 도와줄까요?"에는 1·2·3 단계를 붙였어요 — 링크를 넣고, 질문을 복사하고, 쓰는 AI에 붙여넣는 흐름이 글로만 적혀 있어서 처음 온 사람은 한 번에 안 읽혔거든요. 두 섹션 설명문에는 형광펜을 한 구절씩 그었습니다. -->
 <!-- show:en **The "if any of this sounds familiar" section is now a table of pairs.** The four problems on the left and the four answers on the right were always in matching order, but splitting them into two grey boxes hid that. On one row, "this problem is solved by this" reads immediately — and row heights now match on their own, so the column-balancing problem is gone structurally rather than by counting characters. The preview section gained numbered steps: drop in the link, copy the question, paste it into your AI. That sequence was previously prose only. Both section intros got one highlighted phrase. -->
