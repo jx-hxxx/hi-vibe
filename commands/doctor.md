@@ -1,5 +1,5 @@
 ---
-description: "hi-vibe's own health check — actually runs hi-vibe's 4 hooks & scanner to catch silent failure. Not Claude Code's built-in /doctor (that one checks your CLI install)"
+description: "hi-vibe's own health check — actually runs hi-vibe's 5 hooks & scanner to catch silent failure. Not Claude Code's built-in /doctor (that one checks your CLI install)"
 argument-hint: "[--root <project>]"
 ---
 
@@ -25,7 +25,7 @@ name is confusing enough without us pretending otherwise.
 hi-vibe를 켠 뒤, 그게 실제로 도는지 확인하는 자리다. 그러니 정상 결과는
 "전부 ✅"이고, 그때는 **짧게 끝내라.**
 
-1. First line: 이 프로젝트에서 hi-vibe가 제대로 도나? (python3 + 훅 4종 +
+1. First line: 이 프로젝트에서 hi-vibe가 제대로 도나? (python3 + 훅 5종 +
    스캐너 + 이 프로젝트 항목이 ✅면 "잘 돌고 있어요"로 단언). ❌가 있을
    때만 그걸 먼저.
 2. **아직 init을 안 한 폴더라면** — 그건 결함이 아니라 순서가 바뀐 것이다.

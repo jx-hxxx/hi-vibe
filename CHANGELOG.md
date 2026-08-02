@@ -5,6 +5,25 @@
 
 ## [Unreleased]
 
+## [0.31.0] - 2026-08-02
+<!-- show:ko **`/clear`를 쳐도 이제 무엇을 하던 중이었는지 남습니다.** 지금까지 자동 기록은 compact 직전 하나뿐이었어요. 그런데 `/clear`는 대화를 요약해 이어가는 게 아니라 **통째로 버리는** 것이라, 정작 기록이 제일 필요한 쪽인데 아무것도 안 남았습니다. Anthropic 공식 권장이 "관련 없는 작업 사이에는 `/clear`"라서, 권장대로 쓰는 사람일수록 더 많이 잃는 구조였고요. 창을 닫고 나갈 때도 같이 남습니다. 대신 조심한 게 둘 있어요 — 열자마자 `/clear`를 쳐도 **빈 항목은 안 쌓이고**, `/compact` 하고 바로 `/clear`를 쳐도 **같은 내용을 두 번 안 씁니다.** -->
+<!-- show:en **`/clear` no longer throws away what you were in the middle of.** Until now the only automatic writer was the one that runs just before a compact. But `/clear` discards the conversation instead of summarising it, so it is exactly where a record matters most — and nothing was written. Anthropic's own guidance is to run `/clear` between unrelated tasks, so following best practice cost you the most. Closing the window is covered too. Two things were guarded: an empty session writes nothing, and a `/compact` followed by `/clear` does not record the same work twice. -->
+
+### Added
+- **`SessionEnd` 훅 — `/clear`·세션 종료 때 handover 자동 기록** (2026-08-02) — 자동 기록이 `PreCompact` 하나뿐이라 **`/clear`로 버리면 아무것도 안 남았다.** `/compact`는 요약해 이어가지만 `/clear`는 통째로 버리므로 오히려 기록이 더 필요한 쪽이다. 매처는 `clear|prompt_input_exit`. 나머지 이유(`logout`·`other`)는 안 받는다 — 실제로 아쉬운 경우가 나오면 그때.
+  - **빈 세션엔 안 쓴다.** compact은 대화가 길어야 일어나지만 `/clear`는 열자마자 칠 수 있다. `PreCompact`를 그대로 붙였으면 `(추출된 내용 없음)` 항목만 쌓였을 것이다.
+  - **같은 세션에서 이미 남겼으면 건너뛴다.** `.hi-vibe/state/handover-written.json`에 세션과 진행량을 적어, `/compact` → `/clear` 흐름에서 같은 내용이 두 번 들어가지 않게 한다. 다만 **그 뒤에 한 일은 반드시 남긴다** — 중복을 막다 진짜 작업을 버리면 그게 더 나쁘다(테스트로 고정).
+- **`doctor`가 `SessionEnd`도 실제로 돌려본다** (2026-08-02) — 파일 존재만 보면 "있는데 안 도는" 상태를 놓친다.
+
+### Changed
+- **항목 형식을 `_common.handover_body` 한 벌로** (2026-08-02) — `PreCompact`와 `SessionEnd`가 같은 모양이어야 한다. 두 벌로 두면 한쪽만 고쳐져 handover가 뒤죽박죽이 된다(이 저장소가 문서에서 여러 번 겪은 일). 테스트가 두 훅이 같은 함수를 쓰는지 확인한다.
+- **"훅 4종" → "5종"을 열 곳에서** (2026-08-02) — README 한/영 · 랜딩 한·영 · `commands/doctor.md` 2곳 · `scripts/doctor.py` 3곳. CLAUDE.md의 "한 동작이 8곳에 산다"를 **열 곳으로** 고쳤다 — `doctor.py`는 문구와 실행 목록 양쪽에 있어서 빠뜨리기 쉽다.
+- **오늘 아침 적은 handover 한계를 갱신** (2026-08-02) — v0.30.0에서 "압축 없이 창을 닫으면 기록이 없다"고 한계로 적었는데, 그 한계가 없어졌다. 남은 것은 크래시·`kill`·로그아웃뿐이다.
+
+### 확인한 계약
+- `SessionEnd`는 `transcript_path`·`cwd`를 받고, **무엇도 막지 못한다**(exit 2도 stderr만). 나가는 길을 붙잡을 수 없다는 뜻이라 fail-open과 어긋나지 않는다.
+- **훅 전체가 1.5초 예산을 나눠 쓴다.** 21MB·4916줄 트랜스크립트로 실측 **0.03초**. `timeout: 5`로 여유만 뒀다. CLAUDE.md에 제약으로 기록.
+
 ## [0.30.0] - 2026-08-02
 <!-- show:ko **바깥에서 온 리뷰가 짚은 구멍 세 개를 메웠어요. 전부 "안 적어놨다"는 문제였습니다.** ①자동 리뷰는 대화를 한 번 더 돌리고 딴 클로드까지 부르니 답이 늦어지고 토큰을 더 쓰는데, 그 값을 어디에도 안 적었습니다. 이제 첫 화면 아래 정직함 칸에 적혀 있고, 급할 땐 "가볍게 봐줘"로 체크리스트만 돌릴 수 있다는 것도 같이 안내해요. ②handover는 압축 직전에만 자동으로 남습니다. 압축 없이 창을 닫으면 그 세션은 기록이 없어요. ③비밀키 검사는 대표 패턴 정규식이라 gitleaks 같은 전문 도구를 대신하지 않습니다. 안 걸렸다고 깨끗한 게 아니에요. -->
 <!-- show:en **Three gaps an outside review found are now filled. All three were things that were simply never written down.** (1) An automatic review runs an extra turn and calls in a second Claude, which costs latency and tokens — that price appeared nowhere. It is now stated plainly, along with the fact that saying "keep it light" runs only the checklist. (2) handover is written automatically only just before a compact, so a session that closes without one leaves no record. (3) The secret check is a regex over common key shapes and does not replace a dedicated scanner like gitleaks — a clean result is not proof of a clean repo. -->

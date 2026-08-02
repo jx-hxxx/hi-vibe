@@ -448,6 +448,70 @@ def last_test_result(path):
     return found
 
 
+def handover_body(cwd, transcript):
+    """handover 자동 항목의 본문 줄, "건질 게 있었나", 고친 파일 수를 돌려준다.
+
+    PreCompact와 SessionEnd가 **같은 형식**을 써야 한다. 두 벌로 두면
+    한쪽만 고쳐져 항목 모양이 갈린다(이 저장소가 문서에서 여러 번 겪은 일).
+
+    두 번째 값이 중요하다 — compact는 대화가 길어야 일어나니 빈 항목이
+    드물지만, `/clear`는 **열자마자 칠 수도** 있다. 부르는 쪽이 빈 세션을
+    건너뛸지 스스로 정한다."""
+    prompts, edited = parse_transcript(transcript) if transcript else ([], [])
+    git = git_status(cwd)
+    test = last_test_result(transcript) if transcript else None
+
+    lines = []
+    if git:
+        lines.append("- Git: %s" % git)
+    if test:
+        cmd, res = test
+        lines.append("- 최근 검증: `%s` → %s" % (cmd, res))
+    if prompts:
+        lines.append("- 사용자 요청(최근):")
+        lines += ["  - %s" % p for p in prompts]
+    if edited:
+        lines.append("- 수정 파일:")
+        lines += ["  - `%s`" % fp for fp in edited[:15]]
+        if len(edited) > 15:
+            lines.append("  - …외 %d개" % (len(edited) - 15))
+    return lines, bool(prompts or edited or git or test), len(edited)
+
+
+WRITTEN_FILE = "handover-written.json"
+
+
+def note_handover_written(cwd, session_id, edited_count):
+    """이 세션에서 자동 항목을 어디까지 남겼는지 적어둔다.
+
+    `/compact` 직후 `/clear`를 치면 거의 같은 내용이 두 번 들어간다. 세션과
+    진행량을 적어두면 뒤에 오는 훅이 "그 뒤로 늘어난 게 없다"를 알 수 있다."""
+    if not os.path.isdir(os.path.join(cwd or "", ".hi-vibe")):
+        return
+    path = os.path.join(cwd, ".hi-vibe", "state", WRITTEN_FILE)
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump({"session": str(session_id or ""), "edited": int(edited_count)},
+                      fh, ensure_ascii=False)
+    except OSError:
+        pass
+
+
+def handover_already_written(cwd, session_id, edited_count):
+    """같은 세션에서 이미 남겼고 그 뒤로 고친 파일이 안 늘었나."""
+    try:
+        with open(os.path.join(cwd, ".hi-vibe", "state", WRITTEN_FILE),
+                  encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (OSError, ValueError):
+        return False
+    if not isinstance(data, dict):
+        return False
+    return (data.get("session") == str(session_id or "")
+            and int(data.get("edited", -1)) >= int(edited_count))
+
+
 def prepend_entry(handover_path, entry_text):
     """헤더(첫 '## ' 전까지)를 보존하고 그 뒤, 기존 항목들 앞에 삽입."""
     header, body = "", ""

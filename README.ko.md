@@ -34,8 +34,8 @@ Claude Code가 이미 있는 코드를 또 만들고, 에러를 덮고, 어제�
 <details>
 <summary><strong>왜 이렇게 만들었나요? (기술적 배경)</strong></summary>
 
-단순한 프롬프트 묶음이 아닙니다. **실제 Claude Code 훅 4종 · 회귀 테스트
-172개 · 프로젝트별 활성화 · Python 표준 라이브러리 기반 핵심 기능**으로
+단순한 프롬프트 묶음이 아닙니다. **실제 Claude Code 훅 5종 · 회귀 테스트
+183개 · 프로젝트별 활성화 · Python 표준 라이브러리 기반 핵심 기능**으로
 AI가 자주 생략하는 확인·기록·검증을 작업 흐름 안에 넣습니다. 자세한 근거는
 아래 [왜 믿을 만한가요?](#왜-믿을-만한가요)에 있습니다.
 
@@ -159,7 +159,8 @@ Claude Code 안에서 아래 명령을 차례대로 실행하세요.
 ```text
 Claude Code 이벤트
 ├─ PostToolUse ── 에러 삼킴·비밀키 감지
-├─ PreCompact ─── handover 자동 기록
+├─ PreCompact ─── handover 자동 기록 (compact 직전)
+├─ SessionEnd ─── handover 자동 기록 (/clear · 세션 종료)
 ├─ SessionStart ─ 기억·규율 복원 + 훅·CI가 죽었으면 알림
 └─ Stop ───────── 리뷰 안 받은 변경을 그 자리에서 리뷰
 
@@ -218,7 +219,7 @@ Claude Code 이벤트
 
 ## 왜 믿을 만한가요?
 
-### 172개의 자동 테스트
+### 183개의 자동 테스트
 
 handover 기록·회전·동시 쓰기, SessionStart·PreCompact·PostToolUse·Stop
 훅, 비밀키와 에러 삼킴 감지, Python·JS/TS 심볼 탐색, 동일·유사 함수,
@@ -232,7 +233,7 @@ handover 기록·회전·동시 쓰기, SessionStart·PreCompact·PostToolUse·S
 훅은 Claude Code를 방해하지 않도록 실패해도 조용히 넘어갑니다. 그 대신
 Python이 없거나 설정이 잘못되면 기능이 꺼진 사실이 눈에 띄지 않을 수 있습니다.
 
-`/hi-vibe:doctor`는 파일 존재 여부만 보는 대신 훅 4종과 스캐너를 실제로
+`/hi-vibe:doctor`는 파일 존재 여부만 보는 대신 훅 5종과 스캐너를 실제로
 실행하여 ✅/❌로 결과를 보여줍니다.
 
 **자동으로 도는 확인은 이보다 얕습니다.** 코딩을 시작할 때 스킬이 한 번
@@ -465,10 +466,15 @@ fresh-eyes는 체크리스트만으로 잡기 어려운 과잉설계, 불필요�
 | `/hi-vibe:handover` | PreCompact 훅 — 대화가 압축되기 직전 |
 | `/hi-vibe:recall` | "예전에 왜 이렇게 했지?" 하면 걸림 |
 
-**한계 — handover는 compact 직전에만 자동으로 남습니다.** 자동 기록은
-`PreCompact` 훅 하나뿐이라, **압축이 일어나지 않은 채 창을 닫으면 그 세션은
-기록이 없습니다.** 짧게 쓰고 끝낸 세션이 여기 해당합니다. 남기고 싶으면
-끝내기 전에 `/hi-vibe:handover`를 직접 부르세요.
+**자동으로 남는 시점은 셋입니다** — compact 직전(`PreCompact`), `/clear`,
+창 닫고 나가기(`SessionEnd`). `/clear`는 대화를 요약해 이어가는 게 아니라
+**통째로 버리는** 것이라 기록이 가장 필요한 쪽인데, v0.31.0 전에는 여기서
+아무것도 안 남았습니다.
+
+**여전히 안 남는 경우** — 프로세스가 강제로 죽거나(크래시·`kill`) 로그아웃으로
+끝날 때입니다. 확실히 남기고 싶으면 `/hi-vibe:handover`를 직접 부르세요.
+그리고 **빈 세션에는 아무것도 안 씁니다** — 열자마자 `/clear`를 쳐도 빈 항목이
+쌓이지 않습니다.
 
 ### 내부 스킬 구성
 

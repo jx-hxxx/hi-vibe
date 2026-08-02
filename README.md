@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **4 real Claude Code hooks · 172 regression
+It's not just a prompt pack. With **4 real Claude Code hooks · 183 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -219,7 +219,7 @@ itself will keep improving in `/code-review` — that's the right place for it.
 
 ## Why is it trustworthy?
 
-### 172 automated tests
+### 183 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
@@ -235,7 +235,7 @@ Hooks fail silently so they never interrupt Claude Code. The downside: if Python
 is missing or something is misconfigured, a disabled feature can go unnoticed.
 
 Instead of only checking whether files exist, `/hi-vibe:doctor` actually runs the
-4 hooks and the scanner and shows the result as ✅/❌.
+5 hooks and the scanner and shows the result as ✅/❌.
 
 **The automatic check is shallower than this.** What runs by itself when you
 start coding only looks at three things: whether hi-vibe is on here, whether
@@ -480,10 +480,14 @@ It looks like a lot, but **you only type three during setup and one day to day.*
 | `/hi-vibe:handover` | The PreCompact hook, just before the chat compacts |
 | `/hi-vibe:recall` | Fires when you ask "why did we do it this way?" |
 
-**Limit — handover is written automatically only just before a compact.** The
-`PreCompact` hook is the only automatic writer, so **a session that ends without
-ever compacting leaves no record.** Short sessions are exactly that case. If you
-want one, call `/hi-vibe:handover` yourself before you close.
+**Three moments write it automatically** — just before a compact (`PreCompact`),
+on `/clear`, and when you close the window (`SessionEnd`). `/clear` throws the
+conversation away rather than summarising it, so it is where a record matters
+most; before v0.31.0 nothing was written there.
+
+**Still not covered** — a hard kill, a crash, or a logout. Call
+`/hi-vibe:handover` yourself if you need certainty. **Empty sessions write
+nothing**, so hitting `/clear` right after opening does not pile up blank entries.
 
 ### Internal skill composition
 

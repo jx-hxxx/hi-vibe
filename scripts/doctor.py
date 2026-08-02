@@ -18,7 +18,8 @@ import tempfile
 import time
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HOOK_SCRIPTS = ["session_start.py", "pre_compact.py", "stop_nudge.py", "post_write_guard.py"]
+HOOK_SCRIPTS = ["session_start.py", "pre_compact.py", "session_end.py",
+                "stop_nudge.py", "post_write_guard.py"]
 
 results = []  # (status, label, detail)  status: OK | WARN | FAIL
 
@@ -40,7 +41,7 @@ def check_python3():
     python3 = shutil.which("python3")
     if not python3:
         add("FAIL", "python3 실행 파일",
-            "PATH에 python3가 없음 — 훅 4종이 전부 조용히 비활성 상태. "
+            "PATH에 python3가 없음 — 훅 5종이 전부 조용히 비활성 상태. "
             "macOS: `xcode-select --install` 또는 brew install python. "
             "Windows: python.org 설치 후 python3 별칭 필요.")
         return None
@@ -64,12 +65,12 @@ def check_plugin_files():
     if missing:
         add("FAIL", "플러그인 파일", "누락: " + ", ".join(missing) + " — 재설치 필요")
         return False
-    add("OK", "플러그인 파일", "훅 4종 + hooks.json + 스캐너 모두 존재")
+    add("OK", "플러그인 파일", "훅 5종 + hooks.json + 스캐너 모두 존재")
     return True
 
 
 def check_hooks_live(python3):
-    """임시 init 프로젝트를 만들어 훅 4종을 끝까지 실제로 돌려본다."""
+    """임시 init 프로젝트를 만들어 훅 5종을 끝까지 실제로 돌려본다."""
     with tempfile.TemporaryDirectory(prefix="vibe-doctor-") as tmp:
         os.makedirs(os.path.join(tmp, ".hi-vibe"), exist_ok=True)  # init 마커(gate)
         with open(os.path.join(tmp, "handover.md"), "w", encoding="utf-8") as f:
@@ -89,6 +90,14 @@ def check_hooks_live(python3):
             add("OK", "PreCompact 훅", "handover.md 자동 기록 확인")
         else:
             add("FAIL", "PreCompact 훅", f"exit {p.returncode}, 기록됨: {wrote}")
+
+        p = run_hook(python3, "session_end.py",
+                     {"cwd": tmp, "transcript_path": "", "reason": "clear",
+                      "session_id": "doctor-end"}, tmp)
+        if p.returncode == 0:
+            add("OK", "SessionEnd 훅", "/clear·세션 종료 시 기록 가능 확인")
+        else:
+            add("FAIL", "SessionEnd 훅", f"exit {p.returncode}, stderr: {p.stderr.strip()[:200]}")
 
         p = run_hook(python3, "post_write_guard.py", {
             "cwd": tmp, "tool_name": "Write",
