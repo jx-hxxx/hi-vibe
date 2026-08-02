@@ -689,11 +689,11 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Claude Code 기본 기능이랑 겹치지 않나요?</summary>
         <div class="tbody">
-          <b>꽤 겹쳐요.</b><br><br>
+          <b>꽤 겹치지만, 다른 점도 많습니다.</b><br><br>
           <b>겹치는 것</b> — <code>/init</code>(CLAUDE.md 생성) · auto memory(기억) · <code>/code-review</code>(리뷰 내용) · <code>/verify</code>(실행 검증) · <code>/doctor</code>(이름만 같고 검사 대상은 달라요)<br>
-          <b>hi-vibe만 하는 것</b> — 에러 삼킴·비밀키 즉시 감지 · 저장소 전체 중복·미참조 스캔 · 증상과 원인 중심 CHANGELOG · 프로젝트별 opt-in<br><br>
-          <b>가장 큰 차이는 “언제 도느냐”예요.</b> Claude Code 공식 문서에 이렇게 적혀 있어요 — <i>“<code>/verify</code>와 <code>/code-review</code>는 직접 부를 때만 돕니다. v2.1.215 전에는 Claude가 알아서 돌리기도 했습니다.”</i> 자동 실행이 있었다가 빠진 자리예요. hi-vibe는 <b>리뷰 안 받은 변경이 있으면 훅이 대화를 붙잡고 리뷰를 시킵니다</b>(같은 변경으로 두 번 막진 않아요). 기계가 보장하는 건 <i>리뷰를 요구하는 시점</i>이고, 리뷰 자체는 Claude가 해요.<br><br>
-          <span class="dim">그래서 정확히는 “없는 기능을 추가한다”가 아니라, <b>이미 있는 좋은 기능을 놓치기 쉬운 순간에 자동으로 연결하고 프로젝트 기록으로 남긴다</b>예요. 리뷰 품질 자체는 앞으로도 기본 <code>/code-review</code>가 더 좋아질 거고, 그건 그쪽에 맡기는 게 맞아요.</span>
+          <b>hi-vibe만 하는 것</b> — 에러를 조용히 넘기는 코드·비밀키 바로 잡기 · 프로젝트 전체에서 중복 코드와 안 쓰는 코드 찾기 · 무엇이 왜 문제였는지까지 남는 CHANGELOG · 프로젝트별 opt-in<br><br>
+          <b>가장 큰 차이는 “언제 도느냐”예요.</b> Claude Code 공식 문서에 이렇게 적혀 있어요 — <i>“<code>/verify</code>와 <code>/code-review</code>는 직접 부를 때만 돕니다. v2.1.215 전에는 Claude가 알아서 돌리기도 했습니다.”</i> 알아서 돌던 게 없어진 자리예요. hi-vibe는 <b>아직 리뷰 안 한 코드가 있으면 대화를 못 끝내게 막아요.</b> 이미 리뷰한 코드는 다시 보고 검사하지 않습니다. 막는 데까지가 hi-vibe가 하는 일이고, <b>코드를 읽고 문제를 찾는 건 Claude가 해요.</b><br><br>
+          <span class="dim">정리하면, hi-vibe는 기본 기능을 대신 눌러주는 게 아니에요. <b>같은 목적의 검사를 자기 체크리스트로 돌리고</b>, 코드를 짠 기억이 없는 <b>딴 클로드(fresh-eyes)를 새로 불러 설계를 다시 보게 합니다.</b> 그리고 그걸 안 하고 넘어가지 못하게 막아요.</span>
         </div>
       </details>
 
@@ -1064,11 +1064,11 @@ Finish with a short summary:
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Doesn't this overlap with Claude Code's built-ins?</summary>
         <div class="tbody">
-          <b>Quite a bit, yes.</b><br><br>
+          <b>Quite a bit, but plenty is different too.</b><br><br>
           <b>Overlaps</b> — <code>/init</code> (writes CLAUDE.md) · auto memory · <code>/code-review</code> (the review itself) · <code>/verify</code> · <code>/doctor</code> (same name, different subject)<br>
-          <b>Only hi-vibe</b> — instant swallowed-error &amp; secret detection · repo-wide duplicate / unreferenced scan · symptom-and-cause CHANGELOG · per-project opt-in<br><br>
-          <b>The real difference is when things run.</b> From Claude Code's own docs — <i>“<code>/verify</code> and <code>/code-review</code> run only when you invoke them. Before v2.1.215, Claude could also run them on its own.”</i> Auto-invocation existed and was removed. hi-vibe's Stop hook <b>holds the turn open and demands a review when changes nobody reviewed are still sitting in the tree</b> (and won't block twice on the same change). The machine guarantees <i>when</i> a review is demanded; Claude does the reviewing.<br><br>
-          <span class="dim">So the accurate framing isn't “it adds what's missing” but <b>it wires the good features you already have into the moments they're easiest to skip, and leaves the result in your project as a record.</b> Review quality itself will keep improving in <code>/code-review</code> — that's the right place for it.</span>
+          <b>Only hi-vibe</b> — catching code that quietly swallows errors, and secrets left in the source · finding duplicate and unused code across the whole project · a CHANGELOG that records what broke and why · per-project opt-in<br><br>
+          <b>The real difference is when things run.</b> From Claude Code's own docs — <i>“<code>/verify</code> and <code>/code-review</code> run only when you invoke them. Before v2.1.215, Claude could also run them on its own.”</i> That automatic run is the thing that went away. hi-vibe <b>won't let the conversation end while unreviewed code is sitting there.</b> Code that has already been reviewed is not examined again. Holding the turn is where hi-vibe's part ends — <b>reading the code and finding the problems is Claude's.</b><br><br>
+          <span class="dim">So hi-vibe is not pressing the built-in buttons for you. <b>It runs its own checklist for the same purpose</b>, then <b>brings in a second Claude (fresh-eyes) that never wrote the code</b> to look at the design again — and it won't let you walk past that step.</span>
         </div>
       </details>
 

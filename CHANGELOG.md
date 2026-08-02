@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.29.7] - 2026-08-02
+<!-- show:ko **"겹치지 않나요?" 답에 사실이 아닌 문장이 있었어요.** "이미 있는 좋은 기능을 놓치기 쉬운 순간에 연결한다"고 적혀 있었는데, 확인해 보니 hi-vibe의 리뷰는 Claude Code 기본 `/code-review`를 부르지 않습니다. 자기 체크리스트를 돌리고, 코드를 짠 기억이 없는 딴 클로드(fresh-eyes)를 새로 불러 설계를 다시 보게 해요. 겹치는 건 "리뷰를 한다"는 목적이지 구현이 아니었습니다. 그 자리에 실제로 하는 일을 적었어요. 나머지 문장들도 "기계가 보장하는 시점" 같은 말을 쉬운 말로 풀고, 방문자에게 필요 없는 로드맵 얘기는 뺐습니다. -->
+<!-- show:en **The "doesn't this overlap?" answer contained a claim that wasn't true.** It said hi-vibe "wires the good features you already have into the moments they're easiest to skip" — but hi-vibe's review never calls the built-in `/code-review`. It runs its own checklist and brings in a second Claude (fresh-eyes) that never wrote the code. What overlaps is the purpose, not the implementation. The answer now says what actually happens, in plainer words, and drops a roadmap aside that visitors did not need. -->
+
+### Fixed
+- **FAQ의 사실 오류: "기본 기능을 대신 불러준다"** (2026-08-02) — 저장소 전체에 `/code-review`를 호출하는 코드가 없다. `write-gate` SKILL.md:246은 체크리스트 후 **`fresh-eyes` 에이전트를 Agent 도구로 소환**한다. 겹치는 것은 목적이지 구현이 아니다. **에이전트를 띄우는 수단은 Claude Code 것이지만 무엇을 보라고 시키는 내용은 hi-vibe가 쓴 것** — 이 구분을 답에 적었다. fresh-eyes는 랜딩 세 곳(669·677·678줄)과 README에 이미 설명돼 있는데 정작 이 FAQ에는 없었다.
+
+### Changed
+- **FAQ 문장을 쉬운 말로** (2026-08-02) — `꽤 겹쳐요.` 한 줄만 뜬 채 끝나 답이 완결되지 않았다 → `꽤 겹치지만, 다른 점도 많습니다.` / `기계가 보장하는 건 리뷰를 요구하는 시점` → `막는 데까지가 hi-vibe가 하는 일` / `같은 변경으로 두 번 막진 않아요` → `이미 리뷰한 코드는 다시 보고 검사하지 않습니다` / 목록의 `저장소 전체 중복·미참조 스캔`·`증상과 원인 중심 CHANGELOG`도 풀어 썼다. **`opt-in`과 명령어 이름·`훅`은 그대로 둔다** — 쓰다 보면 실제로 만나는 말이라 바꾸면 오히려 못 찾는다.
+- **로드맵 문장 삭제** (2026-08-02) — "리뷰 품질은 앞으로도 기본 `/code-review`가 더 좋아질 것"은 만드는 사람끼리 할 얘기다. 방문자는 "겹치나?"가 궁금해서 연 것이고, 바로 앞 문장이 이미 같은 포지셔닝을 말한다.
+
 ## [0.29.6] - 2026-08-02
 <!-- show:ko **첫 화면의 "평소처럼 말만 하면 돼요"를 "평소처럼 개발하면 돼요"로 바꿨어요.** 달라지는 건 명령어를 외울 필요가 없다는 것뿐이고 개발은 그대로 하는 건데, "말만 하면"은 개발자가 하는 일을 말하는 것으로 줄여 버립니다. README는 처음부터 "평소처럼 Claude와 코딩하면 됩니다"였으니, 첫 화면만 혼자 어긋나 있던 셈이에요. -->
 <!-- show:en **The hero line "just talk normally" became "just build the way you already do".** The only thing that changes is not having to memorize commands; the development itself is unchanged, and "just talk" shrinks the developer's work down to talking. The README had said it correctly all along, so the hero was the one surface out of step. -->
