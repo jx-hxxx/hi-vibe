@@ -287,6 +287,52 @@ class SecretLeakTest(unittest.TestCase):
         self.assertIn("이걸로 설정해줘", files["handover.md"])
 
 
+class MaskingBoundaryTest(unittest.TestCase):
+    """가림 처리의 **경계**를 지킨다 — 덜 지워도, 더 지워도 사고다.
+
+    처음엔 `시작 + len(정규화된 조각)`으로 끝을 추정했다. 정규화는 공백을
+    접으므로 공백이 많으면 추정한 끝이 실제보다 앞이었다:
+
+        API_KEY     =     "ABCDEFGHIJKLMNOPQRSTUVWX"   (hi-vibe: allow-secret)
+        → [비밀키 가림]RSTUVWX"          ← 키 꼬리가 남았다
+
+    반대로 두 패턴이 같은 자리를 잡으면(키 자체 + 할당문) 겹친 구간을
+    안 합친 채 뒤에서부터 차례로 치환해 **키 뒤의 멀쩡한 문장까지** 날렸다.
+    가리기가 문장을 먹으면 사람이 기록을 안 믿게 된다."""
+
+    KEY = "sk-proj-abcdefghijklmnopqrstuvwxyz1234567890"   # hi-vibe: allow-secret
+    AWS = "AKIA1234567890ABCDEF"                            # hi-vibe: allow-secret
+
+    def _masked(self, text):
+        return _common.safe_text(text)
+
+    def test_no_tail_survives_when_spacing_is_wide(self):
+        for text in ('API_KEY     =     "ABCDEFGHIJKLMNOPQRSTUVWX"',  # hi-vibe: allow-secret
+                     'API_KEY =\n  "ABCDEFGHIJKLMNOPQRSTUVWX"',
+                     'API_KEY\t=\t"ABCDEFGHIJKLMNOPQRSTUVWX"'):
+            got = self._masked(text)
+            self.assertNotIn("RSTUVWX", got, f"키 꼬리가 남았다: {got!r}")
+            self.assertIn("비밀키 가림", got)
+
+    def test_text_after_the_secret_survives(self):
+        got = self._masked('API_KEY = "%s" 뒤 문장' % self.KEY)
+        self.assertNotIn(self.KEY, got)
+        self.assertIn("뒤 문장", got, f"키 뒤의 문장까지 지웠다: {got!r}")
+
+    def test_several_secrets_on_one_line(self):
+        got = self._masked("A키 %s 와 B키 %s 둘 다" % (self.KEY, self.AWS))
+        self.assertNotIn(self.KEY, got)
+        self.assertNotIn(self.AWS, got)
+        self.assertEqual(got.count("비밀키 가림"), 2, got)
+        for keep in ("A키", "와 B키", "둘 다"):
+            self.assertIn(keep, got)
+
+    def test_clean_text_is_untouched(self):
+        for text in ("비밀 없는 평범한 문장입니다",
+                     "이 값은 os.environ['API_KEY']로 읽어요", ""):
+            self.assertEqual(self._masked(text), text)
+
+
 class ConcurrentEndTest(unittest.TestCase):
     """두 세션이 **정확히 동시에** 끝나도 표식이 유실되면 안 된다.
 

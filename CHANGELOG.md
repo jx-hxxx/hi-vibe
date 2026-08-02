@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.32.4] - 2026-08-03
+<!-- show:ko **비밀키 가림 처리가 경계에서 어긋나던 것을 고쳤어요.** 두 방향으로 틀렸습니다. ①`API_KEY     =     "..."`처럼 공백이 많으면 키 꼬리가 남았어요 — 끝 위치를 "정규화된 조각 길이"로 추정했는데 정규화가 공백을 접기 때문입니다. ②반대로 두 패턴이 같은 자리를 잡으면 겹친 구간을 안 합친 채 차례로 지워서, 키 뒤의 멀쩡한 문장까지 날아갔어요. 이제 실제 끝 위치를 받아 겹친 구간을 합친 뒤 한 번에 가립니다. 넓은 공백·줄바꿈 할당·한 줄 복수 키·겹친 패턴을 각각 테스트로 고정했어요. -->
+<!-- show:en **Secret masking was off at the boundaries, in both directions.** (1) With wide spacing like `API_KEY     =     "..."` the tail of the key survived, because the end position was estimated from the length of the whitespace-normalised snippet. (2) Conversely, when two patterns covered the same place, the overlapping ranges were replaced one by one and swallowed the ordinary sentence after the key. Real end offsets are now returned, overlapping ranges merged, and the replacement done once. Wide spacing, newline assignments, several keys on one line and overlapping patterns are each pinned by a test. -->
+
+### Fixed
+- **가림 처리가 키 꼬리를 남기던 것** (2026-08-03) — `safe_text()`가 끝을 `시작 + len(정규화된 조각)`으로 추정했다. `iter_secrets`는 공백을 접은 조각을 주므로, 원문에 공백이 많으면 **추정한 끝이 실제보다 앞**이다: `API_KEY     =     "ABCDEFGHIJKLMNOPQRSTUVWX"` → `[비밀키 가림]RSTUVWX"`. `iter_secret_spans()`를 새로 두어 **원문 기준 실제 `m.start()`·`m.end()`**를 돌려준다. 기존 `iter_secrets`는 그걸로 파생시켜 판정 규칙은 여전히 한 곳이다.
+- **가림 처리가 뒤 문장까지 지우던 것** (2026-08-03) — 키 자체 패턴과 할당문 패턴이 **같은 자리를 겹쳐 잡는다.** 겹친 구간을 안 합치고 뒤에서부터 차례로 치환하면, 바깥 구간을 먼저 지운 뒤 안쪽 구간의 **옛 좌표**로 또 자른다. `API_KEY = "sk-proj-…" 뒤 문장` → `[비밀키 가림]`으로 문장이 통째로 사라졌다. 구간을 먼저 병합한다. **가리기가 문장을 먹으면 사람이 기록을 안 믿는다.**
+
+### Added
+- **가림 경계 테스트 4개** (2026-08-03) — 넓은 공백·줄바꿈·탭 할당에서 꼬리가 안 남는지 · 키 뒤 문장이 살아남는지 · 한 줄에 키 둘이면 둘 다 가려지고 사이 글자는 남는지 · 비밀키 없는 글은 **한 글자도 안 바뀌는지**. 덜 지워도 더 지워도 사고라 양쪽을 다 본다.
+
+### 알려진 한계 (안 고침)
+- **`SECRET_KEY`·`ACCESS_TOKEN` 같은 이름은 할당 패턴이 못 잡는다.** 정규식이 `secret`·`token` 바로 뒤에 `=`를 기대하는데 `_KEY`가 끼어 경계가 깨진다. 오늘 만든 결함이 아니라 탐지기의 기존 범위 문제이고, `\w*`로 넓히면 `TOKENIZER = "…"` 같은 오탐이 생긴다. **키 자체 형태 패턴(`sk-`·`AKIA`·`ghp_`…)은 이름과 무관하게 잡으므로** 실제 키 대부분은 여전히 걸린다. 실사용에서 놓친 사례가 나오면 그때 근거를 갖고 넓힌다.
+
 ## [0.32.3] - 2026-08-03
 <!-- show:ko **handover가 비밀키 유출 통로가 될 수 있었어요. 오늘 제가 만든 결함입니다.** 몇 시간 전 "Bash로 쓴 것"을 기록에 싣게 했는데, 명령 원문을 그대로 넣었습니다. `printf 'API_KEY = "…"' > cfg.py` 하나면 트랜스크립트에만 있던 키가 프로젝트 파일로 복제되고, 다음 세션에 다시 주입되고, 아카이브에 오래 남습니다. 게다가 handover는 `.md`라 `check`의 비밀키 스캔 대상도 아니었어요. 정규식으로 가리는 건 새 패턴을 놓치니, **원문을 아예 저장하지 않도록** 고쳤습니다. 이제 대상 파일과 작업 종류만 남아요. 사용자 요청은 글 자체가 내용이라 안 남길 수 없어서 훅과 같은 규칙으로 가리고, `check`가 handover도 훑게 했습니다. -->
 <!-- show:en **handover could have leaked secrets — a defect introduced earlier today.** When "written via Bash" was added to the record a few hours ago, it stored the raw command. One `printf 'API_KEY = "…"' > cfg.py` copies a key that lived only in the transcript into a project file, re-injects it into the next session, and preserves it in the archive. handover is a `.md` file, so the secret scan did not cover it either. Masking with regexes misses new patterns, so the raw text is simply never stored now: only the target file and the kind of write. User requests are content by nature, so those are masked with the same rule the hook uses, and `check` now scans handover as well. -->

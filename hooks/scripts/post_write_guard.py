@@ -92,22 +92,33 @@ def find_swallows(text, path):
     return [(label, snippet) for label, snippet, _ in iter_swallows(text, path)]
 
 
+def iter_secret_spans(text):
+    """(라벨, 시작, **끝**) — 원문 기준 실제 구간.
+
+    끝 위치가 따로 필요한 이유: 가림 처리는 `시작 + len(정규화된 조각)`으로
+    끝을 추정할 수 없다. 정규화는 공백을 접으므로 `API_KEY     =     "..."`
+    처럼 공백이 많으면 **추정한 끝이 실제보다 앞이라 키 꼬리가 남는다.**
+    실제로 `[비밀키 가림]RSTUVWX"`가 남았다."""
+    if not text:
+        return []
+    spans = []
+    for label, rx in SECRET_PATTERNS:
+        for m in rx.finditer(text):
+            if ALLOW_SECRET_MARK in _match_region(text, m) \
+                    or SECRET_FALSE_ALARM_RE.search(_match_region(text, m)):
+                continue
+            spans.append((label, m.start(), m.end()))
+    return spans
+
+
 def iter_secrets(text):
     """(라벨, 정규화된 매치 텍스트, 시작 오프셋) 리스트.
 
     `iter_swallows`와 같은 이유로 오프셋까지 준다 — 저장소 전체를 훑는
     스캐너는 위치가 필요하고, 판정 규칙은 여기 한 곳에만 둔다. 훅은 새로
     쓰는 코드만 보므로, Bash로 들어온 키는 스캐너 쪽에서만 잡힌다."""
-    if not text:
-        return []
-    found = []
-    for label, rx in SECRET_PATTERNS:
-        for m in rx.finditer(text):
-            if ALLOW_SECRET_MARK in _match_region(text, m) \
-                    or SECRET_FALSE_ALARM_RE.search(_match_region(text, m)):
-                continue
-            found.append((label, " ".join(m.group(0).split()), m.start()))
-    return found
+    return [(label, " ".join(text[start:end].split()), start)
+            for label, start, end in iter_secret_spans(text)]
 
 
 def find_secrets(text):

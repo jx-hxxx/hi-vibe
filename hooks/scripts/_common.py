@@ -456,14 +456,19 @@ def safe_text(text):
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import post_write_guard          # 지연 임포트 — 순환 임포트 방지
-        finder = post_write_guard.iter_secrets
+        raw = post_write_guard.iter_secret_spans(text)
     except Exception:
         return text
-    try:
-        spans = [(off, off + len(sn)) for _label, sn, off in finder(text)]
-    except Exception:
-        return text
-    for start, end in sorted(spans, reverse=True):
+    # 겹치는 구간을 먼저 합친다. 안 합치고 뒤에서부터 하나씩 바꾸면 **바깥
+    # 구간을 먼저 지운 뒤 안쪽 구간의 옛 좌표로 또 자르게 되어**, 키 뒤의
+    # 멀쩡한 문장까지 날아간다(실제로 `… 뒤 문장`이 통째로 사라졌다).
+    merged = []
+    for _label, start, end in sorted((sp for sp in raw), key=lambda sp: (sp[1], sp[2])):
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    for start, end in reversed(merged):
         text = text[:start] + "[비밀키 가림]" + text[end:]
     return text
 
