@@ -333,6 +333,12 @@ real-time catch — let this repo-wide scan be the backstop**. You get the file,
 even in the report. If it's intentional, mark that line with a
 `hi-vibe: allow-secret` comment and both the hook and the scan skip it.
 
+**"The only net" means the only one inside hi-vibe.** It matches common key
+shapes with regexes; it is **not a replacement for a dedicated secret scanner**
+like `gitleaks` or `trufflehog`. If a leaked key would really hurt, run one of
+those as well — what this catches is the unmistakable case, and a clean result
+here is not proof that the repo is clean.
+
 **Left unfinished** (not to delete — to finish)
 
 - Swallowed errors across the whole repo — the hook only sees code as it's
@@ -473,6 +479,11 @@ It looks like a lot, but **you only type three during setup and one day to day.*
 | `/hi-vibe:log` | The review checklist writes the CHANGELOG entry itself |
 | `/hi-vibe:handover` | The PreCompact hook, just before the chat compacts |
 | `/hi-vibe:recall` | Fires when you ask "why did we do it this way?" |
+
+**Limit — handover is written automatically only just before a compact.** The
+`PreCompact` hook is the only automatic writer, so **a session that ends without
+ever compacting leaves no record.** Short sessions are exactly that case. If you
+want one, call `/hi-vibe:handover` yourself before you close.
 
 ### Internal skill composition
 

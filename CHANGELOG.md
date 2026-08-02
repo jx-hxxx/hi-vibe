@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.30.0] - 2026-08-02
+<!-- show:ko **바깥에서 온 리뷰가 짚은 구멍 세 개를 메웠어요. 전부 "안 적어놨다"는 문제였습니다.** ①자동 리뷰는 대화를 한 번 더 돌리고 딴 클로드까지 부르니 답이 늦어지고 토큰을 더 쓰는데, 그 값을 어디에도 안 적었습니다. 이제 첫 화면 아래 정직함 칸에 적혀 있고, 급할 땐 "가볍게 봐줘"로 체크리스트만 돌릴 수 있다는 것도 같이 안내해요. ②handover는 압축 직전에만 자동으로 남습니다. 압축 없이 창을 닫으면 그 세션은 기록이 없어요. ③비밀키 검사는 대표 패턴 정규식이라 gitleaks 같은 전문 도구를 대신하지 않습니다. 안 걸렸다고 깨끗한 게 아니에요. -->
+<!-- show:en **Three gaps an outside review found are now filled. All three were things that were simply never written down.** (1) An automatic review runs an extra turn and calls in a second Claude, which costs latency and tokens — that price appeared nowhere. It is now stated plainly, along with the fact that saying "keep it light" runs only the checklist. (2) handover is written automatically only just before a compact, so a session that closes without one leaves no record. (3) The secret check is a regex over common key shapes and does not replace a dedicated scanner like gitleaks — a clean result is not proof of a clean repo. -->
+
+### Added
+- **비용 고지** (2026-08-02) — 랜딩 정직함 칸에 `공짜는 아니에요` 노트 추가. 자동 리뷰는 **턴을 한 번 더 돌리고 `fresh-eyes`까지 소환**하므로 응답 지연과 토큰 사용이 늘어난다. 정직함 노트가 셋이나 있으면서 **사용자가 실제로 치르는 값은 어디에도 없었다.** escape hatch(`가볍게 봐줘` → 체크리스트만)를 같이 안내해 경고가 아니라 선택지가 되게 했다.
+- **`write-gate`가 영어 escape hatch를 받는다** (2026-08-02) — `keep it light` / `light review`. 영문 랜딩에 안내를 넣으려면 스킬이 그 말을 알아야 한다. **안내만 넣고 스킬을 안 고치면 영문 사이트가 거짓말이 된다.**
+
+### Fixed
+- **handover의 한계가 문서에 없던 것** (2026-08-02) — 자동 기록은 `pre_compact.py` 하나뿐이다(`Stop` 훅은 리뷰만 한다). **압축이 일어나지 않은 채 창을 닫으면 그 세션은 기록이 없다** — 짧게 쓰고 끝낸 세션이 정확히 이 경우인데 어디에도 안 적혀 있었다. README 한·영에 한계 문단, 랜딩 3단 설명에 한 마디.
+- **"이 스캔이 유일한 그물"의 범위** (2026-08-02) — hi-vibe **안에서** 유일하다는 뜻인데 앞뒤 없이 읽으면 "이거면 충분"으로 읽힌다. **`gitleaks`·`trufflehog` 같은 전문 스캐너를 대신하지 않으며, 안 걸렸다고 깨끗한 게 아니라는 것**을 README 한·영에 명시했다.
+
 ## [0.29.9] - 2026-08-02
 <!-- show:ko **"설치는 전역 한 번, init은 프로젝트마다" 안내의 줄바꿈을 고쳤어요.** 한 문장 한가운데에 강제 줄바꿈이 들어가 있어서, 뒷부분이 새 항목처럼 다음 줄에서 시작했습니다. 일곱 조각으로 흩어져 보이던 것이 네 문장으로 정리됐어요. 글은 그대로고 줄이 끊기는 자리만 바뀝니다. -->
 <!-- show:en **Fixed the line breaks in the "install once, init per project" note.** A hard break sat in the middle of a sentence, so the second half started on its own line and read like a separate item. What looked like seven fragments is now four sentences. The wording is unchanged; only where the lines break.  -->
