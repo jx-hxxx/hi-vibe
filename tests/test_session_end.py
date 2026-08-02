@@ -150,6 +150,26 @@ class SessionEndHandoverTest(unittest.TestCase):
             self.assertIn("결제 방식은 PG로 가자",
                           self._compact_then_more([_user("결제 방식은 PG로 가자")]))
 
+    def test_marker_survives_other_sessions(self):
+        """다른 세션이 표식을 덮어써 중복 방지가 풀리면 안 된다.
+
+        같은 프로젝트에 창을 두 개 띄우면 실제로 난다. 표식을 슬롯 하나로
+        두었을 때, 세션 B가 기록한 뒤 세션 A가 끝나면 A의 compact 항목이
+        한 번 더 들어갔다."""
+        self.tr = _transcript([_user("A 작업"), _edit("a.py")])
+        _run(PRE_COMPACT, {"cwd": self.root, "transcript_path": self.tr,
+                           "hook_event_name": "PreCompact", "trigger": "manual",
+                           "session_id": "sess-A"})
+        other = _transcript([_user("B 작업"), _edit("b.py")])
+        try:   # 다른 세션(창)이 끼어들어 기록
+            _run(SESSION_END, {"cwd": self.root, "transcript_path": other,
+                               "reason": "clear", "session_id": "sess-B"})
+        finally:
+            os.unlink(other)
+        _run(SESSION_END, self._payload(sid="sess-A"))
+        self.assertEqual(self._handover().count("A 작업"), 1,
+                         "다른 세션이 표식을 덮어써 A가 두 번 기록됐다")
+
     def test_other_session_is_not_deduped(self):
         """세션이 다르면 남겨야 한다 — 표식은 세션마다다."""
         self.tr = _transcript([_user("첫 세션"), _edit("a.py")])

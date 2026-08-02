@@ -522,12 +522,17 @@ def handover_body(cwd, transcript, git_timeout=3):
 
 
 WRITTEN_FILE = "handover-written.json"
+# 표식을 슬롯 하나로 두면 **다른 세션이 덮어쓴다** — 같은 프로젝트에 창을
+# 두 개 띄우면 앞 세션의 표식이 사라져 중복 방지가 풀린다. 세션별로 둔다.
+WRITTEN_KEEP = 10
 
 
 def note_handover_written(cwd, session_id, signature):
     """이 세션에서 **무엇을** 남겼는지 서명으로 적어둔다.
 
     `/compact` 직후 `/clear`를 치면 거의 같은 내용이 두 번 들어간다.
+
+    표식은 **세션별로** 둔다(슬롯 하나면 다른 세션이 덮어쓴다).
 
     처음엔 "수정 파일 **개수**"로 비교했는데, 그러면 compact 뒤에 한 일이
     통째로 사라졌다 — 같은 파일을 또 고치거나, Bash로 고치거나, 파일은
@@ -539,9 +544,21 @@ def note_handover_written(cwd, session_id, signature):
     path = os.path.join(cwd, ".hi-vibe", "state", WRITTEN_FILE)
     try:
         os.makedirs(os.path.dirname(path), exist_ok=True)
+        try:
+            with open(path, encoding="utf-8") as fh:
+                data = json.load(fh)
+        except (OSError, ValueError):
+            data = {}
+        if not isinstance(data, dict):
+            data = {}
+        data[str(session_id or "")] = str(signature)
+        # 세션마다 한 칸씩 쌓이므로 오래된 것은 버린다. 창을 여러 개 띄워도
+        # 최근 몇 개는 남는다.
+        if len(data) > WRITTEN_KEEP:
+            for key in list(data)[:-WRITTEN_KEEP]:
+                del data[key]
         with open(path, "w", encoding="utf-8") as fh:
-            json.dump({"session": str(session_id or ""), "sig": str(signature)},
-                      fh, ensure_ascii=False)
+            json.dump(data, fh, ensure_ascii=False)
     except OSError:
         pass
 
@@ -556,8 +573,7 @@ def handover_already_written(cwd, session_id, signature):
         return False
     if not isinstance(data, dict):
         return False
-    return (data.get("session") == str(session_id or "")
-            and data.get("sig") == str(signature))
+    return data.get(str(session_id or "")) == str(signature)
 
 
 def prepend_entry(handover_path, entry_text):

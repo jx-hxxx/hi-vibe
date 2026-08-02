@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.32.1] - 2026-08-02
+<!-- show:ko **중복 방지 표식이 슬롯 하나뿐이라 다른 세션이 덮어쓰고 있었어요.** 같은 프로젝트에 Claude Code 창을 두 개 띄우면 실제로 납니다. 세션 B가 기록하면 세션 A의 표식이 사라져서, A가 끝날 때 compact이 이미 남긴 내용이 한 번 더 들어갔어요. 이제 세션별로 표식을 둡니다(최근 10개까지). 실제 21MB 트랜스크립트로 네 가지 종료 이유를 다 돌려 확인했습니다. -->
+<!-- show:en **The duplicate-suppression marker was a single slot, so another session overwrote it.** Two Claude Code windows on one project is enough to trigger it: once session B records, session A's marker is gone, and A's ending re-adds what the compact had already written. Markers are now kept per session (the last ten). Verified against a real 21MB transcript across all four end reasons. -->
+
+### Fixed
+- **중복 방지 표식을 다른 세션이 덮어쓰던 것** (2026-08-02) — `handover-written.json`이 `{session, sig}` 한 벌이었다. 같은 프로젝트에서 세션이 겹치면(창 두 개) 뒤에 쓴 세션이 앞 세션의 표식을 지워, 앞 세션 종료 때 compact 항목이 한 번 더 들어갔다. `{세션: 서명}` 맵으로 바꾸고 최근 10개까지 보관한다. **실제 21MB 트랜스크립트로 재현하고 고친 뒤 다시 확인했다** — 네 종료 이유(clear·prompt_input_exit·resume·logout) 각각 0.05~0.12초.
+
 ## [0.32.0] - 2026-08-02
 <!-- show:ko **어제 만든 `/clear` 기록 기능에 결함 두 개가 있었어요. 제 테스트가 거짓으로 통과시켰습니다.** ①"빈 세션엔 안 쓴다"가 git 저장소에서는 안 먹혔습니다. Git 상태를 "활동 있음"으로 세고 있었는데 git 프로젝트에서는 그 값이 늘 있어서, 열자마자 `/clear`를 쳐도 `- Git: master, 변경 없음` 한 줄짜리 항목이 쌓였어요. 테스트를 git 아닌 임시 폴더에서 돌려서 못 봤습니다. ②중복 방지가 "수정 파일 개수"만 비교해서, compact 뒤에 같은 파일을 또 고치거나 파일 없이 중요한 결정만 논의하면 그게 통째로 사라졌습니다. 이제 내용 서명으로 비교해요. 그리고 나가는 길의 Git 조회를 0.3초로 묶었고, `/resume`·로그아웃도 기록 대상에 넣었습니다. -->
 <!-- show:en **Two defects in yesterday's `/clear` recording, both of which my tests passed falsely.** (1) "Empty sessions write nothing" did not hold in a git repository: Git status counted as activity, and in a git project that value is always present, so hitting `/clear` right after opening still left a one-line entry. The test ran in a non-git temp folder, which hid it. (2) Duplicate suppression compared only the *number* of edited files, so work after a compact vanished whenever the count did not grow — re-editing the same file, or discussing a decision without touching one. It now compares a content signature. Git lookups on the way out are capped at 0.3s, and `/resume` and logout are covered too. -->
