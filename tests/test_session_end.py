@@ -40,9 +40,21 @@ def _user(text):
     return {"type": "user", "message": {"role": "user", "content": text}}
 
 
+def _bash(cmd):
+    return {"type": "assistant", "message": {"role": "assistant", "content": [
+        {"type": "tool_use", "name": "Bash", "input": {"command": cmd}}]}}
+
+
 def _edit(path):
     return {"type": "assistant", "message": {"role": "assistant", "content": [
         {"type": "tool_use", "name": "Edit", "input": {"file_path": path}}]}}
+
+
+def _race_worker(barrier, root, transcript, idx):
+    """동시 종료 재현용 — 모듈 최상단에 있어야 프로세스로 넘길 수 있다."""
+    barrier.wait()
+    _run(SESSION_END, {"cwd": root, "transcript_path": transcript,
+                       "reason": "clear", "session_id": "race-%d" % idx})
 
 
 def _run(script, payload):
@@ -149,6 +161,14 @@ class SessionEndHandoverTest(unittest.TestCase):
         with self.subTest("파일은 안 건드리고 결정만 논의한 경우"):
             self.assertIn("결제 방식은 PG로 가자",
                           self._compact_then_more([_user("결제 방식은 PG로 가자")]))
+        with self.subTest("새 사용자 메시지 없이 Bash로만 작업한 경우"):
+            # auto-compact은 같은 턴 중간에 일어난다. 그 뒤 Claude가 이어서
+            # Bash로만 파일을 만들면 prompts도 edited도 그대로다 — 서명에
+            # Bash를 안 넣었을 때 이 턴이 통째로 사라졌다.
+            before = self._compact_then_more([])
+            self.assertNotIn("build.sh", before)
+            self.assertIn("build.sh", self._compact_then_more(
+                [_bash("cat > build.sh <<'EOF'\nmake all\nEOF")]))
 
     def test_marker_survives_other_sessions(self):
         """다른 세션이 표식을 덮어써 중복 방지가 풀리면 안 된다.
@@ -204,6 +224,60 @@ class SessionEndHandoverTest(unittest.TestCase):
         self.tr = _transcript([_user("뭐 해줘"), _edit("x.py")])
         _run(SESSION_END, self._payload())
         self.assertIn("SessionEnd", _common.read_heartbeat(self.root))
+
+
+class ConcurrentEndTest(unittest.TestCase):
+    """두 세션이 **정확히 동시에** 끝나도 표식이 유실되면 안 된다.
+
+    표식 파일은 읽고-고치고-쓰는 구조다. 확인·기록·표식을 한 락 안에 넣기
+    전에는, 둘이 동시에 빈 표식을 읽어 둘 다 쓰고 **뒤에 쓴 쪽만 남았다.**
+    그러면 앞 세션의 표식이 사라져 다음 종료 때 중복 항목이 생긴다.
+
+    **아래 동시 실행 테스트만으로는 부족하다** — 락을 빼고 돌려봤더니 세 번
+    다 통과했다. 프로세스를 띄우는 시간차 때문에 실제로는 거의 겹치지
+    않는다. 그래서 "겹쳐도 살아남는가"(기능)와 "표식이 락 안에서 쓰이는가"
+    (구조)를 **둘 다** 본다. 재현이 안 되는 타이밍 테스트 하나만 두면
+    안전장치가 아니라 장식이다."""
+
+    def test_simultaneous_ends_keep_both_markers(self):
+        import multiprocessing
+        with tempfile.TemporaryDirectory(prefix="vibe-race-") as root:
+            os.makedirs(os.path.join(root, ".hi-vibe"))
+            subprocess.run(["git", "init", "-q"], cwd=root,
+                           capture_output=True, timeout=30)
+            trs = [_transcript([_user(f"세션 {n} 작업"), _edit(f"{n}.py")])
+                   for n in ("A", "B")]
+            try:
+                barrier = multiprocessing.Barrier(2)
+                procs = [multiprocessing.Process(
+                    target=_race_worker, args=(barrier, root, trs[i], i))
+                    for i in (0, 1)]
+                for pr in procs:
+                    pr.start()
+                for pr in procs:
+                    pr.join(60)
+            finally:
+                for t in trs:
+                    os.unlink(t)
+            with open(os.path.join(root, ".hi-vibe", "state",
+                                   "handover-written.json"), encoding="utf-8") as f:
+                marks = json.load(f)
+        self.assertEqual(sorted(marks), ["race-0", "race-1"],
+                         "동시에 끝났더니 한쪽 표식이 사라졌다: %s" % marks)
+
+    def test_marker_is_written_inside_the_lock(self):
+        """표식 쓰기가 락 블록 **안**에 있는가 (구조로 고정).
+
+        타이밍 테스트가 못 잡는 회귀를 여기서 잡는다 — 누군가
+        `note_handover_written`을 락 밖으로 옮기면 즉시 실패한다."""
+        for name in ("session_end.py", "pre_compact.py"):
+            with open(os.path.join(HOOKS, name), encoding="utf-8") as f:
+                src = f.read()
+            after_lock = src.split("with _common.file_lock(")[1]
+            block = after_lock.split("\n\n")[0]     # 락 with-블록
+            self.assertIn("note_handover_written", block,
+                          f"{name}: 표식 쓰기가 락 밖에 있다 — 동시에 끝나는 "
+                          f"다른 세션이 이 세션의 표식을 덮어쓴다")
 
 
 class SharedFormatTest(unittest.TestCase):

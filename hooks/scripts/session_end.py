@@ -53,8 +53,6 @@ def main(payload):
     body, active, sig = _common.handover_body(cwd, transcript, git_timeout=0.3)
     if not active:
         return  # 빈 세션 — 남길 게 없으면 조용히 넘어간다
-    if _common.handover_already_written(cwd, sid, sig):
-        return  # 방금 compact이 똑같은 내용을 남겼다
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     reason = payload.get("reason", "other")
@@ -63,11 +61,17 @@ def main(payload):
     lines += body
     lines += ["", f"⚠️ 자동 생성({label}) — 다음 세션에서 이 항목을 다듬어 주세요."]
 
+    # **확인 → 기록 → 표식**을 한 락 안에서 한다. 표식 파일은 읽고-고치고-쓰는
+    # 구조라, 락 밖에 두면 두 세션이 동시에 끝날 때 한쪽 표식이 통째로 덮여
+    # 사라진다(그러면 다음 종료에서 중복 항목이 생긴다). 확인만 락 밖에 둬도
+    # 같은 문제가 난다 — 둘 다 "아직 없다"를 보고 둘 다 쓴다.
     handover = os.path.join(cwd, "handover.md")
     with _common.file_lock(handover):
+        if _common.handover_already_written(cwd, sid, sig):
+            return  # 방금 compact이 똑같은 내용을 남겼다
         _common.prepend_entry(handover, "\n".join(lines))
         _common.rotate(handover)
-    _common.note_handover_written(cwd, sid, sig)
+        _common.note_handover_written(cwd, sid, sig)
 
 
 if __name__ == "__main__":

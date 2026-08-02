@@ -33,11 +33,13 @@ def main(payload):
         lines.append("- (트랜스크립트에서 추출된 내용 없음)")
     lines += ["", f"⚠️ 자동 생성({trigger} compact) — 세션이 이어지면 이 항목을 다듬어 주세요."]
 
+    # 표식도 같은 락 안에서 — 락 밖에 두면 동시에 끝나는 다른 세션이
+    # 읽고-고치고-쓰는 사이에 이 세션의 표식을 덮어쓴다.
     handover = os.path.join(cwd, "handover.md")
     with _common.file_lock(handover):
         _common.prepend_entry(handover, "\n".join(lines))
         _common.rotate(handover)
-    _common.note_handover_written(cwd, payload.get("session_id", ""), sig)
+        _common.note_handover_written(cwd, payload.get("session_id", ""), sig)
 
 
 if __name__ == "__main__":

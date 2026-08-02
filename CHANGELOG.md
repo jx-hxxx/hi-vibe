@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.32.2] - 2026-08-02
+<!-- show:ko **auto-compact 뒤 Bash로만 작업한 구간이 여전히 사라지고 있었어요.** 어제 "Bash 수정도 서명으로 해결했다"고 적었는데 사실이 아니었습니다 — 서명에는 요청·Write/Edit 파일·테스트 결과만 들어 있었고 Bash는 빠져 있었어요. 새 사용자 메시지 없이 Claude가 같은 턴에서 Bash로만 파일을 만들면 서명이 그대로라 건너뛰었습니다. 이제 Bash 쓰기 명령을 서명에 넣고, 기록 본문에도 "Bash로 쓴 것(추정)"으로 싣습니다. 그리고 표식 파일을 읽고-고치고-쓰는 구간이 락 밖에 있어서, 두 세션이 정확히 동시에 끝나면 한쪽 표식이 사라질 수 있었어요. -->
+<!-- show:en **Work done only through Bash after an auto-compact was still being dropped.** Yesterday's note claimed the content signature covered Bash edits; it did not — the signature held requests, Write/Edit files and test results, and nothing from Bash. When Claude continued the same turn with only Bash writes, the signature was unchanged and the entry was skipped. Bash write commands are now part of the signature and appear in the record itself. Separately, the marker file's read-modify-write sat outside the lock, so two sessions ending at the same instant could lose one marker. -->
+
+### Fixed
+- **auto-compact 뒤 Bash 전용 작업이 사라지던 것** (2026-08-02) — 서명이 `[prompts, edited, test]`였다. `edited`는 `Write|Edit|MultiEdit`만 모으므로 **Bash로 만든 파일은 어디에도 안 들어간다.** `사용자 요청 → Edit → auto compact → 같은 턴에서 Bash로 파일 생성 → /clear` 흐름에서 서명이 그대로라 통째로 건너뛰었다. `bash_write_commands()`(판정 규칙은 `bash_wrote_files`와 공유)를 서명에 넣었다. **있다/없다 불리언으로는 부족하다** — compact 전에도 Bash를 썼으면 둘 다 참이라 "그 뒤로 새 게 있나"에 답하지 못한다.
+- **기록에 Bash 작업이 안 보이던 것** (2026-08-02) — 서명만 고쳤을 때는 항목이 **생기기는 하나 내용이 compact 때와 똑같았다**(빈 껍데기). 본문에 `- Bash로 쓴 것(추정):`을 추가해 최근 5개를 싣는다. `(추정)`을 붙인 이유는 `_BASH_WRITE_RE`가 대표적인 쓰기 명령만 잡기 때문이다.
+- **표식 파일의 동시 쓰기 경쟁** (2026-08-02) — `handover-written.json`은 읽고-고치고-쓰는 구조인데 `note_handover_written()`이 **락 밖에서** 불렸다. 두 세션이 동시에 끝나면 한쪽 표식이 통째로 덮여 다음 종료에서 중복 항목이 생긴다. **확인 → 기록 → 표식**을 한 `file_lock` 안으로 넣었다(`pre_compact`도 같이).
+- **어제 CHANGELOG의 과장 정정** (2026-08-02) — v0.32.0 항목에 "Bash 수정"을 고친 사례로 적었으나 사실이 아니었다. 그 줄에 정정을 달았다.
+
+### Added
+- **Bash 전용 작업 테스트 + 동시 종료 테스트** (2026-08-02) — 기존 테스트는 "새 파일 Edit · 같은 파일 Edit · 새 사용자 결정"뿐이라 Bash 경로가 없었다. **동시 종료는 타이밍 테스트만으로 부족하다** — 락을 빼고 세 번 돌렸더니 전부 통과했다(프로세스 기동 시간차로 실제로 겹치지 않는다). 그래서 "겹쳐도 살아남는가"(기능)와 **"표식이 락 블록 안에서 쓰이는가"(구조)**를 둘 다 본다. 구조 검사는 락 밖으로 옮기면 즉시 실패하는 것을 확인했다.
+
 ## [0.32.1] - 2026-08-02
 <!-- show:ko **중복 방지 표식이 슬롯 하나뿐이라 다른 세션이 덮어쓰고 있었어요.** 같은 프로젝트에 Claude Code 창을 두 개 띄우면 실제로 납니다. 세션 B가 기록하면 세션 A의 표식이 사라져서, A가 끝날 때 compact이 이미 남긴 내용이 한 번 더 들어갔어요. 이제 세션별로 표식을 둡니다(최근 10개까지). 실제 21MB 트랜스크립트로 네 가지 종료 이유를 다 돌려 확인했습니다. -->
 <!-- show:en **The duplicate-suppression marker was a single slot, so another session overwrote it.** Two Claude Code windows on one project is enough to trigger it: once session B records, session A's marker is gone, and A's ending re-adds what the compact had already written. Markers are now kept per session (the last ten). Verified against a real 21MB transcript across all four end reasons. -->
@@ -18,7 +31,7 @@
 
 ### Fixed
 - **git 저장소에서 빈 세션이 기록되던 것** (2026-08-02) — `handover_body`가 `git_status`를 활동 판정에 넣었다. **git 프로젝트에서는 항상 문자열이 나오므로 모든 빈 세션이 "활동 있음"이 된다.** 활동은 대화에서 나온 것(요청·수정·검증)만으로 판단하고 Git은 부가정보로만 싣는다. **제 테스트는 비-git 임시 폴더에서 돌아 거짓 통과했다** — 사용자 프로젝트는 거의 항상 git 저장소다. 테스트 픽스처를 `git init`으로 바꾸고, git 저장소인지 확인하는 단언을 넣었다.
-- **중복 방지가 compact 이후의 새 작업을 버리던 것** (2026-08-02) — 판정 기준이 `session_id + 수정 파일 **개수**`였다. 개수가 안 느는 경우가 흔하다: 같은 파일 재수정 · Bash 수정 · 파일 없이 결정만 논의 · 테스트만 실행. 그 세션의 새 요청이 통째로 사라졌다. **중복을 막다 진짜 작업을 버리는 쪽이 훨씬 나쁘다.** 이제 본문 내용의 SHA1 서명으로 비교한다 — 요청 한 줄만 늘어도 서명이 달라진다. 실제로 사라졌던 세 경우를 각각 테스트로 고정했다.
+- **중복 방지가 compact 이후의 새 작업을 버리던 것** (2026-08-02) — 판정 기준이 `session_id + 수정 파일 **개수**`였다. 개수가 안 느는 경우가 흔하다: 같은 파일 재수정 · 파일 없이 결정만 논의 · 테스트만 실행. (**이때 "Bash 수정"도 고쳤다고 적었으나 사실이 아니었다** — 서명에 Bash가 없었다. v0.32.2에서 실제로 고쳤다.) 그 세션의 새 요청이 통째로 사라졌다. **중복을 막다 진짜 작업을 버리는 쪽이 훨씬 나쁘다.** 이제 본문 내용의 SHA1 서명으로 비교한다 — 요청 한 줄만 늘어도 서명이 달라진다. 실제로 사라졌던 세 경우를 각각 테스트로 고정했다.
 - **`SessionEnd`에서 Git 조회가 예산을 넘길 수 있던 것** (2026-08-02) — `_run_git` 기본 타임아웃이 3초인데 `SessionEnd`는 **훅 전체가 1.5초 예산을 나눠 쓴다.** 느린 저장소·네트워크 파일시스템에서 handover를 쓰기도 전에 죽을 수 있었다. `git_status(cwd, timeout)`로 호출부가 줄일 수 있게 하고 `session_end.py`는 0.3초를 쓴다. Git은 부가정보라 못 얻어도 기록은 남는다.
 - **랜딩·README에 남은 옛 설명 다섯 곳** (2026-08-02) — `handover.md` 문서 카드(한·영)·명령어 표(한·영)·README auto memory 비교(한·영)가 아직 compact만 말했다. 그리고 랜딩 AI 영역의 `훅이 리뷰를 돌린 뒤`(영문 `after the hook ran the review`)는 **이번에 막으려던 바로 그 주장**이었다.
 

@@ -365,6 +365,36 @@ def bash_wrote_files(path):
     return False
 
 
+def bash_write_commands(path):
+    """Bash로 파일을 썼을 법한 **명령들**의 목록 (판정 규칙은 `bash_wrote_files`와 동일).
+
+    `bash_wrote_files`는 있다/없다만 답한다. 그걸로는 **compact 전후를 가릴 수
+    없다** — compact 전에도 Bash를 썼으면 둘 다 True라 "그 뒤로 새 게 있나"에
+    답하지 못한다. handover 중복 판정에는 목록이 필요하다: 명령이 하나라도
+    늘면 서명이 달라진다.
+
+    (여전히 완전하지 않다 — `_BASH_WRITE_RE`가 대표적인 쓰기 명령을 추정할
+    뿐이다. 다만 "Bash로만 일한 턴이 통째로 사라지는" 것보다는 낫다.)"""
+    out = []
+    for line in tail_lines(path):
+        try:
+            entry = json.loads(line)
+        except Exception:
+            continue
+        content = (entry.get("message") or {}).get("content")
+        if not isinstance(content, list):
+            continue
+        for c in content:
+            if not isinstance(c, dict) or c.get("type") != "tool_use":
+                continue
+            if c.get("name") != "Bash":
+                continue
+            cmd = (c.get("input") or {}).get("command") or ""
+            if _BASH_WRITE_RE.search(_BASH_NOISE_RE.sub("", cmd)):
+                out.append(" ".join(cmd.split())[:200])
+    return out
+
+
 def session_activity(path):
     """(코드 쓰기 tool_use 횟수, 어시스턴트가 남긴 `👋 hi-vibe` 마커 수).
 
@@ -499,6 +529,9 @@ def handover_body(cwd, transcript, git_timeout=3):
     prompts, edited = parse_transcript(transcript) if transcript else ([], [])
     git = git_status(cwd, git_timeout)
     test = last_test_result(transcript) if transcript else None
+    # Bash 쓰기는 `edited`에 안 잡힌다(PostToolUse가 Write/Edit만 보므로).
+    # 기록에도 안 실으면 "Bash로만 일한 구간"은 남아도 빈 껍데기가 된다.
+    bash_cmds = bash_write_commands(transcript) if transcript else []
 
     lines = []
     if git:
@@ -514,9 +547,17 @@ def handover_body(cwd, transcript, git_timeout=3):
         lines += ["  - `%s`" % fp for fp in edited[:15]]
         if len(edited) > 15:
             lines.append("  - …외 %d개" % (len(edited) - 15))
-    active = bool(prompts or edited or test)      # Git은 활동이 아니다
+    if bash_cmds:
+        lines.append("- Bash로 쓴 것(추정):")
+        lines += ["  - `%s`" % c[:100] for c in bash_cmds[-5:]]
+        if len(bash_cmds) > 5:
+            lines.append("  - …외 %d개" % (len(bash_cmds) - 5))
+    # 서명에서 Bash를 빠뜨렸더니 **auto-compact 뒤 같은 턴에서 Bash로만
+    # 작업한 경우**가 통째로 사라졌다 — 새 사용자 메시지가 없으면 prompts도
+    # 그대로여서 "새 게 없다"로 읽혔다.
+    active = bool(prompts or edited or test or bash_cmds)   # Git은 활동이 아니다
     sig = hashlib.sha1(
-        json.dumps([prompts, edited, test], ensure_ascii=False,
+        json.dumps([prompts, edited, test, bash_cmds], ensure_ascii=False,
                    sort_keys=True).encode("utf-8")).hexdigest()
     return lines, active, sig
 
