@@ -70,6 +70,16 @@ BANNED = [
 
     (r"첫\s*`?/hi-vibe:log`?\s*때\s*(생|만들)|CHANGELOG[^.\n|]{0,40}lazil",
      "v0.23.0부터 CHANGELOG.md는 init이 만든다."),
+
+    # 랜딩에서 고친 뒤 README에 그대로 남아 하루에 두 번 걸렸다. 손으로 훑는
+    # 대신 여기 등록한다 — 이 목록이 있는 이유가 정확히 이런 경우다.
+    (r"(이미 있는|원래 있던)\s*좋은 기능[^.\n]{0,30}(연결|불러)"
+     r"|wires? the good features"
+     r"|리뷰 품질[^.\n]{0,30}(`?/code-review`?|기본)[^.\n]{0,20}(더 )?좋아질"
+     r"|[Rr]eview quality[^.\n]{0,40}keep improving",
+     "hi-vibe는 `/code-review`를 호출하지 않는다(저장소에 그런 코드가 없다). "
+     "자기 체크리스트와 `fresh-eyes` 에이전트로 돈다 → 겹치는 건 목적이지 "
+     "구현이 아니다. 로드맵 문장도 방문자용이 아니라 뺐다."),
 ]
 
 
@@ -136,6 +146,10 @@ class NoOverclaimTest(unittest.TestCase):
             "every code write is checked for error-swallowing",
             "CLAUDE.md | 프로젝트 전체 지도 — 개요·요구사항·폴더 구조",
             "CHANGELOG.md는 첫 /hi-vibe:log 때 생깁니다",
+            "이미 있는 좋은 기능을 놓치기 쉬운 순간에 자동으로 연결하고",
+            "it wires the good features you already have into the moments",
+            "리뷰 품질 자체는 앞으로도 기본 /code-review가 더 좋아질 겁니다",
+            "Review quality itself will keep improving in /code-review",
         ]
         for sentence in past:
             caught = any(re.search(p, sentence, re.I) for p, _ in BANNED)
@@ -154,6 +168,8 @@ class NoOverclaimTest(unittest.TestCase):
             "Claude가 Write/Edit로 코드를 쓸 때마다 에러 삼킴·비밀키를 잡고",
             "CLAUDE.md는 코드만 봐서는 모를 것 — 개요·제약·함정·결정 이유·실행 명령",
             "CHANGELOG.md는 init이 만든다.",
+            "같은 목적의 검사를 자기 체크리스트와 자기 에이전트로 돌립니다.",
+            "hi-vibe does not press the built-in /code-review for you.",
         ]
         for sentence in fine:
             hit = [why for p, why in BANNED if re.search(p, sentence, re.I)]

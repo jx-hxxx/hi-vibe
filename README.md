@@ -192,7 +192,7 @@ Both are good tools, but they cover different ground.
 |---|---|---|
 | `/init` (writes CLAUDE.md) | `init` | **Overlaps.** hi-vibe also creates `handover.md` and `CHANGELOG.md`, and turns the hooks on |
 | auto memory | `handover.md` | Built-in memory is **Claude deciding what to keep**, stored under your Claude config. handover is **a script writing a fixed set** into the project right before compaction — readable by you, shareable with your team if you want |
-| `/code-review` | `review` | **The review itself overlaps.** What differs is when it runs — see below |
+| `/code-review` | `review` | **The purpose overlaps; the implementation does not** — hi-vibe never calls `/code-review`; it runs its own checklist and the `fresh-eyes` agent. See below |
 | `/verify` | the run-verification checklist item | Overlaps. hi-vibe's side is closer to a rule: "don't claim it works because the tests passed" |
 | `/doctor` | `/hi-vibe:doctor` | **Same name, different subject.** The built-in checks your CLI install and settings; this one checks hi-vibe's own hooks and scanner |
 | (none) | instant swallowed-error / secret detection | You can write the hooks yourself, but it isn't built in |
@@ -204,16 +204,23 @@ Both are good tools, but they cover different ground.
 > `/verify` and `/code-review` **run only when you invoke them.**
 > Before v2.1.215, Claude could also run them on its own.
 
-Auto-invocation existed and was removed. hi-vibe's Stop hook **holds the turn open and demands a review when changes
-nobody reviewed are still sitting in the tree** — and won't block twice on the
-same change. (The machine guarantees *when* a review is demanded; Claude does
-the reviewing.) Catching what you forgot to run is the
-whole point of this plugin.
+That automatic run is the thing that went away. With hi-vibe, **once a feature
+is finished the conversation does not end until it has been through a review.**
+Code that has already been reviewed is not examined again. Catching what you
+forgot to run is the whole point of this plugin.
 
-**So the accurate framing is this:** not "it adds what Claude Code lacks," but
-**it wires the good features you already have into the moments they're easiest
-to skip, and leaves the result in your project as a record.** Review quality
-itself will keep improving in `/code-review` — that's the right place for it.
+**The second difference is who does the looking.** The review has two layers.
+First a checklist sweeps for **what got skipped** — errors swallowed in silence,
+code never actually run, docs left stale — and whatever it finds is fixed on the
+spot and re-checked. Then **a subagent that never wrote this code**
+(`fresh-eyes`) judges **how well it was built**: over-engineering, simpler
+routes, hidden coupling.
+
+**hi-vibe does not press the built-in `/code-review` for you.** Nothing in this
+repository calls it — the same purpose is served by **hi-vibe's own checklist and
+its own agent**, because a Claude that has been in the conversation all along
+does not properly doubt the code it just wrote. Holding the turn is where
+hi-vibe's part ends; reading the code and judging is Claude's.
 
 ---
 

@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.31.2] - 2026-08-02
+<!-- show:ko **랜딩에서 고친 사실 오류가 README에 그대로 남아 있었어요.** v0.29.7에서 "hi-vibe는 기본 /code-review를 대신 불러준다"가 사실이 아니라고 고쳤는데, 같은 말이 README 한·영 FAQ에 남아 있었습니다. 하루 만에 같은 문장에 두 번 걸린 셈이라, 이번엔 사람 눈에 다시 맡기지 않고 재발 방지 목록에 등록했습니다. 이제 이 문장이 어느 문서에든 다시 들어오면 테스트가 실패합니다. README FAQ도 랜딩과 같은 내용으로 맞췄어요 — 리뷰가 두 겹이라는 것과, 딴 클로드를 새로 부르는 이유까지. -->
+<!-- show:en **A factual error fixed on the landing page was still sitting in the README.** v0.29.7 corrected the claim that hi-vibe "wires the built-in features for you"; the same sentence survived in both README FAQs. Getting caught twice in one day by the same sentence is a sign not to rely on reading carefully, so it is now in the regression list — the test fails if it reappears in any document. The README FAQ now matches the landing, including the two layers of the review and why a fresh subagent is brought in. -->
+
+### Fixed
+- **README FAQ에 남아 있던 사실 오류** (2026-08-02) — v0.29.7이 랜딩에서만 고쳤다. README 한·영에 `이미 있는 좋은 기능을 놓치기 쉬운 순간에 자동으로 연결한다`·`리뷰 품질은 앞으로도 기본 /code-review가 더 좋아질 것`이 그대로 있었다. **저장소 어디에도 `/code-review`를 호출하는 코드가 없다.** 겹치는 표의 해당 행도 `리뷰 내용은 겹친다` → `목적이 겹치고 구현은 다르다`로 고쳤다.
+- **README FAQ를 랜딩과 같은 내용으로** (2026-08-02) — `차이 둘 — 누가 보느냐`(체크리스트=빠뜨림 / `fresh-eyes`=판단)와 새로 부르는 이유(`같은 대화를 이어온 Claude는 자기가 쓴 코드를 제대로 의심하지 않는다`)가 README에는 없었다.
+
+### Added
+- **이 문장을 `test_no_overclaim` 금지 목록에 등록** (2026-08-02) — 하루에 같은 주장으로 두 번 걸렸다(랜딩 → README). **이 목록이 있는 이유가 정확히 이런 경우다** — 상상으로 만든 금지어가 아니라 실제로 있었고 사실이 아니어서 고친 문장만 넣는다. 지운 문장 4개로 실제로 잡히는지 확인했고, 지금 쓰는 표현이 오탐으로 걸리지 않는 것도 같이 고정했다.
+
 ## [0.31.1] - 2026-08-02
 <!-- show:ko **handover의 "최근 검증" 줄에 돌린 적 없는 명령이 적히던 것을 고쳤어요.** 명령을 이어 붙여 치면(예: 문서 고치는 파이썬 다음 줄에 테스트) 판정은 뒤쪽 테스트 명령을 보고 하면서 기록은 맨 앞 80자를 적었습니다. 그래서 "이 명령으로 검증했다"고 남는데 실제로는 그 명령을 돌린 적이 없었어요. 결과("통과")는 맞아서 딱 봐서는 안 이상한 게 더 나쁩니다 — 다음 세션이 그걸 믿으니까요. 이제 실제로 돌린 구간만 잘라서 적습니다. -->
 <!-- show:en **Fixed the "last verified" line in handover naming a command that was never run.** When commands are chained (say, a Python heredoc that edits docs, then a test run on the next line), the match was found in the later test command while the recorded text was the first 80 characters of the whole thing. The record claimed a verification command that had not been executed — and since the result ("passed") was correct, nothing looked wrong. The segment that actually ran is now the one recorded. -->
