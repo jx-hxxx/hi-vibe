@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.32.3] - 2026-08-03
+<!-- show:ko **handover가 비밀키 유출 통로가 될 수 있었어요. 오늘 제가 만든 결함입니다.** 몇 시간 전 "Bash로 쓴 것"을 기록에 싣게 했는데, 명령 원문을 그대로 넣었습니다. `printf 'API_KEY = "…"' > cfg.py` 하나면 트랜스크립트에만 있던 키가 프로젝트 파일로 복제되고, 다음 세션에 다시 주입되고, 아카이브에 오래 남습니다. 게다가 handover는 `.md`라 `check`의 비밀키 스캔 대상도 아니었어요. 정규식으로 가리는 건 새 패턴을 놓치니, **원문을 아예 저장하지 않도록** 고쳤습니다. 이제 대상 파일과 작업 종류만 남아요. 사용자 요청은 글 자체가 내용이라 안 남길 수 없어서 훅과 같은 규칙으로 가리고, `check`가 handover도 훑게 했습니다. -->
+<!-- show:en **handover could have leaked secrets — a defect introduced earlier today.** When "written via Bash" was added to the record a few hours ago, it stored the raw command. One `printf 'API_KEY = "…"' > cfg.py` copies a key that lived only in the transcript into a project file, re-injects it into the next session, and preserves it in the archive. handover is a `.md` file, so the secret scan did not cover it either. Masking with regexes misses new patterns, so the raw text is simply never stored now: only the target file and the kind of write. User requests are content by nature, so those are masked with the same rule the hook uses, and `check` now scans handover as well. -->
+
+### Security
+- **Bash 명령 원문이 handover로 복제되던 것** (2026-08-03) — `bash_write_commands()`가 원문을 200자까지 보관하고 100자를 기록에 실었다. `printf 'API_KEY = "…"' > cfg.py` 같은 명령이 그대로 남아, **트랜스크립트에만 있던 값이 프로젝트 루트 파일·다음 세션 컨텍스트·`handover-archive.md`로 퍼진다.** `.gitignore` 덕에 즉시 커밋되지는 않지만, 공유 옵션을 켜면 커밋될 수 있다. **비밀키 안전장치를 내세우는 도구에서 날 일이 아니다.**
+  - 정규식으로 가리는 방식은 **새 패턴을 놓친다.** 그래서 `bash_write_summary()`로 바꿔 **원문을 아예 갖지 않는다** — 보여주는 것은 `` `generated.py` — redirect ``처럼 대상과 종류뿐이고, 변화 감지에 필요한 것은 SHA-256 지문이면 충분하다. 표식 파일에도 원문이 안 남는다.
+  - 대상 후보 토큰에 따옴표·`=`·공백·`$`가 있으면 **파일 이름이 아니라 내용일 수 있으므로 버린다**(`_SAFE_PATH_RE`). 그게 값이 새는 경로다.
+- **사용자 요청·테스트 명령의 비밀키 가림** (2026-08-03) — 이쪽은 글 자체가 내용이라 안 남길 수가 없다. `safe_text()`가 훅의 `iter_secrets`(SSOT)로 판정해 `[비밀키 가림]`으로 바꾼다. Bash처럼 구조적으로 막는 게 아니라 **차선책**이라는 점은 분명히 해둔다.
+- **`check`가 handover를 안 보던 것** (2026-08-03) — 비밀키 스캔 대상 확장자에 `.md`가 없어 **여기 복제된 키는 전체 스캔에도 안 걸렸다.** handover는 사람이 쓴 글이 아니라 기계가 트랜스크립트에서 뽑아 적는 파일이라, 뽑는 쪽이 실수하면 여기로 온다. `handover.md`·`handover-archive.md`는 확장자와 무관하게 훑는다(일반 `.md`는 그대로 제외 — 예시 코드가 많아 시끄러워진다).
+
+### Added
+- **유출 회귀 테스트 3개** (2026-08-03) — ①Bash 명령 원문이 handover·표식 어디에도 안 남고 **대상 파일 이름은 남는지**(안 남기면 기록이 아니라 침묵이다) ②요청 속 비밀키가 가려지고 나머지 문장은 살아남는지 ③`check`가 handover는 잡고 일반 `.md`는 안 잡는지.
+
 ## [0.32.2] - 2026-08-02
 <!-- show:ko **auto-compact 뒤 Bash로만 작업한 구간이 여전히 사라지고 있었어요.** 어제 "Bash 수정도 서명으로 해결했다"고 적었는데 사실이 아니었습니다 — 서명에는 요청·Write/Edit 파일·테스트 결과만 들어 있었고 Bash는 빠져 있었어요. 새 사용자 메시지 없이 Claude가 같은 턴에서 Bash로만 파일을 만들면 서명이 그대로라 건너뛰었습니다. 이제 Bash 쓰기 명령을 서명에 넣고, 기록 본문에도 "Bash로 쓴 것(추정)"으로 싣습니다. 그리고 표식 파일을 읽고-고치고-쓰는 구간이 락 밖에 있어서, 두 세션이 정확히 동시에 끝나면 한쪽 표식이 사라질 수 있었어요. -->
 <!-- show:en **Work done only through Bash after an auto-compact was still being dropped.** Yesterday's note claimed the content signature covered Bash edits; it did not — the signature held requests, Write/Edit files and test results, and nothing from Bash. When Claude continued the same turn with only Bash writes, the signature was unchanged and the entry was skipped. Bash write commands are now part of the signature and appear in the record itself. Separately, the marker file's read-modify-write sat outside the lock, so two sessions ending at the same instant could lose one marker. -->

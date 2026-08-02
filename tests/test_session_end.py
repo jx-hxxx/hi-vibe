@@ -226,6 +226,67 @@ class SessionEndHandoverTest(unittest.TestCase):
         self.assertIn("SessionEnd", _common.read_heartbeat(self.root))
 
 
+# 비밀키 탐지기가 실제로 잡는 모양의 가짜 키. 저장소 스캔에도 걸리므로 마커를 단다.
+FAKE_KEY = "sk-proj-abcdefghijklmnopqrstuvwxyz1234567890"  # hi-vibe: allow-secret
+
+
+class SecretLeakTest(unittest.TestCase):
+    """handover가 비밀키 유출 통로가 되면 안 된다.
+
+    처음 만들 때 Bash 명령 **원문**을 200자까지 들고 있다가 100자를 실었다.
+    `printf 'API_KEY = "…"' > cfg.py` 하나면 트랜스크립트에만 있던 키가
+    프로젝트 루트 파일로 복제되고, 다음 세션 컨텍스트에 다시 주입되고,
+    아카이브에 장기 보존된다. 비밀키 안전장치를 내세우는 도구에서 날 일이
+    아니다. 정규식으로 가리는 건 새 패턴을 놓치므로 **원문을 아예 갖지
+    않는 쪽**으로 고쳤다 — 남기는 것은 대상 파일과 작업 종류뿐이다."""
+
+    def setUp(self):
+        self._dir = tempfile.TemporaryDirectory(prefix="vibe-leak-")
+        self.root = self._dir.name
+        os.makedirs(os.path.join(self.root, ".hi-vibe"))
+        subprocess.run(["git", "init", "-q"], cwd=self.root,
+                       capture_output=True, timeout=30)
+
+    def tearDown(self):
+        self._dir.cleanup()
+
+    def _run_end(self, entries):
+        tr = _transcript(entries)
+        try:
+            _run(SESSION_END, {"cwd": self.root, "transcript_path": tr,
+                               "reason": "clear", "session_id": "leak"})
+        finally:
+            os.unlink(tr)
+        out = {}
+        for rel in ("handover.md", os.path.join(".hi-vibe", "state",
+                                                "handover-written.json")):
+            path = os.path.join(self.root, rel)
+            if os.path.isfile(path):
+                with open(path, encoding="utf-8") as f:
+                    out[rel] = f.read()
+        return out
+
+    def test_bash_command_body_never_reaches_handover(self):
+        files = self._run_end([
+            _user("설정 파일 만들어줘"),
+            _bash("printf 'API_KEY = \"%s\"' > generated.py" % FAKE_KEY)])
+        self.assertTrue(files.get("handover.md"), "기록 자체는 남아야 한다")
+        for rel, text in files.items():
+            self.assertNotIn(FAKE_KEY, text, f"{rel}에 비밀키가 복제됐다")
+            self.assertNotIn("printf", text, f"{rel}에 명령 원문이 남았다")
+        # 무엇을 했는지는 남아야 한다 — 안 남기면 기록이 아니라 침묵이다
+        self.assertIn("generated.py", files["handover.md"])
+        self.assertIn("redirect", files["handover.md"])
+
+    def test_secrets_in_user_requests_are_masked(self):
+        """요청 원문은 안 남길 수 없으므로 가린다(훅과 같은 판정 규칙)."""
+        files = self._run_end([_user("내 키는 %s 야, 이걸로 설정해줘" % FAKE_KEY),
+                               _edit("cfg.py")])
+        self.assertNotIn(FAKE_KEY, files["handover.md"])
+        self.assertIn("비밀키 가림", files["handover.md"])
+        self.assertIn("이걸로 설정해줘", files["handover.md"])
+
+
 class ConcurrentEndTest(unittest.TestCase):
     """두 세션이 **정확히 동시에** 끝나도 표식이 유실되면 안 된다.
 

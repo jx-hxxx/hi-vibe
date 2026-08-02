@@ -96,6 +96,30 @@ class BashWriteDetectionTest(unittest.TestCase):
         self.assertFalse(_common.bash_wrote_files("/nonexistent/transcript.jsonl"))
 
 
+class HandoverScannedTest(unittest.TestCase):
+    """`check`가 handover도 훑는가.
+
+    handover는 `.md`라 원래 비밀키 스캔 대상이 아니었다. 그런데 이 파일은
+    사람이 쓴 글이 아니라 **기계가 트랜스크립트에서 뽑아 적은 것**이라,
+    뽑는 쪽이 실수하면 키가 여기로 복제된다(v0.32.2에서 실제로 그랬다).
+    마지막 그물이 마지막이려면 여기도 봐야 한다."""
+
+    def test_handover_is_scanned_even_though_it_is_markdown(self):
+        finder, exts = audit.load_secret_finder()
+        self.assertNotIn(".md", exts, "전제가 바뀌었다 — 이 테스트를 다시 보라")
+        with tempfile.TemporaryDirectory(prefix="vibe-hs-") as root:
+            paths = []
+            for name in ("handover.md", "handover-archive.md", "README.md"):
+                p = os.path.join(root, name)
+                with open(p, "w", encoding="utf-8") as f:
+                    f.write('API_KEY = "%s"\n' % FAKE_KEY)
+                paths.append(p)
+            found = {f["file"] for f in
+                     audit.secret_report(root, paths, finder, exts)}
+        self.assertEqual(found, {"handover.md", "handover-archive.md"},
+                         "handover는 잡고 일반 문서는 안 잡아야 한다")
+
+
 class SecretScanTest(unittest.TestCase):
     """`check`의 저장소 전체 스캔이 비밀키를 잡는다 — 훅이 못 본 경로의 유일한 그물."""
 

@@ -658,6 +658,10 @@ def swallow_report(root, code_files, finder):
     return found
 
 
+# 기계가 트랜스크립트에서 뽑아 적는 문서 — 확장자와 무관하게 비밀키를 훑는다.
+SCANNED_DOCS = {"handover.md", "handover-archive.md"}
+
+
 def secret_report(root, text_files, finder, exts):
     """저장소 전체의 하드코딩 비밀키.
 
@@ -667,7 +671,14 @@ def secret_report(root, text_files, finder, exts):
     found = []
     for path in text_files:
         name = os.path.basename(path)
-        if not path.lower().endswith(tuple(exts)) or name.startswith(".env"):
+        # handover는 확장자가 `.md`라 원래 스캔 대상이 아니었다. 그런데 이 파일은
+        # 사람이 쓴 글이 아니라 **트랜스크립트에서 기계가 뽑아 적은 것**이라,
+        # 뽑는 쪽이 실수하면 키가 여기로 복제된다(실제로 한 번 그랬다).
+        # 마지막 그물이 마지막이려면 여기도 봐야 한다.
+        if name not in SCANNED_DOCS and (
+                not path.lower().endswith(tuple(exts)) or name.startswith(".env")):
+            continue
+        if name.startswith(".env"):
             continue
         text = read_text(path)
         if not text:
