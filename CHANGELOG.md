@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.29.2] - 2026-08-02
+<!-- show:ko **"이런 불편을 겪고 있다면" 섹션을 대응표로 바꿨어요.** 원래 왼쪽 불편 4개와 오른쪽 해결 4개가 순서대로 짝이었는데, 회색 상자 두 개로 갈라놔서 그게 안 보였습니다. 같은 줄에 붙이니 "이 문제는 이게 푼다"가 바로 읽혀요. 덤으로 행 높이가 저절로 맞아서, 글자 수를 세어가며 맞추던 열 높이 문제가 구조적으로 사라졌습니다. 그리고 "내 프로젝트에서는 무엇을 도와줄까요?"에는 1·2·3 단계를 붙였어요 — 링크를 넣고, 질문을 복사하고, 쓰는 AI에 붙여넣는 흐름이 글로만 적혀 있어서 처음 온 사람은 한 번에 안 읽혔거든요. 두 섹션 설명문에는 형광펜을 한 구절씩 그었습니다. -->
+<!-- show:en **The "if any of this sounds familiar" section is now a table of pairs.** The four problems on the left and the four answers on the right were always in matching order, but splitting them into two grey boxes hid that. On one row, "this problem is solved by this" reads immediately — and row heights now match on their own, so the column-balancing problem is gone structurally rather than by counting characters. The preview section gained numbered steps: drop in the link, copy the question, paste it into your AI. That sequence was previously prose only. Both section intros got one highlighted phrase. -->
+
+### Changed
+- **불편↔해결을 대응표로** (2026-08-02) — `.fitgrid`/`.fitcard` 2열 카드를 `.pairs` 대응표로 교체. 좌우 항목이 **원래 1:1로 짝**인데 상자 두 개로 갈라져 짝이 안 보였다. 같은 행에 붙이면 대응이 읽히고, **행 높이가 자동으로 맞아** 0.29.1에서 글자 수를 세어 맞췄던 열 높이 문제가 구조적으로 사라진다. 좁은 화면에서는 세로로 떨어지고 화살표가 90° 돌아간다. 한·영 모두.
+- **미리보기 섹션에 1·2·3 단계** (2026-08-02) — "링크 넣기 → 질문 복사 → 쓰는 AI에 붙여넣기"가 글로만 적혀 있어 흐름이 한 번에 안 읽혔다. `.steps`로 순서를 드러냈다. **번호는 진짜 순서가 있을 때만 쓴다** — 여기는 링크를 넣어야 질문에 반영되므로 순서가 실제 의미를 갖는다. 폼 라벨은 단계 제목과 겹쳐 `sr-only`로 내렸다(스크린리더에는 남는다).
+- **두 섹션 설명문에 형광펜 한 구절씩** (2026-08-02) — 히어로에 이미 있는 `b.hlx`를 재사용(새 CSS 없음). 카드 소제목까지 그으면 한 화면에 노란색이 네 군데가 돼 오히려 안 보이므로 설명문만.
+
+### Fixed
+- **대응표가 행 단위로 떠오르며 겹치던 것** (2026-08-02) — 스크롤 등장 애니메이션의 `GROUP_SEL`에 `.fitgrid`가 있었다. 그대로 `.pairs`로 바꾸면 테두리 안의 행이 각자 밀려 올라와 서로 겹치고 `overflow:hidden`에 잘린다. 표는 **한 덩어리**로 떠오르게 뒀다.
+
 ## [0.29.1] - 2026-08-01
 <!-- show:ko **기능 카드 세 열의 높이가 안 맞던 것을 고쳤어요.** 가운데 열만 아래로 길게 내려가고 좌우는 비어 보였는데, 원인은 레이아웃이 아니라 **카드 하나가 너무 길어서**였습니다. 짧은 카드는 95자인데 긴 건 213자였어요. 한 카드에 네 가지를 설명하고 있어서, 다른 데 이미 적힌 것들을 덜어냈습니다. 이제 세 열이 288·330·330자로 비슷해요. 히어로 문장과 제목 두 개의 줄바꿈도 같이 다듬었습니다. -->
 <!-- show:en **The three feature columns no longer end at wildly different heights.** The middle one ran far past the others, and the cause wasn't the layout — one card was simply too long (213 characters against 95 for the short ones). It was explaining four separate things, so the parts already covered elsewhere were cut. The columns now sit at comparable lengths. Hero and two headings had their line breaks tidied at the same time. -->
