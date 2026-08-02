@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.29.4] - 2026-08-02
+<!-- show:ko **"켜지는 방식이 3단이에요" 설명이 글자 벽처럼 읽히던 것을 고쳤어요.** 세 항목이 줄바꿈으로만 나뉘어 있어서, 앞 항목이 길어 넘어간 줄이 다음 항목의 아이콘 자리와 똑같은 왼쪽 끝에서 시작했습니다. 그래서 어디가 새 항목이고 어디가 이어지는 줄인지 눈으로 구분이 안 됐어요. 넘어간 줄을 아이콘 너비만큼 안쪽으로 밀어 넣어, 맨 왼쪽에서 시작하는 건 항상 새 항목이 되게 했습니다. 그리고 "내가 치는 것"을 "평소에 내가 치는 것"으로 고쳤어요 — 아래 명령어 표에는 직접 치는 게 다섯 개인데 여기는 둘이라 어긋나 보였거든요. "침습적"이라는 말도 뜻이 드러나게 풀었습니다. -->
+<!-- show:en **The "three tiers" note no longer reads as a wall of text.** The three items were separated by line breaks alone, so a wrapped line began at exactly the same left edge as the next item's icon — there was no way to see where one item ended and the next began. Wrapped lines are now indented past the icon, so anything starting at the far left is a new item. "What you type" became "What you type day to day", since the command table below lists five commands you type and this note named two. "Invasive" was replaced with what it actually means. -->
+
+### Fixed
+- **3단 설명이 글자 벽으로 읽히던 것** (2026-08-02) — 증상: 여섯 줄이 한 덩어리로 보이고 항목 경계가 안 보인다. 원인: 항목 구분이 `<br>` 하나뿐이라 **넘어간 줄이 다음 항목의 아이콘 자리와 같은 왼쪽 끝에서 시작**했다. `.tiers`/`.tier` 그리드로 행잉 인덴트를 줘서 맨 왼쪽 시작 = 새 항목이 되게 했다. 글은 그대로. 한·영 모두.
+
+### Changed
+- **"내가 치는 것" → "평소에 내가 치는 것"** (2026-08-02) — 직접 치는 명령은 SSOT(`COMMAND_MODE`) 기준 다섯 개(welcome·init·doctor·check·gate)인데 이 문장은 둘(check·gate)만 든다. 틀린 말은 아니지만(설치 후 평소에 치는 건 check 하나) 바로 아래 명령어 표와 나란히 보면 어긋나 보인다. 다섯 개를 나열하면 "칠 게 많네"로 읽혀 손해라, **범위를 좁히는 한 단어**를 붙였다.
+- **"침습적"을 쉬운 말로** (2026-08-02) — 입문자 대상 문장의 용어. `gate`가 왜 한 번만인지가 드러나게 "프로젝트 설정 파일에 손을 대니"로 풀었다.
+
 ## [0.29.3] - 2026-08-02
 <!-- show:ko **방금 만든 대응표에 엉뚱한 스타일이 얹혀 있던 것을 고쳤어요.** 행마다 빨간 세로 막대와 흰 카드 테두리가 생겨 표가 아니라 부서진 목록처럼 보였습니다. 원인은 이름이었어요 — 행에 붙인 `prow`라는 이름을 페이지 아래쪽 "AI에게 코딩을 맡기면" 섹션이 이미 쓰고 있었고, 그쪽 스타일이 그대로 딸려 왔습니다. 이름을 바꾸고, 새 이름은 전부 표 안쪽으로 묶었어요. 한 페이지에 섹션이 열여덟 개라 또 겪을 일이라, 그 이유를 코드에 적어 뒀습니다. -->
 <!-- show:en **The new comparison table was picking up styling that didn't belong to it.** Every row had a red left bar and a white card border, so it read as a broken list rather than a table. The cause was a name: the row class `prow` was already in use by a section further down the page, and that section's styling came along with it. The class is renamed, and every new name is now scoped inside the table. With eighteen sections on one page this will come up again, so the reason is written into the code. -->
