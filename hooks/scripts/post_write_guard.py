@@ -54,7 +54,7 @@ SECRET_PATTERNS = [
     # 안 걸린다. 넓히되 아무 데나 넓히지 않는 지점이 여기다.
     ("하드코딩된 시크릿 할당", re.compile(
         r"""(?i)\b[A-Za-z0-9_.\-]*(?:api[_-]?key|secret[_-]?key|private[_-]?key|secret|token|password|passwd|passphrase)"""
-        r"""["']?\s*[:=]\s*["'][A-Za-z0-9+/_\-]{16,}["']""")),
+        r"""["']?\s*[:=]\s*["'](?P<value>[A-Za-z0-9+/_\-]{16,})["']""")),
 ]
 # 자리표시자/환경변수 참조가 있는 줄은 진짜 키가 아니다.
 # `<...>`는 `<YOUR_KEY>` 같은 자리표시자만 억제한다 — 예전엔 맨 `<` 하나라
@@ -111,12 +111,16 @@ def iter_secret_spans(text):
     for label, rx in SECRET_PATTERNS:
         for m in rx.finditer(text):
             # allow 표시는 줄 어디에나 달 수 있으므로 줄 전체에서 찾는다.
-            # 그러나 **자리표시자 판정은 매치 안에서만** 한다 — 줄 전체로
-            # 보면 `example = "demo"; API_KEY = "진짜키"` 한 줄에 `example`이
-            # 있다는 이유로 **진짜 키가 통과했다.** 오탐을 줄이려다 놓치면
-            # 그건 개선이 아니라 구멍이다.
+            # 그러나 **자리표시자 판정은 값에만** 한다. 범위를 두 번 좁혔다:
+            #   줄 전체 → `example = "demo"; API_KEY = "진짜키"`가 통과했다
+            #   매치 전체 → 매치에는 **변수명도 들어간다.** 그래서
+            #     `EXAMPLE_API_KEY`·`YOURCOMPANY_API_KEY`·`DUMMY_SERVICE_TOKEN`
+            #     처럼 이름에 그 단어가 든 것들이 통과했다. 회사 이름이
+            #     `YourCompany`인 곳에서는 멀쩡한 키가 전부 샌다.
+            # 자리표시자인지 아닌지는 **값이 정한다** — 이름은 상관없다.
+            checked = m.groupdict().get("value") or m.group(0)
             if ALLOW_SECRET_MARK in _match_region(text, m) \
-                    or SECRET_FALSE_ALARM_RE.search(m.group(0)):
+                    or SECRET_FALSE_ALARM_RE.search(checked):
                 continue
             spans.append((label, m.start(), m.end()))
     return spans

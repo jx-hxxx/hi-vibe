@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **5 real Claude Code hooks · 199 regression
+It's not just a prompt pack. With **5 real Claude Code hooks · 201 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -227,7 +227,7 @@ hi-vibe's part ends; reading the code and judging is Claude's.
 
 ## Why is it trustworthy?
 
-### 199 automated tests
+### 201 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,

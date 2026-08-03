@@ -104,10 +104,35 @@ class SecretDetectionScopeTest(unittest.TestCase):
                                 "같은 줄의 단어 때문에 진짜 키를 놓쳤다")
 
     def test_placeholder_inside_the_value_still_suppresses(self):
+        """자리표시자인지는 **값이** 정한다."""
         for value in ("your_key_here_placeholder", "example_value_1234567",
-                      "changeme_changeme_1234"):
+                      "changeme_changeme_1234", "dummy_token_abcdefghij",
+                      "xxxx_xxxx_xxxx_xxxx"):
             with self.subTest(value):
                 self.assertFalse(self._found('API_KEY = "%s"' % value))
+
+    def test_placeholder_word_in_the_variable_name_does_not_suppress(self):
+        """이름에 `example`·`your`·`dummy`가 들어도 값이 진짜면 잡는다.
+
+        자리표시자 판정 범위를 두 번 좁혔다. 처음엔 **줄 전체**라
+        `example = "demo"; API_KEY = "진짜키"`가 통과했고, 그다음 **매치
+        전체**로 좁혔더니 매치에는 변수명도 들어가서 `EXAMPLE_API_KEY`가
+        통과했다. 회사 이름이 `YourCompany`인 곳에서는 멀쩡한 키가 전부
+        샌다. 이름은 자리표시자 여부와 아무 상관이 없다."""
+        for name in ("EXAMPLE_API_KEY", "YOURCOMPANY_API_KEY",
+                     "DUMMY_SERVICE_TOKEN", "PLACEHOLDER_SECRET",
+                     "CHANGEME_TOKEN"):
+            with self.subTest(name):
+                self.assertTrue(self._found('%s = "%s"' % (name, self.VALUE)),
+                                "변수명 때문에 진짜 값을 놓쳤다")
+
+    def test_env_references_are_still_ignored(self):
+        """값 자리가 환경변수 참조면 키가 아니다 — 좁히면서도 유지된다."""
+        for text in ('API_KEY = os.environ["OPENAI_API_KEY_LONG_NAME"]',
+                     'API_KEY = "${SOME_PLACEHOLDER_VALUE}"',
+                     'API_KEY = process.env.MY_VERY_LONG_KEY_NAME'):
+            with self.subTest(text[:34]):
+                self.assertFalse(self._found(text))
 
 
 class CommonTest(TempProject):

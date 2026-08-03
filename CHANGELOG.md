@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.33.2] - 2026-08-03
+<!-- show:ko **변수 이름에 `example`·`your`·`dummy`가 들어 있으면 진짜 키를 놓치고 있었어요.** 자리표시자인지 판정하는 범위를 어제 "줄 전체"에서 "매치 전체"로 좁혔는데, 매치에는 값뿐 아니라 **변수 이름도 들어갑니다.** 그래서 `EXAMPLE_API_KEY`·`YOURCOMPANY_API_KEY`·`DUMMY_SERVICE_TOKEN`이 전부 통과했어요. 회사 이름이 YourCompany인 곳에서는 멀쩡한 키가 전부 새는 셈입니다. 이제 따옴표 안의 **값만** 보고 판정해요. 이름은 자리표시자 여부와 아무 상관이 없습니다. -->
+<!-- show:en **A real key was missed whenever the variable name contained `example`, `your` or `dummy`.** The placeholder check was narrowed yesterday from the whole line to the whole match — but a match includes the variable name as well as the value, so `EXAMPLE_API_KEY`, `YOURCOMPANY_API_KEY` and `DUMMY_SERVICE_TOKEN` all slipped through. At a company literally named YourCompany, every key would leak. The judgment now looks only at the quoted value; the name has nothing to do with whether something is a placeholder. -->
+
+### Security
+- **변수명 속 자리표시자 단어가 진짜 값을 가리던 것** (2026-08-03) — 자리표시자 판정 범위를 **두 번** 좁혔다. ①줄 전체 → `example = "demo"; API_KEY = "진짜키"`가 통과 ②매치 전체 → **매치에 변수명이 포함되어** `EXAMPLE_API_KEY = "진짜키"`가 통과. 할당 정규식에 `(?P<value>…)`를 두고 **값에만** 판정한다. 값 그룹이 없는 패턴(`sk-ant-`·`AKIA`·`ghp_` 등)은 매치 자체가 값이므로 그대로 쓴다.
+  - 좁히면서 잃은 게 없는지 같이 고정했다: 값이 자리표시자면 여전히 억제(`your_key_here_placeholder`·`example_value_1234567`·`xxxx_…`), 환경변수 참조도 여전히 무시(`os.environ[...]`·`${…}`·`process.env.…`).
+
+### Added
+- **탐지 경계 테스트 3개** (2026-08-03) — 이름에 자리표시자 단어가 든 5종을 잡는지 · 값이 자리표시자인 5종을 안 잡는지 · 환경변수 참조 3종을 안 잡는지. **범위를 좁힐 때마다 반대편이 깨진다** — 이 항목만 세 번째 조정이라 양쪽을 같이 본다.
+
+### 확인
+- 자기 저장소 스캔 비밀키 **0건** — 세 번째로 좁혔는데도 오탐이 늘지 않았다.
+
 ## [0.33.1] - 2026-08-03
 <!-- show:ko **플러그인 검증(`--strict`)이 실패하던 것을 고쳤어요.** 저장소 루트의 `CLAUDE.md`가 "플러그인 루트에 두면 플러그인 컨텍스트로 로드되지 않는다"는 경고를 내고 있었습니다. 이 파일은 배포용이 아니라 이 저장소가 자기를 hi-vibe로 관리하는 파일이라 스킬로 바꿀 수 없는데, 공식 문서를 보니 `./CLAUDE.md`와 `./.claude/CLAUDE.md` **둘 다 프로젝트 지침으로 자동 로드**됩니다. `.claude/` 안으로 옮겨 자기 규율은 그대로 두고 검증도 통과시켰어요. 옮기자마자 과장 검사가 이 파일을 놓치기 시작했는데(점으로 시작하는 폴더를 건너뜁니다) 그건 테스트가 잡아줬습니다. -->
 <!-- show:en **`claude plugin validate --strict` no longer fails.** The repository's root `CLAUDE.md` triggered a warning: a CLAUDE.md at the plugin root is not loaded as plugin context. That file is not shipped context — it is how this repository manages itself with hi-vibe — so converting it to a skill was wrong. The official docs list `./CLAUDE.md` and `./.claude/CLAUDE.md` as equally auto-loaded project instructions, so moving it satisfies both. The move immediately dropped the file out of the overclaim scan (dot-directories are skipped); the test caught that. -->
