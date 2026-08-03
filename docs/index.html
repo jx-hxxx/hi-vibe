@@ -660,6 +660,15 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
         <div class="qs-row"><div class="qs-when">뭐부터 할지 모르겠으면</div><div class="qs-do"><code>/hi-vibe:welcome</code></div></div>
       </div>
 
+      <div class="quickstart">
+        <h4><svg class="eic" style="margin-right:.4em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>이 프로젝트에서 빼고 싶다면</h4>
+        <p class="qs-sub">들어올 때보다 나갈 때가 쉬워야 한다고 봐요. <b>빼는 전용 명령어는 만들지 않았어요</b> — 외울 게 하나 더 늘 뿐이라서요.</p>
+        <div class="qs-row"><div class="qs-when">자동만 잠깐 끄기</div><div class="qs-do">Claude에게 <b>“이 프로젝트에선 hi-vibe 꺼줘”</b> <span class="dim">또는 <code>touch .hi-vibe/optout</code> · 훅만 조용해지고 명령어는 그대로 써요</span></div></div>
+        <div class="qs-row"><div class="qs-when">이 프로젝트에서 빼기</div><div class="qs-do"><code>rm -rf .hi-vibe .repo-xray</code> <span class="dim">(<code>init</code> 안 한 상태로 돌아가요)</span></div></div>
+        <div class="qs-row"><div class="qs-when">플러그인 자체를 지우기</div><div class="qs-do"><code>/plugin uninstall hi-vibe@hi-vibe-marketplace</code> <span class="dim">(모든 프로젝트에서 사라져요)</span></div></div>
+        <div class="qs-row"><div class="qs-when">만들어진 문서는?</div><div class="qs-do"><b>그대로 남아요</b> <span class="dim"><code>CLAUDE.md</code>·<code>handover.md</code>·<code>CHANGELOG.md</code>는 전부 여러분의 파일이에요. 필요 없으면 직접 지우시면 돼요</span></div></div>
+      </div>
+
       <p class="lead small" style="margin:26px 0 4px;font-size:14px">더 자세히 — 헷갈리기 쉬운 것들 (펼쳐 보기)</p>
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>review가 알아서 정하는 것들</summary>
@@ -1036,6 +1045,15 @@ Finish with a short summary:
         <div class="qs-row"><div class="qs-when">Want to clean up structure</div><div class="qs-do"><code>/hi-vibe:check</code> <span class="dim">(after the scan, a fresh Claude opens each candidate and keeps only the real ones)</span></div></div>
         <div class="qs-row"><div class="qs-when">Automate the checks (optional)</div><div class="qs-do"><code>/hi-vibe:gate</code> <span class="dim">(once per project · offers push-time gating when the project is on GitHub)</span></div></div>
         <div class="qs-row"><div class="qs-when">Not sure where to start</div><div class="qs-do"><code>/hi-vibe:welcome</code></div></div>
+      </div>
+
+      <div class="quickstart">
+        <h4><svg class="eic" style="margin-right:.4em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>If you want it out of this project</h4>
+        <p class="qs-sub">Leaving should be easier than arriving. <b>There is no dedicated command for it</b> — that would just be one more thing to remember.</p>
+        <div class="qs-row"><div class="qs-when">Silence the automation</div><div class="qs-do">Tell Claude <b>“turn hi-vibe off in this project”</b> <span class="dim">or <code>touch .hi-vibe/optout</code> · only the hooks go quiet; the commands still work</span></div></div>
+        <div class="qs-row"><div class="qs-when">Remove it from this project</div><div class="qs-do"><code>rm -rf .hi-vibe .repo-xray</code> <span class="dim">(back to never having run <code>init</code>)</span></div></div>
+        <div class="qs-row"><div class="qs-when">Uninstall the plugin</div><div class="qs-do"><code>/plugin uninstall hi-vibe@hi-vibe-marketplace</code> <span class="dim">(gone from every project)</span></div></div>
+        <div class="qs-row"><div class="qs-when">What about the documents?</div><div class="qs-do"><b>They stay</b> <span class="dim"><code>CLAUDE.md</code>, <code>handover.md</code> and <code>CHANGELOG.md</code> are yours. Delete them yourself if you don't want them</span></div></div>
       </div>
 
       <p class="lead small" style="margin:26px 0 4px;font-size:14px">More detail — easy-to-confuse things (expand)</p>

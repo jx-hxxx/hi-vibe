@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.34.1] - 2026-08-04
+<!-- show:ko **첫 화면에도 "빼는 법"을 넣었어요.** README에만 있던 걸 랜딩 명령어 섹션의 빠른 시작 바로 아래로 올렸습니다. 자동만 잠깐 끄기(Claude에게 "이 프로젝트에선 꺼줘"라고 말하거나 파일 하나 만들기), 이 프로젝트에서 빼기, 플러그인 자체 지우기, 그리고 만들어진 문서는 어떻게 되는지까지 네 줄이에요. **빼는 전용 명령어는 만들지 않았습니다** — 외울 게 하나 더 느는 대신, 이미 있는 방법을 보이게만 했어요. -->
+<!-- show:en **The landing page now shows how to remove it, too.** What was only in the README moved up next to the quick-start rows in the commands section: silence the automation (say so to Claude, or create one file), remove it from this project, uninstall the plugin, and what happens to the documents. **No dedicated command was added** — that would be one more thing to remember; the existing routes were simply made visible. -->
+
+### Added
+- **랜딩에 "이 프로젝트에서 빼고 싶다면"** (2026-08-04, 한·영) — v0.34.0에서 README에 적었지만 **첫 화면에서는 여전히 안 보였다.** 빠른 시작과 같은 `.quickstart` 구조를 재사용해 새 CSS 없이 넣었다. 네 줄: `optout`(말로 하거나 파일 하나) · `.hi-vibe/` 삭제 · 플러그인 제거 · **문서는 남는다**.
+  - **`/hi-vibe:optout` 명령은 만들지 않았다.** 명령이 11개가 되고, 랜딩이 내세우는 "명령어 10개 — 외울 게 적다"가 깨진다. `optout`은 이미 스킬이 말로 처리하고 파일 하나면 되는 일이라 **새 표면을 늘릴 값이 없다.**
+  - 마지막 줄(문서는 남는다)을 굵게 둔 이유: "지우면 다 날아가나?"가 실제로 제일 큰 걱정이고, 그게 안 보이면 나머지를 읽어도 불안하다.
+
 ## [0.34.0] - 2026-08-03
 <!-- show:ko **무엇을 읽고 무엇을 남기는지, 그리고 어떻게 끄는지를 README에 한곳으로 모았어요.** 기능은 그대로입니다. 어제 기록 시점을 네 배로 늘리고(`/clear`·창 닫기·resume·로그아웃) Bash 항목까지 추가했는데 고지는 어제 문장 그대로였거든요. 읽는 범위(대화 기록 마지막 512KB), 남기는 항목(요청 5개·각 120자, 파일 경로, Bash는 대상 이름만), 저장 위치, 그리고 **비밀키는 가리지만 일반 민감 정보는 안 가린다**는 한계까지 적었습니다. 끄는 방법도 네 가지로 나눠 적었어요 — 잠깐 끄기, 프로젝트에서 빼기, 플러그인 지우기, 그리고 만들어진 문서는 어떻게 되나. -->
 <!-- show:en **The README now states, in one place, what is read, what is written down, and how to turn it off.** No behaviour changed. Yesterday the number of moments that write a record went from one to four and a Bash field was added, while the disclosure stayed as it was. It now covers the read window (last 512KB of the transcript), every stored field (5 requests at 120 characters each, file paths, and for Bash only the target name), where it is stored, and the limit that **secrets are masked but ordinary sensitive information is not**. Turning it off is split into four distinct things, including what happens to the documents. -->
