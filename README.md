@@ -315,6 +315,100 @@ If you want to share handover with your team, remove those lines from `.gitignor
 
 ---
 
+## What it reads, and what it writes down
+
+This tool records things on its own, so what it reads and what it keeps are
+stated here in one place.
+
+### Your conversation never leaves this machine
+
+The hooks and the scanner use the Python standard library only. Nothing about
+your conversation, code, or records is transmitted anywhere.
+
+One thing does touch the network: **the CI health check**. It shells out to the
+`gh` CLI to ask GitHub for the recent workflow results on your current branch
+(the branch name goes out). If `gh` is missing or not logged in, the check is
+skipped silently. No conversation content is part of that request.
+
+### What it reads
+
+| What | How much |
+|---|---|
+| The conversation transcript | the **last 512KB** only |
+| Project git state | branch name plus **counts** of changed files |
+
+### What goes into `handover.md`
+
+Written automatically just before a compact, on `/clear`, and when you close the window:
+
+| Field | Content |
+|---|---|
+| Your requests | the **last 5**, each truncated to **120 characters** |
+| Edited files | paths touched via Write/Edit (up to 15) |
+| Written via Bash | **target filename and kind of write only** — the command text is never stored |
+| Git state | branch plus modified / new / deleted counts |
+| Last verification | the test command and whether it passed |
+
+**Anything that looks like a secret is replaced with a masked marker before it
+is written.** That judgment is regex-based, so **ordinary sensitive information
+(names, addresses, internal jargon) is not removed.** Assume your requests are
+stored in plain text.
+
+### Where it lives
+
+- `handover.md` in the project root, **added to `.gitignore` by default**
+- Past 20 entries, older ones move to `handover-archive.md`
+- Other state lives in `.hi-vibe/state/` (also gitignored)
+
+All of it is **your files**. Open, edit or delete them whenever you like.
+
+### For a sensitive conversation
+
+Turn the automatic features off for that project. See "Turning it off and
+removing it" below.
+
+---
+
+## Turning it off and removing it
+
+Four different things:
+
+### 1. Silence the automatic features in this project
+
+```bash
+touch .hi-vibe/optout
+```
+
+Every hook goes quiet. The commands (`/hi-vibe:check` and friends) still work.
+Delete the file to turn them back on.
+
+### 2. Remove it from this project entirely
+
+```bash
+rm -rf .hi-vibe .repo-xray
+```
+
+Without the marker the hooks don't look at this folder at all. Identical to
+never having run `init`.
+
+### 3. Uninstall the plugin
+
+```text
+/plugin uninstall hi-vibe@hi-vibe-marketplace
+```
+
+Hooks and commands disappear from every project.
+
+### 4. What happens to the documents?
+
+**They stay.** `CLAUDE.md`, `MODULE.md`, `CHANGELOG.md` and `handover.md` are
+**yours**. Removing the plugin or the marker does not delete them. Delete them
+yourself if you don't want them.
+
+Leaving should be easier than arriving.
+
+---
+
 ## Structure check: `check`
 
 ```text

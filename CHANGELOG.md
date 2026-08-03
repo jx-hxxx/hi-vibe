@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-08-03
+<!-- show:ko **무엇을 읽고 무엇을 남기는지, 그리고 어떻게 끄는지를 README에 한곳으로 모았어요.** 기능은 그대로입니다. 어제 기록 시점을 네 배로 늘리고(`/clear`·창 닫기·resume·로그아웃) Bash 항목까지 추가했는데 고지는 어제 문장 그대로였거든요. 읽는 범위(대화 기록 마지막 512KB), 남기는 항목(요청 5개·각 120자, 파일 경로, Bash는 대상 이름만), 저장 위치, 그리고 **비밀키는 가리지만 일반 민감 정보는 안 가린다**는 한계까지 적었습니다. 끄는 방법도 네 가지로 나눠 적었어요 — 잠깐 끄기, 프로젝트에서 빼기, 플러그인 지우기, 그리고 만들어진 문서는 어떻게 되나. -->
+<!-- show:en **The README now states, in one place, what is read, what is written down, and how to turn it off.** No behaviour changed. Yesterday the number of moments that write a record went from one to four and a Bash field was added, while the disclosure stayed as it was. It now covers the read window (last 512KB of the transcript), every stored field (5 requests at 120 characters each, file paths, and for Bash only the target name), where it is stored, and the limit that **secrets are masked but ordinary sensitive information is not**. Turning it off is split into four distinct things, including what happens to the documents. -->
+
+### Added
+- **"무엇을 읽고 무엇을 남기나요?" 섹션** (2026-08-03, README 한·영) — 자동 기록이 있는 도구인데 **읽는 범위·저장 항목·저장 위치·중지 방법이 한곳에 없었다.** 어제 기록 시점을 넷으로 늘리고(`/clear`·`prompt_input_exit`·`resume`·`logout`) Bash 항목을 더하면서 **고지만 그대로 뒀다** — 밀린 빚이었다.
+  - **"모든 처리는 로컬"이라고 쓰지 않았다.** `ci_health()`가 `gh` CLI로 GitHub에 현재 브랜치의 워크플로 결과를 조회한다(브랜치 이름이 나간다). 대화 내용은 안 나가지만 **네트워크는 탄다** — 신뢰를 올리려는 문장이 과장이 되면 안 된다.
+  - **비밀키 가림의 한계를 명시했다** — 정규식 판정이라 사람 이름·주소·사내 용어 같은 일반 민감 정보는 그대로 남는다. "사용자 요청은 평문으로 저장된다고 보시는 게 맞습니다"라고 적었다.
+- **"끄기와 지우기" 섹션** (2026-08-03, README 한·영) — `.hi-vibe/optout`은 v0.20대부터 있었지만 **`write-gate` 스킬 파일 안에만** 적혀 있었다. 사용자가 볼 일이 없는 자리다. 네 가지를 구분했다: ①`optout`으로 잠깐 끄기(명령어는 그대로 동작) ②`.hi-vibe/` 삭제로 프로젝트에서 빼기 ③플러그인 제거 ④**만들어진 문서는 남는다**(전부 사용자 파일이다). **나갈 때가 들어올 때보다 쉬워야 한다.**
+
+### 확인
+- 사실 대조: 512KB(`tail_lines`) · 요청 5개·120자(`parse_transcript`) · 파일 15개·Bash 5개(`handover_body`) · 회전 20개 초과 시 아카이브(`rotate`) · `.gitignore` 항목(docs-keeper 5단계) · `optout`이 훅만 끄고 명령은 안 막는 것 — **적기 전에 전부 소스에서 확인했다.**
+
 ## [0.33.2] - 2026-08-03
 <!-- show:ko **변수 이름에 `example`·`your`·`dummy`가 들어 있으면 진짜 키를 놓치고 있었어요.** 자리표시자인지 판정하는 범위를 어제 "줄 전체"에서 "매치 전체"로 좁혔는데, 매치에는 값뿐 아니라 **변수 이름도 들어갑니다.** 그래서 `EXAMPLE_API_KEY`·`YOURCOMPANY_API_KEY`·`DUMMY_SERVICE_TOKEN`이 전부 통과했어요. 회사 이름이 YourCompany인 곳에서는 멀쩡한 키가 전부 새는 셈입니다. 이제 따옴표 안의 **값만** 보고 판정해요. 이름은 자리표시자 여부와 아무 상관이 없습니다. -->
 <!-- show:en **A real key was missed whenever the variable name contained `example`, `your` or `dummy`.** The placeholder check was narrowed yesterday from the whole line to the whole match — but a match includes the variable name as well as the value, so `EXAMPLE_API_KEY`, `YOURCOMPANY_API_KEY` and `DUMMY_SERVICE_TOKEN` all slipped through. At a company literally named YourCompany, every key would leak. The judgment now looks only at the quoted value; the name has nothing to do with whether something is a placeholder. -->
