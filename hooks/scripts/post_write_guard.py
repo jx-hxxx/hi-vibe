@@ -47,8 +47,14 @@ SECRET_PATTERNS = [
     ("Google API 키", re.compile(r"\bAIza[0-9A-Za-z_\-]{35}\b")),
     ("Slack 토큰", re.compile(r"\bxox[baprs]-[A-Za-z0-9\-]{10,}")),
     ("Stripe 시크릿 키", re.compile(r"\b[sr]k_live_[A-Za-z0-9]{10,}")),
+    # 이름 **앞부분**을 허용한다: `OPENAI_API_KEY`·`DJANGO_SECRET_KEY`·
+    # `ACCESS_TOKEN`·`DATABASE_PASSWORD`·`"client_secret"`는 예외가 아니라
+    # 관례에 가깝다. 대신 키워드가 식별자 **끝**이어야 한다(바로 뒤에
+    # `=`/`:`가 온다) — 그래서 `TOKENIZER = "…"`·`TOKEN_EXPIRY = "…"`는
+    # 안 걸린다. 넓히되 아무 데나 넓히지 않는 지점이 여기다.
     ("하드코딩된 시크릿 할당", re.compile(
-        r"""(?i)\b(?:api[_-]?key|secret|token|password|passwd)["']?\s*[:=]\s*["'][A-Za-z0-9+/_\-]{16,}["']""")),
+        r"""(?i)\b[A-Za-z0-9_.\-]*(?:api[_-]?key|secret[_-]?key|private[_-]?key|secret|token|password|passwd|passphrase)"""
+        r"""["']?\s*[:=]\s*["'][A-Za-z0-9+/_\-]{16,}["']""")),
 ]
 # 자리표시자/환경변수 참조가 있는 줄은 진짜 키가 아니다.
 # `<...>`는 `<YOUR_KEY>` 같은 자리표시자만 억제한다 — 예전엔 맨 `<` 하나라
@@ -104,8 +110,13 @@ def iter_secret_spans(text):
     spans = []
     for label, rx in SECRET_PATTERNS:
         for m in rx.finditer(text):
+            # allow 표시는 줄 어디에나 달 수 있으므로 줄 전체에서 찾는다.
+            # 그러나 **자리표시자 판정은 매치 안에서만** 한다 — 줄 전체로
+            # 보면 `example = "demo"; API_KEY = "진짜키"` 한 줄에 `example`이
+            # 있다는 이유로 **진짜 키가 통과했다.** 오탐을 줄이려다 놓치면
+            # 그건 개선이 아니라 구멍이다.
             if ALLOW_SECRET_MARK in _match_region(text, m) \
-                    or SECRET_FALSE_ALARM_RE.search(_match_region(text, m)):
+                    or SECRET_FALSE_ALARM_RE.search(m.group(0)):
                 continue
             spans.append((label, m.start(), m.end()))
     return spans

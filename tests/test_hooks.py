@@ -50,6 +50,55 @@ class TempProject(unittest.TestCase):
         return buf.getvalue()
 
 
+class SecretDetectionScopeTest(unittest.TestCase):
+    """비밀키를 **찾는 단계**의 범위. 못 찾으면 가림도 소용없다.
+
+    두 가지가 뚫려 있었다:
+
+      1. `OPENAI_API_KEY`·`DJANGO_SECRET_KEY`·`ACCESS_TOKEN`·
+         `DATABASE_PASSWORD`·`"client_secret"` — 정규식이 키워드 바로 뒤에
+         `=`를 기대해서, 이름 앞에 뭐가 붙거나 뒤에 `_KEY`가 붙으면 놓쳤다.
+         예외적인 이름이 아니라 관례에 가깝다.
+      2. 자리표시자 판정(`example`·`your`…)을 **줄 전체**에서 했다. 그래서
+         `example = "demo"; API_KEY = "진짜키"` 한 줄에 `example`이 있다는
+         이유로 진짜 키가 통과했다. **오탐을 줄이려다 놓치면 구멍이다.**
+
+    넓히기만 하면 `TOKENIZER = "…"` 같은 평범한 변수를 잡는다. 그래서
+    잡아야 할 것과 잡으면 안 될 것을 **같이** 고정한다."""
+
+    VALUE = "ABCDEFGHIJKLMNOPQRSTUVWX"
+
+    def _found(self, text):
+        return bool(post_write_guard.iter_secrets(text))
+
+    def test_common_real_world_names_are_caught(self):
+        for name in ("API_KEY", "OPENAI_API_KEY", "DJANGO_SECRET_KEY",
+                     "ACCESS_TOKEN", "DATABASE_PASSWORD", "PRIVATE_KEY",
+                     "STRIPE_SECRET", "app.secret_key"):
+            with self.subTest(name):
+                self.assertTrue(self._found('%s = "%s"' % (name, self.VALUE)))
+        self.assertTrue(self._found('"client_secret": "%s"' % self.VALUE))
+
+    def test_ordinary_variables_are_not_caught(self):
+        """키워드가 식별자 **끝**일 때만 잡는다 — 안 그러면 잔소리가 된다."""
+        for name in ("TOKENIZER", "TOKEN_EXPIRY", "KEYBOARD",
+                     "password_hint", "SECRET_KEY_LENGTH"):
+            with self.subTest(name):
+                self.assertFalse(self._found('%s = "%s"' % (name, self.VALUE)))
+
+    def test_placeholder_word_elsewhere_on_the_line_does_not_hide_a_real_key(self):
+        for text in ('example = "demo"; API_KEY = "%s"' % self.VALUE,
+                     'your_choice = 1; API_KEY = "%s"' % self.VALUE):
+            with self.subTest(text[:30]):
+                self.assertTrue(self._found(text), "같은 줄의 단어 때문에 놓쳤다")
+
+    def test_placeholder_inside_the_value_still_suppresses(self):
+        for value in ("your_key_here_placeholder", "example_value_1234567",
+                      "changeme_changeme_1234"):
+            with self.subTest(value):
+                self.assertFalse(self._found('API_KEY = "%s"' % value))
+
+
 class CommonTest(TempProject):
     def test_project_gate(self):
         self.assertTrue(_common.project_gate(self.root))  # .hi-vibe/ 있음

@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.33.0] - 2026-08-03
+<!-- show:ko **비밀키를 "찾는 단계"가 생각보다 좁았어요.** `OPENAI_API_KEY`·`DJANGO_SECRET_KEY`·`ACCESS_TOKEN`·`DATABASE_PASSWORD`·`"client_secret"` 전부 못 잡고 있었습니다. 정규식이 키워드 바로 뒤에 `=`가 오기를 기대해서, 이름 앞에 뭐가 붙거나 뒤에 `_KEY`가 붙으면 빠져나갔어요. 예외적인 이름이 아니라 관례에 가까운 것들이라 지금 고쳤습니다. 그리고 더 나빴던 건 자리표시자 판정을 **줄 전체**에서 하던 것 — `example = "demo"; API_KEY = "진짜키"`처럼 같은 줄에 `example`이 있다는 이유로 진짜 키가 통과했습니다. 오탐을 줄이려다 놓치면 그건 개선이 아니라 구멍이에요. -->
+<!-- show:en **The step that finds secrets was narrower than it looked.** `OPENAI_API_KEY`, `DJANGO_SECRET_KEY`, `ACCESS_TOKEN`, `DATABASE_PASSWORD` and `"client_secret"` were all missed: the pattern expected `=` immediately after the keyword, so anything prefixed or suffixed slipped through. These are conventions, not exotic names, so they are handled now. Worse, placeholder suppression looked at the whole line — `example = "demo"; API_KEY = "realkey"` passed because `example` appeared somewhere on it. Reducing false positives by creating a hole is not an improvement. -->
+
+### Security
+- **흔한 변수명을 못 잡던 것** (2026-08-03) — 할당 패턴이 `\b(?:api[_-]?key|secret|token|…)` 바로 뒤에 `["']?\s*[:=]`를 요구했다. 그래서 **앞에 붙는 것**(`OPENAI_`·`DATABASE_`)과 **뒤에 붙는 것**(`SECRET_KEY`)이 전부 빠져나갔다. 식별자 앞부분(`[A-Za-z0-9_.\-]*`)을 허용하고 `secret[_-]?key`·`private[_-]?key`를 더했다. **키워드가 식별자 끝일 때만** 잡으므로 `TOKENIZER = "…"`·`TOKEN_EXPIRY = "…"`·`SECRET_KEY_LENGTH = "…"`는 여전히 안 걸린다 — 넓히되 아무 데나 넓히지 않는 지점이 여기다.
+- **자리표시자 판정 범위** (2026-08-03) — `example`·`your`·`dummy` 같은 단어를 **줄 전체**에서 찾아 억제했다. `example = "demo"; API_KEY = "진짜키"` 한 줄이면 진짜 키가 통과한다. 이제 **매치 안에서만** 본다(`API_KEY = "your_key_here"`는 그대로 억제). `allow-secret` 표시만 줄 전체에서 찾는다 — 그건 매치 밖(닫는 괄호 뒤)에 다는 게 정상이라서다.
+
+### Added
+- **탐지 범위 회귀 테스트 4개** (2026-08-03) — 흔한 이름 9종을 잡는지 · 평범한 변수 5종을 안 잡는지 · 같은 줄의 자리표시자 단어에 속지 않는지 · **값 안의** 자리표시자는 여전히 억제하는지. 넓히기만 하면 잔소리가 되므로 양쪽을 같이 고정한다.
+
+### 확인
+- 저장소 자기 스캔 비밀키 **0건** — 넓히고도 오탐이 늘지 않았다.
+
 ## [0.32.4] - 2026-08-03
 <!-- show:ko **비밀키 가림 처리가 경계에서 어긋나던 것을 고쳤어요.** 두 방향으로 틀렸습니다. ①`API_KEY     =     "..."`처럼 공백이 많으면 키 꼬리가 남았어요 — 끝 위치를 "정규화된 조각 길이"로 추정했는데 정규화가 공백을 접기 때문입니다. ②반대로 두 패턴이 같은 자리를 잡으면 겹친 구간을 안 합친 채 차례로 지워서, 키 뒤의 멀쩡한 문장까지 날아갔어요. 이제 실제 끝 위치를 받아 겹친 구간을 합친 뒤 한 번에 가립니다. 넓은 공백·줄바꿈 할당·한 줄 복수 키·겹친 패턴을 각각 테스트로 고정했어요. -->
 <!-- show:en **Secret masking was off at the boundaries, in both directions.** (1) With wide spacing like `API_KEY     =     "..."` the tail of the key survived, because the end position was estimated from the length of the whitespace-normalised snippet. (2) Conversely, when two patterns covered the same place, the overlapping ranges were replaced one by one and swallowed the ordinary sentence after the key. Real end offsets are now returned, overlapping ranges merged, and the replacement done once. Wide spacing, newline assignments, several keys on one line and overlapping patterns are each pinned by a test. -->
