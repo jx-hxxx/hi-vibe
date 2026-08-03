@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.34.4] - 2026-08-04
+<!-- show:ko **"아니면 16개가 떠요" 한마디를 지웠어요.** 줄바꿈 때문에 문장을 줄였는데, 다시 보니 그 절 자체가 없어도 되는 말이었습니다. 스킬을 왜 숨겼는지는 앞 문장이 이미 말하고 있어요. 영문도 같이 지웠습니다. -->
+<!-- show:en **Dropped the "otherwise you'd see 16 entries" aside.** It was trimmed for line-wrapping reasons, and on a second look the clause was not carrying anything the preceding sentence had not already said. Removed in both languages. -->
+
+### Changed
+- **`아니면 16개가 떠요.` 삭제** (2026-08-04, 한·영) — v0.34.3에서 줄바꿈 때문에 문장을 줄였는데, **그 절 자체가 없어도 되는 말이었다.** 왜 숨겼는지(엔진이라서)는 앞 문장이 이미 말한다. 줄을 맞추려고 문장을 깎는 것보다 **안 필요한 문장을 지우는 게 먼저다.**
+
 ## [0.34.3] - 2026-08-04
 <!-- show:ko **"안 그러면 16개가 떠요"가 혼자 다음 줄로 넘어가던 것을 고쳤어요.** 문장을 11자 줄여 한 줄에 담았습니다. 덜어낸 건 "엔진이지 버튼이 아니라서"인데, 바로 위 소제목이 이미 "스킬(엔진) ↔ 명령어(버튼)"이라 같은 말을 두 번 하고 있었어요. -->
 <!-- show:en **A short trailing clause no longer falls onto its own line.** The sentence was shortened by trimming the engine-versus-button contrast, which the heading directly above it already makes. -->
