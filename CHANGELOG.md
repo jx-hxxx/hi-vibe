@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.36.0] - 2026-08-04
+<!-- show:ko **README에 "fresh-eyes는 hi-vibe가 직접 만든 것"이라는 말이 어디에도 없었어요.** 스킬 6개는 표로 정리돼 있는데 에이전트 2개는 본문에 흩어져만 있어서, `fresh-eyes 에이전트`라고만 보면 Claude Code 기본 기능으로 읽힐 수 있었습니다. 에이전트 표를 새로 넣고 **둘 다 hi-vibe가 만들어 함께 배포한다**고 적었어요. 그리고 `fresh-eyes`는 코드를 의심하고 `proof-eyes`는 스캐너를 의심한다는 차이도 같이요 — 이름만 보고 바꿔 쓰면 리뷰가 헛돕니다. -->
+<!-- show:en **Nowhere did the README say that `fresh-eyes` is an agent hi-vibe wrote.** The six skills had a table; the two agents were only mentioned in passing, so "the `fresh-eyes` agent" could read as a Claude Code built-in. There is now an agent table stating that **both ship with hi-vibe**, along with the distinction that `fresh-eyes` doubts the code while `proof-eyes` doubts the scanner. -->
+
+### Added
+- **"내부 에이전트 구성" 표** (2026-08-04, README 한·영) — 스킬 6개는 표로 있는데 **에이전트 2개는 표가 없었다.** `fresh-eyes`·`proof-eyes`가 `agents/` 폴더에 들어 있는 **hi-vibe 소유물**이라는 사실이 README 어디에도 없어, Claude Code 기본 기능으로 읽힐 여지가 있었다. 언제 불리는지와 **무엇을 의심하는지**(코드 ↔ 스캐너)를 같이 적었다 — 이 구분은 CLAUDE.md에 함정으로 적혀 있는데 정작 사용자 문서에는 없었다.
+
+### Changed
+- **겹침 표의 `review` 행** (2026-08-04, 한·영) — `자기 체크리스트와 fresh-eyes 에이전트로 봅니다` → `자기 체크리스트와 **hi-vibe가 직접 만든 fresh-eyes 서브에이전트**로 봅니다`. 이 표는 "겹치나?"를 묻는 사람이 제일 먼저 보는 자리다.
+
 ## [0.35.2] - 2026-08-04
 <!-- show:ko **README의 "겹치지 않나요?" 답을 한 문장으로 끝냈어요.** "꽤 겹칩니다."만 있으면 질문에 "네"만 하고 멈춘 셈이라, 랜딩과 같이 "하지만 다른 점도 많아요"를 붙였습니다. -->
 <!-- show:en **The README answer to "doesn't this overlap?" now finishes the thought.** "Quite a bit" alone answered yes and stopped; it now says what the landing page says — plenty is different, too. -->

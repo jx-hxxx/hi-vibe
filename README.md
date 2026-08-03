@@ -193,7 +193,7 @@ Both are good tools, but they cover different ground.
 |---|---|---|
 | `/init` (writes CLAUDE.md) | `init` | **Overlaps.** hi-vibe also creates `handover.md` and `CHANGELOG.md`, and turns the hooks on |
 | auto memory | `handover.md` | Built-in memory is **Claude deciding what to keep**, stored under your Claude config. handover is **a script writing a fixed set** into the project right before a compact, on `/clear`, and when you close the window — readable by you, shareable with your team if you want |
-| `/code-review` | `review` | **The purpose overlaps; the implementation does not** — hi-vibe never calls `/code-review`; it runs its own checklist and the `fresh-eyes` agent. See below |
+| `/code-review` | `review` | **The purpose overlaps; the implementation does not** — hi-vibe never calls `/code-review`; it runs its own checklist and **`fresh-eyes`, a subagent hi-vibe ships itself**. See below |
 | `/verify` | the run-verification checklist item | Overlaps. hi-vibe's side is closer to a rule: "don't claim it works because the tests passed" |
 | `/doctor` | `/hi-vibe:doctor` | **Same name, different subject.** The built-in checks your CLI install and settings; this one checks hi-vibe's own hooks and scanner |
 | (none) | instant swallowed-error / secret detection | You can write the hooks yourself, but it isn't built in |
@@ -603,6 +603,19 @@ Commands are easy buttons; the actual work is done by these skills.
 | `guards-setup` | `gate` | lint · type · cyclic-deps · CI setup |
 | `grounded-answers` | Auto-triggered from natural language | Prevents asserting external API · pricing · versions without checking |
 | `root-cause-first` | Auto-triggered on bug work | Find the root cause before hiding it with a fallback |
+
+### Internal agent composition
+
+**Both are subagents hi-vibe writes and ships** (the `agents/` folder), not Claude
+Code built-ins. Each is summoned fresh, with a clean context, to act as a second pair of eyes.
+
+| Agent | When it is called | What it doubts |
+|---|---|---|
+| `fresh-eyes` | summoned by default during `review` | It doubts **the code** — over-engineering, simpler routes, hidden coupling. A judgment call, so it needs intent |
+| `proof-eyes` | after the `check` scan finishes | It doubts **the scanner** — it opens the candidates itself and filters out false positives. A factual check, so it needs evidence |
+
+Swapping the two because the names sound alike makes the review spin its wheels.
+**They doubt different things.**
 
 ---
 
