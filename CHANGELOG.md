@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.34.5] - 2026-08-04
+<!-- show:ko **"설치는 전역 한 번" 안내에서 마지막 한마디가 줄을 넘어가던 것을 고쳤어요.** 92자를 79자로 줄여 한 줄에 담았습니다. 같은 칸의 다른 줄이 84자로 한 줄에 들어가니 이제 안 넘어가요. 뜻은 그대로고 군더더기만 뺐습니다. -->
+<!-- show:en **The last clause of the install note no longer spills onto a second line.** The sentence was tightened from 92 to 79 characters; a neighbouring line at 84 characters fits on one line, so this now does too. The meaning is unchanged. -->
+
+### Fixed
+- **`폴더에서만 돌거든요.`가 줄을 넘어가던 것** (2026-08-04) — `쓰고 싶은 프로젝트마다, 그 최상위 폴더에서` → `쓸 프로젝트마다 최상위 폴더에서`, `.hi-vibe/ 마커가 만들어진 폴더에서만 돌거든요` → `.hi-vibe/가 있는 폴더에서만 돌아요`. 92자 → 79자. **줄바꿈을 강제하지 않고 문장을 줄였다** — 같은 칸의 다른 줄(84자)이 한 줄에 들어가는 것을 재서 기준으로 삼았다.
+
 ## [0.34.4] - 2026-08-04
 <!-- show:ko **"아니면 16개가 떠요" 한마디를 지웠어요.** 줄바꿈 때문에 문장을 줄였는데, 다시 보니 그 절 자체가 없어도 되는 말이었습니다. 스킬을 왜 숨겼는지는 앞 문장이 이미 말하고 있어요. 영문도 같이 지웠습니다. -->
 <!-- show:en **Dropped the "otherwise you'd see 16 entries" aside.** It was trimmed for line-wrapping reasons, and on a second look the clause was not carrying anything the preceding sentence had not already said. Removed in both languages. -->
