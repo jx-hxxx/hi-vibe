@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.34.3] - 2026-08-04
+<!-- show:ko **"안 그러면 16개가 떠요"가 혼자 다음 줄로 넘어가던 것을 고쳤어요.** 문장을 11자 줄여 한 줄에 담았습니다. 덜어낸 건 "엔진이지 버튼이 아니라서"인데, 바로 위 소제목이 이미 "스킬(엔진) ↔ 명령어(버튼)"이라 같은 말을 두 번 하고 있었어요. -->
+<!-- show:en **A short trailing clause no longer falls onto its own line.** The sentence was shortened by trimming the engine-versus-button contrast, which the heading directly above it already makes. -->
+
+### Fixed
+- **짧은 뒷절이 혼자 줄바꿈되던 것** (2026-08-04) — `안 그러면 16개가 떠요.`만 다음 줄로 떨어졌다. 69자 → 58자로 줄여 한 줄에 넣었다. **덜어낸 건 중복이다** — `엔진이지 버튼이 아니라서`는 바로 위 소제목(`뒤에서 뭐가 도나 — 스킬(엔진) ↔ 명령어(버튼)`)이 이미 말한다. 줄바꿈을 강제하는 대신 **같은 말을 두 번 하는 쪽을 지웠다.**
+
 ## [0.34.2] - 2026-08-04
 <!-- show:ko **첫 화면의 "Python 3.8+프로젝트에 최적화"가 붙어 보이던 것을 고쳤어요.** 원인이 좀 뜻밖이었는데, 그 줄이 flex 배치라서 태그 사이의 공백이 통째로 버려지고 있었습니다. 영문에서는 공백 두 개가 사라지고 있었어요. 그리고 문장 끝이 "합니다"와 "해요"로 섞여 있던 것도 맞췄습니다 — 공식 문서 인용과 AI에 붙여넣는 프롬프트는 원래 말투 그대로 뒀고요. "중복 찾아줘"가 줄 끝에서 잘려 두 줄로 나뉘던 것도 붙였습니다. -->
 <!-- show:en **"Python 3.8+ projects" was rendering with the space missing.** The cause was less obvious than it looked: that line is a flex row, and whitespace between elements inside a flex container is discarded entirely — the English version was losing two spaces. Sentence endings that mixed formal and casual Korean were also unified, leaving the official-docs quote and the copy-paste prompt in their original register. A quoted phrase that broke across two lines was pinned back together. -->
