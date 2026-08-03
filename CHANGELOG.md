@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.35.2] - 2026-08-04
+<!-- show:ko **README의 "겹치지 않나요?" 답을 한 문장으로 끝냈어요.** "꽤 겹칩니다."만 있으면 질문에 "네"만 하고 멈춘 셈이라, 랜딩과 같이 "하지만 다른 점도 많아요"를 붙였습니다. -->
+<!-- show:en **The README answer to "doesn't this overlap?" now finishes the thought.** "Quite a bit" alone answered yes and stopped; it now says what the landing page says — plenty is different, too. -->
+
+### Changed
+- **README FAQ 첫 줄** (2026-08-04, 한·영) — `꽤 겹칩니다.` → `꽤 겹칩니다. 하지만 다른 점도 많아요.` 랜딩은 v0.29.7에서 이미 이렇게 고쳤는데 **README만 옛 문장이었다.** 질문이 "겹치지 않나요"인데 "네"만 하고 멈추면 답이 완결되지 않는다.
+
 ## [0.35.1] - 2026-08-04
 <!-- show:ko **영문 제목 두 개에 남아 있던 강제 줄바꿈을 뺐어요.** 한국어는 v0.29.1에서 이미 뺐는데 영문만 그대로였습니다. 이제 화면 너비에 맞춰 자연스럽게 흐르고, 넓은 화면에서는 한 줄로 나와요. -->
 <!-- show:en **Two English headings no longer carry a hard line break.** The Korean side lost these in v0.29.1 and the English side was missed. They now flow with the viewport and sit on one line where there is room. -->

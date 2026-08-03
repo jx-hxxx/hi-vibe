@@ -187,7 +187,7 @@ Both are good tools, but they cover different ground.
 
 ### Doesn't this overlap with Claude Code's built-ins?
 
-**Quite a bit, yes.**
+**Quite a bit. But plenty is different, too.**
 
 | Claude Code built-in | hi-vibe | What's different |
 |---|---|---|
