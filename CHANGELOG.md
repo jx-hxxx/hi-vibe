@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.35.0] - 2026-08-04
+<!-- show:ko **헤더의 "설치"와 "명령어"가 사실상 같은 데로 가고 있었어요.** 설치 터미널이 명령어 섹션 **안에** 있어서, 두 메뉴를 눌러도 화면이 거의 안 움직였습니다. "명령어"를 "설치 & 명령어"로 합치고, 빈자리를 "나한테 맞나"로 채워 "이런 불편을 겪고 있다면" 섹션으로 보냅니다. 처음 온 사람이 제일 먼저 궁금한 건 설치법이 아니라 **이게 나한테 필요한가**니까요. -->
+<!-- show:en **"Install" and "Commands" in the header led to almost the same place.** The install terminal sits inside the commands section, so both links landed within a screen of each other. They are merged into "Install & commands", and the freed slot became "Good fit?", pointing at the section that helps you decide whether this is for you — which is the first thing a newcomer actually wants to know. -->
+
+### Changed
+- **헤더 메뉴 정리** (2026-08-04) — `#install-ko`는 **`#commands-ko` 섹션 안의 터미널 상자**다. 두 메뉴가 사실상 같은 자리로 가고 있었다. `명령어` → `설치 & 명령어`로 합치고, 첫 항목을 `나한테 맞나`(`#audit-ko`)로 바꿨다. **처음 온 사람의 첫 질문은 "어떻게 설치하나"가 아니라 "이게 나한테 필요한가"다.** 영문도 `Good fit?` / `Install & commands`로.
+- **중간 너비에서 메뉴 간격 축소** (2026-08-04) — 라벨이 길어져 1080px 부근에서 좁아진다. 760px 아래로는 어차피 숨기므로 그 위 구간만 `gap:30px→20px`, `13px→12.5px`.
+
 ## [0.34.5] - 2026-08-04
 <!-- show:ko **"설치는 전역 한 번" 안내에서 마지막 한마디가 줄을 넘어가던 것을 고쳤어요.** 92자를 79자로 줄여 한 줄에 담았습니다. 같은 칸의 다른 줄이 84자로 한 줄에 들어가니 이제 안 넘어가요. 뜻은 그대로고 군더더기만 뺐습니다. -->
 <!-- show:en **The last clause of the install note no longer spills onto a second line.** The sentence was tightened from 92 to 79 characters; a neighbouring line at 84 characters fits on one line, so this now does too. The meaning is unchanged. -->

@@ -86,6 +86,9 @@
   .ctl.js-theme { font-size:15px; padding:0 9px; line-height:1; }
   .ghub { font-family:var(--mono); font-size:13px; text-decoration:none; color:var(--text); border:1px solid var(--border-2); border-radius:8px; padding:6px 12px; white-space:nowrap; }
   .ghub:hover { border-color:var(--accent); color:var(--accent-ink); }
+  /* 라벨이 길어져(설치 & 명령어 / Install & commands) 중간 너비에서 좁아진다.
+     760px 아래로는 어차피 숨기므로, 그 위 구간만 간격을 줄인다. */
+  @media (max-width:1080px){ .bar nav { gap:20px; font-size:12.5px; } }
   @media (max-width:760px){ .bar nav { display:none; } }
 
   .hero { padding:44px 0 12px; border-top:none; }
@@ -378,11 +381,11 @@
   <header class="bar"><div class="wrap">
     <a class="brand" href="#ko" aria-label="맨 위로"><span class="wm-img" aria-hidden="true"></span><span class="wm-alt" aria-hidden="true"><span class="logo" aria-hidden="true"></span><span class="wm">hi-vibe</span></span></a>
     <nav>
-      <a href="#install-ko">설치</a>
+      <a href="#audit-ko">나한테 맞나</a>
       <a href="#problem-ko">문제점</a>
       <a href="#how-ko">작동 방식</a>
       <a href="#features-ko">기능</a>
-      <a href="#commands-ko">명령어</a>
+      <a href="#commands-ko">설치 &amp; 명령어</a>
       <a href="#living-ko">업데이트</a>
     </nav>
     <div class="hdr-right">
@@ -765,11 +768,11 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
   <header class="bar"><div class="wrap">
     <a class="brand" href="#en" aria-label="Back to top"><span class="wm-img" aria-hidden="true"></span><span class="wm-alt" aria-hidden="true"><span class="logo" aria-hidden="true"></span><span class="wm">hi-vibe</span></span></a>
     <nav>
-      <a href="#install-en">Install</a>
+      <a href="#audit-en">Good fit?</a>
       <a href="#problem-en">Problems</a>
       <a href="#how-en">How it works</a>
       <a href="#features-en">Features</a>
-      <a href="#commands-en">Commands</a>
+      <a href="#commands-en">Install &amp; commands</a>
       <a href="#living-en">Updates</a>
     </nav>
     <div class="hdr-right">
