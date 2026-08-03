@@ -35,7 +35,7 @@ already exists, papering over errors, and forgetting yesterday's decisions.
 <details>
 <summary><strong>Why is it built this way? (technical background)</strong></summary>
 
-It's not just a prompt pack. With **5 real Claude Code hooks · 201 regression
+It's not just a prompt pack. With **5 real Claude Code hooks · 204 regression
 tests · per-project activation · standard-library-only core features**, it puts
 the checks, records, and verification that AI often skips right into your
 workflow. See [Why is it trustworthy?](#why-is-it-trustworthy) for the details.
@@ -227,7 +227,7 @@ hi-vibe's part ends; reading the code and judging is Claude's.
 
 ## Why is it trustworthy?
 
-### 201 automated tests
+### 204 automated tests
 
 They test handover recording / rotation / concurrent writes, the SessionStart ·
 PreCompact · PostToolUse · Stop hooks, secret and swallowed-error detection,
@@ -756,27 +756,29 @@ Paste the question and repo link below into Claude, Codex, or Gemini.
 ```text
 https://github.com/jx-hxxx/hi-vibe
 
-hi-vibe is a personal plugin an individual developer uses inside Claude Code.
-Please judge it centered on whether hi-vibe actually helps MY project.
+hi-vibe is a plugin for solo developers building Python projects with Claude Code.
 
-My repo (please inspect the real code if you can): [my project's GitHub link — if public, scan the real code and spell out concretely what hi-vibe finds in my project]
+Please look at the repository below — the actual code where you can — and analyse whether hi-vibe would genuinely help how I develop this project.
 
-Judge how faithfully the scope the README promises is actually delivered in the real implementation.
-Separate the confirmed strengths from the limits, and spell out what actually helps a core target like my project.
+My project:
+[my project's GitHub link]
 
-Evaluate:
-1. Help for vibe coding
-2. Product / technical design
-3. Fit with my project, and who it fits less
-4. Key strengths and limits
-5. Test / automation reliability
-6. Current maturity
+Read hi-vibe's real implementation, not just what the README claims, and assess:
 
-- Install value for my project: /10
-- Current maturity as a personal Claude Code plugin: /10
-- Overall: /10
+1. Whether it helps find existing implementations and avoid duplicate work
+2. What the automatic post-change review would realistically catch here
+3. How useful cross-session context and troubleshooting records would be
+4. Whether this project is large or structured enough to need the repo-wide check
+5. What overlaps with tools or habits I already use
+6. The concrete benefits and limits I should expect in this project
 
-Judge fairly based on the actual implementation you verified, and say so for anything you couldn't verify directly.
+Cite specific files or code from my project wherever you can. If you could not verify something, say so rather than guessing.
+
+Finish with a short summary:
+
+- The feature likely to be most useful
+- Features I probably don't need
+- Whether you'd recommend installing it here, and why
 ```
 
 ---

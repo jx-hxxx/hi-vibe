@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.36.1] - 2026-08-04
+<!-- show:ko **README의 평가 프롬프트가 랜딩보다 몇 버전 뒤처져 있었어요.** 같은 질문이 네 곳(랜딩·README 한·README 영·내부 아카이브)에 있는데, 랜딩만 고치고 나머지를 안 봤습니다. 넷을 다 맞추고, **다음부터는 기계가 지키게** 검사를 붙였어요. 한 곳이라도 달라지면 테스트가 실패합니다. 아카이브 파일 첫머리에 "두 벌이 갈리면 이 파일이 거짓말이 된다"고 적어놓고 정작 사람 눈에 맡기고 있었거든요. -->
+<!-- show:en **The README's evaluation prompt had fallen several versions behind the landing page.** The same question lives in four places, and only the landing was kept current. All four now match, and a test enforces it from here on. The archive file opened by saying that a divergence would make it a lie, and then relied on someone noticing. -->
+
+### Fixed
+- **README의 평가 프롬프트가 옛 버전** (2026-08-04, 한·영) — 랜딩(`docs/index.html`)의 `audit-prompt-*`가 원본인데 README는 v0.27 무렵 문구를 그대로 갖고 있었다. **사람이 복사해 쓰는 글**이라 옛 질문이 그대로 퍼진다. 랜딩 내용으로 교체했다.
+
+### Added
+- **`test_eval_prompt_sync.py`** (2026-08-04) — 네 곳(랜딩·README 한·README 영·`docs/internal/eval-prompt.md`)이 **글자까지 같은지** 확인한다. 랜딩을 원본으로 삼는 이유는 거기가 **복사 버튼이 달린 자리**라 실제로 가장 많이 쓰이기 때문이다. `[내 프로젝트 GitHub 링크]` 자리표시자가 살아 있는지도 본다 — 그게 없으면 AI가 hi-vibe만 보고 답해서 질문이 반쪽이 된다.
+  - 아카이브 파일은 첫머리에 `페이지가 바뀌면 여기도 같이 고친다 — 두 벌이 갈리면 이 파일이 거짓말이 된다`고 적어두고 **사람 눈에 맡기고 있었다.** 그 약속을 기계로 옮겼다.
+
 ## [0.36.0] - 2026-08-04
 <!-- show:ko **README에 "fresh-eyes는 hi-vibe가 직접 만든 것"이라는 말이 어디에도 없었어요.** 스킬 6개는 표로 정리돼 있는데 에이전트 2개는 본문에 흩어져만 있어서, `fresh-eyes 에이전트`라고만 보면 Claude Code 기본 기능으로 읽힐 수 있었습니다. 에이전트 표를 새로 넣고 **둘 다 hi-vibe가 만들어 함께 배포한다**고 적었어요. 그리고 `fresh-eyes`는 코드를 의심하고 `proof-eyes`는 스캐너를 의심한다는 차이도 같이요 — 이름만 보고 바꿔 쓰면 리뷰가 헛돕니다. -->
 <!-- show:en **Nowhere did the README say that `fresh-eyes` is an agent hi-vibe wrote.** The six skills had a table; the two agents were only mentioned in passing, so "the `fresh-eyes` agent" could read as a Claude Code built-in. There is now an agent table stating that **both ship with hi-vibe**, along with the distinction that `fresh-eyes` doubts the code while `proof-eyes` doubts the scanner. -->
