@@ -87,10 +87,21 @@ class SecretDetectionScopeTest(unittest.TestCase):
                 self.assertFalse(self._found('%s = "%s"' % (name, self.VALUE)))
 
     def test_placeholder_word_elsewhere_on_the_line_does_not_hide_a_real_key(self):
-        for text in ('example = "demo"; API_KEY = "%s"' % self.VALUE,
-                     'your_choice = 1; API_KEY = "%s"' % self.VALUE):
-            with self.subTest(text[:30]):
-                self.assertTrue(self._found(text), "같은 줄의 단어 때문에 놓쳤다")
+        """`example`·`your`가 **줄 어딘가**에 있다는 이유로 놓치면 안 된다.
+
+        표현이 조금씩 다른 실제 모양들로 확인한다 — 한 형태만 막으면
+        나머지로 그대로 빠져나간다(이 저장소가 여러 번 겪은 방식)."""
+        for text in (
+            'example = "demo"; API_KEY = "%s"',
+            'your_choice = 1; API_KEY = "%s"',
+            'API_KEY = "%s"  # example: replace before shipping',
+            'API_KEY = "%s"  # 예시가 아니라 your real key 입니다',
+            'cfg = {"example": 1, "api_key": "%s"}',
+            'os.environ.setdefault("EXAMPLE_MODE", "1"); API_KEY = "%s"',
+        ):
+            with self.subTest(text[:34]):
+                self.assertTrue(self._found(text % self.VALUE),
+                                "같은 줄의 단어 때문에 진짜 키를 놓쳤다")
 
     def test_placeholder_inside_the_value_still_suppresses(self):
         for value in ("your_key_here_placeholder", "example_value_1234567",

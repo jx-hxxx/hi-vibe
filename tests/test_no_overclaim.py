@@ -19,12 +19,17 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _SKIP_DIRS = {".git", "__pycache__", ".repo-xray", ".hi-vibe", "node_modules",
               ".pytest_cache", "tests"}   # tests/ = 금지 문구를 인용하는 자리
 _SKIP_FILES = {"CHANGELOG.md"}            # 과거 릴리스 서술이라 옛 표현을 인용한다
+# 점으로 시작하는 폴더는 원래 건너뛰지만 여기는 예외다. 이 저장소의 프로젝트
+# 규율이 `.claude/CLAUDE.md`로 옮겨졌는데(플러그인 루트 CLAUDE.md 경고 때문),
+# 그대로 두면 **가장 중요한 문서가 조용히 검사 밖으로 나간다.**
+_DOT_DIRS_TO_SCAN = {".claude"}
 _SCAN_EXT = (".md", ".html", ".tpl", ".py")
 
 
 def _surfaces():
     for root, dirs, files in os.walk(REPO):
-        dirs[:] = [d for d in dirs if d not in _SKIP_DIRS and not d.startswith(".")]
+        dirs[:] = [d for d in dirs if d not in _SKIP_DIRS
+                   and (not d.startswith(".") or d in _DOT_DIRS_TO_SCAN)]
         for name in files:
             if name in _SKIP_FILES or not name.endswith(_SCAN_EXT):
                 continue
@@ -135,7 +140,8 @@ class NoOverclaimTest(unittest.TestCase):
         통과했다. 이제 동적으로 모으므로, 대표 파일이 빠지면 실패한다."""
         found = set(_surfaces())
         for must in ["README.md", "README.ko.md", os.path.join("docs", "index.html"),
-                     "CLAUDE.md", os.path.join("commands", "review.md"),
+                     os.path.join(".claude", "CLAUDE.md"),
+                     os.path.join("commands", "review.md"),
                      os.path.join("agents", "fresh-eyes.md"),
                      os.path.join("hooks", "scripts", "session_start.py"),
                      os.path.join("skills", "write-gate", "SKILL.md")]:

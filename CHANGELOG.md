@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.33.1] - 2026-08-03
+<!-- show:ko **플러그인 검증(`--strict`)이 실패하던 것을 고쳤어요.** 저장소 루트의 `CLAUDE.md`가 "플러그인 루트에 두면 플러그인 컨텍스트로 로드되지 않는다"는 경고를 내고 있었습니다. 이 파일은 배포용이 아니라 이 저장소가 자기를 hi-vibe로 관리하는 파일이라 스킬로 바꿀 수 없는데, 공식 문서를 보니 `./CLAUDE.md`와 `./.claude/CLAUDE.md` **둘 다 프로젝트 지침으로 자동 로드**됩니다. `.claude/` 안으로 옮겨 자기 규율은 그대로 두고 검증도 통과시켰어요. 옮기자마자 과장 검사가 이 파일을 놓치기 시작했는데(점으로 시작하는 폴더를 건너뜁니다) 그건 테스트가 잡아줬습니다. -->
+<!-- show:en **`claude plugin validate --strict` no longer fails.** The repository's root `CLAUDE.md` triggered a warning: a CLAUDE.md at the plugin root is not loaded as plugin context. That file is not shipped context — it is how this repository manages itself with hi-vibe — so converting it to a skill was wrong. The official docs list `./CLAUDE.md` and `./.claude/CLAUDE.md` as equally auto-loaded project instructions, so moving it satisfies both. The move immediately dropped the file out of the overclaim scan (dot-directories are skipped); the test caught that. -->
+
+### Fixed
+- **`claude plugin validate --strict` 실패** (2026-08-03) — 경고: `CLAUDE.md at the plugin root is not loaded as project context. To ship context with your plugin, use a skill instead.` **검증기가 의도를 구분하지 못한다** — 이 파일은 배포물이 아니라 이 저장소의 자기 규율이다. 공식 문서가 `./CLAUDE.md` **또는** `./.claude/CLAUDE.md`를 프로젝트 지침 위치로 명시하므로 후자로 옮겼다. 스킬로 바꾸면 **항상 걸려야 할 규율이 조건부**가 되므로 그 길은 택하지 않았다. 왜 여기 있는지를 파일 안에 주석으로 남겼다(루트로 되돌리지 말 것).
+- **옮기자 과장 검사가 이 파일을 놓치던 것** (2026-08-03) — `_surfaces()`가 점으로 시작하는 폴더를 건너뛰어 **가장 중요한 문서가 조용히 검사 밖으로 나갔다.** `test_scan_covers_the_real_surfaces`가 즉시 실패해 알려줬다 — "검사 범위가 조용히 좁아지는 것도 막는다"고 만들어 둔 테스트가 실제로 값을 했다. `.claude`만 예외로 훑는다.
+
+### Added
+- **같은 줄 자리표시자 오탐 억제 회귀 사례 확대** (2026-08-03) — 표현이 다른 6가지(주석 안의 `example`, 딕셔너리 키 `"example"`, `EXAMPLE_MODE` 환경변수, 한국어 문장 속 `your`…)로 넓혔다. **한 형태만 막으면 나머지로 그대로 빠져나간다** — 이 저장소가 `runs it` → `Stop ── run the review` → `리뷰를 돌린 뒤`로 세 번 겪은 방식이다.
+
 ## [0.33.0] - 2026-08-03
 <!-- show:ko **비밀키를 "찾는 단계"가 생각보다 좁았어요.** `OPENAI_API_KEY`·`DJANGO_SECRET_KEY`·`ACCESS_TOKEN`·`DATABASE_PASSWORD`·`"client_secret"` 전부 못 잡고 있었습니다. 정규식이 키워드 바로 뒤에 `=`가 오기를 기대해서, 이름 앞에 뭐가 붙거나 뒤에 `_KEY`가 붙으면 빠져나갔어요. 예외적인 이름이 아니라 관례에 가까운 것들이라 지금 고쳤습니다. 그리고 더 나빴던 건 자리표시자 판정을 **줄 전체**에서 하던 것 — `example = "demo"; API_KEY = "진짜키"`처럼 같은 줄에 `example`이 있다는 이유로 진짜 키가 통과했습니다. 오탐을 줄이려다 놓치면 그건 개선이 아니라 구멍이에요. -->
 <!-- show:en **The step that finds secrets was narrower than it looked.** `OPENAI_API_KEY`, `DJANGO_SECRET_KEY`, `ACCESS_TOKEN`, `DATABASE_PASSWORD` and `"client_secret"` were all missed: the pattern expected `=` immediately after the keyword, so anything prefixed or suffixed slipped through. These are conventions, not exotic names, so they are handled now. Worse, placeholder suppression looked at the whole line — `example = "demo"; API_KEY = "realkey"` passed because `example` appeared somewhere on it. Reducing false positives by creating a hole is not an improvement. -->
