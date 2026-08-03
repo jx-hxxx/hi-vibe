@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.34.2] - 2026-08-04
+<!-- show:ko **첫 화면의 "Python 3.8+프로젝트에 최적화"가 붙어 보이던 것을 고쳤어요.** 원인이 좀 뜻밖이었는데, 그 줄이 flex 배치라서 태그 사이의 공백이 통째로 버려지고 있었습니다. 영문에서는 공백 두 개가 사라지고 있었어요. 그리고 문장 끝이 "합니다"와 "해요"로 섞여 있던 것도 맞췄습니다 — 공식 문서 인용과 AI에 붙여넣는 프롬프트는 원래 말투 그대로 뒀고요. "중복 찾아줘"가 줄 끝에서 잘려 두 줄로 나뉘던 것도 붙였습니다. -->
+<!-- show:en **"Python 3.8+ projects" was rendering with the space missing.** The cause was less obvious than it looked: that line is a flex row, and whitespace between elements inside a flex container is discarded entirely — the English version was losing two spaces. Sentence endings that mixed formal and casual Korean were also unified, leaving the official-docs quote and the copy-paste prompt in their original register. A quoted phrase that broke across two lines was pinned back together. -->
+
+### Fixed
+- **`display:inline-flex`가 태그 사이 공백을 먹던 것** (2026-08-04) — `.hero .micro span`이 inline-flex라 `<b>Python 3.8+</b> 프로젝트에`의 공백이 **flex 항목 경계로 취급돼 사라졌다**(`3.8+프로젝트에`). 영문 `Built for <b>…</b> projects`는 **공백 두 개**를 잃고 있었다. 체크 표시는 `::before`라 `inline-block`으로도 그대로 붙으므로 그렇게 바꿨다. `gap` 없는 나머지 flex 규칙 7개도 같이 확인했다 — 자식이 전부 태그라 해당 없음.
+- **인용구가 줄 끝에서 갈리던 것** (2026-08-04) — `② “중복 찾아줘”라고 말하기`가 두 줄로 쪼개졌다. 두 경로를 각각 `white-space:nowrap`으로 묶고, 앞 문장과도 줄을 나눴다.
+
+### Changed
+- **한국어 랜딩의 말투 통일** (2026-08-04) — `습니다`와 `해요`가 섞여 있었다. 본문 8곳을 `해요`로 맞추고, **Claude Code 공식 문서 인용**과 **AI에 붙여넣는 프롬프트 본문**은 그대로 뒀다 — 인용은 원문이 맞고, 프롬프트는 사용자가 보내는 글이라 격식체가 자연스럽다.
+
 ## [0.34.1] - 2026-08-04
 <!-- show:ko **첫 화면에도 "빼는 법"을 넣었어요.** README에만 있던 걸 랜딩 명령어 섹션의 빠른 시작 바로 아래로 올렸습니다. 자동만 잠깐 끄기(Claude에게 "이 프로젝트에선 꺼줘"라고 말하거나 파일 하나 만들기), 이 프로젝트에서 빼기, 플러그인 자체 지우기, 그리고 만들어진 문서는 어떻게 되는지까지 네 줄이에요. **빼는 전용 명령어는 만들지 않았습니다** — 외울 게 하나 더 느는 대신, 이미 있는 방법을 보이게만 했어요. -->
 <!-- show:en **The landing page now shows how to remove it, too.** What was only in the README moved up next to the quick-start rows in the commands section: silence the automation (say so to Claude, or create one file), remove it from this project, uninstall the plugin, and what happens to the documents. **No dedicated command was added** — that would be one more thing to remember; the existing routes were simply made visible. -->

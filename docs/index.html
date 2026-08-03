@@ -258,7 +258,10 @@
 
   /* --- grafted: hero micro-proof / trust strip / audit / copy --- */
   .hero .micro { display:flex; flex-wrap:wrap; gap:8px 18px; margin:20px 0 0; font-family:var(--mono); font-size:12.5px; color:var(--muted); }
-  .hero .micro span { display:inline-flex; align-items:center; }
+  /* inline-flex를 쓰면 태그 사이 공백이 flex 항목 경계로 취급돼 **통째로
+     사라진다** — `<b>Python 3.8+</b> 프로젝트에`가 `3.8+프로젝트에`로 붙어
+     보였다. 체크 표시는 ::before라 inline-block으로도 잘 붙는다. */
+  .hero .micro span { display:inline-block; }
   .hero .micro span::before { content:"✓"; color:var(--good); font-weight:700; margin-right:7px; }
 
   .trust { display:grid; grid-template-columns:repeat(4,1fr); margin:52px 0 88px; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; background:var(--surface); }
@@ -446,7 +449,7 @@
           <div class="fix">변경 이유와 <b>트러블슈팅 과정을 프로젝트에 남깁니다</b></div>
         </div>
       </div>
-      <p class="fitnote">Python 프로젝트와 Claude Code 중심의 개인 개발 흐름에 맞춰 만들었습니다. 짧은 실습이나 이미 리뷰·문서 자동화가 갖춰진 팀에서는 효과가 작을 수 있습니다.</p>
+      <p class="fitnote">Python 프로젝트와 Claude Code 중심의 개인 개발 흐름에 맞춰 만들었어요. 짧은 실습이나 이미 리뷰·문서 자동화가 갖춰진 팀에서는 효과가 작을 수 있어요.</p>
     </section>
 
     <section id="verify-ko">
@@ -553,7 +556,7 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
         <div class="featcol">
           <div class="colhd g"><span class="dot"></span><span class="ct">직접 점검</span><span class="cn"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> MANUAL</span></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M9.5 20.5v-11"/></svg></span><span class="ftitle">구조 점검</span><span class="ftag"><b>check</b></span></div><p class="fdesc"><b>"90% 비슷하게 또 만든"</b> 함수·안 쓰는 코드·너무 큰 파일, <b>하다 만 것</b>(에러 삼킴·TODO·테스트 없는 모듈)까지 짚어줘요. 후보를 그냥 던지지 않고 <b>딴 클로드가 열어봐</b> "12건 중 진짜 3건"으로 줄여줘요.</p></div>
-          <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate</b></span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환의존)를 설치해 빨간 줄로 표시. GitHub에 올리는 프로젝트면 <b>push마다 검문</b>도 같이 제안해요 — 리모트가 있는지 보고 알아서 판단합니다.</p></div>
+          <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 5.8v5.4c0 4.3 3 6.9 7 8.6 4-1.7 7-4.3 7-8.6V5.8L12 3Z"/></svg></span><span class="ftitle">기계 강제 (린트·CI)</span><span class="ftag"><b>gate</b></span></div><p class="fdesc"><code>gate</code>면 로컬에 검사기(ruff·eslint·타입·순환의존)를 설치해 빨간 줄로 표시. GitHub에 올리는 프로젝트면 <b>push마다 검문</b>도 같이 제안해요 — 리모트가 있는지 보고 알아서 판단해요.</p></div>
           <div class="feat"><div class="fhead"><span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></span><span class="ftitle">오탐 방지</span><span class="ftag"><b>규율·스캐너</b></span></div><p class="fdesc">"안 쓰는 코드"라고 <b>잘못 짚는 걸</b> 막아요. 프레임워크가 이름 없이 부르는 함수·테스트·<code>export default</code>·만드는 중인 코드를 죽은 코드로 오해하지 않게 인덱스로 관리해요.</p></div>
         </div>
       </div>
@@ -697,14 +700,14 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Claude Code 기본 기능이랑 겹치지 않나요?</summary>
         <div class="tbody">
-          <b>꽤 겹치지만, 다른 점도 많습니다.</b><br><br>
+          <b>꽤 겹치지만, 다른 점도 많아요.</b><br><br>
           <b>겹치는 것</b> — <code>/init</code>(CLAUDE.md 생성) · auto memory(기억) · <code>/code-review</code>(리뷰라는 목적) · <code>/verify</code>(실행 검증) · <code>/doctor</code>(이름만 같고 검사 대상은 달라요)<br>
           <b>hi-vibe만 하는 것</b> — 에러를 조용히 넘기는 코드·비밀키 바로 잡기 · 프로젝트 전체에서 중복 코드와 안 쓰는 코드 찾기 · 무엇이 왜 문제였는지까지 남는 CHANGELOG · 프로젝트별 opt-in<br><br>
           <b>차이 하나 — 언제 도느냐.</b><br>
-          Claude Code 공식 문서에 이렇게 적혀 있어요 — <i>“<code>/verify</code>와 <code>/code-review</code>는 직접 부를 때만 돕니다. v2.1.215 전에는 Claude가 알아서 돌리기도 했습니다.”</i> 알아서 돌던 게 없어진 자리예요. hi-vibe는 <b>기능을 다 만들면 리뷰를 거치기 전엔 대화가 안 끝납니다.</b> 이미 리뷰한 코드는 다시 보고 검사하지 않아요.<br><br>
+          Claude Code 공식 문서에 이렇게 적혀 있어요 — <i>“<code>/verify</code>와 <code>/code-review</code>는 직접 부를 때만 돕니다. v2.1.215 전에는 Claude가 알아서 돌리기도 했습니다.”</i> 알아서 돌던 게 없어진 자리예요. hi-vibe는 <b>기능을 다 만들면 리뷰를 거치기 전엔 대화가 안 끝나요.</b> 이미 리뷰한 코드는 다시 보고 검사하지 않아요.<br><br>
           <b>차이 둘 — 누가 보느냐.</b><br>
-          리뷰는 두 겹이에요. 먼저 체크리스트가 <b>빠뜨린 것</b>을 훑어요 — 에러를 조용히 넘겼는지, 실제로 돌려는 봤는지, 문서는 고쳤는지. 찾으면 그 자리에서 고치고 다시 검사합니다. 그다음 <b>코드를 짠 기억이 없는 딴 클로드</b>(fresh-eyes)를 새로 불러 <b>잘 만들었는지</b>를 봐요 — 과하게 만들지 않았나, 더 단순한 길은 없나.<br>
-          기본 <code>/code-review</code>를 대신 눌러주는 게 아닙니다. <b>hi-vibe가 직접 만든 에이전트</b>예요. 같은 대화를 이어온 Claude는 자기가 쓴 코드를 제대로 의심하지 않거든요.<br><br>
+          리뷰는 두 겹이에요. 먼저 체크리스트가 <b>빠뜨린 것</b>을 훑어요 — 에러를 조용히 넘겼는지, 실제로 돌려는 봤는지, 문서는 고쳤는지. 찾으면 그 자리에서 고치고 다시 검사해요. 그다음 <b>코드를 짠 기억이 없는 딴 클로드</b>(fresh-eyes)를 새로 불러 <b>잘 만들었는지</b>를 봐요 — 과하게 만들지 않았나, 더 단순한 길은 없나.<br>
+          기본 <code>/code-review</code>를 대신 눌러주는 게 아니에요. <b>hi-vibe가 직접 만든 에이전트</b>예요. 같은 대화를 이어온 Claude는 자기가 쓴 코드를 제대로 의심하지 않거든요.<br><br>
           <span class="dim">막는 데까지가 hi-vibe가 하는 일이고, 코드를 읽고 판단하는 건 Claude가 해요.</span>
         </div>
       </details>
@@ -723,15 +726,15 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
         </tbody>
       </table></div></div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>슬래시 메뉴에는 명령어 10개만 나와요.</b><br>
-        스킬 6개는 엔진이지 버튼이 아니라서 메뉴에서 숨겼어요(<code>user-invocable: false</code>). 안 그러면 16개가 뜹니다.<br>
-        <b>숨겼다고 안 도는 건 아니에요</b> — Claude는 알아서 불러요. 같은 엔진(repo-xray)을 부르는 길은 둘입니다: <b>① <code>check</code> 명령어 · ② “중복 찾아줘”라고 말하기.</b><br>
-        <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표예요. <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌립니다.</div></div>
+        스킬 6개는 엔진이지 버튼이 아니라서 메뉴에서 숨겼어요(<code>user-invocable: false</code>). 안 그러면 16개가 떠요.<br>
+        <b>숨겼다고 안 도는 건 아니에요</b> — Claude는 알아서 불러요.<br>같은 엔진(repo-xray)을 부르는 길은 둘이에요 — <b><span style="white-space:nowrap">① <code>check</code> 명령어</span> · <span style="white-space:nowrap">② “중복 찾아줘”라고 말하기</span></b><br>
+        <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표예요. <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌려요.</div></div>
     </section>
 
     <section id="living-ko">
       <span class="living-tag"><span class="pulse"></span>이 목록은 자동으로 채워져요</span>
       <h2>업데이트 기록은 CHANGELOG에서 자동으로 가져와요.</h2>
-      <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않습니다. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
+      <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
         <div class="rel"><div class="v">v0.34.1<small>2026-08-04</small></div><div class="h"><b>첫 화면에도 "빼는 법"을 넣었어요.</b> <span>README에만 있던 걸 랜딩 명령어 섹션의 빠른 시작 바로 아래로 올렸습니다. 자동만 잠깐 끄기(Claude에게 "이 프로젝트에선 꺼줘"라고 말하거나 파일 하나 만들기), 이 프로젝트에서 빼기, 플러그인 자체 지우기, 그리고 만들어진 문서는 어떻게 되는지까지 네 줄이에요. **빼는 전용 명령어는 만들지 않았습니다** — 외울 게 하나 더 느는 대신, 이미 있는 방법을 보이게만 했어요.</span></div></div>
