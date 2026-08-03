@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.35.1] - 2026-08-04
+<!-- show:ko **영문 제목 두 개에 남아 있던 강제 줄바꿈을 뺐어요.** 한국어는 v0.29.1에서 이미 뺐는데 영문만 그대로였습니다. 이제 화면 너비에 맞춰 자연스럽게 흐르고, 넓은 화면에서는 한 줄로 나와요. -->
+<!-- show:en **Two English headings no longer carry a hard line break.** The Korean side lost these in v0.29.1 and the English side was missed. They now flow with the viewport and sit on one line where there is room. -->
+
+### Fixed
+- **영문 제목의 강제 줄바꿈** (2026-08-04) — `If any of this<br>sounds familiar`, `What would it do<br>in your project?`. 한국어는 v0.29.1에서 뺐는데 **영문만 남아 있었다** — 한쪽만 고치고 반대쪽을 안 본 그 패턴이 또 나왔다. `h2`에 이미 `text-wrap:balance`가 있어 줄바꿈은 브라우저가 알아서 한다.
+  - `여기까진 기계가.<br>여기서부턴 AI가.`와 영문 짝은 **그대로 뒀다** — 문장이 둘이고 대비가 구조라서 붙이면 뜻이 흐려진다.
+
 ## [0.35.0] - 2026-08-04
 <!-- show:ko **헤더의 "설치"와 "명령어"가 사실상 같은 데로 가고 있었어요.** 설치 터미널이 명령어 섹션 **안에** 있어서, 두 메뉴를 눌러도 화면이 거의 안 움직였습니다. "명령어"를 "설치 & 명령어"로 합치고, 빈자리를 "나한테 맞나"로 채워 "이런 불편을 겪고 있다면" 섹션으로 보냅니다. 처음 온 사람이 제일 먼저 궁금한 건 설치법이 아니라 **이게 나한테 필요한가**니까요. -->
 <!-- show:en **"Install" and "Commands" in the header led to almost the same place.** The install terminal sits inside the commands section, so both links landed within a screen of each other. They are merged into "Install & commands", and the freed slot became "Good fit?", pointing at the section that helps you decide whether this is for you — which is the first thing a newcomer actually wants to know. -->
