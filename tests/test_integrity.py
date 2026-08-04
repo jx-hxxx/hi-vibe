@@ -58,8 +58,11 @@ _ADVERTISED_COUNT_RES = [
     re.compile(r"회귀\s*테스트\s*\n?\s*(\d+)\s*개"),
     re.compile(r"<b>(\d+)</b>\s*<span>[^<]*(?:테스트|tests)"),
 ]
-# 표현을 통째로 갈아엎어 검사가 0건이 되는 것을 막는 하한(현재 6곳).
-_MIN_ADVERTISED_SPOTS = 6
+# 표현을 통째로 갈아엎어 검사가 0건이 되는 것을 막는 하한.
+# v0.37.0에서 README를 설치 안내만 남기고 줄이면서 **테스트 수 광고가
+# 랜딩 한·영 두 곳으로 줄었다** — 숫자를 여러 곳에 쓰지 않는 게 원래 목표라
+# 하한을 낮춘다. 0이 되면 검사가 무의미해지므로 2는 지킨다.
+_MIN_ADVERTISED_SPOTS = 2
 
 
 def _actual_test_count():

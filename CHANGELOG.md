@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-08-04
+<!-- show:ko **README를 766줄에서 85줄로 줄였어요.** 소개 사이트가 이미 전체 명령어·작동 원리·FAQ·적합성 평가 질문을 다 갖고 있는데, README가 같은 설명을 한 번 더 하고 있었습니다. 오늘 하루에 난 문서 사고가 전부 "같은 말이 두 곳에 있어서" 생긴 것이었어요. 이제 사이트는 "왜 설치하지?", README는 "어떻게 설치하고 쓰지?"만 답합니다. 설치·첫 실행·알아둘 점(기록되는 것·끄는 법·한계)만 남기고 나머지는 사이트로 보냈어요. -->
+<!-- show:en **The README went from 766 lines to 85.** The site already carries every command, how it works, the FAQ and the fit-check prompt, and the README was repeating all of it. Every documentation defect today came from the same sentence living in two places. The site now answers "why install this?" and the README answers "how do I install and use it?" — install, first run, and the things worth knowing (what gets recorded, how to turn it off, the limits) stay; everything else moved. -->
+
+### Changed
+- **README를 설치 안내로 축소** (2026-08-04, 한 766→85줄 · 영 789→89줄) — 사이트와 README가 **같은 설명을 두 번** 하고 있었다. 오늘 난 문서 사고(FAQ 답 불일치 · 평가 프롬프트 네 버전 뒤처짐 · "훅 4종"이 열 곳 · 히어로 문구 어긋남)가 **전부 중복이 갈린 것**이었다. 남긴 것: 한 줄 소개 + 사이트 링크 · 설치 · `init`→`doctor`→평소처럼 · 알아서 해주는 것 5줄 · 알아둘 점 5개 · 더 보기 · 라이선스.
+  - **`check`를 필수처럼 쓰지 않았다.** `init`·`doctor` 한 번씩이면 끝이고 `check`는 "기존 코드 전체 점검 — 필요할 때만"이다. **그다음엔 아무것도 외울 필요가 없다**가 이 도구의 약속이다.
+  - 뺀 것(전부 사이트에 있음): 프롬프트 묶음과의 비교 80줄 · 왜 믿을 만한가 53줄 · `check` 상세 61줄 · 작성 전후 검증 50줄 · FAQ 61줄 · 명령어 표 66줄 · 선택 연동 39줄 · 평가 프롬프트 37줄.
+- **검사가 보는 자리를 옮겼다** (2026-08-04) — `test_command_modes`·`test_eval_prompt_sync`가 README를 읽고 있어서 **테스트가 README의 모양을 붙잡고 있었다.** 도구가 제품을 인질로 잡는 구조다. 두 검사 모두 **랜딩과 `commands/`만** 보게 하고, README에는 그 주장이 **다시 들어오지 않는지**를 지킨다.
+  - **이건 검사 범위를 몰래 좁힌 게 아니다.** 그 원칙은 *주장은 남아 있는데 검사만 뺄 때* 적용된다. 여기서는 주장 자체를 지웠으므로 검사할 것이 없고, 대신 "없는 상태"를 새로 지킨다 — 슬그머니 돌아오면 검사받지 않는 사본이 되기 때문이다.
+- **`.claude/CLAUDE.md`에 단일본 규칙 기록** (2026-08-04) — 명령어 분류표·평가 프롬프트·기능 설명의 **유일본은 랜딩**이다. 그 대가로 **랜딩이 죽으면 README만으로는 알 수 없다**는 것도 적어뒀다 — 알고 감수한 것과 모르고 당하는 것은 다르다.
+
 ## [0.36.1] - 2026-08-04
 <!-- show:ko **README의 평가 프롬프트가 랜딩보다 몇 버전 뒤처져 있었어요.** 같은 질문이 네 곳(랜딩·README 한·README 영·내부 아카이브)에 있는데, 랜딩만 고치고 나머지를 안 봤습니다. 넷을 다 맞추고, **다음부터는 기계가 지키게** 검사를 붙였어요. 한 곳이라도 달라지면 테스트가 실패합니다. 아카이브 파일 첫머리에 "두 벌이 갈리면 이 파일이 거짓말이 된다"고 적어놓고 정작 사람 눈에 맡기고 있었거든요. -->
 <!-- show:en **The README's evaluation prompt had fallen several versions behind the landing page.** The same question lives in four places, and only the landing was kept current. All four now match, and a test enforces it from here on. The archive file opened by saying that a divergence would make it a lie, and then relied on someone noticing. -->

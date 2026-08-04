@@ -132,18 +132,27 @@ class CommandModeConsistencyTest(unittest.TestCase):
             "commands/와 COMMAND_MODE가 어긋난다 — 새 명령을 만들었으면 "
             "이 파일의 COMMAND_MODE에 자동/직접을 적어라.")
 
-    def test_readmes_agree_with_ssot(self):
+    def test_readme_no_longer_claims_the_classification(self):
+        """README에는 명령어 분류표가 **없어야** 한다 (v0.37.0).
+
+        예전엔 README 표도 대조했다. 그런데 그러면 **테스트가 README의
+        모양을 붙잡아** 사용자에게 맞게 줄일 수가 없어진다 — 도구가 제품을
+        인질로 잡는 꼴이다. 분류 주장은 랜딩 한 곳에만 두고, README는
+        설치·첫 실행만 담는다.
+
+        중요한 구분: 이건 **검사 범위를 몰래 좁힌 게 아니다.** 좁히면
+        안 되는 경우는 *주장은 그대로 있는데 검사만 빼는 것*이다. 여기서는
+        주장 자체를 README에서 지웠으므로 검사할 것이 없다. 그래서
+        **정말 없는지**를 대신 지킨다 — 슬그머니 다시 들어오면 그때는
+        검사받지 않는 사본이 되기 때문이다."""
         for rel in READMES:
-            modes = _readme_modes(rel)
-            self.assertEqual(
-                sorted(modes), sorted(COMMAND_MODE),
-                f"{rel}: 명령어 표가 다루는 명령이 실제 명령 목록과 다르다.")
-            wrong = {c: m for c, m in modes.items() if m != COMMAND_MODE[c]}
-            self.assertEqual(
-                wrong, {},
-                f"{rel}: 자동/직접 분류가 실제와 다르다 (기대 "
-                f"{ {c: COMMAND_MODE[c] for c in wrong} }). 자동으로 도는 명령을 "
-                f"'치는 것' 표에 넣지 마라.")
+            text = _read(rel)
+            self.assertIsNone(
+                re.search(r"^##\s+(명령어 한눈에|Commands at a glance)\s*$",
+                          text, re.M),
+                f"{rel}에 명령어 분류표가 다시 들어왔다 — 그 주장의 유일본은 "
+                f"랜딩(docs/index.html)이다. README에 두면 검사받지 않는 "
+                f"사본이 되어 조용히 갈린다.")
 
     def test_landing_agrees_with_ssot(self):
         for i, modes in enumerate(_landing_modes()):

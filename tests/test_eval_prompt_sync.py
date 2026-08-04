@@ -1,9 +1,9 @@
-"""설치 전 평가 프롬프트가 **네 곳에 같은 내용으로** 있는지 지킨다.
+"""설치 전 평가 프롬프트가 **두 곳에 같은 내용으로** 있는지 지킨다.
 
-이 프롬프트는 랜딩(`docs/index.html`) · README 한 · README 영 ·
-`docs/internal/eval-prompt.md` 네 곳에 산다. 사람이 붙여넣어 쓰는 글이라
-한 곳만 고치면 **다른 데서 옛 질문을 복사해 간다** — 실제로 랜딩만 고치고
-README를 몇 릴리스 동안 방치했다.
+이 프롬프트는 랜딩(`docs/index.html`)과 `docs/internal/eval-prompt.md`
+두 곳에 산다. 사람이 붙여넣어 쓰는 글이라 한 곳만 고치면 **다른 데서 옛
+질문을 복사해 간다** — 실제로 랜딩만 고치고 README 사본을 몇 릴리스 동안
+방치했고, v0.37.0에서 그 사본을 아예 없앴다(사본이 적을수록 갈릴 일이 적다).
 
 `docs/internal/eval-prompt.md` 첫머리가 이렇게 적어두고 있었다:
 
@@ -45,17 +45,19 @@ def fenced_block(path, heading):
 
 
 class EvalPromptSyncTest(unittest.TestCase):
-    def test_readmes_match_the_landing(self):
-        for path, heading, lang in (
-            ("README.ko.md", "## 직접 검증해 보세요", "ko"),
-            ("README.md", "## Verify it yourself", "en"),
-        ):
+    def test_readme_does_not_carry_a_copy(self):
+        """README에는 프롬프트 사본이 **없어야** 한다 (v0.37.0).
+
+        예전엔 README 사본도 대조했다. 그런데 그러면 테스트가 README의
+        모양을 고정해버린다. 긴 질문은 **복사 버튼이 있는 랜딩**이 제 자리고,
+        README는 링크만 갖는다. 사본이 슬그머니 돌아오면 갈릴 곳이 하나
+        늘어나므로, 없는 상태를 지킨다."""
+        for path, heading in (("README.ko.md", "직접 검증"),
+                              ("README.md", "Verify it yourself")):
             with self.subTest(path):
-                self.assertEqual(
-                    fenced_block(os.path.join(REPO, path), heading),
-                    landing_prompt(lang),
-                    f"{path}의 평가 프롬프트가 랜딩과 다르다 — 한 곳만 고쳤다. "
-                    f"랜딩(docs/index.html)이 원본이다.")
+                self.assertNotIn(heading, _read(os.path.join(REPO, path)),
+                                 f"{path}에 평가 프롬프트가 다시 들어왔다 — "
+                                 f"유일본은 랜딩이다.")
 
     def test_archive_matches_the_landing(self):
         blocks = [b.strip() for b in
