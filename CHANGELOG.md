@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.38.0] - 2026-08-04
+<!-- show:ko **"내 프로젝트에서는 무엇을 도와줄까요?"의 질문을 다시 썼어요.** 예전 질문은 "설치할 가치가 있는지 평가해 달라"였는데, 이 자리의 목적은 심사가 아니라 **내 프로젝트 어디에 쓸지 미리 보는 것**입니다. 이제 다섯 가지를 실제 파일과 함께 짚어달라고 하고, 마지막에 도움이 될 지점 3가지·관련 파일·설치 후 사용 순서만 정리하게 해요. "비슷한 파일이 있다는 이유만으로 같은 기능이라고 단정하지 말라"는 줄도 넣었습니다. -->
+<!-- show:en **The question in "What would it do in your project?" has been rewritten.** The old one asked for a verdict on whether installing was worth it; the purpose of this section is not a verdict but a preview of where it would fit in your own code. It now asks for five specific things backed by real files, and closes with three places it would help, the files involved, and a suggested order of use. It also warns against concluding two things are the same because their filenames look alike. -->
+
+### Changed
+- **적합성 평가 프롬프트를 활용 미리보기로** (2026-08-04, 랜딩 한·영 + 아카이브) — 예전 질문은 `설치를 추천하는지와 그 이유`·`활용도가 낮은 기능`을 물었다. **이 자리의 목적은 심사가 아니다** — 한계와 안 맞는 사용자는 사이트의 다른 섹션이 이미 밝힌다. 이제 다섯 항목(중복 방지·리뷰가 잡을 것·세션 기록·전체 점검·기존 도구와의 병행)을 **실제 파일과 함께** 답하게 한다.
+  - **`필요 없어 보이는 기능`을 묻지 않는 이유**: 그렇게 물으면 AI가 제일 쉬운 출구로 간다 — 저장소에 `handover.md`가 하나 있는 걸 보고 "이미 있으니 필요 없다"고 결론짓는 식이다. 같은 프롬프트에 `비슷한 파일이 있다는 이유만으로 기능이 같다고 단정하지 말라`를 넣어놓고 반대 방향의 질문을 하면 모순이다.
+  - **정직함은 `실제 동작을 확인할 수 없다면 확인 불가라고 밝혀 주세요`가 담보한다.** 긍정적 활용점을 묻는 것이 거짓말을 유도하는 것은 아니다 — 근거가 없으면 없다고 말하게 돼 있다.
+- **왼쪽 카드 설명도 같이** (2026-08-04, 한·영) — `활용도가 높은 기능과 필요성이 낮은 기능을 구분해서`는 프롬프트가 더 이상 묻지 않는 것이었다. **카드가 지키지 못할 약속을 하고 있었다.** `어느 자리에서 무엇이 도움이 될지 파일 단위로 짚어줘요`로 바꿨다.
+
 ## [0.37.3] - 2026-08-04
 <!-- show:ko **`favicon.ico`를 추가했어요.** 페이지에는 원래 로고 파비콘이 선언돼 있었지만, 일부 도구는 HTML을 안 읽고 `/favicon.ico` 경로부터 찾습니다. 그때 404가 나서 아이콘이 안 보이거나 엉뚱한 게 나올 수 있었어요. 16·32·48px을 한 파일에 담아 7KB로 만들었습니다. -->
 <!-- show:en **Added a `favicon.ico`.** The page already declared a PNG icon, but some tools skip the HTML and go straight to `/favicon.ico`, which returned 404. The new file packs 16, 32 and 48 pixel versions into 7KB. -->

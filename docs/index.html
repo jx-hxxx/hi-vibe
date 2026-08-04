@@ -462,7 +462,7 @@
       <div class="audit">
         <div class="card">
           <h3>내 프로젝트로 확인하기</h3>
-          <p>공개 GitHub 저장소라면 <b>실제 코드까지 확인</b>해, 활용도가 높은 기능과 필요성이 낮은 기능을 구분해서 살펴볼 수 있어요.</p>
+          <p>공개 GitHub 저장소라면 <b>실제 코드까지 확인</b>해, 내 프로젝트의 어느 자리에서 무엇이 도움이 될지 파일 단위로 짚어줘요.</p>
           <ol class="steps">
             <li><span><b>내 프로젝트 GitHub 링크를 넣어요</b>
               <div class="fitform">
@@ -477,29 +477,28 @@
         <div class="promptbox">
           <pre id="audit-prompt-ko">https://github.com/jx-hxxx/hi-vibe
 
-hi-vibe는 Python 프로젝트를 Claude Code로 개발하는 개인 개발자를 위한 플러그인입니다.
-
-아래 프로젝트 저장소를 가능하면 실제 코드까지 확인하고, hi-vibe가 제 프로젝트의 개발 과정에 실질적으로 도움이 될지 분석해 주세요.
+hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
+이 프로젝트에서 hi-vibe를 어떻게 활용하면 좋을지 알려주세요.
 
 제 프로젝트:
 <span id="proj-ko">[내 프로젝트 GitHub 링크]</span>
 
-README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고, 다음 내용을 평가해 주세요.
+다음을 실제 파일이나 코드 사례와 함께 살펴봐 주세요.
 
-1. 기존 구현 탐색과 중복 작업 방지에 도움이 되는지
-2. 기능 구현 후 자동 리뷰가 발견할 수 있는 문제
-3. 세션 간 작업 맥락과 트러블슈팅 기록 관리의 활용도
-4. 프로젝트 전체 점검 기능이 필요한 규모와 구조인지
-5. 현재 사용 중인 도구나 작업 방식과 겹치는 부분
-6. 이 프로젝트에서 기대할 수 있는 장점과 한계
+1. 기존 구현 탐색과 중복 작업 방지가 도움이 될 부분
+2. 구현 후 리뷰가 오류나 누락을 발견할 수 있는 부분
+3. 세션 간 작업 맥락과 트러블슈팅 기록 관리가 특히 도움이 될 부분
+4. 중복 코드·안 쓰는 코드·비밀키 등 전체 점검이 유용할 부분
+5. 기존 테스트·lint·CI·문서와 함께 적용하는 방법
 
-가능하면 제 프로젝트의 실제 파일이나 코드에서 확인한 구체적인 사례를 들어 설명해 주세요. 직접 확인하지 못한 내용은 추측하지 말고 확인 불가라고 밝혀 주세요.
+비슷한 파일이 있다는 이유만으로 기능이 같다고 단정하지 말고,
+실제 동작을 확인할 수 없다면 확인 불가라고 밝혀 주세요.
 
-마지막에는 다음 내용을 간단히 정리해 주세요.
+마지막에는 다음만 간단히 정리해 주세요.
 
-- 가장 유용할 것으로 예상되는 기능
-- 활용도가 낮거나 필요하지 않은 기능
-- 이 프로젝트에 설치를 추천하는지와 그 이유</pre>
+- 가장 도움이 될 지점 3가지
+- 관련된 실제 파일
+- 설치 후 권장 사용 순서</pre>
           <button class="btn ghost js-copy" type="button" data-target="audit-prompt-ko">질문 복사</button>
         </div>
       </div>
@@ -849,7 +848,7 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
       <div class="audit">
         <div class="card">
           <h3>Check it with your project</h3>
-          <p>If your GitHub repo is public, the AI reads <b>the actual code</b> and separates the features you'd lean on from the ones you wouldn't need.</p>
+          <p>If your GitHub repo is public, the AI reads <b>the actual code</b> and points at the specific files in your project where each piece would help.</p>
           <ol class="steps">
             <li><span><b>Drop in your project's GitHub link</b>
               <div class="fitform">
@@ -864,29 +863,28 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
         <div class="promptbox">
           <pre id="audit-prompt-en">https://github.com/jx-hxxx/hi-vibe
 
-hi-vibe is a plugin for solo developers building Python projects with Claude Code.
-
-Please look at the repository below — the actual code where you can — and analyse whether hi-vibe would genuinely help how I develop this project.
+Look at hi-vibe's actual implementation and at the code of the project below,
+then tell me how I could put hi-vibe to use in this project.
 
 My project:
 <span id="proj-en">[my project's GitHub link]</span>
 
-Read hi-vibe's real implementation, not just what the README claims, and assess:
+Go through the following, citing real files or code from my project.
 
-1. Whether it helps find existing implementations and avoid duplicate work
-2. What the automatic post-change review would realistically catch here
-3. How useful cross-session context and troubleshooting records would be
-4. Whether this project is large or structured enough to need the repo-wide check
-5. What overlaps with tools or habits I already use
-6. The concrete benefits and limits I should expect in this project
+1. Where searching for existing implementations would prevent duplicated work
+2. Where a post-implementation review would catch errors or omissions
+3. Where carrying working context and troubleshooting records between sessions would help most
+4. Where a repo-wide sweep for duplicate code, unused code and secrets would be useful
+5. How to fit it alongside the tests, lint, CI and docs that already exist here
 
-Cite specific files or code from my project wherever you can. If you could not verify something, say so rather than guessing.
+Do not conclude that two things do the same job just because the filenames look alike,
+and if you cannot verify actual behaviour, say so plainly.
 
-Finish with a short summary:
+Close with just these.
 
-- The feature likely to be most useful
-- Features I probably don't need
-- Whether you'd recommend installing it here, and why</pre>
+- The 3 places it would help most
+- The real files involved
+- A suggested order of use after installing</pre>
           <button class="btn ghost js-copy" type="button" data-target="audit-prompt-en">Copy question</button>
         </div>
       </div>
