@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.37.1] - 2026-08-04
+<!-- show:ko **별표가 그대로 보이던 자리를 여덟 곳 고쳤어요.** 닫는 `**` 바로 앞에 따옴표나 괄호가 오면 마크다운이 굵게로 안 읽습니다. 한국어는 조사가 바로 붙어서 유독 자주 걸려요. 이 문제는 7월 28일에 이미 한 번 고치면서 "전수 확인했다"고 적었는데 그 뒤로 여덟 건이 다시 쌓였습니다. 사람이 한 번 훑는 걸로는 안 되는 종류라 검사를 붙였어요. -->
+<!-- show:en **Eight places where the asterisks were showing literally are fixed.** A closing `**` preceded by a quote or a bracket is not read as bold, and Korean particles attach directly, so it happens constantly. This was already fixed once in July, with a note saying every occurrence had been checked — eight more accumulated afterwards. A one-time sweep clearly is not enough, so it is a test now. -->
+
+### Fixed
+- **볼드가 깨져 별표가 노출되던 것 8곳** (2026-08-04) — 닫는 `**` 앞이 문장부호(`"` `)`)이고 뒤가 글자면 CommonMark가 **닫는 표시로 인정하지 않는다**. 따옴표·괄호를 볼드 밖으로 뺐다(`"**굵게**"를`). README 한 1곳 · `.claude/CLAUDE.md` 2곳 · CHANGELOG 7곳.
+  - **`show:` 주석 안의 것은 랜딩에도 그대로 나갔다** — `build-showcase.py`는 맨 앞 볼드만 `<b>`로 바꾸고 나머지는 `<span>`에 그대로 넣기 때문이다.
+
+### Added
+- **`test_markdown_bold.py`** (2026-08-04) — **이건 재발이다.** 2026-07-28 항목에 같은 문제를 고치며 `같은 패턴이 더 있는지 정규식으로 전수 확인했다`고 적었는데, 그 뒤로 여덟 건이 쌓였다. **한 번 훑는 것으로는 안 되는 종류**라 기계로 옮겼다. 백틱 안(이렇게 쓰면 깨진다고 인용하는 자리)은 제외하고, 잡아야 할 4문장·놓치면 안 될 5문장으로 양쪽을 고정했다.
+
 ## [0.37.0] - 2026-08-04
 <!-- show:ko **README를 766줄에서 85줄로 줄였어요.** 소개 사이트가 이미 전체 명령어·작동 원리·FAQ·적합성 평가 질문을 다 갖고 있는데, README가 같은 설명을 한 번 더 하고 있었습니다. 오늘 하루에 난 문서 사고가 전부 "같은 말이 두 곳에 있어서" 생긴 것이었어요. 이제 사이트는 "왜 설치하지?", README는 "어떻게 설치하고 쓰지?"만 답합니다. 설치·첫 실행·알아둘 점(기록되는 것·끄는 법·한계)만 남기고 나머지는 사이트로 보냈어요. -->
 <!-- show:en **The README went from 766 lines to 85.** The site already carries every command, how it works, the FAQ and the fit-check prompt, and the README was repeating all of it. Every documentation defect today came from the same sentence living in two places. The site now answers "why install this?" and the README answers "how do I install and use it?" — install, first run, and the things worth knowing (what gets recorded, how to turn it off, the limits) stay; everything else moved. -->
@@ -193,7 +204,7 @@
 - **어제 CHANGELOG의 과장 정정** (2026-08-02) — v0.32.0 항목에 "Bash 수정"을 고친 사례로 적었으나 사실이 아니었다. 그 줄에 정정을 달았다.
 
 ### Added
-- **Bash 전용 작업 테스트 + 동시 종료 테스트** (2026-08-02) — 기존 테스트는 "새 파일 Edit · 같은 파일 Edit · 새 사용자 결정"뿐이라 Bash 경로가 없었다. **동시 종료는 타이밍 테스트만으로 부족하다** — 락을 빼고 세 번 돌렸더니 전부 통과했다(프로세스 기동 시간차로 실제로 겹치지 않는다). 그래서 "겹쳐도 살아남는가"(기능)와 **"표식이 락 블록 안에서 쓰이는가"(구조)**를 둘 다 본다. 구조 검사는 락 밖으로 옮기면 즉시 실패하는 것을 확인했다.
+- **Bash 전용 작업 테스트 + 동시 종료 테스트** (2026-08-02) — 기존 테스트는 "새 파일 Edit · 같은 파일 Edit · 새 사용자 결정"뿐이라 Bash 경로가 없었다. **동시 종료는 타이밍 테스트만으로 부족하다** — 락을 빼고 세 번 돌렸더니 전부 통과했다(프로세스 기동 시간차로 실제로 겹치지 않는다). 그래서 "겹쳐도 살아남는가"(기능)와 "**표식이 락 블록 안에서 쓰이는가**"(구조)를 둘 다 본다. 구조 검사는 락 밖으로 옮기면 즉시 실패하는 것을 확인했다.
 
 ## [0.32.1] - 2026-08-02
 <!-- show:ko **중복 방지 표식이 슬롯 하나뿐이라 다른 세션이 덮어쓰고 있었어요.** 같은 프로젝트에 Claude Code 창을 두 개 띄우면 실제로 납니다. 세션 B가 기록하면 세션 A의 표식이 사라져서, A가 끝날 때 compact이 이미 남긴 내용이 한 번 더 들어갔어요. 이제 세션별로 표식을 둡니다(최근 10개까지). 실제 21MB 트랜스크립트로 네 가지 종료 이유를 다 돌려 확인했습니다. -->
@@ -214,7 +225,7 @@
 
 ### Changed
 - **`SessionEnd` 매처에 `resume`·`logout` 추가** (2026-08-02) — `clear|prompt_input_exit`만 받고 있었다. 랜딩이 "세션이 바뀌며 맥락을 잃는 문제"를 다룬다고 말하는 이상 `/resume`으로 넘어가는 경로도 덮는 게 맞다. `other`는 어떤 경우인지 문서에 없어 제목을 정할 수 없으므로 계속 제외.
-- **과장 검사를 문구 차단에서 주장 모델로** (2026-08-02) — 이 항목만 세 번 뚫렸다: `runs it`(대명사) → `└─ Stop ── run the review`(훅 이름이 주어) → `훅이 리뷰를 돌린 뒤`(`직접`이 없음). **문구를 하나씩 막는 구조라 표현이 조금만 바뀌면 계속 빠져나간다.** 이제 **주어(훅·hook·Stop) + 수행 동사(돌리다·실행·수행·runs·ran·performs)**로 잡고, 정확한 표현(지시·시키다·hold·demand)과 **수행자를 밝힌 문장**(`…수행하는 건 Claude다`, `수행은 AI`)은 부정 조건으로 뺀다. 한국어는 목적어→동사, 영어는 동사→목적어라 어순별로 나눠 썼다(`\b`가 한글 앞에서 경계로 안 잡히는 것도 여기서 드러났다). 잡아야 할 9문장·놓치면 안 될 7문장으로 양쪽을 고정했다.
+- **과장 검사를 문구 차단에서 주장 모델로** (2026-08-02) — 이 항목만 세 번 뚫렸다: `runs it`(대명사) → `└─ Stop ── run the review`(훅 이름이 주어) → `훅이 리뷰를 돌린 뒤`(`직접`이 없음). **문구를 하나씩 막는 구조라 표현이 조금만 바뀌면 계속 빠져나간다.** 이제 **주어(훅·hook·Stop) + 수행 동사**(돌리다·실행·수행·runs·ran·performs)로 잡고, 정확한 표현(지시·시키다·hold·demand)과 **수행자를 밝힌 문장**(`…수행하는 건 Claude다`, `수행은 AI`)은 부정 조건으로 뺀다. 한국어는 목적어→동사, 영어는 동사→목적어라 어순별로 나눠 썼다(`\b`가 한글 앞에서 경계로 안 잡히는 것도 여기서 드러났다). 잡아야 할 9문장·놓치면 안 될 7문장으로 양쪽을 고정했다.
 
 ## [0.31.3] - 2026-08-02
 <!-- show:ko **"이제 옛 문장 없나?"를 주장별로 전수 확인해 여섯 군데를 더 고쳤어요.** 영문 README와 랜딩 신뢰 바에 "훅 4종"이 남아 있었고(제 검색이 `4 hooks`만 찾아서 `4 real Claude Code hooks`를 놓쳤습니다), 영문 훅 다이어그램에는 새 훅이 아예 빠져 있었어요. 기계가 하는 일 목록의 "진행상황 저장" 시점도 compact만 적혀 있어 `/clear`와 창 닫기가 빠져 있었고요. 그리고 한·영 다이어그램의 Stop 줄이 "훅이 리뷰를 직접 한다"로 읽혀서, 이 형태도 금지 목록에 넣었습니다. -->
@@ -475,7 +486,7 @@
 - **명령어 표의 `review` 설명** (2026-08-01) — "훅이 직접 돌려요"가 남아 있었다. v0.26.1에서 여러 곳을 고쳤는데 이 표를 빠뜨렸다. "훅이 대화를 붙잡고 Claude에게 리뷰를 시켜요"로 교체.
 - **`handover` 발동 시점이 틀림** (2026-08-01) — "세션 끝"이라고 적혀 있었지만 PreCompact 훅은 **대화가 정리(compact)되기 직전**에 돈다. 세션이 그냥 끝날 땐 안 돈다.
 - **"코드가 바뀌면 자동으로 따라 갱신"** (2026-08-01) — 기계가 항상 보장하는 것처럼 읽힌다. 실제로는 리뷰(AI)가 어떤 문서를 고쳐야 하는지 확인하는 것이다. "문서를 역할별로 나눠 두고, 코드를 바꾸면 리뷰가 같이 확인한다"로.
-- **"이 페이지가 안 낡는다는 게 증거예요"** (2026-08-01) — 자동 생성되는 건 업데이트 목록뿐이고 페이지의 나머지는 손으로 쓴다. 제목을 "업데이트 기록은 CHANGELOG에서 자동으로 가져와요"로 바꾸고, 본문에 **"자동인 건 이 목록이고 나머지는 손으로 쓴다"**를 명시했다.
+- **"이 페이지가 안 낡는다는 게 증거예요"** (2026-08-01) — 자동 생성되는 건 업데이트 목록뿐이고 페이지의 나머지는 손으로 쓴다. 제목을 "업데이트 기록은 CHANGELOG에서 자동으로 가져와요"로 바꾸고, 본문에 "**자동인 건 이 목록이고 나머지는 손으로 쓴다**"를 명시했다.
 
 ### Changed
 - **첫 화면에서 대상을 밝힘** (2026-08-01) — "hi-vibe가 AI가 대충 못 하게 잡아 줘요"는 언어·규모를 안 밝혀 범용 도구로 읽혔다. "Claude Code로 **Python** 프로젝트를 만드는 **입문자·1인 개발자**를 위한 안전벨트"로 바꾸고, 배지도 "python3만 있으면 돼요"(설치 조건) → "**Python 3.8+ 프로젝트에 최적화**"(지원 대상)로. JS/TS 부분 지원은 이미 아래에 밝혀져 있다.
@@ -485,7 +496,7 @@
 <!-- show:en **The previous release added one rule that was simply wrong.** It said "don't account for how long things took" — but the answer that prompted it came from the user asking directly, "it took 15 minutes; was that hi-vibe or the feature?" The reply measured real timestamps instead of guessing, which is exactly right, and the new rule discouraged it. It now reads: don't volunteer timing, but if asked, measure and answer. That same conversation also revealed where the 15 minutes actually went — not the review, but scope growing during the build: a request to "write it on the site" turned into shipping a new bot feature. Findings outside the request are now reported, not fixed. -->
 
 ### Fixed
-- **"시간을 해명하지 마라"가 과했다** (2026-08-01) — 증상: 도그푸딩 피드백을 확인 없이 받아, 소요 시간 설명 자체를 노이즈로 규정했다. 실제로는 사용자가 **"15분이나 걸렸는데 hi-vibe 때문이냐"고 먼저 물었고**, 답변은 `git` 시각으로 구간을 실측해 "리뷰 1분 22초, 나머지는 버그 수정"이라고 답한 것이었다 — 추측을 금지하는 `grounded-answers`가 제대로 작동한 자리다. **"안 물으면 붙이지 말고, 물으면 재서 답하라"**로 고쳤다. 일을 키운 쪽이 자신이면 그렇게 말하고 리뷰 탓으로 돌리지 말라는 것도 같이 적었다. (같은 결함을 두 번 설명하지 말라는 규칙은 유효해 유지 — 그 대화에서 실제로 두 번 설명됐다.)
+- **"시간을 해명하지 마라"가 과했다** (2026-08-01) — 증상: 도그푸딩 피드백을 확인 없이 받아, 소요 시간 설명 자체를 노이즈로 규정했다. 실제로는 사용자가 **"15분이나 걸렸는데 hi-vibe 때문이냐"고 먼저 물었고**, 답변은 `git` 시각으로 구간을 실측해 "리뷰 1분 22초, 나머지는 버그 수정"이라고 답한 것이었다 — 추측을 금지하는 `grounded-answers`가 제대로 작동한 자리다. "**안 물으면 붙이지 말고, 물으면 재서 답하라**"로 고쳤다. 일을 키운 쪽이 자신이면 그렇게 말하고 리뷰 탓으로 돌리지 말라는 것도 같이 적었다. (같은 결함을 두 번 설명하지 말라는 규칙은 유효해 유지 — 그 대화에서 실제로 두 번 설명됐다.)
 
 ### Added
 - **요청 범위 밖 발견은 고치지 말고 묻는다 (`find` 모드)** (2026-08-01) — v0.26.1은 **리뷰 단계**의 스코프 크립만 막았는데, 실제 15분의 원인은 **만들 때** 번진 것이었다: "사이트에 적어줘"라는 요청으로 시작해 코드를 보다가 다른 문제를 발견하고 기능 신설까지 갔고, 그 새 기능의 버그를 잡느라 작업이 배로 늘었다. 이제 요청 밖에서 발견한 것은 **한 줄로 보고하고 사용자가 정한다**. 예외는 요청한 것을 하려면 반드시 통과해야 하는 경우뿐. **발견하지 말라는 게 아니라, 범위를 넓히는 결정이 사용자 것**이라는 규칙이다.
@@ -505,7 +516,7 @@
 <!-- show:en **Deleting a file whole slipped past the review entirely.** Review scope only ever looked at files that currently exist, so when the AI removed one, nothing caught it — even though leftover callers blow up at runtime. Deleted files are now part of the scope, and the review is told to go looking for callers that survived. Also, hi-vibe was showing 16 entries in the slash menu; it's 10 now — the 6 internal skills are engines, not buttons, so they're hidden (Claude still loads them on its own). -->
 
 ### Fixed
-- **삭제된 파일이 리뷰 범위에서 빠짐** (2026-08-01) — 증상: AI가 `lib.py`를 지워도 Stop 훅이 안 막았다. 원인: `_code_files`가 `os.path.isfile`로 **존재하는 파일만** 걸렀고(주석에 "삭제분 제외"라고 명시돼 있었다), 삭제만 있는 변경은 지문까지 비어 훅이 판단할 근거가 없었다. `_deleted_code_files`를 만들어 `scope`가 삭제분도 돌려주고, 지문에도 넣는다(안 넣으면 "파일만 지운 변경"이 영영 안 막힌다). Stop 훅의 차단 사유에 **"이 파일들을 부르던 곳이 남아 있는지 반드시 확인하라"**를 넣었고, `write-gate`도 지운 파일은 열 수 없으니 **남은 호출부를 찾으라**고 지시한다. `rm`도 Bash 쓰기 신호에 추가했다. 회귀 테스트 4개.
+- **삭제된 파일이 리뷰 범위에서 빠짐** (2026-08-01) — 증상: AI가 `lib.py`를 지워도 Stop 훅이 안 막았다. 원인: `_code_files`가 `os.path.isfile`로 **존재하는 파일만** 걸렀고(주석에 "삭제분 제외"라고 명시돼 있었다), 삭제만 있는 변경은 지문까지 비어 훅이 판단할 근거가 없었다. `_deleted_code_files`를 만들어 `scope`가 삭제분도 돌려주고, 지문에도 넣는다(안 넣으면 "파일만 지운 변경"이 영영 안 막힌다). Stop 훅의 차단 사유에 "**이 파일들을 부르던 곳이 남아 있는지 반드시 확인하라**"를 넣었고, `write-gate`도 지운 파일은 열 수 없으니 **남은 호출부를 찾으라**고 지시한다. `rm`도 Bash 쓰기 신호에 추가했다. 회귀 테스트 4개.
 - **`gate` 예시가 같은 명령 두 줄** (2026-08-01) — 한/영 README 모두 `--ci` 시절 잔재로 두 줄이 동일했다. 한 줄로 합치고 "GitHub 프로젝트면 push 관문까지 같이 제안한다(고를 플래그 없음)"로 설명했다.
 - **미사용 호환 함수 제거** (2026-08-01) — `changed_code_files()`.
 
@@ -576,7 +587,7 @@
 - **README·랜딩 전면 재점검** (2026-08-01) — 오늘 제거한 것들의 잔재 0건: CLAUDE.md 폴더 지도, CHANGELOG 지연 생성, 없앤 플래그(`--all`·`--deep`·`--ci`), 옛 에이전트 이름. 구조 개수(명령 10·스킬 6·에이전트 2·훅 4) 실제와 일치. 한/영 대칭 전 항목 동일(기능 카드 9·빠른시작 7·정직함 노트 5·펼침 노트 4·카드 그룹 3·계층 3·자동 배지 5·직접 배지 5), README 헤딩 35개 동일. 카드 그룹별 성격 대조에서 AUTO 그룹의 `직접` 0건·MANUAL 그룹의 `자동` 0건. 목차 링크·랜딩 앵커·표 행 깨짐 0건, HTML 태그 균형 정상, 테스트 142개 통과.
 
 ## [0.24.1] - 2026-08-01
-<!-- show:ko **문서 정합성을 내세우는 플러그인이 자기 문서에서 모순을 냈어요.** 앞 릴리스에서 CLAUDE.md의 폴더 지도를 없앴는데, **세션마다 주입되는 규율 문구**에는 "구조가 바뀌면 CLAUDE.md 지도 동기화"가 그대로 남아 있었습니다. 없앤 기능을 훅이 매 세션 다시 요구하고 있었던 거예요. README·랜딩의 CLAUDE.md 설명도 여전히 "폴더 구조"라고 적혀 있었고요. 그리고 우리 도구로 우리 저장소를 검사하면 **"비밀키 11건"**이 떴습니다 — 전부 테스트용 가짜 키인데, 한 줄이 두 패턴에 걸려 6곳이 11건으로 부풀려진 것이었어요. 이제 0건입니다. -->
+<!-- show:ko **문서 정합성을 내세우는 플러그인이 자기 문서에서 모순을 냈어요.** 앞 릴리스에서 CLAUDE.md의 폴더 지도를 없앴는데, **세션마다 주입되는 규율 문구**에는 "구조가 바뀌면 CLAUDE.md 지도 동기화"가 그대로 남아 있었습니다. 없앤 기능을 훅이 매 세션 다시 요구하고 있었던 거예요. README·랜딩의 CLAUDE.md 설명도 여전히 "폴더 구조"라고 적혀 있었고요. 그리고 우리 도구로 우리 저장소를 검사하면 "**비밀키 11건**"이 떴습니다 — 전부 테스트용 가짜 키인데, 한 줄이 두 패턴에 걸려 6곳이 11건으로 부풀려진 것이었어요. 이제 0건입니다. -->
 <!-- show:en **A plugin that sells doc consistency contradicted its own docs.** The previous release dropped the folder map from CLAUDE.md, but the discipline text injected at every session start still said "keep the CLAUDE.md map in sync when structure changes" — a hook asking, every session, for the thing we just removed. The README and landing page still described CLAUDE.md as holding the folder structure too. And scanning our own repo with our own tool reported **11 hardcoded secrets** — all test fixtures, and 6 real locations inflated to 11 because a single line matched two patterns. It reports 0 now. -->
 
 ### Fixed
@@ -623,7 +634,7 @@
 - 테스트 128 → 140개. PostToolUse가 Bash를 못 본다는 제약과 그 대응을 CLAUDE.md 핵심 요구사항에 적었다(훅에만 의존하는 안전장치를 새로 만들지 않도록).
 
 ## [0.22.0] - 2026-08-01
-<!-- show:ko **CHANGELOG가 "고쳤다"만 남기고 있었어요.** 이 파일은 원래 트러블슈팅을 기록하려고 넣은 건데, `log`가 시키는 건 "무엇이 바뀌었나"까지였습니다. 나중에 `recall`로 찾는 사람이 궁금한 건 고쳤다는 사실이 아니라 **"왜 그랬더라"**인데 그게 안 남았어요. 이제 `Fixed`에는 증상과 원인을 같이 적습니다. 원인을 모른 채 고쳤으면 모른다고 적게 했어요 — 틀린 원인은 기록이 없느니만 못하니까요(다음 사람이 그걸 믿고 엉뚱한 데를 팝니다). -->
+<!-- show:ko **CHANGELOG가 "고쳤다"만 남기고 있었어요.** 이 파일은 원래 트러블슈팅을 기록하려고 넣은 건데, `log`가 시키는 건 "무엇이 바뀌었나"까지였습니다. 나중에 `recall`로 찾는 사람이 궁금한 건 고쳤다는 사실이 아니라 "**왜 그랬더라**"인데 그게 안 남았어요. 이제 `Fixed`에는 증상과 원인을 같이 적습니다. 원인을 모른 채 고쳤으면 모른다고 적게 했어요 — 틀린 원인은 기록이 없느니만 못하니까요(다음 사람이 그걸 믿고 엉뚱한 데를 팝니다). -->
 <!-- show:en **The CHANGELOG was only recording "fixed it."** This file exists to capture troubleshooting, but `log` only ever asked for *what changed*. What someone actually wants when they come back with `recall` isn't that it was fixed — it's **why it broke**, and that wasn't being kept. `Fixed` entries now carry the symptom and the cause. If the cause was never found, it says so: a wrong cause is worse than no record, because the next person trusts it and digs in the wrong place. -->
 
 ### Changed
