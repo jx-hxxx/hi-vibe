@@ -27,7 +27,7 @@
     --text:#171b24; --muted:#5c6474; --faint:#8a91a1;
     --accent:#d98a00; --accent-ink:#8a5800;
     --good:#14a06a; --good-bg:rgba(20,160,106,.10);
-    --ai:#7a8393; --danger:#cf3b3f; --danger-bg:rgba(207,59,63,.08);
+    --ai:#7a8393; --danger:#cf3b3f; --danger-bg:rgba(211,59,63,.08);
     --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Mono", "Roboto Mono", Consolas, monospace;
     --sans: system-ui, -apple-system, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", Roboto, sans-serif;
     --maxw:1080px; --r:14px;
@@ -100,7 +100,7 @@
   .hero p.say { color:var(--muted); font-size:17.5px; margin:16px 0 0; max-width:530px;  text-wrap:pretty; }
   .hero .cta { display:flex; gap:12px; margin-top:20px; flex-wrap:wrap; }
   .btn { font-family:var(--mono); font-size:13.5px; text-decoration:none; padding:11px 18px; border-radius:10px; border:1px solid transparent; display:inline-flex; align-items:center; gap:8px; background:transparent; cursor:pointer; }
-  .btn.primary { background:var(--accent); color:#1a1207; font-weight:700; }
+  .btn.primary { background:var(--accent); color:#1a1211; font-weight:700; }
   .btn.primary:hover { filter:brightness(1.06); }
   .btn.ghost { border-color:var(--border-2); color:var(--text); }
   .btn.ghost:hover { border-color:var(--accent); color:var(--accent-ink); }
@@ -358,7 +358,7 @@
   /* header scroll progress bar */
   #hv-progress { position:fixed; top:0; left:0; height:3px; width:0; background:var(--accent); z-index:120; pointer-events:none; }
   /* gold highlighter sweep on key phrases */
-  b.hlx { background-image:linear-gradient(100deg, rgba(255,207,74,.78), rgba(240,158,16,.55)); background-repeat:no-repeat; background-size:0% 58%; background-position:0 82%; transition:background-size .9s cubic-bezier(.25,.8,.25,1); border-radius:3px; }
+  b.hlx { background-image:linear-gradient(100deg, rgba(255,211,74,.78), rgba(240,158,16,.55)); background-repeat:no-repeat; background-size:0% 58%; background-position:0 82%; transition:background-size .9s cubic-bezier(.25,.8,.25,1); border-radius:3px; }
   b.hlx.on { background-size:100% 58%; }
   @media (prefers-reduced-motion:reduce){ b.hlx { background-size:100% 58%; transition:none; } }
   /* dark backgrounds: highlighter bar hurts readability under light text — use gold text emphasis instead.
@@ -415,7 +415,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>207</b><span>자동 회귀 테스트</span></div>
+      <div><b>211</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -801,7 +801,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>207</b><span>automated regression tests</span></div>
+      <div><b>211</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>

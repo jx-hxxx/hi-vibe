@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+## [0.39.0] - 2026-08-04
+<!-- show:ko **실사용에서 처음으로 결함이 나왔어요.** 다른 프로젝트에서 쓰다가 `doctor`가 스스로 모순되는 진단을 냈습니다 — "훅이 안 돈다(stale)"면서 같은 줄에 "마지막 실행 0.0시간 전"이고 살아있는 훅이 둘이었어요. 세션 도중에 플러그인을 켜거나 업데이트하면 `SessionStart`만 이번 세션에서 안 도는데, 그것 하나로 전체를 판정하고 있었습니다. 그걸 본 AI는 경고를 그냥 무시했고요 — **건강검진이 늑대소년이 되면 진짜 고장도 같이 묻힙니다.** 그리고 리뷰 지침이 서로 반대를 시키던 것도 고쳤어요. -->
+<!-- show:en **The first defect found in real use.** While using it on another project, `doctor` produced a self-contradictory diagnosis: it reported the hooks as stale while the same line said the last run was 0.0 hours ago, with two hooks listed as alive. Enabling or updating the plugin mid-session means only `SessionStart` misses that session, and the whole verdict hung on that one hook. The AI reading it simply ignored the warning — a health check that cries wolf buries the real failures with it. A contradiction inside the review instructions was fixed at the same time. -->
+
+### Fixed
+- **`doctor --quick`이 스스로 모순되는 진단을 내던 것** (2026-08-04) — 실제로 나온 출력: `{"state": "stale", "fresh_hooks": ["PostToolUse", "Stop"], "last_seen_hours": 0.0}`. 판정이 **`SessionStart`가 신선한지만** 봤는데(`세션마다 반드시 돈다`는 전제), **세션 도중에 플러그인을 켜거나 업데이트하면 그 훅은 다음 세션에나 돈다.** 그동안 `PostToolUse`·`Stop`은 멀쩡히 돈다.
+  - **결과가 나쁘다**: 그 출력을 본 AI는 스킬 지침대로 `훅이 안 돌고 있습니다`를 알려야 했지만 **말이 안 돼서 무시했다.** 다음에 진짜로 훅이 죽어도 똑같이 무시하게 된다.
+  - 훅이 **하나라도** 최근에 돌았으면 `alive`로 본다. `Stop`은 매 턴 도므로 정말 죽었으면 `fresh_hooks`가 빈다. 진짜 낡은 경우가 여전히 `stale`로 잡히는지도 같이 고정했다.
+- **리뷰 지침이 서로 반대를 시키던 것** (2026-08-04) — `SKILL.md:107`은 `사용자에게 고르라고 묻지 않는다`인데 `SKILL.md:288`은 `"가볍게 봐줘"라고 하시면 됩니다를 덧붙인다`였다. 실사용에서 AI가 **"리뷰가 값어치 있었냐"는 질문에 이 문장을 답 대신 내놓았다** — 판단을 사용자에게 떠넘긴 것이다. 안내 자체는 남기되(끄는 법을 모르면 마찰이 불만이 된다), **깊이 판단은 여전히 AI가 하고 되묻지 않는다**를 같은 자리에 못박았다.
+
+### Added
+- **`test_doctor_quick.py`** (2026-08-04) — **살아있는 훅이 있는데 `stale`이라고 하면 실패**한다(자기모순 금지). 세션 도중 켠 경우·`Stop`만 돈 경우 등 네 조합으로 확인하고, 반대로 **진짜 낡았을 때는 여전히 `stale`**인지도 고정했다. 상태 값이 스킬이 분기하는 다섯 개 밖으로 새지 않는지도 본다. 고치기 전 코드로 되돌리면 3건이 실패하는 것을 확인했다.
+
+### 기록만 하고 안 고친 것
+- **`fresh-eyes`가 변경 크기와 무관하게 붙는다** — 실사용 측정: 273줄 렌더링 재작성에 5분 50초·69,386토큰(실질 결함 2건), 37줄 데이터 추가에 3분 4초·38,404토큰(0건). `review_scope`가 이미 `total_changed_lines`·`file_count`를 주는데 병렬 여부에만 쓰고 깊이에는 안 쓴다. **다만 표본이 둘이다** — 빈손 한 번을 근거로 임계값을 박으면 "10번 중 2~3건" 기준과 어긋난다. 사례를 더 모은 뒤에 정한다.
+
 ## [0.38.1] - 2026-08-04
 <!-- show:ko **질문 마지막 줄을 조건형으로 바꿨어요.** `설치 후 권장 사용 순서`는 설치를 이미 정한 것처럼 읽혔습니다. 이 자리는 설치 전에 보는 미리보기니까 `설치한다면`으로 여지를 뒀어요. 묻는 내용은 그대로입니다. -->
 <!-- show:en **The closing line of the question is now conditional.** "A suggested order of use after installing" read as though the decision had already been made; this section is a preview seen before installing, so it now says "if you do install it". Nothing else changed. -->

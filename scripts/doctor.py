@@ -276,8 +276,16 @@ def cmd_quick(root):
     now = time.time()
     fresh = sorted(k for k, v in beats.items()
                    if isinstance(v, (int, float)) and now - v < STALE_AFTER)
-    # SessionStart는 세션마다 반드시 돈다 — 이게 낡았으면 훅 자체가 안 도는 것.
-    state = "alive" if "SessionStart" in fresh else ("stale" if beats else "never-ran")
+    # 예전엔 `SessionStart`가 신선한지만 봤다("세션마다 반드시 돈다"는 전제).
+    # 그런데 **세션 도중에 플러그인을 켜거나 업데이트하면** SessionStart는 이번
+    # 세션에서 안 돈다 — 다음 세션에나 돈다. 그동안 PostToolUse·Stop은 멀쩡히
+    # 도는데도 `stale`이 나왔고, 같은 JSON에 `last_seen_hours: 0.0`이 함께
+    # 실려 **스스로 모순되는 진단**이 됐다. 실제로 그걸 본 AI는 경고를 무시했다.
+    # 건강검진이 늑대소년이 되면 진짜 고장도 같이 묻힌다.
+    #
+    # 훅이 **하나라도** 최근에 돌았으면 훅 계층은 살아 있는 것이다. Stop 훅은
+    # 매 턴 돌므로, 정말 죽었으면 `fresh`가 비어 있다.
+    state = "alive" if fresh else ("stale" if beats else "never-ran")
     last = max((v for v in beats.values() if isinstance(v, (int, float))), default=0)
     # 추적 중인 `.env`도 여기서 본다. 전체 doctor에만 두면 **이미 쓰던
     # 프로젝트가 업데이트만 받았을 때 영영 모른다** — init을 다시 칠 일도,
