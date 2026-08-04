@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.38.1] - 2026-08-04
+<!-- show:ko **질문 마지막 줄을 조건형으로 바꿨어요.** `설치 후 권장 사용 순서`는 설치를 이미 정한 것처럼 읽혔습니다. 이 자리는 설치 전에 보는 미리보기니까 `설치한다면`으로 여지를 뒀어요. 묻는 내용은 그대로입니다. -->
+<!-- show:en **The closing line of the question is now conditional.** "A suggested order of use after installing" read as though the decision had already been made; this section is a preview seen before installing, so it now says "if you do install it". Nothing else changed. -->
+
+### Changed
+- **프롬프트 마지막 줄** (2026-08-04, 랜딩 한·영 + 아카이브) — `설치 후 권장 사용 순서` → `설치한다면 권장하는 첫 사용 순서`. **답을 강요하지 않으면서 설치를 전제하지도 않는다.** 영문도 `If you do install it, a suggested order to start with`로.
+
 ## [0.38.0] - 2026-08-04
 <!-- show:ko **"내 프로젝트에서는 무엇을 도와줄까요?"의 질문을 다시 썼어요.** 예전 질문은 "설치할 가치가 있는지 평가해 달라"였는데, 이 자리의 목적은 심사가 아니라 **내 프로젝트 어디에 쓸지 미리 보는 것**입니다. 이제 다섯 가지를 실제 파일과 함께 짚어달라고 하고, 마지막에 도움이 될 지점 3가지·관련 파일·설치 후 사용 순서만 정리하게 해요. "비슷한 파일이 있다는 이유만으로 같은 기능이라고 단정하지 말라"는 줄도 넣었습니다. -->
 <!-- show:en **The question in "What would it do in your project?" has been rewritten.** The old one asked for a verdict on whether installing was worth it; the purpose of this section is not a verdict but a preview of where it would fit in your own code. It now asks for five specific things backed by real files, and closes with three places it would help, the files involved, and a suggested order of use. It also warns against concluding two things are the same because their filenames look alike. -->

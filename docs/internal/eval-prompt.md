@@ -39,7 +39,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
 
 - 가장 도움이 될 지점 3가지
 - 관련된 실제 파일
-- 설치 후 권장 사용 순서
+- 설치한다면 권장하는 첫 사용 순서
 ```
 
 ## English
@@ -68,5 +68,5 @@ Close with just these.
 
 - The 3 places it would help most
 - The real files involved
-- A suggested order of use after installing
+- If you do install it, a suggested order to start with
 ```
