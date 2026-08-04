@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.37.3] - 2026-08-04
+<!-- show:ko **`favicon.ico`를 추가했어요.** 페이지에는 원래 로고 파비콘이 선언돼 있었지만, 일부 도구는 HTML을 안 읽고 `/favicon.ico` 경로부터 찾습니다. 그때 404가 나서 아이콘이 안 보이거나 엉뚱한 게 나올 수 있었어요. 16·32·48px을 한 파일에 담아 7KB로 만들었습니다. -->
+<!-- show:en **Added a `favicon.ico`.** The page already declared a PNG icon, but some tools skip the HTML and go straight to `/favicon.ico`, which returned 404. The new file packs 16, 32 and 48 pixel versions into 7KB. -->
+
+### Added
+- **`docs/favicon.ico`** (2026-08-04) — `<link rel="icon">`으로 PNG를 선언해 두었지만 **`/favicon.ico`는 404**였다. HTML을 파싱하지 않고 그 경로부터 찾는 도구(일부 크롤러·리더·구형 클라이언트)에서는 아이콘이 안 뜬다. 16·32·48px을 한 파일에 담았다(7KB) — 256px까지 넣으면 60KB가 되는데, 고해상도는 이미 PNG 선언이 담당하므로 넣지 않았다.
+  - **완전한 해결은 아니다.** 이 사이트는 `jx-hxxx.github.io/hi-vibe/` 아래라, **도메인 루트**(`jx-hxxx.github.io/favicon.ico`)를 찾는 도구에는 여전히 안 잡힌다. 그건 이 저장소가 어쩔 수 없는 자리다.
+
 ## [0.37.2] - 2026-08-04
 <!-- show:ko **"이 저장소는 스스로를 관리한다(dogfooding)"가 절반만 사실이었어요.** 문서 체계는 hi-vibe 방식을 쓰지만 훅은 이 저장소에서 켠 적이 없습니다. 그런데 그렇게 적어두니, `doctor`가 매번 "아직 init 안 함"이라고 알려주는 걸 정상으로 읽고 넘겼어요. 켜면 안 되는 이유가 분명한데(만드는 중인 버전이 만드는 곳에 파일을 쓴다) 그 이유가 어디에도 없었습니다. 이제 적혀 있어요. -->
 <!-- show:en **"This repository manages itself with hi-vibe" was only half true.** The document system follows hi-vibe's conventions, but the hooks have never been enabled here. Because the file said otherwise, the `doctor` line reporting "not initialised" was read as normal noise every time. There is a good reason not to enable them — a version under development would be writing into the place it is being developed — and that reason was written down nowhere. Now it is. -->
