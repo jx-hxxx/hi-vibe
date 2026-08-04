@@ -740,9 +740,9 @@ README의 설명뿐만 아니라 hi-vibe의 실제 구현도 함께 살펴보고
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.37.0<small>2026-08-04</small></div><div class="h"><b>README를 766줄에서 85줄로 줄였어요.</b> <span>소개 사이트가 이미 전체 명령어·작동 원리·FAQ·적합성 평가 질문을 다 갖고 있는데, README가 같은 설명을 한 번 더 하고 있었습니다. 오늘 하루에 난 문서 사고가 전부 "같은 말이 두 곳에 있어서" 생긴 것이었어요. 이제 사이트는 "왜 설치하지?", README는 "어떻게 설치하고 쓰지?"만 답합니다. 설치·첫 실행·알아둘 점(기록되는 것·끄는 법·한계)만 남기고 나머지는 사이트로 보냈어요.</span></div></div>
         <div class="rel"><div class="v">v0.36.1<small>2026-08-04</small></div><div class="h"><b>README의 평가 프롬프트가 랜딩보다 몇 버전 뒤처져 있었어요.</b> <span>같은 질문이 네 곳(랜딩·README 한·README 영·내부 아카이브)에 있는데, 랜딩만 고치고 나머지를 안 봤습니다. 넷을 다 맞추고, **다음부터는 기계가 지키게** 검사를 붙였어요. 한 곳이라도 달라지면 테스트가 실패합니다. 아카이브 파일 첫머리에 "두 벌이 갈리면 이 파일이 거짓말이 된다"고 적어놓고 정작 사람 눈에 맡기고 있었거든요.</span></div></div>
         <div class="rel"><div class="v">v0.36.0<small>2026-08-04</small></div><div class="h"><b>README에 "fresh-eyes는 hi-vibe가 직접 만든 것"이라는 말이 어디에도 없었어요.</b> <span>스킬 6개는 표로 정리돼 있는데 에이전트 2개는 본문에 흩어져만 있어서, `fresh-eyes 에이전트`라고만 보면 Claude Code 기본 기능으로 읽힐 수 있었습니다. 에이전트 표를 새로 넣고 **둘 다 hi-vibe가 만들어 함께 배포한다**고 적었어요. 그리고 `fresh-eyes`는 코드를 의심하고 `proof-eyes`는 스캐너를 의심한다는 차이도 같이요 — 이름만 보고 바꿔 쓰면 리뷰가 헛돕니다.</span></div></div>
-        <div class="rel"><div class="v">v0.35.2<small>2026-08-04</small></div><div class="h"><b>README의 "겹치지 않나요?" 답을 한 문장으로 끝냈어요.</b> <span>"꽤 겹칩니다."만 있으면 질문에 "네"만 하고 멈춘 셈이라, 랜딩과 같이 "하지만 다른 점도 많아요"를 붙였습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1127,9 +1127,9 @@ Finish with a short summary:
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.37.0<small>2026-08-04</small></div><div class="h"><b>The README went from 766 lines to 85.</b> <span>The site already carries every command, how it works, the FAQ and the fit-check prompt, and the README was repeating all of it. Every documentation defect today came from the same sentence living in two places. The site now answers "why install this?" and the README answers "how do I install and use it?" — install, first run, and the things worth knowing (what gets recorded, how to turn it off, the limits) stay; everything else moved.</span></div></div>
         <div class="rel"><div class="v">v0.36.1<small>2026-08-04</small></div><div class="h"><b>The README's evaluation prompt had fallen several versions behind the landing page.</b> <span>The same question lives in four places, and only the landing was kept current. All four now match, and a test enforces it from here on. The archive file opened by saying that a divergence would make it a lie, and then relied on someone noticing.</span></div></div>
         <div class="rel"><div class="v">v0.36.0<small>2026-08-04</small></div><div class="h"><b>Nowhere did the README say that `fresh-eyes` is an agent hi-vibe wrote.</b> <span>The six skills had a table; the two agents were only mentioned in passing, so "the `fresh-eyes` agent" could read as a Claude Code built-in. There is now an agent table stating that **both ship with hi-vibe**, along with the distinction that `fresh-eyes` doubts the code while `proof-eyes` doubts the scanner.</span></div></div>
-        <div class="rel"><div class="v">v0.35.2<small>2026-08-04</small></div><div class="h"><b>The README answer to "doesn't this overlap?" now finishes the thought.</b> <span>"Quite a bit" alone answered yes and stopped; it now says what the landing page says — plenty is different, too.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
