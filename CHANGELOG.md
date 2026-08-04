@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.37.2] - 2026-08-04
+<!-- show:ko **"이 저장소는 스스로를 관리한다(dogfooding)"가 절반만 사실이었어요.** 문서 체계는 hi-vibe 방식을 쓰지만 훅은 이 저장소에서 켠 적이 없습니다. 그런데 그렇게 적어두니, `doctor`가 매번 "아직 init 안 함"이라고 알려주는 걸 정상으로 읽고 넘겼어요. 켜면 안 되는 이유가 분명한데(만드는 중인 버전이 만드는 곳에 파일을 쓴다) 그 이유가 어디에도 없었습니다. 이제 적혀 있어요. -->
+<!-- show:en **"This repository manages itself with hi-vibe" was only half true.** The document system follows hi-vibe's conventions, but the hooks have never been enabled here. Because the file said otherwise, the `doctor` line reporting "not initialised" was read as normal noise every time. There is a good reason not to enable them — a version under development would be writing into the place it is being developed — and that reason was written down nowhere. Now it is. -->
+
+### Fixed
+- **`.claude/CLAUDE.md`의 dogfooding 서술** (2026-08-04) — `hi-vibe 문서 시스템으로 스스로를 관리한다`고만 적혀 있어 **훅도 도는 것처럼 읽혔다.** 실제로는 `.hi-vibe/` 마커가 없어 훅이 한 번도 안 돌았다. 그 결과 오늘 `doctor`를 여러 번 돌리면서 `아직 init 안 함` 경고를 **매번 정상으로 읽고 넘겼다** — 문서가 신호를 무디게 만든 사례다.
+  - 켜지 않는 이유를 같이 적었다: ①만드는 중인 버전이 만드는 곳에 파일을 쓴다(2026-08-02에 Bash 명령 원문이 handover로 복사되는 유출이 있었다 — 켜져 있었으면 이 저장소에 남았다) ②훅은 **설치된 캐시 버전**에서 돌므로 지금 고치는 소스가 아니라 옛 버전이 검사한다.
+  - **`doctor`의 "아직 init 안 함"은 정상이고 의도한 상태**라고 못박았다. 안 적으면 다음에 또 누가 켠다.
+
 ## [0.37.1] - 2026-08-04
 <!-- show:ko **별표가 그대로 보이던 자리를 여덟 곳 고쳤어요.** 닫는 `**` 바로 앞에 따옴표나 괄호가 오면 마크다운이 굵게로 안 읽습니다. 한국어는 조사가 바로 붙어서 유독 자주 걸려요. 이 문제는 7월 28일에 이미 한 번 고치면서 "전수 확인했다"고 적었는데 그 뒤로 여덟 건이 다시 쌓였습니다. 사람이 한 번 훑는 걸로는 안 되는 종류라 검사를 붙였어요. -->
 <!-- show:en **Eight places where the asterisks were showing literally are fixed.** A closing `**` preceded by a quote or a bracket is not read as bold, and Korean particles attach directly, so it happens constantly. This was already fixed once in July, with a note saying every occurrence had been checked — eight more accumulated afterwards. A one-time sweep clearly is not enough, so it is a test now. -->
