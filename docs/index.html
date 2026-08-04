@@ -739,9 +739,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.38.1<small>2026-08-04</small></div><div class="h"><b>질문 마지막 줄을 조건형으로 바꿨어요.</b> <span>`설치 후 권장 사용 순서`는 설치를 이미 정한 것처럼 읽혔습니다. 이 자리는 설치 전에 보는 미리보기니까 `설치한다면`으로 여지를 뒀어요. 묻는 내용은 그대로입니다.</span></div></div>
         <div class="rel"><div class="v">v0.38.0<small>2026-08-04</small></div><div class="h"><b>"내 프로젝트에서는 무엇을 도와줄까요?"의 질문을 다시 썼어요.</b> <span>예전 질문은 "설치할 가치가 있는지 평가해 달라"였는데, 이 자리의 목적은 심사가 아니라 **내 프로젝트 어디에 쓸지 미리 보는 것**입니다. 이제 다섯 가지를 실제 파일과 함께 짚어달라고 하고, 마지막에 도움이 될 지점 3가지·관련 파일·설치 후 사용 순서만 정리하게 해요. "비슷한 파일이 있다는 이유만으로 같은 기능이라고 단정하지 말라"는 줄도 넣었습니다.</span></div></div>
         <div class="rel"><div class="v">v0.37.3<small>2026-08-04</small></div><div class="h"><b>`favicon.ico`를 추가했어요.</b> <span>페이지에는 원래 로고 파비콘이 선언돼 있었지만, 일부 도구는 HTML을 안 읽고 `/favicon.ico` 경로부터 찾습니다. 그때 404가 나서 아이콘이 안 보이거나 엉뚱한 게 나올 수 있었어요. 16·32·48px을 한 파일에 담아 7KB로 만들었습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.37.2<small>2026-08-04</small></div><div class="h"><b>"이 저장소는 스스로를 관리한다(dogfooding)"가 절반만 사실이었어요.</b> <span>문서 체계는 hi-vibe 방식을 쓰지만 훅은 이 저장소에서 켠 적이 없습니다. 그런데 그렇게 적어두니, `doctor`가 매번 "아직 init 안 함"이라고 알려주는 걸 정상으로 읽고 넘겼어요. 켜면 안 되는 이유가 분명한데(만드는 중인 버전이 만드는 곳에 파일을 쓴다) 그 이유가 어디에도 없었습니다. 이제 적혀 있어요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1125,9 +1125,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.38.1<small>2026-08-04</small></div><div class="h"><b>The closing line of the question is now conditional.</b> <span>"A suggested order of use after installing" read as though the decision had already been made; this section is a preview seen before installing, so it now says "if you do install it". Nothing else changed.</span></div></div>
         <div class="rel"><div class="v">v0.38.0<small>2026-08-04</small></div><div class="h"><b>The question in "What would it do in your project?" has been rewritten.</b> <span>The old one asked for a verdict on whether installing was worth it; the purpose of this section is not a verdict but a preview of where it would fit in your own code. It now asks for five specific things backed by real files, and closes with three places it would help, the files involved, and a suggested order of use. It also warns against concluding two things are the same because their filenames look alike.</span></div></div>
         <div class="rel"><div class="v">v0.37.3<small>2026-08-04</small></div><div class="h"><b>Added a `favicon.ico`.</b> <span>The page already declared a PNG icon, but some tools skip the HTML and go straight to `/favicon.ico`, which returned 404. The new file packs 16, 32 and 48 pixel versions into 7KB.</span></div></div>
-        <div class="rel"><div class="v">v0.37.2<small>2026-08-04</small></div><div class="h"><b>"This repository manages itself with hi-vibe" was only half true.</b> <span>The document system follows hi-vibe's conventions, but the hooks have never been enabled here. Because the file said otherwise, the `doctor` line reporting "not initialised" was read as normal noise every time. There is a good reason not to enable them — a version under development would be writing into the place it is being developed — and that reason was written down nowhere. Now it is.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
