@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.39.1] - 2026-08-06
+<!-- show:ko **잡아놓고 말을 안 하던 것을 고쳤어요.** hi-vibe가 뭔가 잡으면 답변 끝에 `👋 hi-vibe가 방금 …을 잡았어요` 한 줄을 남기게 돼 있습니다. 그게 나중에 "몇 건 잡았나"를 셀 수 있는 유일한 표시예요. 그런데 바로 위 문단이 그 줄을 **"중복 설명"** 목록에 넣어놔서, 체크리스트에 이미 적었으면 생략하게 돼 있었습니다. 실사용에서 리뷰가 여덟 번 돌고 진짜 결함도 나왔는데 이 줄은 **한 번도 안 붙었어요.** 설명은 한 곳에만, 세는 표시는 항상. 이 둘을 갈라놨습니다. -->
+<!-- show:en **It was catching things and not saying so.** When hi-vibe catches something it is supposed to close the reply with one line, `👋 hi-vibe caught …`, which is the only marker that makes later counting possible. The paragraph above it listed that line among things not to repeat, so once the checklist covered the defect the line was dropped. In real use a session ran eight reviews, found real defects, and emitted the line zero times. Explanations belong in one place; the counter always gets written. -->
+
+### Fixed
+- **`👋` catch 줄이 "중복 설명 금지"에 걸려 사라지던 것** (2026-08-06) — `write-gate/SKILL.md:277`이 체크리스트 ⚠️ · `👋` 줄 · 마무리 요약을 나란히 두고 **한 곳에만 쓰라**고 했는데, `325`는 조건이 맞으면 **붙이라**고 한다. 같은 파일이 반대를 시켰고, 실제로는 더 구체적인 체크리스트가 이겨서 줄이 안 붙었다.
+  - **실사용 근거**: 2026-08-06 한 프로젝트에서 Stop 훅이 리뷰를 8회 강제했고 실질 결함(되살아난 회귀 1건·숨은 전제 1건·안 쓰는 import 2건·낡은 docstring 3건)이 나왔는데, 그날 `👋 hi-vibe가 방금` 줄은 **0건**이었다. 같은 기간 다른 프로젝트들에서는 붙었다.
+  - **왜 중요한가**: 이 접두사는 `나중에 세션에서 grep 가능하게` 고정한 것이다(같은 파일 324행). 안 붙으면 "잡은 건수"를 셀 방법이 없어져, 지금 모으는 중인 깔때기 수치(리뷰 발동 → 실제 결함)가 실제보다 작게 잡힌다.
+  - **`👋`는 설명이 아니라 세는 표시**라고 그 자리에 못박았다. 설명 중복 금지는 체크리스트·요약 사이에만 적용된다.
+  - **이번이 세 번째 자기모순이다** (v0.39.0의 `107 vs 288`, `SessionStart charter`에 이어). 한 파일 안에서 두 문단이 반대를 시키는 것이 이 스킬의 재발 유형이라 CLAUDE.md 함정에 적었다.
+
 ## [0.39.0] - 2026-08-04
 <!-- show:ko **실사용에서 처음으로 결함이 나왔어요.** 다른 프로젝트에서 쓰다가 `doctor`가 스스로 모순되는 진단을 냈습니다 — "훅이 안 돈다(stale)"면서 같은 줄에 "마지막 실행 0.0시간 전"이고 살아있는 훅이 둘이었어요. 세션 도중에 플러그인을 켜거나 업데이트하면 `SessionStart`만 이번 세션에서 안 도는데, 그것 하나로 전체를 판정하고 있었습니다. 그걸 본 AI는 경고를 그냥 무시했고요 — **건강검진이 늑대소년이 되면 진짜 고장도 같이 묻힙니다.** 그리고 리뷰 지침이 서로 반대를 시키던 것도 고쳤어요. -->
 <!-- show:en **The first defect found in real use.** While using it on another project, `doctor` produced a self-contradictory diagnosis: it reported the hooks as stale while the same line said the last run was 0.0 hours ago, with two hooks listed as alive. Enabling or updating the plugin mid-session means only `SessionStart` misses that session, and the whole verdict hung on that one hook. The AI reading it simply ignored the warning — a health check that cries wolf buries the real failures with it. A contradiction inside the review instructions was fixed at the same time. -->
