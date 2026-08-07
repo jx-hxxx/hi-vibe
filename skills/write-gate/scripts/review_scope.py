@@ -174,6 +174,43 @@ def changed_lines(root, files, base="HEAD"):
     return counts
 
 
+OVERSIZE_LINES = 400   # 체크리스트 3번과 같은 기준. 여기서 무르게 하지 말 것.
+
+
+def _total_lines(path):
+    try:
+        with open(path, "rb") as fh:
+            return fh.read().count(b"\n") + 1
+    except OSError:
+        return 0
+
+
+def oversized(root, files, base="HEAD"):
+    """{file: {"lines": 지금 줄 수, "growth": 이번에 늘어난 순증}} — 초과분만.
+
+    **왜 순증(growth)을 따로 주나:** `changed_lines`는 추가+삭제라 방향이
+    없다. 559줄을 389줄로 쪼갠 리팩터링도 `383줄 변경`으로만 보여서, 리뷰가
+    `크다`고 또 짚었다. 늘렸는지 줄였는지는 정반대 이야기다.
+
+    **왜 기계가 세나:** 지금은 AI가 눈으로 세고 보고해서 세션마다 말이
+    다르다. 사실은 기계가 주고 판단만 스킬이 한다(이 저장소의 기본 분업)."""
+    grew = {}
+    for line in (_git(["diff", "--numstat", base], root).splitlines() if base else []):
+        parts = line.split("\t")
+        if len(parts) < 3 or parts[2] not in files:
+            continue
+        try:
+            grew[parts[2]] = int(parts[0]) - int(parts[1])
+        except ValueError:
+            grew[parts[2]] = 0            # 바이너리
+    out = {}
+    for f in files:
+        n = _total_lines(os.path.join(root, f))
+        if n > OVERSIZE_LINES:
+            out[f] = {"lines": n, "growth": grew.get(f, n)}
+    return out
+
+
 def _split_reviewed(root, files):
     """현재 계단의 파일을 (아직 봐야 할 것, 이미 봤고 안 바뀐 것)으로 나눈다."""
     state = load_state(root)
@@ -239,6 +276,8 @@ def cmd_list(root):
         "to_review": to_review,        # 파일명 배열 (하위호환 유지)
         "skipped": skipped,
         "sizes": sizes,                # {파일: 변경 줄 수} — 병렬 판단 근거
+        # 400줄 초과 파일만. growth가 양수면 이번에 더 키운 것, 음수면 줄인 것.
+        "oversized": oversized(root, set(to_review), base),
         "total_changed_lines": sum(sizes.values()),
         # 지운 파일은 열어볼 수 없다 — 남은 호출부가 있는지만 확인하면 된다.
         "deleted": deleted,

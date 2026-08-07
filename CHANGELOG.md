@@ -5,6 +5,21 @@
 
 ## [Unreleased]
 
+## [0.42.0] - 2026-08-07
+<!-- show:ko **같은 파일에 같은 크기 경고가 리뷰마다 똑같이 떴어요.** `이 파일 686줄입니다`를 이미 알고 넘어가기로 한 뒤에도 계속 펼쳐졌습니다. 이 저장소 원칙이 `알림은 쌓이면 신호가 아니다`인데 정면으로 어긋난 자리였어요. 이제 **처음 400줄을 넘긴 것만 크게 짚고**, 원래 넘어 있던 파일은 한 줄로 줄입니다. 그리고 리뷰가 파일이 **커졌는지 줄었는지**를 이제 압니다 — 예전엔 559줄을 389줄로 쪼갠 리팩터링도 `383줄 변경`으로만 보여서 또 `크다`고 짚었거든요. 기준 400은 그대로예요. 무르게 한 게 아니라 같은 말을 반복하지 않게 한 겁니다. -->
+<!-- show:en **The same size warning was reprinted in full at every review.** "This file is 686 lines" kept expanding even after it had been raised and consciously deferred. This repository's own rule is that alerts which pile up stop being signal. Now only a file that has *just* crossed 400 lines gets the full warning; one that was already over gets a single line. The review can also tell whether a file grew or shrank — a refactor that split 559 lines down to 389 previously showed up only as "383 lines changed" and got flagged as oversized again. The 400 threshold is unchanged; what changed is the repetition. -->
+
+### Added
+- **`review_scope list`에 `oversized`** (2026-08-07) — `{파일: {lines, growth}}`로 400줄 초과 파일만. `growth`는 **순증**(추가 − 삭제)이다.
+  - **`changed_lines`에는 방향이 없다.** 추가+삭제라서 **559줄을 389줄로 쪼갠 리팩터링도 `383줄 변경`으로 보인다** — 리뷰가 그걸 보고 또 `크다`고 짚었다. 늘린 것과 줄인 것은 정반대 이야기다.
+  - **처음 넘긴 것인지는 `lines - growth`로 나온다** — 400 이하면 이번에 넘긴 것이다. 상태 파일을 새로 두지 않고 판정할 수 있어 그렇게 했다.
+  - 숫자를 AI가 눈으로 세던 것을 기계로 옮겼다(세션마다 말이 달랐다).
+
+### Changed
+- **크기 경고를 반복해 펼치지 않는다** (2026-08-07, `write-gate` 체크리스트 3번) — **처음 400을 넘긴 파일만 ⚠️로 펼쳐 분리를 제안**하고, 원래 넘어 있던 파일은 한 줄로 축약한다(`kis_client.py 686줄, 이번 +26`). `growth`가 음수면 아예 짚지 않는다.
+  - **기준 400은 그대로다.** CLAUDE.md의 `임계값을 무르게 조정하지 말 것`은 유효하다 — 바뀐 것은 탐지 기준이 아니라 **같은 사실을 몇 번 되풀이하느냐**다.
+  - **없애지 않고 축약만 한 이유**: 반복이 소음이기만 한 건 아니었다. `livefeed.py`가 475→511→559로 커지는 동안 세 번 울렸고 그게 실제로 분리를 이끌었다. 계속 보이되 자리를 덜 차지하게 했다.
+
 ## [0.41.0] - 2026-08-07
 <!-- show:ko **프론트 파일이 리뷰 대상에서 통째로 빠져 있었어요.** `.html`·`.css`가 확장자 목록에 없어서, 로직이 `index.html` 안에 있어도 레이아웃이 깨져도 리뷰가 **한 번도 안 걸렸습니다.** 프론트 버그가 잦은 프로젝트일수록 손해가 컸어요. 이제 봅니다. 대신 사람이 읽을 파일이 아닌 것(`node_modules/`, `*.min.*`)은 뺐어요 — 600KB짜리 미니파이 파일을 읽으라고 하면 리뷰가 조롱거리가 되니까요. 그리고 **`남의 눈`을 안 부르는 이유**도 못박았습니다. `요청 없으면 서브에이전트 부르지 마라` 같은 세션 지시를 보고 건너뛰는 일이 있었는데, `init`으로 켠 것 자체가 요청이라 부르는 게 맞아요. -->
 <!-- show:en **Front-end files were entirely outside the review.** `.html` and `.css` were missing from the extension list, so a review never fired even when the logic lived inside `index.html` or the layout broke. Projects with frequent front-end bugs lost the most. They are covered now, minus files no human reads (`node_modules/`, `*.min.*`) — asking someone to review a 600KB minified bundle makes the review a joke. Also pinned down **why fresh-eyes was being skipped**: a session instruction saying not to call subagents unless the user asked was read as a block, but enabling hi-vibe with `init` is the request. -->

@@ -187,6 +187,77 @@ class ReviewScopeTest(unittest.TestCase):
         self.assertEqual(len(buckets), 1)  # 빈 버킷은 안 나온다
 
 
+class OversizedTest(unittest.TestCase):
+    """"크다"는 사실이 아니라 **커지고 있다**를 준다 (2026-08-07).
+
+    실사용에서 같은 파일의 같은 경고가 리뷰마다 똑같이 펼쳐졌다
+    (`kis_client.py 686줄`, `livefeed.py 511·559줄`). 이 저장소 원칙은
+    `알림은 쌓이면 신호가 아니다`인데 정면으로 어긋난 자리였다.
+
+    그런데 `changed_lines`는 추가+삭제라 **방향이 없다** — 559줄을 389줄로
+    쪼갠 리팩터링도 `383줄 변경`으로 보여서 또 짚였다. 그래서 순증을 따로 준다."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        _git(self.root, "init", "-q")
+        _git(self.root, "config", "user.email", "t@t.t")
+        _git(self.root, "config", "user.name", "t")
+        _write(self.root, "base.py", "x = 1\n")
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "init")
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def _lines(self, rel, n):
+        _write(self.root, rel, "".join("x%d = %d\n" % (i, i) for i in range(n)))
+
+    def _commit(self, msg):
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", msg)
+
+    def test_small_files_are_absent(self):
+        self._lines("small.py", 50)
+        self.assertEqual(_list(self.root)["oversized"], {})
+
+    def test_reports_lines_and_growth(self):
+        self._lines("big.py", 500)
+        got = _list(self.root)["oversized"]["big.py"]
+        self.assertGreater(got["lines"], 400)
+        self.assertGreater(got["growth"], 0)
+
+    def test_first_crossing_is_derivable(self):
+        """`lines - growth <= 400`이면 이번에 처음 넘긴 것 — 스킬이 이걸로 가른다."""
+        self._lines("grow.py", 380)
+        self._commit("under")
+        self._lines("grow.py", 460)
+        got = _list(self.root)["oversized"]["grow.py"]
+        self.assertLessEqual(got["lines"] - got["growth"], 400,
+                             "처음 넘긴 것으로 안 읽힌다")
+
+    def test_already_over_is_not_a_first_crossing(self):
+        self._lines("big.py", 660)
+        self._commit("already big")
+        self._lines("big.py", 686)
+        got = _list(self.root)["oversized"]["big.py"]
+        self.assertGreater(got["lines"] - got["growth"], 400,
+                           "원래 넘어 있었는데 처음 넘긴 것처럼 읽힌다")
+
+    def test_shrinking_shows_negative_growth(self):
+        """**이게 오늘 실제로 헛짚은 경우다** — 559줄을 389줄로 쪼갠 리팩터링."""
+        self._lines("live.py", 559)
+        self._commit("big")
+        self._lines("live.py", 500)      # 줄였지만 아직 400 초과
+        got = _list(self.root)["oversized"]["live.py"]
+        self.assertLess(got["growth"], 0, "줄였는데 늘어난 것으로 보인다")
+
+    def test_dropping_under_the_limit_disappears(self):
+        self._lines("live.py", 559)
+        self._commit("big")
+        self._lines("live.py", 389)
+        self.assertNotIn("live.py", _list(self.root)["oversized"])
+
+
 class FrontendAndVendorTest(unittest.TestCase):
     """프론트 파일은 보고, 사람이 안 읽는 파일은 뺀다 (2026-08-07).
 
