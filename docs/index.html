@@ -415,7 +415,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>228</b><span>자동 회귀 테스트</span></div>
+      <div><b>234</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -739,9 +739,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.41.0<small>2026-08-07</small></div><div class="h"><b>프론트 파일이 리뷰 대상에서 통째로 빠져 있었어요.</b> <span>`.html`·`.css`가 확장자 목록에 없어서, 로직이 `index.html` 안에 있어도 레이아웃이 깨져도 리뷰가 **한 번도 안 걸렸습니다.** 프론트 버그가 잦은 프로젝트일수록 손해가 컸어요. 이제 봅니다. 대신 사람이 읽을 파일이 아닌 것(`node_modules/`, `*.min.*`)은 뺐어요 — 600KB짜리 미니파이 파일을 읽으라고 하면 리뷰가 조롱거리가 되니까요. 그리고 **`남의 눈`을 안 부르는 이유**도 못박았습니다. `요청 없으면 서브에이전트 부르지 마라` 같은 세션 지시를 보고 건너뛰는 일이 있었는데, `init`으로 켠 것 자체가 요청이라 부르는 게 맞아요.</span></div></div>
         <div class="rel"><div class="v">v0.40.0<small>2026-08-07</small></div><div class="h"><b>리뷰의 절반이 조용히 안 돌고 있어도 아무도 몰랐어요.</b> <span>리뷰는 두 겹입니다 — 체크리스트가 빠뜨림을 잡고, 남의 눈(fresh-eyes)이 판단 착오를 잡아요. 그런데 세션 설정이 서브에이전트 호출을 막으면 뒤쪽 절반이 그냥 안 돕니다. 실제로 한 세션이 **하루 종일** 그 상태로 돌았는데 어디에도 안 남았어요. 훅이 죽는 건 이미 감시하고 있었는데 에이전트가 죽는 건 아무도 안 보고 있었던 겁니다. 이제 훅이 대화 기록에서 **직접 세고**, `doctor`가 `리뷰 8회 중 0회`처럼 알려줘요. AI가 신고해 주기를 기다리지 않습니다.</span></div></div>
         <div class="rel"><div class="v">v0.39.2<small>2026-08-07</small></div><div class="h"><b>랜딩 문구를 다듬었어요.</b> <span>한 줄에 들어갈 문장이 두 줄로 넘어가 꼬리만 덩그러니 남던 자리 두 곳을 줄여서 한 줄에 앉혔습니다. 비용을 설명하는 칸은 말이 좀 셌어요 — `공짜는 아니에요`를 `시간과 토큰을 조금 씁니다`로 바꾸고, 뒷부분은 줄을 나눠 읽기 쉽게 했습니다. 드는 비용을 감추지는 않았어요. 그리고 `init`과 `gate`가 같은 뜻을 서로 다른 말로 적고 있어서(`새 프로젝트마다 한 번` / `프로젝트마다 1회`) 한쪽으로 맞췄습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.39.1<small>2026-08-06</small></div><div class="h"><b>잡아놓고 말을 안 하던 것을 고쳤어요.</b> <span>hi-vibe가 뭔가 잡으면 답변 끝에 `👋 hi-vibe가 방금 …을 잡았어요` 한 줄을 남기게 돼 있습니다. 그게 나중에 "몇 건 잡았나"를 셀 수 있는 유일한 표시예요. 그런데 바로 위 문단이 그 줄을 **"중복 설명"** 목록에 넣어놔서, 체크리스트에 이미 적었으면 생략하게 돼 있었습니다. 실사용에서 리뷰가 여덟 번 돌고 진짜 결함도 나왔는데 이 줄은 **한 번도 안 붙었어요.** 설명은 한 곳에만, 세는 표시는 항상. 이 둘을 갈라놨습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -801,7 +801,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>228</b><span>automated regression tests</span></div>
+      <div><b>234</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -1125,9 +1125,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.41.0<small>2026-08-07</small></div><div class="h"><b>Front-end files were entirely outside the review.</b> <span>`.html` and `.css` were missing from the extension list, so a review never fired even when the logic lived inside `index.html` or the layout broke. Projects with frequent front-end bugs lost the most. They are covered now, minus files no human reads (`node_modules/`, `*.min.*`) — asking someone to review a 600KB minified bundle makes the review a joke. Also pinned down **why fresh-eyes was being skipped**: a session instruction saying not to call subagents unless the user asked was read as a block, but enabling hi-vibe with `init` is the request.</span></div></div>
         <div class="rel"><div class="v">v0.40.0<small>2026-08-07</small></div><div class="h"><b>Half the review could be silently missing and nothing said so.</b> <span>A review has two layers: the checklist catches omissions, and fresh-eyes catches misjudgements. When a session's settings block subagent calls, the second layer simply does not run. One real session spent an entire day like that with no trace anywhere. Dead hooks were already watched; a dead agent was watched by no one. The hook now counts the calls straight out of the transcript and `doctor` reports it as "0 of 8 reviews", rather than waiting for the AI to volunteer it.</span></div></div>
         <div class="rel"><div class="v">v0.39.2<small>2026-08-07</small></div><div class="h"><b>Landing copy cleanup.</b> <span>Two sentences were spilling a few characters onto a second line, leaving an orphan tail; both are now trimmed to fit one line. The section about cost was blunter than it needed to be, so "It is not free" became "It costs a little time and a few tokens", with the trailing thought on its own line. The cost itself is still stated plainly. And `init` and `gate` described the same thing two different ways, so they now use one wording.</span></div></div>
-        <div class="rel"><div class="v">v0.39.1<small>2026-08-06</small></div><div class="h"><b>It was catching things and not saying so.</b> <span>When hi-vibe catches something it is supposed to close the reply with one line, `👋 hi-vibe caught …`, which is the only marker that makes later counting possible. The paragraph above it listed that line among things not to repeat, so once the checklist covered the defect the line was dropped. In real use a session ran eight reviews, found real defects, and emitted the line zero times. Explanations belong in one place; the counter always gets written.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

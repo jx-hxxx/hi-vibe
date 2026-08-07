@@ -187,5 +187,80 @@ class ReviewScopeTest(unittest.TestCase):
         self.assertEqual(len(buckets), 1)  # 빈 버킷은 안 나온다
 
 
+class FrontendAndVendorTest(unittest.TestCase):
+    """프론트 파일은 보고, 사람이 안 읽는 파일은 뺀다 (2026-08-07).
+
+    실사용에서 프론트 버그가 잦은 프로젝트인데 `.html`·`.css`가 확장자
+    목록에 없어 **리뷰가 한 번도 안 걸렸다.** 로직이 `index.html` 안에
+    있어도 마찬가지였다.
+
+    넓히는 김에 빼는 쪽도 좁게 정했다: 사용자의 세 저장소가 전부
+    `three.min.js`(600KB 미니파이)를 갖고 있는데 그건 이미 `.js`라 리뷰
+    대상이었다. 반대로 `vendor/cube.js`는 **사용자가 직접 쓴 코드**라
+    `vendor/`를 통째로 빼면 진짜 코드가 검사에서 사라진다."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        _git(self.root, "init", "-q")
+        _git(self.root, "config", "user.email", "t@t.t")
+        _git(self.root, "config", "user.name", "t")
+        _write(self.root, "base.py", "x = 1\n")
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "init")
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def _add(self, rel, text="x\n"):
+        path = os.path.join(self.root, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+
+    def test_html_and_css_are_reviewed(self):
+        self._add("frontend/index.html", "<script>boot()</script>\n")
+        self._add("frontend/style.css", ".a{color:red}\n")
+        got = _list(self.root)["to_review"]
+        self.assertIn("frontend/index.html", got)
+        self.assertIn("frontend/style.css", got)
+
+    def test_minified_files_are_skipped(self):
+        """600KB 미니파이 파일을 사람에게 읽으라고 하면 리뷰가 조롱거리가 된다."""
+        self._add("cube/three.min.js", "!function(){}();\n")
+        self._add("site/app.min.css", ".a{color:red}\n")
+        got = _list(self.root)["to_review"]
+        self.assertNotIn("cube/three.min.js", got)
+        self.assertNotIn("site/app.min.css", got)
+
+    def test_node_modules_is_skipped(self):
+        self._add("node_modules/left-pad/index.js", "module.exports=1\n")
+        self.assertNotIn("node_modules/left-pad/index.js",
+                         _list(self.root)["to_review"])
+
+    def test_vendor_folder_is_not_skipped(self):
+        """`vendor/`를 빼면 사용자가 **직접 쓴** 코드가 조용히 검사 밖으로 간다.
+
+        실제 저장소에 손으로 쓴 `vendor/cube.js`가 있었다. 이름 규칙이
+        아니라 파일의 성격으로 갈라야 하는데, 그건 기계가 모른다 —
+        그래서 논란 없는 것만 뺀다."""
+        self._add("vendor/cube.js", "export function cube(){}\n")
+        self.assertIn("vendor/cube.js", _list(self.root)["to_review"])
+
+    def test_deleted_html_is_reported(self):
+        self._add("page.html", "<p>hi</p>\n")
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "add page")
+        os.remove(os.path.join(self.root, "page.html"))
+        self.assertIn("page.html", _list(self.root)["deleted"])
+
+    def test_docs_are_still_excluded(self):
+        """넓히면서 문서까지 딸려 들어오면 커밋마다 리뷰가 걸린다."""
+        self._add("README.md", "# hi\n")
+        self._add("notes.txt", "hi\n")
+        got = _list(self.root)["to_review"]
+        self.assertNotIn("README.md", got)
+        self.assertNotIn("notes.txt", got)
+
+
 if __name__ == "__main__":
     unittest.main()

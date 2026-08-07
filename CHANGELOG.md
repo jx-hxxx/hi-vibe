@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+## [0.41.0] - 2026-08-07
+<!-- show:ko **프론트 파일이 리뷰 대상에서 통째로 빠져 있었어요.** `.html`·`.css`가 확장자 목록에 없어서, 로직이 `index.html` 안에 있어도 레이아웃이 깨져도 리뷰가 **한 번도 안 걸렸습니다.** 프론트 버그가 잦은 프로젝트일수록 손해가 컸어요. 이제 봅니다. 대신 사람이 읽을 파일이 아닌 것(`node_modules/`, `*.min.*`)은 뺐어요 — 600KB짜리 미니파이 파일을 읽으라고 하면 리뷰가 조롱거리가 되니까요. 그리고 **`남의 눈`을 안 부르는 이유**도 못박았습니다. `요청 없으면 서브에이전트 부르지 마라` 같은 세션 지시를 보고 건너뛰는 일이 있었는데, `init`으로 켠 것 자체가 요청이라 부르는 게 맞아요. -->
+<!-- show:en **Front-end files were entirely outside the review.** `.html` and `.css` were missing from the extension list, so a review never fired even when the logic lived inside `index.html` or the layout broke. Projects with frequent front-end bugs lost the most. They are covered now, minus files no human reads (`node_modules/`, `*.min.*`) — asking someone to review a 600KB minified bundle makes the review a joke. Also pinned down **why fresh-eyes was being skipped**: a session instruction saying not to call subagents unless the user asked was read as a block, but enabling hi-vibe with `init` is the request. -->
+
+### Added
+- **`.html`·`.css`가 리뷰 범위에 들어온다** (2026-08-07) — `CODE_EXT`에 없어서 **프론트 변경은 Stop 훅이 아예 안 막았다.** 실사용 프로젝트에서 `bootFetch` 로직 전체가 `index.html` 안에 있는데도 리뷰가 안 걸렸고, 레이아웃이 깨진 `style.css`도 그냥 나갔다.
+  - **`write-gate` 체크리스트는 안 건드렸다.** 9번에 이미 `UI·CSS·레이아웃 변경 → 사용자가 검증 루프` 특례가 있어, 시각적 변경은 브라우저 자가검증을 요구하지 않고 동작을 바꾸는 변경만 실행 검증으로 간다. **확장자만 늘리면 자연히 그쪽으로 간다.**
+- **사람이 안 읽는 파일 제외** (2026-08-07) — `node_modules/`와 `*.min.*`. 사용자의 저장소 **세 곳 전부** `three.min.js`(600KB)를 갖고 있었고 그건 이미 `.js`라 리뷰 대상이었다.
+  - **`vendor/`·`dist/`·`build/`는 일부러 안 뺐다.** 실제 저장소에 사용자가 **직접 쓴** `vendor/cube.js`가 있다 — 이름 규칙으로 빼면 진짜 코드가 조용히 검사 밖으로 간다. 넓게 빼는 것이 좁게 빼는 것보다 위험하다.
+
+### Fixed
+- **`남의 눈`을 "요청 안 했으니 안 부른다"고 건너뛰던 것** (2026-08-07) — 세션에 `사용자가 요청하지 않으면 서브에이전트를 부르지 마라`는 지시가 있는데, 그 지시의 예외(`요청했으면`)를 **세션마다 다르게 판단**했다. 실측: 같은 지시 아래 어떤 프로젝트는 6회 부르고 어떤 세션은 하루 종일 0회였다.
+  - `write-gate`에 **`init`으로 켠 것 자체가 그 요청**이라고 못박았다. 세션 지시를 무시하라는 게 아니라, 그 지시가 묻는 `사용자가 요청했나`에 답을 준 것이다.
+  - **`안 부른 것`과 `못 부른 것`을 구분해 적게** 했다 — 사용자가 고칠 수 있는지가 갈린다. `막혀 있어서`로 뭉뚱그리지 말라고 명시했다(실제로 그렇게 보고된 적이 있는데, 확인해 보니 막힌 게 아니었다).
+  - `doctor` 문구도 같이 고쳤다: `설정이 막고 있는지 확인하세요` → `대개 막혀서가 아니라 AI가 안 부른 것`.
+
 ## [0.40.0] - 2026-08-07
 <!-- show:ko **리뷰의 절반이 조용히 안 돌고 있어도 아무도 몰랐어요.** 리뷰는 두 겹입니다 — 체크리스트가 빠뜨림을 잡고, 남의 눈(fresh-eyes)이 판단 착오를 잡아요. 그런데 세션 설정이 서브에이전트 호출을 막으면 뒤쪽 절반이 그냥 안 돕니다. 실제로 한 세션이 **하루 종일** 그 상태로 돌았는데 어디에도 안 남았어요. 훅이 죽는 건 이미 감시하고 있었는데 에이전트가 죽는 건 아무도 안 보고 있었던 겁니다. 이제 훅이 대화 기록에서 **직접 세고**, `doctor`가 `리뷰 8회 중 0회`처럼 알려줘요. AI가 신고해 주기를 기다리지 않습니다. -->
 <!-- show:en **Half the review could be silently missing and nothing said so.** A review has two layers: the checklist catches omissions, and fresh-eyes catches misjudgements. When a session's settings block subagent calls, the second layer simply does not run. One real session spent an entire day like that with no trace anywhere. Dead hooks were already watched; a dead agent was watched by no one. The hook now counts the calls straight out of the transcript and `doctor` reports it as "0 of 8 reviews", rather than waiting for the AI to volunteer it. -->

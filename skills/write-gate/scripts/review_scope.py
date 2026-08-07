@@ -26,10 +26,28 @@ review doesn't drag older commits back in). No third-party dependencies.
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 
-CODE_EXT = (".py", ".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx", ".mts", ".cts")
+CODE_EXT = (".py", ".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx", ".mts", ".cts",
+            ".html", ".css")
+# `.html`·`.css`는 2026-08-07에 들어왔다. 프론트 버그가 잦은 프로젝트에서
+# **그쪽이 통째로 레이더 밖**이었다 — 로직이 `index.html` 안에 있어도, 레이아웃이
+# 깨져도 리뷰가 한 번도 안 걸렸다. 체크리스트 9번에 이미 "UI·CSS 변경은 사용자가
+# 검증 루프" 특례가 있어서, 시각적 변경은 브라우저 자가검증을 요구하지 않고
+# 동작을 바꾸는 변경만 실행 검증으로 간다.
+
+# 사람이 손으로 읽을 파일이 아닌 것만 뺀다. **좁게** 잡는 게 중요하다 —
+# 넓게 빼면 검사받지 않는 코드가 조용히 생긴다. 그래서 `dist/`·`build/`는
+# 안 뺀다(프로젝트마다 뜻이 달라 진짜 소스를 가릴 수 있다). `vendor/`도
+# 안 뺀다 — 실제 저장소에서 사용자가 **직접 쓴** `vendor/cube.js`가 있었다.
+# 남는 건 논란의 여지가 없는 둘뿐이다.
+SKIP_RE = re.compile(r"(^|/)node_modules/|(^|/)[^/]*\.min\.[^/]+$")
+
+
+def _reviewable(name):
+    return bool(name) and name.lower().endswith(CODE_EXT) and not SKIP_RE.search(name)
 
 
 def _git(args, root):
@@ -53,7 +71,7 @@ def _code_files(root, names):
     """이름 집합에서 **지금 존재하는** 코드 파일만."""
     out = []
     for f in names:
-        if f and f.lower().endswith(CODE_EXT) and os.path.isfile(os.path.join(root, f)):
+        if _reviewable(f) and os.path.isfile(os.path.join(root, f)):
             out.append(f)
     return sorted(out)
 
@@ -67,7 +85,7 @@ def _deleted_code_files(root, names):
     남은 호출부 확인은 리뷰가 한다."""
     out = []
     for f in names:
-        if f and f.lower().endswith(CODE_EXT) and not os.path.isfile(os.path.join(root, f)):
+        if _reviewable(f) and not os.path.isfile(os.path.join(root, f)):
             out.append(f)
     return sorted(out)
 
