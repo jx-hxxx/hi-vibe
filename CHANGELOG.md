@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.39.2] - 2026-08-07
+<!-- show:ko **랜딩 문구를 다듬었어요.** 한 줄에 들어갈 문장이 두 줄로 넘어가 꼬리만 덩그러니 남던 자리 두 곳을 줄여서 한 줄에 앉혔습니다. 비용을 설명하는 칸은 말이 좀 셌어요 — `공짜는 아니에요`를 `시간과 토큰을 조금 씁니다`로 바꾸고, 뒷부분은 줄을 나눠 읽기 쉽게 했습니다. 드는 비용을 감추지는 않았어요. 그리고 `init`과 `gate`가 같은 뜻을 서로 다른 말로 적고 있어서(`새 프로젝트마다 한 번` / `프로젝트마다 1회`) 한쪽으로 맞췄습니다. -->
+<!-- show:en **Landing copy cleanup.** Two sentences were spilling a few characters onto a second line, leaving an orphan tail; both are now trimmed to fit one line. The section about cost was blunter than it needed to be, so "It is not free" became "It costs a little time and a few tokens", with the trailing thought on its own line. The cost itself is still stated plainly. And `init` and `gate` described the same thing two different ways, so they now use one wording. -->
+
+### Changed
+- **한 줄에 안 들어가 꼬리가 넘어가던 문구 2곳** (2026-08-07, 한·영) — 하드 개행이 아니라 **자연 줄바꿈**이었다. 컨테이너 폭을 건드리면 다른 카드가 같이 흔들리므로 **문장을 줄였다**. ①`AI가 깜빡할 수도 있어요` → `AI도 깜빡해요`, `훑어서` → `훑어`. ②`기본이 유저 스코프(전역)라` → `유저 스코프(전역)라`, `(프로젝트마다 재설치 X)` → `(재설치 X)` — 바로 앞에 `모든 프로젝트에서`가 이미 있어 중복이었다.
+  - **좁은 창에서는 여전히 줄이 넘어간다.** 반응형이라 모든 폭에서 한 줄을 보장할 수는 없고, 데스크톱 기준으로 맞춘 것이다.
+- **비용 설명 카드의 어조** (2026-08-07, 한·영) — `공짜는 아니에요` → `시간과 토큰을 조금 씁니다`, `딴 클로드까지 불러요` → `딴 클로드도 한 번 봐요`, `값을 치르는 건 맞아요` → `시간이 드는 건 맞아요`. **비용을 감추지 않는다는 원칙은 그대로**이고 문장이 세게 읽히던 것만 낮췄다. 마지막 두 문장은 `<br>`로 내려 세 덩어리로 읽히게 했다.
+- **`init`·`gate`의 주기 표기 통일** (2026-08-07) — 명령어 표에서 `init`은 `새 프로젝트마다 한 번`, `gate`는 `프로젝트마다 1회`였다. **같은 뜻을 다른 말로 적으면 둘이 다른 주기인 줄 읽힌다.** `프로젝트마다 1회`로 맞췄다(영문은 이미 `once per project`로 같았다).
+- **`gate`의 빠른 시작 라벨** (2026-08-07, 한·영) — `검사 자동화(선택)` → `코드 검사기 설치(선택)`. 명령어 표는 이미 `코드 자동 검사기 설치`라 **한 명령을 두 이름으로 부르고 있었다.** `CI 자동화`로 바꾸자는 안은 **택하지 않았다** — `gate`가 실제로 까는 건 lint·타입·순환참조 가드이고 CI는 GitHub을 쓸 때만 덤으로 제안하는 것이라, CI를 제목에 올리면 **GitHub을 안 쓰는 사람이 자기와 무관하다고 읽는다**.
+- **문장이 문장 한가운데서 잘리던 곳 3곳에 `<br>`** (2026-08-07, 한·영) — `check vs review` 카드의 `의심하는 대상이 …` 두 줄과, `doctor는 스킬 없이 훅·스캐너를 직접 돌려요`. **자연 줄바꿈이 하필 주어와 서술어 사이를 갈랐다.** 문장 앞에 개행을 넣어 **한 문장이 한 줄에** 오게 했다(짧아서 어느 폭에서도 안 넘친다). 영문도 같은 자리.
+
 ## [0.39.1] - 2026-08-06
 <!-- show:ko **잡아놓고 말을 안 하던 것을 고쳤어요.** hi-vibe가 뭔가 잡으면 답변 끝에 `👋 hi-vibe가 방금 …을 잡았어요` 한 줄을 남기게 돼 있습니다. 그게 나중에 "몇 건 잡았나"를 셀 수 있는 유일한 표시예요. 그런데 바로 위 문단이 그 줄을 **"중복 설명"** 목록에 넣어놔서, 체크리스트에 이미 적었으면 생략하게 돼 있었습니다. 실사용에서 리뷰가 여덟 번 돌고 진짜 결함도 나왔는데 이 줄은 **한 번도 안 붙었어요.** 설명은 한 곳에만, 세는 표시는 항상. 이 둘을 갈라놨습니다. -->
 <!-- show:en **It was catching things and not saying so.** When hi-vibe catches something it is supposed to close the reply with one line, `👋 hi-vibe caught …`, which is the only marker that makes later counting possible. The paragraph above it listed that line among things not to repeat, so once the checklist covered the defect the line was dropped. In real use a session ran eight reviews, found real defects, and emitted the line zero times. Explanations belong in one place; the counter always gets written. -->

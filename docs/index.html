@@ -594,8 +594,8 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <div class="notes">
       <div class="honest-note"><span>⚠️</span><div><b>hi-vibe는 "버그 자동 탐지기"가 아니에요.</b><br>
         코드를 훑어 버그를 찾아주는 도구가 아니라, <b>AI가 대충 못 하게 만드는 안전벨트</b>예요. 버그를 잡는 건 결국 Claude의 추론이고, hi-vibe는 그 추론을 <b>빡세게 하도록 강제하는 규율·문서·기계 장치</b>예요. "자동으로 다 잡아줘요"가 아니라 <b>"안 하던 규율을 강제로 하게 만들어요"</b> — 기대를 여기 맞추면 실망이 없어요.</div></div>
-      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg><div><b><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI가 깜빡할 수도 있어요. 그래서 <b>평소에 치는 건 <code>/hi-vibe:check</code> 하나</b>면 돼요 — 저장소 전체를 훑어서 놓친 걸 모아 보여줍니다.</div></div>
-      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>공짜는 아니에요.</b><br>리뷰가 자동으로 걸리면 대화가 <b>한 번 더 돌고</b>, 코드를 짠 기억이 없는 딴 클로드까지 불러요. 그만큼 <b>답이 늦어지고 토큰도 더 씁니다.</b> 놓치는 것보다 낫다고 봐서 그렇게 만들었지만, 값을 치르는 건 맞아요. 급할 땐 <b>“가볍게 봐줘”</b>라고 하면 체크리스트만 돌아요.</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg><div><b><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> “AI가 알아서”는 100% 보장은 아니에요.</b><br>AI도 깜빡해요. 그래서 <b>평소에 치는 건 <code>/hi-vibe:check</code> 하나</b>면 돼요 — 저장소 전체를 훑어 놓친 걸 모아 보여줍니다.</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>시간과 토큰을 조금 씁니다.</b><br>리뷰가 자동으로 걸리면 대화가 <b>한 번 더 돌고</b>, 코드를 짠 기억이 없는 딴 클로드도 한 번 봐요. 그만큼 <b>답이 조금 늦어지고 토큰도 더 들어요.</b><br>놓치는 것보다 낫다고 봐서 이렇게 만들었지만, 시간이 드는 건 맞아요. 급할 땐 <b>“가볍게 봐줘”</b>라고 하면 체크리스트만 돌아요.</div></div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><div><b>켜지는 방식이 3단이에요.</b>
 
         <div class="tiers">
@@ -634,7 +634,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
         </div>
       </div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><div><b>설치는 전역 한 번, <code>init</code>은 프로젝트마다.</b><br>
-        <code>/plugin install</code>은 기본이 <b>유저 스코프(전역)</b>라 한 번 설치하면 모든 프로젝트에서 <code>/hi-vibe:</code> 명령어를 써요(프로젝트마다 재설치 X).<br>
+        <code>/plugin install</code>은 <b>유저 스코프(전역)</b>라 한 번 설치하면 모든 프로젝트에서 <code>/hi-vibe:</code> 명령어를 써요(재설치 X).<br>
         하지만 자동 기능(훅)은 <b>쓸 프로젝트마다 최상위 폴더에서</b> <code>/hi-vibe:init</code>을 해야 켜져요. <code>.hi-vibe/</code>가 있는 폴더에서만 돌아요.<br>
         <b>init 안 한 다른 프로젝트엔 전혀 개입하지 않아요.</b> 전역 설치인데도 원하지 않는 곳에서 훅이 도는 걸 막는 <b>안전장치</b>예요.<br>
         <span class="dim">(새 프로젝트에서 쓰려면 그 폴더에서 <code>/hi-vibe:init</code> 한 번.)</span></div></div>
@@ -642,7 +642,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
         <thead><tr><th>명령어</th><th>언제 쓰나</th><th>발동</th></tr></thead>
         <tbody>
           <tr><td><code>/hi-vibe:welcome</code></td><td>처음이라 뭐부터 할지 모를 때</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
-          <tr><td><code>/hi-vibe:init</code></td><td>새 프로젝트마다 한 번, 켜기</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
+          <tr><td><code>/hi-vibe:init</code></td><td>프로젝트마다 1회, 켜기</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
           <tr><td><code>/hi-vibe:doctor</code></td><td><code>init</code> 직후, 제대로 도는지 확인</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
           <tr><td><code>/hi-vibe:gate</code></td><td>코드 자동 검사기 설치 (프로젝트마다 1회 → 자동)</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
           <tr><td><code>/hi-vibe:check</code></td><td>중복·안 쓰는 코드·큰 파일 + 하다 만 것(에러 삼킴·TODO·테스트 없는 모듈) — 딴 클로드가 후보를 열어봐 오탐을 걸러줘요</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
@@ -661,7 +661,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
         <div class="qs-row"><div class="qs-when">새 기능 만들 때</div><div class="qs-do"><b>칠 것 없어요</b> <span class="dim">그냥 평소처럼 말하면, “이미 있나”를 먼저 찾아요. (AI가 깜빡한 것 같으면 <code>/hi-vibe:find</code>)</span></div></div>
         <div class="qs-row"><div class="qs-when">다 만든 후 점검</div><div class="qs-do"><b>칠 것 없어요</b> <span class="dim">리뷰 안 받은 변경이 있으면 훅이 대화를 붙잡고 <code>review</code>를 시켜요.</span></div></div>
         <div class="qs-row"><div class="qs-when">코드 정리하고 싶을 때</div><div class="qs-do"><code>/hi-vibe:check</code> <span class="dim">(스캔 후 딴 클로드가 후보를 열어보고 진짜만 골라줘요)</span></div></div>
-        <div class="qs-row"><div class="qs-when">검사 자동화(선택)</div><div class="qs-do"><code>/hi-vibe:gate</code> <span class="dim">(프로젝트마다 1회 · GitHub에 올리는 프로젝트면 push마다 자동 검문도 제안)</span></div></div>
+        <div class="qs-row"><div class="qs-when">코드 검사기 설치(선택)</div><div class="qs-do"><code>/hi-vibe:gate</code> <span class="dim">(프로젝트마다 1회 · GitHub에 올리는 프로젝트면 push마다 자동 검문도 제안)</span></div></div>
         <div class="qs-row"><div class="qs-when">뭐부터 할지 모르겠으면</div><div class="qs-do"><code>/hi-vibe:welcome</code></div></div>
       </div>
 
@@ -687,8 +687,8 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z"/></svg>check vs review — 헷갈리기 쉬운데 완전 달라요</summary>
         <div class="tbody">
-          <code>check</code>는 <b>기계(스캐너)가 저장소 구조를 훑고</b>, 그 후보를 <b>딴 클로드(proof-eyes)가 열어봐</b> 진짜인지 가려요 — 중복 코드·안 쓰는 코드·너무 큰 파일. <b>사실 확인</b>이에요. 의심하는 대상이 <b>스캐너</b>라 증거가 필요해요.<br>
-          <code>review</code>는 <b>서브에이전트(fresh-eyes)가 방금 바꾼 코드를 설계 관점으로 봐</b> “잘 만들었는지”를 판단해요 — 과잉설계·더 단순한 길·숨은 결합. <b>의견·판단</b>이에요. 의심하는 대상이 <b>코드</b>라 의도가 필요해요.<br>
+          <code>check</code>는 <b>기계(스캐너)가 저장소 구조를 훑고</b>, 그 후보를 <b>딴 클로드(proof-eyes)가 열어봐</b> 진짜인지 가려요 — 중복 코드·안 쓰는 코드·너무 큰 파일. <b>사실 확인</b>이에요.<br>의심하는 대상이 <b>스캐너</b>라 증거가 필요해요.<br>
+          <code>review</code>는 <b>서브에이전트(fresh-eyes)가 방금 바꾼 코드를 설계 관점으로 봐</b> “잘 만들었는지”를 판단해요 — 과잉설계·더 단순한 길·숨은 결합. <b>의견·판단</b>이에요.<br>의심하는 대상이 <b>코드</b>라 의도가 필요해요.<br>
           <span class="dim">한 줄로: <b>check = 뭐가 있는지(사실), review = 잘 만들었는지(판단).</b> 겹치는 게 아니라 서로 보완이에요.</span>
         </div>
       </details>
@@ -730,7 +730,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>슬래시 메뉴에는 명령어 10개만 나와요.</b><br>
         스킬 6개는 엔진이라 메뉴에서 숨겼어요(<code>user-invocable: false</code>).<br>
         <b>숨겼다고 안 도는 건 아니에요</b> — Claude는 알아서 불러요.<br>같은 엔진(repo-xray)을 부르는 길은 둘이에요 — <b><span style="white-space:nowrap">① <code>check</code> 명령어</span> · <span style="white-space:nowrap">② “중복 찾아줘”라고 말하기</span></b><br>
-        <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표예요. <code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌려요.</div></div>
+        <code>hi-vibe:</code> 접두사는 “이 플러그인 소속”이라는 이름표예요.<br><code>doctor</code>는 스킬 없이 훅·스캐너를 직접 돌려요.</div></div>
     </section>
 
     <section id="living-ko">
@@ -739,9 +739,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.39.2<small>2026-08-07</small></div><div class="h"><b>랜딩 문구를 다듬었어요.</b> <span>한 줄에 들어갈 문장이 두 줄로 넘어가 꼬리만 덩그러니 남던 자리 두 곳을 줄여서 한 줄에 앉혔습니다. 비용을 설명하는 칸은 말이 좀 셌어요 — `공짜는 아니에요`를 `시간과 토큰을 조금 씁니다`로 바꾸고, 뒷부분은 줄을 나눠 읽기 쉽게 했습니다. 드는 비용을 감추지는 않았어요. 그리고 `init`과 `gate`가 같은 뜻을 서로 다른 말로 적고 있어서(`새 프로젝트마다 한 번` / `프로젝트마다 1회`) 한쪽으로 맞췄습니다.</span></div></div>
         <div class="rel"><div class="v">v0.39.1<small>2026-08-06</small></div><div class="h"><b>잡아놓고 말을 안 하던 것을 고쳤어요.</b> <span>hi-vibe가 뭔가 잡으면 답변 끝에 `👋 hi-vibe가 방금 …을 잡았어요` 한 줄을 남기게 돼 있습니다. 그게 나중에 "몇 건 잡았나"를 셀 수 있는 유일한 표시예요. 그런데 바로 위 문단이 그 줄을 **"중복 설명"** 목록에 넣어놔서, 체크리스트에 이미 적었으면 생략하게 돼 있었습니다. 실사용에서 리뷰가 여덟 번 돌고 진짜 결함도 나왔는데 이 줄은 **한 번도 안 붙었어요.** 설명은 한 곳에만, 세는 표시는 항상. 이 둘을 갈라놨습니다.</span></div></div>
         <div class="rel"><div class="v">v0.39.0<small>2026-08-04</small></div><div class="h"><b>실사용에서 처음으로 결함이 나왔어요.</b> <span>다른 프로젝트에서 쓰다가 `doctor`가 스스로 모순되는 진단을 냈습니다 — "훅이 안 돈다(stale)"면서 같은 줄에 "마지막 실행 0.0시간 전"이고 살아있는 훅이 둘이었어요. 세션 도중에 플러그인을 켜거나 업데이트하면 `SessionStart`만 이번 세션에서 안 도는데, 그것 하나로 전체를 판정하고 있었습니다. 그걸 본 AI는 경고를 그냥 무시했고요 — **건강검진이 늑대소년이 되면 진짜 고장도 같이 묻힙니다.** 그리고 리뷰 지침이 서로 반대를 시키던 것도 고쳤어요.</span></div></div>
-        <div class="rel"><div class="v">v0.38.1<small>2026-08-04</small></div><div class="h"><b>질문 마지막 줄을 조건형으로 바꿨어요.</b> <span>`설치 후 권장 사용 순서`는 설치를 이미 정한 것처럼 읽혔습니다. 이 자리는 설치 전에 보는 미리보기니까 `설치한다면`으로 여지를 뒀어요. 묻는 내용은 그대로입니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -980,8 +980,8 @@ Close with just these.
       <div class="notes">
       <div class="honest-note"><span>⚠️</span><div><b>hi-vibe is not a "bug detector."</b><br>
         It doesn't scan your code to find bugs; it's a <b>seatbelt that stops the AI from cutting corners</b>. Catching bugs is still Claude's reasoning — hi-vibe is the <b>discipline, docs, and machinery that force that reasoning to be rigorous</b>. Not "it auto-catches everything" but <b>"it forces the discipline you'd otherwise skip."</b> Set expectations there and you won't be let down.</div></div>
-      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg><div><b><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> “AI does it” is not a 100% guarantee.</b><br>The AI can forget. That is what <b>day-to-day <code>/hi-vibe:check</code></b> is for — the one command you actually type, sweeping the whole repository for whatever slipped past.</div></div>
-      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>It is not free.</b><br>When a review fires, the conversation <b>runs one more turn</b> and a second Claude that never wrote the code gets called in. That means <b>slower answers and more tokens.</b> We think it beats missing things, but it is a real cost. In a hurry, say <b>“keep it light”</b> and only the checklist runs.</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg><div><b><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V5"/><circle cx="12" cy="3.5" r="1.2"/><path d="M9 13h.01M15 13h.01M9.5 17h5"/></svg> “AI does it” is not a 100% guarantee.</b><br>The AI can forget. That is what <b>day-to-day <code>/hi-vibe:check</code></b> is for — the one command you type, sweeping the repo for whatever slipped past.</div></div>
+      <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>It costs a little time and a few tokens.</b><br>When a review fires, the conversation <b>runs one more turn</b> and a second Claude that never wrote the code takes a look. That means <b>slightly slower answers and more tokens.</b><br>We think it beats missing things, but the time is real. In a hurry, say <b>“keep it light”</b> and only the checklist runs.</div></div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><div><b>Three tiers, each turned on differently.</b>
 
         <div class="tiers">
@@ -1020,7 +1020,7 @@ Close with just these.
         </div>
       </div>
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg><div><b>Install once (global); <code>init</code> per project.</b><br>
-        <code>/plugin install</code> defaults to <b>user scope (global)</b>, so a single install makes the <code>/hi-vibe:</code> commands available everywhere (no per-project reinstall).<br>
+        <code>/plugin install</code> is <b>user scope (global)</b> by default, so one install makes the <code>/hi-vibe:</code> commands available everywhere (no reinstall).<br>
         But the automatic features (hooks) only turn on when you run <code>/hi-vibe:init</code> <b>from each project's top-level folder</b>. They run only in folders where the <code>.hi-vibe/</code> marker was created.<br>
         <b>It never touches other projects you didn't init.</b> Even with a global install, that is the <b>safety guard</b> against hooks running where you don't want them.<br>
         <span class="dim">(To use it in a new project, just <code>/hi-vibe:init</code> once in that folder.)</span></div></div>
@@ -1047,7 +1047,7 @@ Close with just these.
         <div class="qs-row"><div class="qs-when">Building a new feature</div><div class="qs-do"><b>nothing to type</b> <span class="dim">just talk normally and it searches “does this exist?” first. (If the AI seems to have skipped it, <code>/hi-vibe:find</code>.)</span></div></div>
         <div class="qs-row"><div class="qs-when">Checking after you're done</div><div class="qs-do"><b>nothing to type</b> <span class="dim">if there are changes nobody reviewed, the hook holds the turn open and demands a <code>review</code>.</span></div></div>
         <div class="qs-row"><div class="qs-when">Want to clean up structure</div><div class="qs-do"><code>/hi-vibe:check</code> <span class="dim">(after the scan, a fresh Claude opens each candidate and keeps only the real ones)</span></div></div>
-        <div class="qs-row"><div class="qs-when">Automate the checks (optional)</div><div class="qs-do"><code>/hi-vibe:gate</code> <span class="dim">(once per project · offers push-time gating when the project is on GitHub)</span></div></div>
+        <div class="qs-row"><div class="qs-when">Install the code checker (optional)</div><div class="qs-do"><code>/hi-vibe:gate</code> <span class="dim">(once per project · offers push-time gating when the project is on GitHub)</span></div></div>
         <div class="qs-row"><div class="qs-when">Not sure where to start</div><div class="qs-do"><code>/hi-vibe:welcome</code></div></div>
       </div>
 
@@ -1073,8 +1073,8 @@ Close with just these.
 
       <details class="note-toggle"><summary><svg class="eic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z"/></svg>check vs review — easy to confuse, but totally different</summary>
         <div class="tbody">
-          <code>check</code> is <b>a machine (scanner) sweeping your repo's structure</b>, then <b>a fresh Claude (proof-eyes) opening each candidate</b> to see which are real — duplicate code, unused code, oversized files. It's <b>fact-finding</b>. What it doubts is <b>the scanner</b>, so it needs evidence.<br>
-          <code>review</code> is <b>a subagent (fresh-eyes) looking at what you just changed from a design angle</b> to judge “is it well-built?” — over-engineering, simpler alternatives, hidden coupling. It's <b>judgment</b>. What it doubts is <b>the code</b>, so it needs intent.<br>
+          <code>check</code> is <b>a machine (scanner) sweeping your repo's structure</b>, then <b>a fresh Claude (proof-eyes) opening each candidate</b> to see which are real — duplicate code, unused code, oversized files. It's <b>fact-finding</b>.<br>What it doubts is <b>the scanner</b>, so it needs evidence.<br>
+          <code>review</code> is <b>a subagent (fresh-eyes) looking at what you just changed from a design angle</b> to judge “is it well-built?” — over-engineering, simpler alternatives, hidden coupling. It's <b>judgment</b>.<br>What it doubts is <b>the code</b>, so it needs intent.<br>
           <span class="dim">In one line: <b>check = what exists (facts), review = is it good (judgment).</b> They complement, not overlap.</span>
         </div>
       </details>
@@ -1116,7 +1116,7 @@ Close with just these.
       <div class="honest-note"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0V8Z"/><path d="M12 16v6"/></svg><div><b>Only the 10 commands show up in the slash menu.</b><br>
         The 6 skills are engines, not buttons, so they're hidden from the menu (<code>user-invocable: false</code>).<br>
         <b>Hidden doesn't mean off</b> — Claude still loads them itself. Two ways reach the same engine (repo-xray): <b>① the <code>check</code> command · ② saying “find duplicates”.</b><br>
-        The <code>hi-vibe:</code> prefix just means “belongs to this plugin”. <code>doctor</code> runs the hooks and scanner directly, with no skill.</div></div>
+        The <code>hi-vibe:</code> prefix just means “belongs to this plugin”.<br><code>doctor</code> runs the hooks and scanner directly, with no skill.</div></div>
     </section>
 
     <section id="living-en">
@@ -1125,9 +1125,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.39.2<small>2026-08-07</small></div><div class="h"><b>Landing copy cleanup.</b> <span>Two sentences were spilling a few characters onto a second line, leaving an orphan tail; both are now trimmed to fit one line. The section about cost was blunter than it needed to be, so "It is not free" became "It costs a little time and a few tokens", with the trailing thought on its own line. The cost itself is still stated plainly. And `init` and `gate` described the same thing two different ways, so they now use one wording.</span></div></div>
         <div class="rel"><div class="v">v0.39.1<small>2026-08-06</small></div><div class="h"><b>It was catching things and not saying so.</b> <span>When hi-vibe catches something it is supposed to close the reply with one line, `👋 hi-vibe caught …`, which is the only marker that makes later counting possible. The paragraph above it listed that line among things not to repeat, so once the checklist covered the defect the line was dropped. In real use a session ran eight reviews, found real defects, and emitted the line zero times. Explanations belong in one place; the counter always gets written.</span></div></div>
         <div class="rel"><div class="v">v0.39.0<small>2026-08-04</small></div><div class="h"><b>The first defect found in real use.</b> <span>While using it on another project, `doctor` produced a self-contradictory diagnosis: it reported the hooks as stale while the same line said the last run was 0.0 hours ago, with two hooks listed as alive. Enabling or updating the plugin mid-session means only `SessionStart` misses that session, and the whole verdict hung on that one hook. The AI reading it simply ignored the warning — a health check that cries wolf buries the real failures with it. A contradiction inside the review instructions was fixed at the same time.</span></div></div>
-        <div class="rel"><div class="v">v0.38.1<small>2026-08-04</small></div><div class="h"><b>The closing line of the question is now conditional.</b> <span>"A suggested order of use after installing" read as though the decision had already been made; this section is a preview seen before installing, so it now says "if you do install it". Nothing else changed.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
