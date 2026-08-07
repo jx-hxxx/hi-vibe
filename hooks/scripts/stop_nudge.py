@@ -120,6 +120,14 @@ def main(payload):
     if not transcript:
         return
 
+    # 리뷰가 돌 때 **남의 눈까지 같이 도는지**를 기록해 둔다. 여기서 세는
+    # 이유는 훅만이 트랜스크립트를 볼 수 있어서다 — `review_scope mark`는
+    # AI가 Bash로 부르는 별도 프로세스라 대화 기록에 접근하지 못한다.
+    sid = str(payload.get("session_id", "unknown"))
+    off = _common.agent_offset(cwd, sid)
+    fe, mk, off2 = _common.review_activity(transcript, off)
+    _common.note_agent_activity(cwd, sid, fe, mk, off2)
+
     _, edited = _common.parse_transcript(transcript)
     writes, catches = _common.session_activity(transcript)
     code_edits = [f for f in edited if not f.endswith(DOC_SUFFIXES)]

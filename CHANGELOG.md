@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+## [0.40.0] - 2026-08-07
+<!-- show:ko **리뷰의 절반이 조용히 안 돌고 있어도 아무도 몰랐어요.** 리뷰는 두 겹입니다 — 체크리스트가 빠뜨림을 잡고, 남의 눈(fresh-eyes)이 판단 착오를 잡아요. 그런데 세션 설정이 서브에이전트 호출을 막으면 뒤쪽 절반이 그냥 안 돕니다. 실제로 한 세션이 **하루 종일** 그 상태로 돌았는데 어디에도 안 남았어요. 훅이 죽는 건 이미 감시하고 있었는데 에이전트가 죽는 건 아무도 안 보고 있었던 겁니다. 이제 훅이 대화 기록에서 **직접 세고**, `doctor`가 `리뷰 8회 중 0회`처럼 알려줘요. AI가 신고해 주기를 기다리지 않습니다. -->
+<!-- show:en **Half the review could be silently missing and nothing said so.** A review has two layers: the checklist catches omissions, and fresh-eyes catches misjudgements. When a session's settings block subagent calls, the second layer simply does not run. One real session spent an entire day like that with no trace anywhere. Dead hooks were already watched; a dead agent was watched by no one. The hook now counts the calls straight out of the transcript and `doctor` reports it as "0 of 8 reviews", rather than waiting for the AI to volunteer it. -->
+
+### Added
+- **남의 눈(fresh-eyes)이 안 도는 것을 훅이 감지** (2026-08-07) — `_common.review_activity()`가 트랜스크립트에서 `subagent_type: hi-vibe:fresh-eyes` 호출과 `review_scope … mark` 호출을 **직접 센다.** Stop 훅이 `.hi-vibe/state/agents.json`에 누적하고, `doctor`가 `리뷰 N회 중 M회 실행`으로 보고한다. 리뷰 3회 미만이면 판단을 보류한다(늑대소년 방지).
+  - **AI에게 묻지 않는 것이 핵심이다.** `write-gate`는 이미 `생략했으면 한 줄로 밝혀라`고 지시하고 있었는데, **정확히 그 층이 조용히 빠진 사건**이었다. 이 저장소 기준(`증거가 파일 안에 있으면 기계가 잡는다`)의 앞쪽이라 기계로 옮겼다.
+  - **막지는 않는다.** 에이전트가 못 도는 건 그 세션 환경 때문인 경우가 많아, 막으면 사용자가 어쩌지 못하는 잔소리 루프가 된다. 기록하고 `doctor`에서만 보여준다.
+  - `proof-eyes`는 안 센다 — `check`가 쓰는 다른 에이전트이지 리뷰의 절반이 아니다.
+
+### Fixed
+- **긴 세션일수록 못 세던 것** (2026-08-07, 배포 전에 잡음) — 첫 구현은 매번 트랜스크립트 **전체**를 세고 세션별 누계와 비교해 델타를 구했다. 그런데 그 전체 읽기가 `tail_lines`(끝 512KB)여서, 세션이 커지면 예전 호출이 창 밖으로 밀려 **누계가 줄어든 것처럼 보이고** 델타 계산이 멈춘다. **긴 세션일수록 안 세는데 하필 긴 세션이 제일 중요하다.**
+  - **실제 16MB 세션에 돌려 보고 잡았다** — 손으로 grep하면 3건인데 함수는 0건을 냈다. 픽스처가 작아 테스트는 전부 통과하고 있었다.
+  - 읽은 **바이트 위치를 세션별로 기억**하고 그 뒤만 읽게 바꿨다. 정확하고 더 싸다. 반쯤 쓰인 마지막 줄은 소비하지 않는다(훅이 기록 도중에 돌 수 있다).
+- **랜딩의 광고 테스트 수** (2026-08-07) — 211 → 228. `test_integrity`가 잡았다.
+
 ## [0.39.2] - 2026-08-07
 <!-- show:ko **랜딩 문구를 다듬었어요.** 한 줄에 들어갈 문장이 두 줄로 넘어가 꼬리만 덩그러니 남던 자리 두 곳을 줄여서 한 줄에 앉혔습니다. 비용을 설명하는 칸은 말이 좀 셌어요 — `공짜는 아니에요`를 `시간과 토큰을 조금 씁니다`로 바꾸고, 뒷부분은 줄을 나눠 읽기 쉽게 했습니다. 드는 비용을 감추지는 않았어요. 그리고 `init`과 `gate`가 같은 뜻을 서로 다른 말로 적고 있어서(`새 프로젝트마다 한 번` / `프로젝트마다 1회`) 한쪽으로 맞췄습니다. -->
 <!-- show:en **Landing copy cleanup.** Two sentences were spilling a few characters onto a second line, leaving an orphan tail; both are now trimmed to fit one line. The section about cost was blunter than it needed to be, so "It is not free" became "It costs a little time and a few tokens", with the trailing thought on its own line. The cost itself is still stated plainly. And `init` and `gate` described the same thing two different ways, so they now use one wording. -->
