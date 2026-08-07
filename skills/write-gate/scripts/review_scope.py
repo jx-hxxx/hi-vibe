@@ -101,15 +101,18 @@ def _rev_exists(root, ref):
 MAX_LOOKBACK = 10   # 거슬러 올라갈 커밋 수 상한 (첫 리뷰가 무한히 커지지 않게)
 
 
-def _unreviewed_count(root, files, gone):
-    """아직 안 봤거나 본 뒤 또 바뀐 파일 수. 지운 파일은 항상 안 본 것으로 센다."""
-    state = load_state(root)
-    n = len(gone)
-    for f in files:
-        h = content_hash(os.path.join(root, f))
-        if not h or state.get(f) != h:
-            n += 1
-    return n
+def _last_code_commit_range(root):
+    """`(가장 오래된 기준점, 그 뒤로 바뀐 파일 이름들)` — 최근 MAX_LOOKBACK 커밋.
+
+    `HEAD~1`부터 하나씩 `rev-parse`+`diff` 하면 git을 20번 부르고 마지막
+    결과만 쓴다(실측 2.1초 — Stop 훅 예산 8초를 위험하게 갉아먹는다).
+    커밋 목록을 한 번에 받아 가장 오래된 것 하나로 diff하면 두 번이면 된다."""
+    revs = _git(["rev-list", "--max-count=%d" % (MAX_LOOKBACK + 1), "HEAD"],
+                root).split()
+    if len(revs) < 2:
+        return None, set()
+    base = revs[-1]                      # 가장 오래된 것 = 비교 기준점
+    return base, _diff_names(root, base)
 
 
 def _unreviewed_commits(root):
@@ -121,24 +124,25 @@ def _unreviewed_commits(root):
     이렇게 샜다. `sec_client.py`는 12:48에 커밋됐고 12:55 커밋에서 리뷰가
     걸렸는데, 그때 범위는 12:55 커밋 하나뿐이었다.
 
-    멈추는 조건은 **한 단계 더 가도 안 본 게 안 늘어날 때**다. 이래야
-    리뷰를 마친 뒤 옛 커밋이 도로 끌려오지 않는다(그 성질은 이 계단
-    설계의 전제이고 테스트가 지킨다). 넓게 잡아도 이미 본 파일은
-    `_split_reviewed`가 빼므로 같은 것을 두 번 보지는 않는다."""
-    best = None
-    for i in range(1, MAX_LOOKBACK + 1):
-        ref = "HEAD~%d" % i
-        if not _rev_exists(root, ref):
-            break
-        names = _diff_names(root, ref)
-        files, gone = _code_files(root, names), _deleted_code_files(root, names)
-        fresh = _unreviewed_count(root, files, gone)
-        if best is not None and fresh <= best[3]:
-            break                       # 더 가도 새로 볼 게 없다
-        best = (ref, files, gone, fresh)
-    if best is None:
+    **중간에 멈추지 않는다.** 처음엔 두 가지 조기 종료를 시도했다가 둘 다
+    같은 함정에 빠졌다:
+
+      ①`한 단계 더 가도 안 늘어나면 멈춤` → 중간에 낀 **문서 커밋** 하나가
+        그 뒤 이력을 통째로 가렸다(이 저장소에서 실제로 HEAD~3 이후가 안 보임).
+      ②`이미 리뷰한 커밋을 만나면 멈춤` → **리뷰한 커밋**이 똑같이 그 뒤의
+        안 본 작업을 가렸다.
+
+    중간에서 멈추는 규칙은 무엇을 기준으로 삼든 "그 뒤"를 가린다. 그래서
+    최근 구간을 통째로 후보로 주고, **좁히는 일은 `_split_reviewed`에 맡긴다**
+    — 파일 내용 해시로 거르므로 이미 본 것은 어차피 빠진다. 범위를 넓히는
+    것과 볼 일이 늘어나는 것은 별개다.
+
+    남는 비용은 **처음 켠 저장소의 첫 리뷰**가 최대 10커밋만큼 커질 수 있다는
+    것이다. 상한이 그것만 막는다(그 이상은 `check`가 할 일이지 리뷰가 아니다)."""
+    base, names = _last_code_commit_range(root)
+    if base is None:
         return "HEAD~1", [], []
-    return best[0], best[1], best[2]
+    return base, _code_files(root, names), _deleted_code_files(root, names)
 
 
 def scope(root):

@@ -223,8 +223,13 @@ class MultipleCommitsTest(unittest.TestCase):
         self.assertIn("livefeed.py", got)
         self.assertIn("sec_client.py", got, "직전 커밋이 범위에서 빠졌다")
 
-    def test_stops_when_nothing_new_appears(self):
-        """문서 커밋을 만나면 멈춘다 — 무한히 거슬러 가면 첫 리뷰가 폭발한다."""
+    def test_docs_commit_does_not_hide_older_work(self):
+        """**이건 배포 전에 잡은 두 번째 결함이다.**
+
+        처음엔 `한 단계 더 가도 안 늘어나면 멈춤`으로 만들었는데, 중간에
+        낀 문서 커밋 하나가 **그 뒤 이력을 통째로 가렸다**(이 저장소에서
+        실제로 HEAD~3 이후가 안 보였다). 문서 커밋은 코드 이력의 일부가
+        아니라 그냥 건너뛸 대상이다."""
         _write(self.root, "old.py", "a = 1\n")
         self._commit("old code")
         _write(self.root, "notes.md", "# doc\n")
@@ -233,15 +238,27 @@ class MultipleCommitsTest(unittest.TestCase):
         self._commit("new code")
         got = _list(self.root)["to_review"]
         self.assertIn("new.py", got)
-        self.assertNotIn("old.py", got, "문서 커밋 너머까지 끌어왔다")
+        self.assertIn("old.py", got, "문서 커밋이 그 뒤를 가렸다")
+
+    def test_reviewed_file_is_filtered_even_if_in_range(self):
+        """좁히는 일은 범위가 아니라 `_split_reviewed`가 한다 — 그래야
+        중간에서 멈출 필요가 없다."""
+        _write(self.root, "old.py", "a = 1\n")
+        self._commit("old code")
+        review_scope.cmd_mark(self.root, ["old.py"])
+        _write(self.root, "new.py", "b = 2\n")
+        self._commit("new code")
+        got = _list(self.root)["to_review"]
+        self.assertIn("new.py", got)
+        self.assertNotIn("old.py", got, "이미 본 파일이 다시 나왔다")
 
     def test_reviewed_commits_are_not_dragged_back(self):
-        """리뷰를 마친 뒤 옛 커밋이 도로 끌려오면 같은 걸 영원히 다시 본다."""
+        """리뷰를 마친 뒤 같은 걸 또 보게 되면 리뷰가 영원히 안 끝난다."""
         _write(self.root, "a.py", "a = 1\n")
         self._commit("a")
         _write(self.root, "b.py", "b = 2\n")
         self._commit("b")
-        review_scope.cmd_mark(self.root, ["a.py", "b.py"])
+        review_scope.cmd_mark(self.root, ["a.py", "b.py", "base.py"])
         self.assertEqual(_list(self.root)["to_review"], [])
 
     def test_older_unreviewed_survives_marking_the_newer(self):

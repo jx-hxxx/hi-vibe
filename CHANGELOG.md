@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.43.1] - 2026-08-07
+<!-- show:ko **바로 앞 버전에서 낸 결함 두 개를 다시 확인하다 잡았어요.** 하나는 리뷰 범위가 **중간에 낀 문서 커밋에서 끊기던 것**입니다. "더 가도 새로 나올 게 없으면 멈춘다"로 만들었는데, 문서만 고친 커밋이 하나 끼면 그 뒤가 통째로 안 보였어요. 이 저장소에서 실제로 그랬습니다. 멈추는 기준을 "이미 리뷰한 커밋"으로 바꿔봤더니 **똑같은 함정**에 빠졌고요. 중간에서 멈추는 규칙은 무엇을 기준으로 하든 그 뒤를 가립니다. 그래서 안 멈춥니다. 다른 하나는 속도예요 — git을 스무 번 부르고 마지막 결과만 쓰고 있어서 2.1초 걸리던 걸 0.19초로 줄였습니다. -->
+<!-- show:en **Two defects in the version just shipped, caught while re-checking it.** The review range stopped at any docs-only commit sitting in the middle: the rule was "stop once nothing new appears", and a commit touching only documentation hid everything behind it — which happened in this very repository. Switching the boundary to "stop at an already-reviewed commit" fell into exactly the same trap. Any mid-walk stop rule hides what lies beyond it, so there is no longer one. The second fix is speed: the walk called git twenty times and used only the last result, taking 2.1s; it now takes 0.19s. -->
+
+### Fixed
+- **문서 커밋 하나가 그 뒤 이력을 통째로 가리던 것** (2026-08-07) — v0.43.0의 종료 조건이 `한 단계 더 가도 안 본 게 안 늘어나면 멈춤`이었다. 문서·설정만 고친 커밋은 코드 파일을 하나도 안 더하므로 **거기서 걸음이 멈춘다.** 이 저장소에서 실측: `HEAD~1`·`HEAD~2` 모두 3개였고 `HEAD~3`(4개)·`HEAD~4`(7개)는 **안 보였다.** 2026-08-06 모의투자 사례가 통과한 건 커밋 순서가 우연히 맞았기 때문이다.
+  - **두 번째 시도도 같은 함정이었다**: `이미 리뷰한 커밋을 만나면 멈춤`으로 바꿨더니, 이번엔 **리뷰한 커밋**이 그 뒤의 안 본 작업을 가렸다(새 커밋만 마크하면 옛 커밋이 사라짐).
+  - **결론: 중간에서 멈추는 규칙은 기준이 무엇이든 "그 뒤"를 가린다.** 최근 구간을 통째로 후보로 주고 좁히는 일은 `_split_reviewed`에 맡긴다 — 파일 내용 해시로 거르므로 이미 본 것은 어차피 빠진다. **범위를 넓히는 것과 볼 일이 늘어나는 것은 별개다.**
+  - 남는 비용은 **처음 켠 저장소의 첫 리뷰**가 최대 10커밋만큼 커질 수 있다는 것이고, 상한이 그것만 막는다. 그 이상은 `check`가 할 일이지 리뷰가 아니다.
+- **범위 계산이 2.1초 걸리던 것** (2026-08-07) — `HEAD~1`부터 하나씩 `rev-parse`+`diff`를 돌려 **git을 스무 번 부르고 마지막 결과만** 썼다. Stop 훅 예산이 8초라 통과는 했지만 매 턴 무는 비용이다. 커밋 목록을 한 번에 받아 가장 오래된 것 하나로 diff하면 두 번이면 된다 — 실측 **2.1초 → 0.19초**, 결과는 동일.
+
+### Changed
+- `write-gate/SKILL.md` 334 → 350줄 (오늘 누계 +16). 성장 억제 대상이라 기록해 둔다 — 다음에 규칙을 더할 땐 뺄 것을 먼저 찾는다.
+
 ## [0.43.0] - 2026-08-07
 <!-- show:ko **커밋을 여러 번 하면 직전 커밋이 리뷰에서 통째로 빠졌어요.** 리뷰가 걸리는 건 기능마다인데(커밋과 무관), **무엇을 볼지**는 git에서 계산합니다. 커밋하고 푸시까지 하면 `마지막 커밋 하나`만 남아서, 몇 분 전 커밋은 영영 범위 밖이었어요. 실제로 세어보니 하루에 커밋된 코드 35개 중 4개가 이렇게 샜습니다. 이제 **아직 안 본 게 나오는 데까지 거슬러 올라갑니다.** 이미 본 파일은 원래 자동으로 빠지니까 같은 걸 두 번 보지는 않아요. -->
 <!-- show:en **With more than one commit, the earlier one dropped out of review entirely.** Reviews fire per piece of work, not per commit, but *what* they look at is computed from git. Once you commit and push, only the last commit remains in range, so a commit from minutes earlier was never seen. Counting one real day: 4 of 35 committed code files slipped through this way. The scope now walks back until nothing unreviewed turns up. Files already reviewed were always filtered out, so nothing gets looked at twice. -->
