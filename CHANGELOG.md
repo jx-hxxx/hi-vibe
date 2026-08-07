@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.43.0] - 2026-08-07
+<!-- show:ko **커밋을 여러 번 하면 직전 커밋이 리뷰에서 통째로 빠졌어요.** 리뷰가 걸리는 건 기능마다인데(커밋과 무관), **무엇을 볼지**는 git에서 계산합니다. 커밋하고 푸시까지 하면 `마지막 커밋 하나`만 남아서, 몇 분 전 커밋은 영영 범위 밖이었어요. 실제로 세어보니 하루에 커밋된 코드 35개 중 4개가 이렇게 샜습니다. 이제 **아직 안 본 게 나오는 데까지 거슬러 올라갑니다.** 이미 본 파일은 원래 자동으로 빠지니까 같은 걸 두 번 보지는 않아요. -->
+<!-- show:en **With more than one commit, the earlier one dropped out of review entirely.** Reviews fire per piece of work, not per commit, but *what* they look at is computed from git. Once you commit and push, only the last commit remains in range, so a commit from minutes earlier was never seen. Counting one real day: 4 of 35 committed code files slipped through this way. The scope now walks back until nothing unreviewed turns up. Files already reviewed were always filtered out, so nothing gets looked at twice. -->
+
+### Fixed
+- **직전 커밋이 리뷰 범위에서 빠지던 것** (2026-08-07) — 계단 3단계가 `HEAD~1..HEAD` **하나**였다. 한 턴에 커밋을 두 번 하고 푸시하면 1·2단계가 비어 3단계로 내려오는데, 거기서 직전 커밋은 이미 범위 밖이다.
+  - **실측이 근거다**: 2026-08-06 한 프로젝트에서 커밋된 코드 35개 중 **12개가 리뷰 표시 없이 남았다.** 8개는 `.html`(v0.41.0에서 해결), **나머지 4개가 이 건**이다. `sec_client.py`·`test_sec_shares.py`는 12:48에 커밋됐고 12:55 커밋에서 리뷰가 걸렸는데 그때 범위는 12:55 하나뿐이었다.
+  - **처음엔 "근거 1건"으로 보고 미뤘던 항목이다.** 세어보니 4건이었다 — 표본을 세지 않고 약하다고 판단한 것이 틀렸다.
+  - 멈추는 조건은 **한 단계 더 가도 안 본 게 안 늘어날 때**다. 리뷰를 마친 뒤 옛 커밋이 도로 끌려오지 않는 성질(이 계단 설계의 전제)은 그대로 유지되고, 테스트가 양쪽을 지킨다.
+  - 상한 10커밋 — 없으면 처음 켠 저장소에서 전체 이력을 리뷰하라고 한다.
+  - **넓게 잡아도 안전한 이유**: `reviewed.json`이 파일 내용 해시를 갖고 있어 이미 본 것은 `_split_reviewed`가 뺀다. 범위를 넓히는 것과 일이 늘어나는 것은 별개다.
+
 ## [0.42.0] - 2026-08-07
 <!-- show:ko **같은 파일에 같은 크기 경고가 리뷰마다 똑같이 떴어요.** `이 파일 686줄입니다`를 이미 알고 넘어가기로 한 뒤에도 계속 펼쳐졌습니다. 이 저장소 원칙이 `알림은 쌓이면 신호가 아니다`인데 정면으로 어긋난 자리였어요. 이제 **처음 400줄을 넘긴 것만 크게 짚고**, 원래 넘어 있던 파일은 한 줄로 줄입니다. 그리고 리뷰가 파일이 **커졌는지 줄었는지**를 이제 압니다 — 예전엔 559줄을 389줄로 쪼갠 리팩터링도 `383줄 변경`으로만 보여서 또 `크다`고 짚었거든요. 기준 400은 그대로예요. 무르게 한 게 아니라 같은 말을 반복하지 않게 한 겁니다. -->
 <!-- show:en **The same size warning was reprinted in full at every review.** "This file is 686 lines" kept expanding even after it had been raised and consciously deferred. This repository's own rule is that alerts which pile up stop being signal. Now only a file that has *just* crossed 400 lines gets the full warning; one that was already over gets a single line. The review can also tell whether a file grew or shrank — a refactor that split 559 lines down to 389 previously showed up only as "383 lines changed" and got flagged as oversized again. The 400 threshold is unchanged; what changed is the repetition. -->

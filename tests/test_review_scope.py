@@ -187,6 +187,81 @@ class ReviewScopeTest(unittest.TestCase):
         self.assertEqual(len(buckets), 1)  # 빈 버킷은 안 나온다
 
 
+class MultipleCommitsTest(unittest.TestCase):
+    """커밋을 여러 번 하면 **직전 커밋이 영영 안 보이던 것** (2026-08-07).
+
+    훅은 커밋과 무관하게 매 턴 돈다. 문제는 트리거가 아니라 **범위**였다.
+    한 턴에 커밋을 두 번 하고 푸시하면 `uncommitted`·`unpushed`가 비어
+    `HEAD~1..HEAD` 하나만 남는데, 그 직전 커밋의 파일은 범위 밖이 된다.
+
+    실측(2026-08-06 한 프로젝트): 커밋된 코드 35개 중 4개가 이렇게 샜다.
+    `sec_client.py`는 12:48에 커밋됐고 12:55 커밋에서 리뷰가 걸렸는데,
+    그때 범위는 12:55 커밋 하나뿐이었다."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        _git(self.root, "init", "-q")
+        _git(self.root, "config", "user.email", "t@t.t")
+        _git(self.root, "config", "user.name", "t")
+        _write(self.root, "base.py", "x = 1\n")
+        self._commit("init")
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def _commit(self, msg):
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", msg)
+
+    def test_earlier_commit_is_not_lost(self):
+        """**이게 실측으로 잡힌 결함이다.** 7분 전 커밋이 통째로 빠졌다."""
+        _write(self.root, "sec_client.py", "def shares():\n    return 1\n")
+        self._commit("feat: SEC")
+        _write(self.root, "livefeed.py", "def poll():\n    return 2\n")
+        self._commit("refactor: livefeed")
+        got = _list(self.root)["to_review"]
+        self.assertIn("livefeed.py", got)
+        self.assertIn("sec_client.py", got, "직전 커밋이 범위에서 빠졌다")
+
+    def test_stops_when_nothing_new_appears(self):
+        """문서 커밋을 만나면 멈춘다 — 무한히 거슬러 가면 첫 리뷰가 폭발한다."""
+        _write(self.root, "old.py", "a = 1\n")
+        self._commit("old code")
+        _write(self.root, "notes.md", "# doc\n")
+        self._commit("docs only")
+        _write(self.root, "new.py", "b = 2\n")
+        self._commit("new code")
+        got = _list(self.root)["to_review"]
+        self.assertIn("new.py", got)
+        self.assertNotIn("old.py", got, "문서 커밋 너머까지 끌어왔다")
+
+    def test_reviewed_commits_are_not_dragged_back(self):
+        """리뷰를 마친 뒤 옛 커밋이 도로 끌려오면 같은 걸 영원히 다시 본다."""
+        _write(self.root, "a.py", "a = 1\n")
+        self._commit("a")
+        _write(self.root, "b.py", "b = 2\n")
+        self._commit("b")
+        review_scope.cmd_mark(self.root, ["a.py", "b.py"])
+        self.assertEqual(_list(self.root)["to_review"], [])
+
+    def test_older_unreviewed_survives_marking_the_newer(self):
+        """새 것만 마크했다고 옛 것이 사라지면 안 된다 — 아직 안 봤으니까."""
+        _write(self.root, "old.py", "a = 1\n")
+        self._commit("old")
+        _write(self.root, "new.py", "b = 2\n")
+        self._commit("new")
+        review_scope.cmd_mark(self.root, ["new.py"])
+        self.assertIn("old.py", _list(self.root)["to_review"])
+
+    def test_lookback_is_capped(self):
+        """상한이 없으면 처음 켠 저장소에서 전체 이력을 리뷰하라고 한다."""
+        for i in range(review_scope.MAX_LOOKBACK + 5):
+            _write(self.root, "f%d.py" % i, "x = %d\n" % i)
+            self._commit("c%d" % i)
+        self.assertLessEqual(len(_list(self.root)["to_review"]),
+                             review_scope.MAX_LOOKBACK)
+
+
 class OversizedTest(unittest.TestCase):
     """"크다"는 사실이 아니라 **커지고 있다**를 준다 (2026-08-07).
 

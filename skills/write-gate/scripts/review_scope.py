@@ -16,7 +16,7 @@ to look at:
 
   1) uncommitted  — 안 커밋한 변경 (평소 경로)
   2) unpushed     — 커밋했지만 아직 안 푸시한 것
-  3) last_commit  — 마지막 커밋 하나
+  3) last_commit  — 마지막 커밋부터 **아직 안 본 것이 나오는 데까지** 거슬러
   4) none         — git 저장소가 아니거나 볼 게 없음
 
 The tier is picked by which one actually has changed code files; the
@@ -98,6 +98,49 @@ def _rev_exists(root, ref):
     return bool(_git(["rev-parse", "--verify", "--quiet", ref], root).strip())
 
 
+MAX_LOOKBACK = 10   # 거슬러 올라갈 커밋 수 상한 (첫 리뷰가 무한히 커지지 않게)
+
+
+def _unreviewed_count(root, files, gone):
+    """아직 안 봤거나 본 뒤 또 바뀐 파일 수. 지운 파일은 항상 안 본 것으로 센다."""
+    state = load_state(root)
+    n = len(gone)
+    for f in files:
+        h = content_hash(os.path.join(root, f))
+        if not h or state.get(f) != h:
+            n += 1
+    return n
+
+
+def _unreviewed_commits(root):
+    """마지막 커밋 하나가 아니라 **아직 안 본 것이 나오는 데까지** 거슬러 간다.
+
+    왜 필요한가: 한 턴에 커밋을 두 번 하고 푸시하면 `uncommitted`·`unpushed`가
+    비어 `HEAD~1..HEAD` 하나만 남는데, **그 직전 커밋의 파일은 영영 범위에
+    안 들어온다.** 실측(2026-08-06 한 프로젝트): 커밋된 코드 35개 중 4개가
+    이렇게 샜다. `sec_client.py`는 12:48에 커밋됐고 12:55 커밋에서 리뷰가
+    걸렸는데, 그때 범위는 12:55 커밋 하나뿐이었다.
+
+    멈추는 조건은 **한 단계 더 가도 안 본 게 안 늘어날 때**다. 이래야
+    리뷰를 마친 뒤 옛 커밋이 도로 끌려오지 않는다(그 성질은 이 계단
+    설계의 전제이고 테스트가 지킨다). 넓게 잡아도 이미 본 파일은
+    `_split_reviewed`가 빼므로 같은 것을 두 번 보지는 않는다."""
+    best = None
+    for i in range(1, MAX_LOOKBACK + 1):
+        ref = "HEAD~%d" % i
+        if not _rev_exists(root, ref):
+            break
+        names = _diff_names(root, ref)
+        files, gone = _code_files(root, names), _deleted_code_files(root, names)
+        fresh = _unreviewed_count(root, files, gone)
+        if best is not None and fresh <= best[3]:
+            break                       # 더 가도 새로 볼 게 없다
+        best = (ref, files, gone, fresh)
+    if best is None:
+        return "HEAD~1", [], []
+    return best[0], best[1], best[2]
+
+
 def scope(root):
     """리뷰 범위를 계단으로 고른다 → (tier, base, files).
 
@@ -119,10 +162,9 @@ def scope(root):
             return "unpushed", "@{upstream}", files, gone
 
     if _rev_exists(root, "HEAD~1"):
-        names = _diff_names(root, "HEAD~1")
-        files, gone = _code_files(root, names), _deleted_code_files(root, names)
+        base, files, gone = _unreviewed_commits(root)
         if files or gone:
-            return "last_commit", "HEAD~1", files, gone
+            return "last_commit", base, files, gone
     elif _rev_exists(root, "HEAD"):
         # 커밋이 하나뿐 = 그 커밋이 저장소 전체다 (비교 대상이 없음).
         tracked = {ln.strip() for ln in _git(["ls-files"], root).splitlines()}
