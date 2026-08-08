@@ -48,7 +48,6 @@
     var THEME = opts.theme || {};
     var ENV_STOPS = THEME.envStops || ['#eef2ff', '#c8d2ff', '#9aa8f0'];       // 반사 환경(림라이트 톤)
     var GLASS = THEME.glassShades || [0x3746d8, 0x4453e6, 0x303fd2, 0x4e5cf0, 0x3a49dc]; // 유리 조각 색들
-    var ATTEN = THEME.attenuationColor != null ? THEME.attenuationColor : 0x141f9c;       // 유리 두께 흡수색(딥)
     var LOGO_STOPS = THEME.logoGradient || ['#3D7BFF', '#5058F0', '#7128E8']; // 로고 대각 그라데이션
     var GLOW = THEME.glowColor || '#cddcff';                                   // 완성 스윕 글로우 틴트
     var AMBIENT = THEME.ambientColor != null ? THEME.ambientColor : 0x8898d0;  // 채움광 색(파랑 큐브=페리윙클)
@@ -85,19 +84,14 @@
 
     var iceShades = GLASS;
     function iceMat(shade) {
-      var m = new THREE.MeshPhysicalMaterial({ color: shade, metalness: 0, roughness: 0.14,
+      // 유리 부피 속성(thickness·attenuationColor·attenuationDistance)은 뺐다.
+      // three r129에서 생긴 것이라 r128 번들에선 콘솔 경고만 내고 무시됐는데,
+      // r129로 올려 실제로 켜 보니 **두께 흡수색이 유리 안쪽에 배어나오는 게
+      // 원하는 그림이 아니었다**(2026-08-08, 브라우저로 보고 판단). 조건부로
+      // 남겨두면 나중에 번들을 올리는 순간 그 색이 도로 켜지므로 아예 지운다.
+      return new THREE.MeshPhysicalMaterial({ color: shade, metalness: 0, roughness: 0.14,
         transmission: 0.15, ior: 1.34, transparent: true, opacity: 1.0,   // 투과↓: 뒷면 로고 유령 비침 제거
         clearcoat: 0.55, clearcoatRoughness: 0.24, envMapIntensity: 0.4 });   // 스펙큘러 분산(가짜 스윕 방지)
-      // 유리 부피 속성(thickness·attenuation*)은 three.js r129에서 생겼다.
-      // 생성자(setValues)에 넘기면 없는 버전에서 콘솔 경고를 내고 버리므로,
-      // 있는 버전에서만 직접 대입한다 — r128 번들에선 조용히 건너뛰고(지금
-      // 모습 그대로), 번들을 올리면 두께 흡수색이 자동으로 살아난다.
-      if ('thickness' in m) {
-        m.thickness = 1.5;
-        m.attenuationColor = new THREE.Color(ATTEN);
-        m.attenuationDistance = 0.8;
-      }
-      return m;
     }
     var geo = new THREE.BoxGeometry(0.94, 0.94, 0.94), S = 1.0;
     var main = new THREE.Group(); main.rotation.x = -0.32; main.rotation.z = 0.06; scene.add(main);

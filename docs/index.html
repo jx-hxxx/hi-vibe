@@ -743,9 +743,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.43.6<small>2026-08-08</small></div><div class="h"><b>바로 앞에서 켠 유리 흡수색을 도로 껐어요.</b> <span>몇 달간 안 켜져 있던 설정이라 켜 보니 정작 <strong>유리 안쪽에 색이 배어나오는 게 원하는 그림이 아니었습니다.</strong> 눈으로 보고 나서야 알 수 있는 종류였어요. 번들은 되돌리고(r129 → r128, git에서 꺼내 바이트까지 원본과 동일) 속성은 아예 지웠습니다 — 조건부로 남겨두면 나중에 번들 올리는 순간 그 색이 도로 켜지니까요. 안 쓰게 된 변수와 테마 설정도 같이 지웠습니다. 원래 모습·경고 0으로 돌아온 것을 브라우저로 확인했어요.</span></div></div>
         <div class="rel"><div class="v">v0.43.5<small>2026-08-08</small></div><div class="h"><b>큐브 유리에 의도했던 흡수색이 드디어 켜졌어요.</b> <span>설정에 짙은 갈금색이 적혀 있었는데 번들된 three.js가 그 기능이 생기기 직전 버전이라 몇 달간 아무 데도 안 쓰이고 있었습니다. 한 단계만 올려서(r128 → r129, 7KB) 원래 의도한 모습이 됐어요. 조건 분기는 남겨뒀습니다 — 이 큐브 코드를 복사해 쓰는 다른 프로젝트 네 곳이 아직 옛 버전이라, 거기서도 경고 없이 돌아야 하거든요. 브라우저로 버전·적용값·경고를 전부 확인했습니다.</span></div></div>
         <div class="rel"><div class="v">v0.43.4<small>2026-08-08</small></div><div class="h"><b>업데이트 타임라인에 마크다운 기호가 글자 그대로 나가고 있었어요.</b> <span>CHANGELOG를 랜딩으로 옮기는 변환기가 <strong>맨 앞 굵은 글씨 하나만</strong> 처리하고 나머지는 그냥 통과시켰습니다. 그래서 코드 이름을 감싼 백틱과 문장 안쪽 강조 별표가 페이지에 보였어요. 아무도 그 기호를 안 써서 몇 달간 안 드러났던 것뿐이고, 사실은 <strong>"타임라인 글엔 마크다운 쓰지 말 것"이라는 적힌 적 없는 규칙</strong>에 기대고 있었습니다. 이제 백틱은 코드로, 별표는 강조로 바뀝니다. 브라우저로 직접 보고 고쳤어요.</span></div></div>
-        <div class="rel"><div class="v">v0.43.3<small>2026-08-08</small></div><div class="h"><b>927줄이 된 훅 공용 파일을 책임별로 쪼갰어요.</b> <span><code>_common.py</code> 하나에 배관·CI·대화 기록 읽기·리뷰 감시·handover 쓰기가 다 살았습니다. 이번 주에 기능이 붙으면서 자기 기준(400줄)의 두 배를 넘겼어요. 다섯 모듈로 나누고, <code>_common</code>은 이름만 지키는 표면으로 남겼습니다 — 훅·테스트가 부르는 이름 25개가 전부 그대로라 호출부는 한 곳도 안 바뀌었어요. 동작 변화 없음: 테스트 246개 그대로 통과, 훅 실측 속도 동일, 실제 21MB 세션 기록으로 세는 값까지 손 grep과 대조했습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1129,9 +1129,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.43.6<small>2026-08-08</small></div><div class="h"><b>The glass absorption turned on in the previous release is off again.</b> <span>The setting had been dormant for months, and once actually visible it turned out that colour bleeding through the inside of the glass was not the look wanted — something only judgeable by eye. The bundle is reverted (r129 back to r128, restored from git so it is byte-identical) and the properties are deleted outright: leaving them behind a version check would switch the colour back on the moment anyone upgrades the bundle. The now-unused variable and theme entry went with them, and the original look with zero warnings was confirmed in a browser.</span></div></div>
         <div class="rel"><div class="v">v0.43.5<small>2026-08-08</small></div><div class="h"><b>The glass cube finally has the absorption colour it was configured for.</b> <span>A deep amber was set in the theme, but the bundled three.js was one release short of supporting it, so the setting sat unused for months. A single-step upgrade (r128 to r129, 7KB) turns it on. The version guard stays: four other projects copy this cube code and still ship the older bundle, and they must keep running without warnings. Version, applied values and console output were all verified in a real browser.</span></div></div>
         <div class="rel"><div class="v">v0.43.4<small>2026-08-08</small></div><div class="h"><b>Markdown markers were reaching the update timeline as literal characters.</b> <span>The converter that moves CHANGELOG entries onto the landing page handled only the leading bold and passed everything else through, so backticks around code names and inline emphasis asterisks showed up on the page. It had gone unnoticed for months only because nobody used those markers — the page was really relying on an unwritten "don't use markdown here" rule. Backticks now become code and asterisks become emphasis, verified in a real browser.</span></div></div>
-        <div class="rel"><div class="v">v0.43.3<small>2026-08-08</small></div><div class="h"><b>The shared hook file had grown to 927 lines and is now split by responsibility.</b> <span>Plumbing, CI health, transcript reading, review watching and handover writing all lived in one <code>_common.py</code> — more than double its own 400-line guideline after this week's additions. It is now five modules, with <code>_common</code> kept as a stable name surface: all 25 names that hooks and tests call are unchanged, so no call site moved. No behavior change — all 246 tests pass, hook timing is identical, and counts against a real 21MB transcript match a manual grep.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1209,7 +1209,6 @@ Close with just these.
     theme: {
       envStops: ['#fff4e0', '#ffd89a', '#f2b45e'],
       glassShades: [0xE8920A, 0xF0A020, 0xD8830A, 0xF7A828, 0xE09010],
-      attenuationColor: 0x7a4a06,
       logoGradient: ['#FFC24E', '#E8920A', '#B5590C'],
       glowColor: '#ffe0a8',
       ambientColor: 0xd0a060

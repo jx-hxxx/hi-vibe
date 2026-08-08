@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.43.6] - 2026-08-08
+<!-- show:ko **바로 앞에서 켠 유리 흡수색을 도로 껐어요.** 몇 달간 안 켜져 있던 설정이라 켜 보니 정작 **유리 안쪽에 색이 배어나오는 게 원하는 그림이 아니었습니다.** 눈으로 보고 나서야 알 수 있는 종류였어요. 번들은 되돌리고(r129 → r128, git에서 꺼내 바이트까지 원본과 동일) 속성은 아예 지웠습니다 — 조건부로 남겨두면 나중에 번들 올리는 순간 그 색이 도로 켜지니까요. 안 쓰게 된 변수와 테마 설정도 같이 지웠습니다. 원래 모습·경고 0으로 돌아온 것을 브라우저로 확인했어요. -->
+<!-- show:en **The glass absorption turned on in the previous release is off again.** The setting had been dormant for months, and once actually visible it turned out that colour bleeding through the inside of the glass was not the look wanted — something only judgeable by eye. The bundle is reverted (r129 back to r128, restored from git so it is byte-identical) and the properties are deleted outright: leaving them behind a version check would switch the colour back on the moment anyone upgrades the bundle. The now-unused variable and theme entry went with them, and the original look with zero warnings was confirmed in a browser. -->
+
+### Removed
+- **유리 부피 속성 3종을 코드에서 삭제** (2026-08-08) — `thickness`·`attenuationColor`·`attenuationDistance`. v0.43.5에서 실제로 켜 보니 **의도한 그림이 아니었다.** 설정에 적혀만 있고 몇 달간 안 켜져 있었기 때문에, 눈으로 보기 전에는 판단할 수 없던 종류다.
+  - **조건 분기(`'thickness' in m`)째로 지웠다.** 남겨두면 나중에 번들을 올리는 순간 그 색이 도로 켜진다 — 지금 "별로"라고 판단한 것을 미래에 지뢰로 심어두는 셈이다.
+  - 딸려 죽은 것도 같이: `cube.js`의 `ATTEN` 변수, 랜딩 테마의 `attenuationColor: 0x7a4a06`. **쓰지 않는 설정을 남기면 다음 사람이 "이게 왜 안 먹지"를 다시 겪는다.**
+- **번들 three.js r129 → r128** (2026-08-08) — 올린 이유(그 속성)가 사라졌으므로 되돌린다. 7,518바이트 작아지고, `cube.js`를 복사해 쓰는 **다른 프로젝트 네 곳과 같은 버전**으로 돌아온다. **git에서 꺼내 복원했다** — 내 사본이 아니라 원본이어야 바이트까지 같다(SHA-256 대조 확인).
+  - **결과적으로 디스코드 회의봇이 먼저 내린 결론과 같아졌다** — 거기선 이미 `콘솔 경고만 190여 개 찍고 무시되던 무해 no-op → 제거`로 정리돼 있었다.
+
+### 남은 상태
+- 브라우저 실측: `THREE.REVISION` 128 · 테마에 `attenuationColor` 없음 · **콘솔 경고 0 · 에러 0** · 큐브 원래 밝은 금색 유리로 렌더.
+
 ## [0.43.5] - 2026-08-08
 <!-- show:ko **큐브 유리에 의도했던 흡수색이 드디어 켜졌어요.** 설정에 짙은 갈금색이 적혀 있었는데 번들된 three.js가 그 기능이 생기기 직전 버전이라 몇 달간 아무 데도 안 쓰이고 있었습니다. 한 단계만 올려서(r128 → r129, 7KB) 원래 의도한 모습이 됐어요. 조건 분기는 남겨뒀습니다 — 이 큐브 코드를 복사해 쓰는 다른 프로젝트 네 곳이 아직 옛 버전이라, 거기서도 경고 없이 돌아야 하거든요. 브라우저로 버전·적용값·경고를 전부 확인했습니다. -->
 <!-- show:en **The glass cube finally has the absorption colour it was configured for.** A deep amber was set in the theme, but the bundled three.js was one release short of supporting it, so the setting sat unused for months. A single-step upgrade (r128 to r129, 7KB) turns it on. The version guard stays: four other projects copy this cube code and still ship the older bundle, and they must keep running without warnings. Version, applied values and console output were all verified in a real browser. -->
