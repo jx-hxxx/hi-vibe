@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+## [0.44.0] - 2026-08-08
+<!-- show:ko **영문 README에서 사이트를 열면 한국어 페이지가 뜨던 것을 고쳤어요.** 랜딩은 한·영이 한 파일에 있고 전에 고른 언어를 기억하는데, 링크에 언어 표시가 없어서 **한 번이라도 한국어로 본 사람은 영문 README를 눌러도 한국어가 나왔습니다.** 이제 각 README가 자기 언어를 링크에 실어 보내고, 랜딩은 그걸 저장된 선택보다 먼저 봅니다. 링크를 눌렀다는 건 지금 이 방문에서 가장 분명한 신호니까요. 저장된 선택이 있는 상태로 반대 언어 링크를 눌러 실제로 바뀌는 것까지 브라우저로 확인했어요. -->
+<!-- show:en **Opening the site from the English README could land you on the Korean page.** Both languages live in one page and it remembers your last choice, so anyone who had ever viewed it in Korean got Korean even from the English README. Each README now carries its own language in the link, and the page reads that before the stored preference — clicking a language-specific link is the clearest signal for that visit. Verified in a browser, including the case where a stored choice had to be overridden. -->
+
+### Added
+- **랜딩이 `?lang=ko` / `?lang=en`을 받는다** (2026-08-08) — 언어 결정 순서가 `URL → 저장된 선택 → 브라우저 언어`가 됐다. 예전엔 저장된 선택이 맨 앞이라 **링크로 언어를 지정할 방법이 아예 없었다.**
+  - **URL을 맨 앞에 둔 이유**: 언어가 명시된 링크를 눌렀다면 그게 이번 방문의 가장 강한 신호다. 저장된 선택이 이기면 링크가 무의미해진다.
+  - 잘못된 값(`?lang=xx`)·다른 이름(`?mylang=en`)은 무시하고 기존 순서로 떨어진다. 다른 파라미터와 섞여도(`?a=1&lang=ko`) 잡는다.
+
+### Changed
+- **README의 사이트 링크 4곳에 언어를 실었다** (2026-08-08) — `README.md`는 `?lang=en`, `README.ko.md`는 `?lang=ko`(각 2곳).
+
+### Fixed
+- **재발 방지 검사 3종** (2026-08-08, `test_integrity.py`) — ①각 README가 자기 언어를 가리키는지 ②랜딩이 그 파라미터를 실제로 처리하는지 ③**URL을 저장된 선택보다 먼저 읽는지**(순서가 뒤집히면 링크가 무시된다). 셋 다 되돌리면 실패하는 것을 확인했다.
+  - 이 저장소는 **한쪽만 고치고 반대쪽을 안 보는 사고**를 여러 번 겪었다(FAQ 답·평가 프롬프트·히어로 문구·강제 개행). 링크도 같은 유형이라 사람 눈이 아니라 기계에 맡긴다.
+
 ## [0.43.6] - 2026-08-08
 <!-- show:ko **바로 앞에서 켠 유리 흡수색을 도로 껐어요.** 몇 달간 안 켜져 있던 설정이라 켜 보니 정작 **유리 안쪽에 색이 배어나오는 게 원하는 그림이 아니었습니다.** 눈으로 보고 나서야 알 수 있는 종류였어요. 번들은 되돌리고(r129 → r128, git에서 꺼내 바이트까지 원본과 동일) 속성은 아예 지웠습니다 — 조건부로 남겨두면 나중에 번들 올리는 순간 그 색이 도로 켜지니까요. 안 쓰게 된 변수와 테마 설정도 같이 지웠습니다. 원래 모습·경고 0으로 돌아온 것을 브라우저로 확인했어요. -->
 <!-- show:en **The glass absorption turned on in the previous release is off again.** The setting had been dormant for months, and once actually visible it turned out that colour bleeding through the inside of the glass was not the look wanted — something only judgeable by eye. The bundle is reverted (r129 back to r128, restored from git so it is byte-identical) and the properties are deleted outright: leaving them behind a version check would switch the colour back on the moment anyone upgrades the bundle. The now-unused variable and theme entry went with them, and the original look with zero warnings was confirmed in a browser. -->

@@ -9,7 +9,7 @@
 A vibe-coding seatbelt that stops Claude Code from **rebuilding what already
 exists, papering over errors, and forgetting yesterday's decisions.**
 
-### 👉 [See what it does on the site](https://jx-hxxx.github.io/hi-vibe/)
+### 👉 [See what it does on the site](https://jx-hxxx.github.io/hi-vibe/?lang=en)
 
 Every command, how it works, the FAQ, and **the question you can paste into an
 AI to check whether it fits your project** all live there. This file covers
@@ -80,7 +80,7 @@ the review, the records and the search for existing code fire on their own.
 
 ## More
 
-- **[The site](https://jx-hxxx.github.io/hi-vibe/)** — every command · how it works · what gets recorded · FAQ · the fit-check question
+- **[The site](https://jx-hxxx.github.io/hi-vibe/?lang=en)** — every command · how it works · what gets recorded · FAQ · the fit-check question
 - **[CHANGELOG.md](./CHANGELOG.md)** — what changed and why
 - **If something breaks**, run `/hi-vibe:doctor` first. It actually executes the
   hooks and the scanner and tells you where it stopped.

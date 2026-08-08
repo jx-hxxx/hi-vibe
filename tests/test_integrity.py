@@ -161,5 +161,48 @@ class RepoIntegrityTest(unittest.TestCase):
             f"광고 테스트 수 != 실제({actual}개): {wrong} — README/랜딩 숫자를 갱신하라.")
 
 
+class SiteLinkLanguageTest(unittest.TestCase):
+    """README의 사이트 링크가 **자기 언어의** 랜딩을 열어야 한다.
+
+    랜딩은 한/영이 한 파일 안에 있고 `localStorage`에 저장된 선택이 우선이라,
+    링크에 아무것도 안 붙이면 **영문 README에서 눌러도 한국어 페이지가 뜬다**
+    (전에 한국어로 본 적이 있으면). 그래서 `?lang=`으로 명시한다.
+
+    이 저장소는 한쪽만 고치고 반대쪽을 안 보는 사고를 여러 번 겪었다
+    (FAQ 답·평가 프롬프트·히어로 문구·강제 개행). 링크도 같은 유형이라
+    사람 눈이 아니라 기계가 지킨다."""
+
+    SITE = "https://jx-hxxx.github.io/hi-vibe/"
+
+    def _links(self, name):
+        return re.findall(re.escape(self.SITE) + r"[^)\s]*", _read(os.path.join(REPO, name)))
+
+    def test_each_readme_points_at_its_own_language(self):
+        for name, lang in (("README.md", "en"), ("README.ko.md", "ko")):
+            links = self._links(name)
+            self.assertTrue(links, f"{name}에 사이트 링크가 없다")
+            for url in links:
+                self.assertIn(f"?lang={lang}", url,
+                              f"{name}의 링크가 {lang} 페이지를 안 연다: {url}")
+
+    def test_landing_actually_honours_the_parameter(self):
+        """링크만 고치고 랜딩이 안 받으면 파라미터는 장식이 된다."""
+        page = _read(os.path.join(REPO, "docs", "index.html"))
+        self.assertIn("lang=(ko|en)", page,
+                      "랜딩에 ?lang= 처리가 없다 — README 링크가 무시된다")
+
+    def test_url_parameter_wins_over_the_saved_choice(self):
+        """저장된 선택이 이기면 링크를 눌러도 엉뚱한 언어가 나온다.
+
+        순서가 뒤집히는 것을 막는다: urlLang을 먼저 넣고, 그게 없을 때만
+        localStorage를 본다."""
+        page = _read(os.path.join(REPO, "docs", "index.html"))
+        url_at = page.find("var savedLang = urlLang")
+        saved_at = page.find("localStorage.getItem('hv-lang')")
+        self.assertGreater(url_at, 0, "urlLang을 먼저 쓰는 코드가 없다")
+        self.assertLess(url_at, saved_at,
+                        "저장된 선택을 URL보다 먼저 읽는다 — 순서가 뒤집혔다")
+
+
 if __name__ == "__main__":
     unittest.main()
