@@ -17,6 +17,7 @@ from contextlib import redirect_stdout
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "hooks", "scripts"))
+import _ci      # patch는 정의된 모듈에 — _common은 재수출이라 안 먹는다
 import _common
 import post_write_guard
 import pre_compact
@@ -538,14 +539,14 @@ class CiHealthTest(TempProject):
         for args in (["add", "-A"], ["commit", "-qm", "init"]):
             subprocess.run(["git", *args], cwd=self.root, check=True,
                            capture_output=True, text=True)
-        self._original = _common._run_gh_json
+        self._original = _ci._run_gh_json
 
     def tearDown(self):
-        _common._run_gh_json = self._original
+        _ci._run_gh_json = self._original
         super().tearDown()
 
     def fake_runs(self, runs):
-        _common._run_gh_json = lambda args, cwd: runs
+        _ci._run_gh_json = lambda args, cwd: runs
 
     def run_health(self):
         # 캐시가 이전 케이스를 물고 오지 않도록 매번 지운다.
@@ -613,7 +614,7 @@ class CiHealthTest(TempProject):
         self.fake_runs([self.a_run("failure"), self.a_run("failure")])
         self.assertEqual(self.run_health()["failures"], 2)
         calls = []
-        _common._run_gh_json = lambda args, cwd: calls.append(1) or []
+        _ci._run_gh_json = lambda args, cwd: calls.append(1) or []
         self.assertEqual(_common.ci_health(self.root)["failures"], 2)  # 캐시 적중
         self.assertEqual(calls, [], "캐시가 있는데 gh를 다시 불렀다")
 

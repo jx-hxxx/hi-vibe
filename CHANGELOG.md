@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.43.3] - 2026-08-08
+<!-- show:ko **927줄이 된 훅 공용 파일을 책임별로 쪼갰어요.** `_common.py` 하나에 배관·CI·대화 기록 읽기·리뷰 감시·handover 쓰기가 다 살았습니다. 이번 주에 기능이 붙으면서 자기 기준(400줄)의 두 배를 넘겼어요. 다섯 모듈로 나누고, `_common`은 이름만 지키는 표면으로 남겼습니다 — 훅·테스트가 부르는 이름 25개가 전부 그대로라 호출부는 한 곳도 안 바뀌었어요. 동작 변화 없음: 테스트 246개 그대로 통과, 훅 실측 속도 동일, 실제 21MB 세션 기록으로 세는 값까지 손 grep과 대조했습니다. -->
+<!-- show:en **The shared hook file had grown to 927 lines and is now split by responsibility.** Plumbing, CI health, transcript reading, review watching and handover writing all lived in one `_common.py` — more than double its own 400-line guideline after this week's additions. It is now five modules, with `_common` kept as a stable name surface: all 25 names that hooks and tests call are unchanged, so no call site moved. No behavior change — all 246 tests pass, hook timing is identical, and counts against a real 21MB transcript match a manual grep. -->
+
+### Changed
+- **`_common.py` 927줄 → 책임별 5모듈 + 표면 52줄** (2026-08-08) — `_base`(배관 190줄) · `_ci`(CI 124줄) · `_transcript`(대화 기록 읽기 331줄) · `_agent_watch`(리뷰 감시 146줄) · `_handover`(handover 쓰기 182줄). 전부 400줄 아래.
+  - **`_common`은 재수출 표면으로 남겼다.** 훅 5종·테스트·스킬이 `_common.X`로 부르는 이름 25개를 grep으로 뽑아 전부 유지 — **호출부는 한 곳도 안 바뀌었다.** 내부를 나중에 또 옮겨도 호출부가 안 흔들린다.
+  - **의존 방향은 한쪽뿐이다**: `_base`가 뿌리이고 형제를 임포트하지 않는다. 순환이 생기면 훅 전체가 조용히 죽는다(fail-open이라 에러도 안 뜬다).
+  - **바꿔치기(patch)는 정의된 모듈에** — `_common._run_gh_json`을 바꿔도 `_ci` 안의 호출은 원본을 본다. 실제로 테스트 4개가 이걸로 깨져 patch 대상을 `_ci`로 옮겼다. 같은 함정을 CLAUDE.md에 적었다.
+  - **기계적 이동 검증**: 소비자 계약 25개 이름 전부 존재 · 246 테스트 통과 · 새 파일 6개 안 쓰는 임포트 0(AST) · doctor 훅 5종 실행 통과 · Stop 훅 실측 0.20초(동일) · 실제 21MB 트랜스크립트 카운트를 손 grep과 대조(fresh-eyes 3 · mark 5 일치).
+
 ## [0.43.2] - 2026-08-08
 <!-- show:ko **"대화 내용은 이 컴퓨터를 벗어나지 않습니다"를 고쳤어요.** hi-vibe 얘기로 쓴 문장인데, 범위를 안 밝히면 Claude Code 전체에 대한 약속으로 읽힙니다 — 그리고 Claude Code는 대화를 Anthropic으로 보내니 그 약속은 사실이 아니에요. "hi-vibe는 대화나 코드를 별도 서버로 보내지 않습니다"로 주어를 못박고, 이 문장이 다시 못 돌아오게 과장 재발 방지 검사에 등록했습니다. 랜딩 큐브의 콘솔 경고 3종도 잡았어요 — 번들된 three.js(r128)에 없는 속성을 넘기고 있던 것이라, 있는 버전에서만 켜지게 바꿨습니다. 화면은 그대로고 경고만 사라집니다. -->
 <!-- show:en **"Your conversation never leaves this machine" is fixed.** The sentence was written about hi-vibe, but without naming its subject it reads as a promise about Claude Code as a whole — and Claude Code does send conversations to Anthropic, so that promise was false. It now says "hi-vibe sends nothing to a server of its own", and the old sentence is registered in the overclaim regression test so it cannot return. The landing cube's three console warnings are also gone — properties that don't exist in the bundled three.js (r128) were being passed in; they now apply only where supported. The cube looks exactly the same. -->
