@@ -64,10 +64,12 @@ the review, the records and the search for existing code fire on their own.
 - **Built around Python and Claude Code.** For JS/TS it only checks symbols,
   name collisions and file size; the core analysis, like duplicate and
   near-duplicate detection, is Python-only.
-- **Your conversation never leaves this machine.** That said, your last 5
-  requests (120 characters each) and the files you edited are written **in plain
-  text** into `handover.md` inside the project (gitignored by default). Anything
-  that looks like a secret is masked; ordinary sensitive information is not.
+- **hi-vibe sends nothing to a server of its own.** It makes no network calls at
+  all (how Claude Code itself handles your data is Anthropic's policy, not this
+  plugin's). That said, your last 5 requests (120 characters each) and the files
+  you edited are written **in plain text** into `handover.md` inside the project
+  (gitignored by default). Anything that looks like a secret is masked; ordinary
+  sensitive information is not.
 - **You can turn it off per project.** Tell Claude "turn hi-vibe off in this
   project", or `touch .hi-vibe/optout`. To remove it entirely,
   `rm -rf .hi-vibe .repo-xray` — **the documents it created stay.**

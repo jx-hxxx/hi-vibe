@@ -85,10 +85,19 @@
 
     var iceShades = GLASS;
     function iceMat(shade) {
-      return new THREE.MeshPhysicalMaterial({ color: shade, metalness: 0, roughness: 0.14,
-        transmission: 0.15, thickness: 1.5, ior: 1.34, transparent: true, opacity: 1.0,   // 투과↓: 뒷면 로고 유령 비침 제거
-        attenuationColor: new THREE.Color(ATTEN), attenuationDistance: 0.8,
+      var m = new THREE.MeshPhysicalMaterial({ color: shade, metalness: 0, roughness: 0.14,
+        transmission: 0.15, ior: 1.34, transparent: true, opacity: 1.0,   // 투과↓: 뒷면 로고 유령 비침 제거
         clearcoat: 0.55, clearcoatRoughness: 0.24, envMapIntensity: 0.4 });   // 스펙큘러 분산(가짜 스윕 방지)
+      // 유리 부피 속성(thickness·attenuation*)은 three.js r129에서 생겼다.
+      // 생성자(setValues)에 넘기면 없는 버전에서 콘솔 경고를 내고 버리므로,
+      // 있는 버전에서만 직접 대입한다 — r128 번들에선 조용히 건너뛰고(지금
+      // 모습 그대로), 번들을 올리면 두께 흡수색이 자동으로 살아난다.
+      if ('thickness' in m) {
+        m.thickness = 1.5;
+        m.attenuationColor = new THREE.Color(ATTEN);
+        m.attenuationDistance = 0.8;
+      }
+      return m;
     }
     var geo = new THREE.BoxGeometry(0.94, 0.94, 0.94), S = 1.0;
     var main = new THREE.Group(); main.rotation.x = -0.32; main.rotation.z = 0.06; scene.add(main);

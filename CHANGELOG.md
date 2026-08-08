@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.43.2] - 2026-08-08
+<!-- show:ko **"대화 내용은 이 컴퓨터를 벗어나지 않습니다"를 고쳤어요.** hi-vibe 얘기로 쓴 문장인데, 범위를 안 밝히면 Claude Code 전체에 대한 약속으로 읽힙니다 — 그리고 Claude Code는 대화를 Anthropic으로 보내니 그 약속은 사실이 아니에요. "hi-vibe는 대화나 코드를 별도 서버로 보내지 않습니다"로 주어를 못박고, 이 문장이 다시 못 돌아오게 과장 재발 방지 검사에 등록했습니다. 랜딩 큐브의 콘솔 경고 3종도 잡았어요 — 번들된 three.js(r128)에 없는 속성을 넘기고 있던 것이라, 있는 버전에서만 켜지게 바꿨습니다. 화면은 그대로고 경고만 사라집니다. -->
+<!-- show:en **"Your conversation never leaves this machine" is fixed.** The sentence was written about hi-vibe, but without naming its subject it reads as a promise about Claude Code as a whole — and Claude Code does send conversations to Anthropic, so that promise was false. It now says "hi-vibe sends nothing to a server of its own", and the old sentence is registered in the overclaim regression test so it cannot return. The landing cube's three console warnings are also gone — properties that don't exist in the bundled three.js (r128) were being passed in; they now apply only where supported. The cube looks exactly the same. -->
+
+### Fixed
+- **README 보안 문구가 범위 없이 약속하던 것** (2026-08-08, 한·영) — `대화 내용은 이 컴퓨터를 벗어나지 않습니다`는 hi-vibe 얘기지만, **주어가 없으면 시스템 전체에 대한 약속으로 읽힌다.** Claude Code 자체는 대화를 Anthropic으로 보내므로 그 약속은 사실이 아니다. `hi-vibe는 대화나 코드를 별도 서버로 보내지 않습니다(Claude Code의 데이터 처리는 Anthropic 정책)`로 바꿨다. `handover.md` 평문 기록 경고는 그대로 유지.
+  - **`test_no_overclaim.py`의 BANNED에 등록했다** — 보안 주장이라 다른 항목보다 무겁다. 옛 문장이 잡히고 새 문장이 오탐 안 나는 것을 양방향으로 확인했다. 외부 리뷰가 짚은 항목이다.
+- **랜딩 큐브의 콘솔 경고 3종** (2026-08-08) — `thickness`·`attenuationColor`·`attenuationDistance`는 three.js **r129**에서 생겼는데 번들은 **r128**이라, 생성자에 넘기면 경고를 내고 버린다. **경고만이 아니라 기능이 죽어 있었다** — `cube.js:51`의 `유리 두께 흡수색` 설정이 아무 데도 안 쓰이고 있었다.
+  - 있는 버전에서만 직접 대입하게 바꿨다(`'thickness' in m`). r128에선 지금 모습 그대로 경고 없이 돌고, 번들을 올리면 흡수색이 자동으로 살아난다. 의도를 지우지 않고 경고를 없앤 것이다.
+  - **실측**: 로컬 서버에 띄워 브라우저 콘솔 확인 — 경고 0 · 에러 0, 큐브 렌더 정상.
+
 ## [0.43.1] - 2026-08-07
 <!-- show:ko **바로 앞 버전에서 낸 결함 두 개를 다시 확인하다 잡았어요.** 하나는 리뷰 범위가 **중간에 낀 문서 커밋에서 끊기던 것**입니다. "더 가도 새로 나올 게 없으면 멈춘다"로 만들었는데, 문서만 고친 커밋이 하나 끼면 그 뒤가 통째로 안 보였어요. 이 저장소에서 실제로 그랬습니다. 멈추는 기준을 "이미 리뷰한 커밋"으로 바꿔봤더니 **똑같은 함정**에 빠졌고요. 중간에서 멈추는 규칙은 무엇을 기준으로 하든 그 뒤를 가립니다. 그래서 안 멈춥니다. 다른 하나는 속도예요 — git을 스무 번 부르고 마지막 결과만 쓰고 있어서 2.1초 걸리던 걸 0.19초로 줄였습니다. -->
 <!-- show:en **Two defects in the version just shipped, caught while re-checking it.** The review range stopped at any docs-only commit sitting in the middle: the rule was "stop once nothing new appears", and a commit touching only documentation hid everything behind it — which happened in this very repository. Switching the boundary to "stop at an already-reviewed commit" fell into exactly the same trap. Any mid-walk stop rule hides what lies beyond it, so there is no longer one. The second fix is speed: the walk called git twenty times and used only the last result, taking 2.1s; it now takes 0.19s. -->

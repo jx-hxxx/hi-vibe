@@ -47,6 +47,15 @@ BANNED = [
      "상태다. 설계 이유나 실패한 접근까지 남기지 않는다 → '이어갈 단서를 "
      "남긴다'로 쓸 것."),
 
+    # 보안 주장이라 다른 항목보다 무겁다. 범위를 안 밝히면 **Claude Code
+    # 전체**에 대한 약속으로 읽히는데, 그건 이 플러그인이 정할 수 있는
+    # 부분이 아니다(대화는 Anthropic으로 간다). 주어를 hi-vibe로 못박는다.
+    (r"대화(\s*내용)?(은|이)[^.\n]{0,20}(이 컴퓨터|기기|로컬)[^.\n]{0,10}벗어나지 않"
+     r"|(your )?conversations? never leaves? (this|your) (machine|computer|device)",
+     "hi-vibe는 외부 통신을 안 하지만, **Claude Code 자체는 대화를 Anthropic으로 "
+     "보낸다.** 범위를 안 밝히면 시스템 전체에 대한 약속으로 읽힌다 → "
+     "'hi-vibe는 대화나 코드를 별도 서버로 보내지 않습니다'처럼 주어를 밝힐 것."),
+
     (r"항상 작동하는 안전벨트|seatbelt that'?s always working|always[- ]on seatbelt",
      "훅은 fail-open이라 조용히 죽을 수 있고, 죽었는지는 heartbeat를 보는 "
      "스킬 층이 돌아야 알 수 있다 → '자동으로 매여 있고, 풀리면 알려주는'."),
@@ -174,6 +183,8 @@ class NoOverclaimTest(unittest.TestCase):
             "돌아온 리뷰 결과를 읽고 뭘 고칠지 판단하기 — 훅이 리뷰를 돌린 뒤",
             "after the hook ran the review",
             "Stop 훅이 리뷰를 실행한다",
+            "대화 내용은 이 컴퓨터를 벗어나지 않습니다.",
+            "Your conversation never leaves this machine.",
         ]
         for sentence in past:
             caught = any(re.search(p, sentence, re.I) for p, _ in BANNED)
@@ -201,6 +212,8 @@ class NoOverclaimTest(unittest.TestCase):
             "훅이 대화를 붙잡고 Claude에게 리뷰를 시켜요",
             "막는 것까지가 이 훅의 일이고 리뷰를 수행하는 건 Claude다.",
             "Stop 훅이 턴을 막고 리뷰를 지시 — 수행은 AI",
+            "hi-vibe는 대화나 코드를 별도 서버로 보내지 않습니다.",
+            "hi-vibe sends nothing to a server of its own.",
         ]
         for sentence in fine:
             hit = [why for p, why in BANNED if re.search(p, sentence, re.I)]
