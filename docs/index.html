@@ -93,7 +93,16 @@
 
   .hero { padding:44px 0 12px; border-top:none; }
   .hero-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; }
-  @media (max-width:860px){ .hero-grid { grid-template-columns:1fr; gap:40px; } }
+  /* 좁은 화면에서는 큐브를 글보다 먼저 보여준다. 데스크톱은 큐브가 오른쪽에
+     나란히 보이지만, 한 줄로 쌓이면 글 아래로 밀려 스크롤해야 나온다 —
+     첫 화면에서 이게 뭔지 알려주는 게 큐브다. HTML 순서는 그대로 두고
+     (읽는 순서·스크린리더는 제목이 먼저인 게 맞다) 표시 순서만 바꾼다.
+     큐브 크기는 `.hero-cube` 정의 옆에서 함께 줄인다 — 여기서 쓰면
+     아래 기본 규칙이 나중에 나와서 덮어쓴다(순서로 지는 자리다). */
+  @media (max-width:860px){
+    .hero-grid { grid-template-columns:1fr; gap:26px; }
+    .hero-grid > .clcol { order:-1; }
+  }
   .tag-ko { font-size:clamp(30px,5.2vw,52px); line-height:1.2; font-weight:850; letter-spacing:-.03em; margin:14px 0 0; text-wrap:balance; }
   .tag-ko .amber { color:var(--accent); }
   .tag-en { font-family:var(--mono); font-size:13px; color:var(--faint); letter-spacing:.02em; margin:20px 0 0; }
@@ -354,6 +363,9 @@
   /* hero 3D cube (gold, WebGL) */
   .hero-cube { position:relative; width:100%; max-width:460px; aspect-ratio:1/1; margin:0 auto; }
   .hero-cube > div, .hero-cube canvas { position:absolute; inset:0; width:100%!important; height:100%!important; display:block; }
+  /* 모바일: 큐브를 맨 위로 올렸으므로(위쪽 hero-grid 미디어쿼리) 제목이 화면
+     밖으로 밀리지 않게 크기를 줄인다. 정사각형이라 폭이 곧 높이다. */
+  @media (max-width:860px){ .hero-cube { max-width:250px; } }
   .instrip { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0 36px; align-items:start; }
   @media (max-width:860px){ .instrip { grid-template-columns:1fr; } }
   /* scroll reveal */
@@ -743,9 +755,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.44.1<small>2026-08-08</small></div><div class="h"><b>폰에서 큐브를 첫 화면으로 올렸어요.</b> <span>넓은 화면에서는 글 옆에 큐브가 나란히 보이는데, 좁아지면 한 줄로 쌓이면서 큐브가 글 아래로 밀려 스크롤해야 보였습니다. 이게 뭔지 한눈에 알려주는 게 큐브라 위로 올렸어요. 크기도 250px로 줄여서 큐브·제목·설치 버튼이 한 화면에 들어옵니다. HTML 순서는 안 건드렸어요 — 읽는 순서와 스크린리더에는 제목이 먼저인 게 맞으니까요.</span></div></div>
         <div class="rel"><div class="v">v0.44.0<small>2026-08-08</small></div><div class="h"><b>영문 README에서 사이트를 열면 한국어 페이지가 뜨던 것을 고쳤어요.</b> <span>랜딩은 한·영이 한 파일에 있고 전에 고른 언어를 기억하는데, 링크에 언어 표시가 없어서 <strong>한 번이라도 한국어로 본 사람은 영문 README를 눌러도 한국어가 나왔습니다.</strong> 이제 각 README가 자기 언어를 링크에 실어 보내고, 랜딩은 그걸 저장된 선택보다 먼저 봅니다. 링크를 눌렀다는 건 지금 이 방문에서 가장 분명한 신호니까요. 저장된 선택이 있는 상태로 반대 언어 링크를 눌러 실제로 바뀌는 것까지 브라우저로 확인했어요.</span></div></div>
         <div class="rel"><div class="v">v0.43.6<small>2026-08-08</small></div><div class="h"><b>바로 앞에서 켠 유리 흡수색을 도로 껐어요.</b> <span>몇 달간 안 켜져 있던 설정이라 켜 보니 정작 <strong>유리 안쪽에 색이 배어나오는 게 원하는 그림이 아니었습니다.</strong> 눈으로 보고 나서야 알 수 있는 종류였어요. 번들은 되돌리고(r129 → r128, git에서 꺼내 바이트까지 원본과 동일) 속성은 아예 지웠습니다 — 조건부로 남겨두면 나중에 번들 올리는 순간 그 색이 도로 켜지니까요. 안 쓰게 된 변수와 테마 설정도 같이 지웠습니다. 원래 모습·경고 0으로 돌아온 것을 브라우저로 확인했어요.</span></div></div>
-        <div class="rel"><div class="v">v0.43.5<small>2026-08-08</small></div><div class="h"><b>큐브 유리에 의도했던 흡수색이 드디어 켜졌어요.</b> <span>설정에 짙은 갈금색이 적혀 있었는데 번들된 three.js가 그 기능이 생기기 직전 버전이라 몇 달간 아무 데도 안 쓰이고 있었습니다. 한 단계만 올려서(r128 → r129, 7KB) 원래 의도한 모습이 됐어요. 조건 분기는 남겨뒀습니다 — 이 큐브 코드를 복사해 쓰는 다른 프로젝트 네 곳이 아직 옛 버전이라, 거기서도 경고 없이 돌아야 하거든요. 브라우저로 버전·적용값·경고를 전부 확인했습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1129,9 +1141,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.44.1<small>2026-08-08</small></div><div class="h"><b>The cube now comes first on a phone.</b> <span>On a wide screen it sits beside the text; once the layout stacks, it was pushed below the copy and needed a scroll to see. The cube is what tells you at a glance what this is, so it moves to the top, and shrinking it to 250px fits the cube, the headline and the install button on one screen. The HTML order is untouched — for reading order and screen readers the heading still comes first.</span></div></div>
         <div class="rel"><div class="v">v0.44.0<small>2026-08-08</small></div><div class="h"><b>Opening the site from the English README could land you on the Korean page.</b> <span>Both languages live in one page and it remembers your last choice, so anyone who had ever viewed it in Korean got Korean even from the English README. Each README now carries its own language in the link, and the page reads that before the stored preference — clicking a language-specific link is the clearest signal for that visit. Verified in a browser, including the case where a stored choice had to be overridden.</span></div></div>
         <div class="rel"><div class="v">v0.43.6<small>2026-08-08</small></div><div class="h"><b>The glass absorption turned on in the previous release is off again.</b> <span>The setting had been dormant for months, and once actually visible it turned out that colour bleeding through the inside of the glass was not the look wanted — something only judgeable by eye. The bundle is reverted (r129 back to r128, restored from git so it is byte-identical) and the properties are deleted outright: leaving them behind a version check would switch the colour back on the moment anyone upgrades the bundle. The now-unused variable and theme entry went with them, and the original look with zero warnings was confirmed in a browser.</span></div></div>
-        <div class="rel"><div class="v">v0.43.5<small>2026-08-08</small></div><div class="h"><b>The glass cube finally has the absorption colour it was configured for.</b> <span>A deep amber was set in the theme, but the bundled three.js was one release short of supporting it, so the setting sat unused for months. A single-step upgrade (r128 to r129, 7KB) turns it on. The version guard stays: four other projects copy this cube code and still ship the older bundle, and they must keep running without warnings. Version, applied values and console output were all verified in a real browser.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.44.1] - 2026-08-08
+<!-- show:ko **폰에서 큐브를 첫 화면으로 올렸어요.** 넓은 화면에서는 글 옆에 큐브가 나란히 보이는데, 좁아지면 한 줄로 쌓이면서 큐브가 글 아래로 밀려 스크롤해야 보였습니다. 이게 뭔지 한눈에 알려주는 게 큐브라 위로 올렸어요. 크기도 250px로 줄여서 큐브·제목·설치 버튼이 한 화면에 들어옵니다. HTML 순서는 안 건드렸어요 — 읽는 순서와 스크린리더에는 제목이 먼저인 게 맞으니까요. -->
+<!-- show:en **The cube now comes first on a phone.** On a wide screen it sits beside the text; once the layout stacks, it was pushed below the copy and needed a scroll to see. The cube is what tells you at a glance what this is, so it moves to the top, and shrinking it to 250px fits the cube, the headline and the install button on one screen. The HTML order is untouched — for reading order and screen readers the heading still comes first. -->
+
+### Changed
+- **모바일 히어로에서 큐브를 맨 위로** (2026-08-08, 860px 이하) — `.clcol`에 `order:-1`. **HTML 순서는 그대로 두고 표시 순서만 바꿨다** — 읽는 순서·스크린리더에는 제목이 먼저인 게 맞다.
+  - 큐브를 250px로 줄이고 간격을 40 → 26px로. 안 줄이면 제목이 화면 절반 아래로 밀린다(390px에서 실측).
+  - **크기 규칙을 `.hero-cube` 정의 옆에 뒀다.** 처음엔 위쪽 `.hero-grid` 미디어쿼리에 같이 썼는데, **아래에 있는 기본 `.hero-cube { max-width:460px }`가 나중에 나와서 덮어썼다**(같은 특정도라 순서로 진다). 실측으로 잡았다 — 화면은 그럴듯했는데 큐브가 안 줄어 있었다.
+  - 실측: 390·360px에서 큐브 위·제목 아래 확인, 한·영 양쪽, 데스크톱(1440px)은 글 왼쪽·큐브 오른쪽 460px 그대로.
+
+### 기록만 하고 안 고친 것
+- **좁은 화면(360px)에서 가로 스크롤이 생긴다** — 문서 폭 401px. **이번 변경과 무관한 기존 문제**로, 커밋된 버전에서도 똑같이 재현된다(확인함). 원인은 헤더 오른쪽 묶음(`.hdr-right` 183px, `flex-wrap:nowrap`)과 터미널 블록이 좁은 폭에서 안 접히는 것. 히어로와 별개 자리라 이번 변경에 섞지 않았다.
+
 ## [0.44.0] - 2026-08-08
 <!-- show:ko **영문 README에서 사이트를 열면 한국어 페이지가 뜨던 것을 고쳤어요.** 랜딩은 한·영이 한 파일에 있고 전에 고른 언어를 기억하는데, 링크에 언어 표시가 없어서 **한 번이라도 한국어로 본 사람은 영문 README를 눌러도 한국어가 나왔습니다.** 이제 각 README가 자기 언어를 링크에 실어 보내고, 랜딩은 그걸 저장된 선택보다 먼저 봅니다. 링크를 눌렀다는 건 지금 이 방문에서 가장 분명한 신호니까요. 저장된 선택이 있는 상태로 반대 언어 링크를 눌러 실제로 바뀌는 것까지 브라우저로 확인했어요. -->
 <!-- show:en **Opening the site from the English README could land you on the Korean page.** Both languages live in one page and it remembers your last choice, so anyone who had ever viewed it in Korean got Korean even from the English README. Each README now carries its own language in the link, and the page reads that before the stored preference — clicking a language-specific link is the clearest signal for that visit. Verified in a browser, including the case where a stored choice had to be overridden. -->
