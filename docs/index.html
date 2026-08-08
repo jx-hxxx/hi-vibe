@@ -7,18 +7,27 @@
 <title>hi-vibe — Python 바이브 코딩 안전벨트</title>
 
 <!-- 링크 미리보기(카카오톡·슬랙·트위터). og:image는 크롤러가 상대경로를
-     못 읽는 경우가 있어 절대 URL로 둔다. -->
+     못 읽는 경우가 있어 절대 URL로 둔다.
+     예전엔 파비콘(정사각형)을 걸고 `twitter:card`도 `summary`라, 카톡에 링크를
+     붙이면 작은 정사각 아이콘만 떴다. 지금은 랜딩 첫 화면을 그대로 담은
+     1200x630(권장 비율 1.91:1)을 쓰고 카드도 큰 이미지형으로 바꿨다.
+     `og-cover.png`는 손으로 그린 게 아니라 이 페이지를 1200x630으로 띄워
+     찍은 것이다 — 첫 화면이 바뀌면 다시 찍어야 하고, 카톡은 미리보기를
+     오래 캐시하므로 `?v=` 숫자를 같이 올려야 새 그림이 나간다. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="hi-vibe">
 <meta property="og:url" content="https://jx-hxxx.github.io/hi-vibe/">
 <meta property="og:title" content="hi-vibe — Python 바이브 코딩 안전벨트">
 <meta property="og:description" content="Claude Code로 Python 프로젝트를 만드는 입문자와 1인 개발자를 위한 플러그인. 있는 코드를 또 만들고, 에러를 덮고, 어제 결정을 잊는 걸 막아요.">
-<meta property="og:image" content="https://jx-hxxx.github.io/hi-vibe/images/favicon-v4.png?v=4">
+<meta property="og:image" content="https://jx-hxxx.github.io/hi-vibe/images/og-cover.png?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="hi-vibe 소개 화면 — AI랑 과속해도, 안전벨트는 hi-vibe가.">
 <meta property="og:locale" content="ko_KR">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="hi-vibe — Python 바이브 코딩 안전벨트">
 <meta name="twitter:description" content="Claude Code로 Python 프로젝트를 만드는 입문자와 1인 개발자를 위한 플러그인.">
-<meta name="twitter:image" content="https://jx-hxxx.github.io/hi-vibe/images/favicon-v4.png?v=4">
+<meta name="twitter:image" content="https://jx-hxxx.github.io/hi-vibe/images/og-cover.png?v=1">
 <link rel="icon" type="image/png" href="images/favicon-v4.png?v=4">
 <link rel="apple-touch-icon" href="images/favicon-v4.png?v=4">
 <style>
@@ -30,7 +39,7 @@
     --ai:#7a8393; --danger:#cf3b3f; --danger-bg:rgba(211,59,63,.08);
     --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Mono", "Roboto Mono", Consolas, monospace;
     --sans: system-ui, -apple-system, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", Roboto, sans-serif;
-    --maxw:1080px; --r:14px;
+    --maxw:1080px; --r:14px; --gut:24px;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -64,7 +73,7 @@
   .ver { font-family:var(--mono); font-size:11px; color:var(--accent-ink); background:color-mix(in srgb, var(--accent) 15%, transparent); padding:2px 8px; border-radius:20px; letter-spacing:.02em; white-space:nowrap; }
   html { overflow-x:clip; }
   body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; }
-  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 var(--gut); }
   section { padding:88px 0; border-top:1px solid var(--border); }
   a { color:inherit; }
 
@@ -169,7 +178,7 @@
   .fdesc code { font-family:var(--mono); font-size:.86em; background:var(--surface-2); color:var(--text); padding:1px 5px; border-radius:5px; }
   .honest-note { display:flex; gap:12px; margin-top:20px; padding:16px 18px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--muted); font-size:14.5px; word-break:keep-all; line-height:1.75; text-wrap:pretty; }
   .honest-note b { color:var(--text); }
-  .honest-note code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); white-space:nowrap; }
+  .honest-note code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); overflow-wrap:anywhere; }
   .honest-note .dim { color:var(--faint); }
   /* 3단 설명. 예전엔 <br>로만 나눠서, 넘어간 줄이 다음 항목의 아이콘 자리와
      같은 왼쪽 끝에서 시작했다 — 새 항목인지 이어지는 줄인지 구분이 안 돼
@@ -189,7 +198,11 @@
   .qs-row:first-of-type { border-top:none; }
   .qs-when { font-weight:700; font-size:14px; color:var(--text); }
   .qs-do { font-size:14px; color:var(--muted); line-height:1.7; }
-  .qs-do code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); background:var(--surface-2); padding:2px 7px; border-radius:5px; white-space:nowrap; }
+  /* 예전엔 `white-space:nowrap`이었다. `/plugin uninstall hi-vibe@hi-vibe-marketplace`
+     처럼 긴 명령이 칸보다 길면 오른쪽이 잘려 읽을 수가 없었다(546px 화면에서
+     칸 306 대 글자 353). `anywhere`는 넘칠 때만 끊으므로 넓은 화면에서는
+     그대로 한 줄이다. 폰 전용으로 막았다가 561~700px 구간이 그대로 남았다. */
+  .qs-do code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); background:var(--surface-2); padding:2px 7px; border-radius:5px; overflow-wrap:anywhere; }
   .qs-do .arrow { color:var(--faint); margin:0 3px; }
   @media (max-width:560px){ .qs-row { grid-template-columns:1fr; gap:4px; } }
   /* 상세 토글 */
@@ -199,16 +212,24 @@
   details.note-toggle > summary::after { content:"▾"; margin-left:auto; color:var(--faint); font-size:12px; transition:transform .15s; }
   details.note-toggle[open] > summary::after { transform:rotate(180deg); }
   details.note-toggle .tbody { padding:0 18px 16px; color:var(--muted); font-size:14px; line-height:1.75; word-break:keep-all;  text-wrap:pretty; }
-  details.note-toggle .tbody code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); white-space:nowrap; }
+  details.note-toggle .tbody code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); overflow-wrap:anywhere; }
   details.note-toggle .tbody b { color:var(--text); }
   details.note-toggle .tbody .dim { color:var(--faint); }
 
   /* honest section -> full-bleed dark band with a machine|AI split */
-  .band { width:100vw; position:relative; left:calc(-50vw + 50%);
+  /* 폭 전체를 쓰는 어두운 띠. 예전엔 `width:100vw`였는데 100vw는 세로
+     스크롤바 폭까지 포함한다 — 폰에서 화면은 375인데 띠가 390이 되어 7.5px씩
+     왼쪽으로 밀렸고, 그만큼이 잘려 나갔다(2026-08-08 실측). 부모가
+     `main.wrap`(좌우 --gut, 최대 1080)이라 그 여백만큼만 빼내면 vw 없이
+     정확히 화면 폭이 된다. 부모가 최대폭에 걸리는 1080px 위에서만 vw를 쓴다
+     — `box-sizing:border-box`라 최대폭 1080 **안에** 여백이 들어 있다.
+     1128(=1080+48)로 잡았다가 1113px 화면에서 좌우 17px씩 떴다. */
+  .band { width:calc(100% + var(--gut) * 2); position:relative; left:calc(var(--gut) * -1);
     --bg:#0f1219; --surface:#161b24; --surface-2:#1d2430; --border:#262d3a; --border-2:#333c4c;
     --text:#e9ecf3; --muted:#9aa3b4; --faint:#6b7486;
     --accent:#f4b324; --accent-ink:#f6c655; --good:#35d18c; --good-bg:rgba(53,209,140,.12); --ai:#f472b6;
     background:#0a0c12; color:var(--text); border-bottom:1px solid var(--border); }
+  @media (min-width:1081px){ .band { width:100vw; left:calc(-50vw + 50%); } }
   .band .eyebrow { color:var(--accent-ink); }
   .band .eyebrow::before { background:var(--accent); }
   .band h2 { letter-spacing:.01em; }
@@ -308,10 +329,15 @@
   .pairs .pair .fix { background:color-mix(in srgb, var(--good) 4%, transparent); color:var(--text); }
   .pairs .pair .arrow { padding:0; display:flex; align-items:center; justify-content:center; color:var(--border-2); font-size:15px; background:color-mix(in srgb, var(--good) 4%, transparent); }
   .fitnote { margin:16px 0 0; font-size:13px; line-height:1.75; color:var(--faint); word-break:keep-all; text-wrap:pretty; }
+  /* 한 줄로 쌓이면 화살표도 아래를 가리켜야 한다. 예전엔 `transform:rotate(90deg)`
+     였는데 글자만 도는 게 아니라 상자째 돈다 — 635x30짜리 초록 칸이 30x635가
+     되어 표 전체를 세로로 가로지르는 띠가 생겼다(2026-08-08 실측). 글자를
+     바꿔 끼우면 상자는 그대로다. */
   @media (max-width:760px){
     .pairs .phead, .pairs .pair { grid-template-columns:1fr; }
     .pairs .phead .arrow { display:none; }
-    .pairs .pair .arrow { padding:2px 0; transform:rotate(90deg); }
+    .pairs .pair .arrow { padding:2px 0; font-size:0; }
+    .pairs .pair .arrow::before { content:"↓"; font-size:15px; }
   }
   .audit { display:grid; grid-template-columns:.82fr 1.18fr; gap:30px; align-items:start; margin-top:26px; }
   .audit .promptbox { display:flex; flex-direction:column; align-items:flex-start; }
@@ -389,6 +415,64 @@
   .hterm .term-cur { display:inline-block; width:7px; height:15px; background:#ffbd4a; margin-left:2px; vertical-align:-2px; animation:hvblink 1.05s steps(1,end) infinite; }
   @keyframes hvblink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
   @media (prefers-reduced-motion:reduce){ .has-rv .rv { opacity:1!important; transform:none!important; transition:none; } .hterm .term-cur { display:none; } }
+
+  /* ===== 폰(≤560px) 축소 · 이 블록은 반드시 스타일 맨 끝 =====
+     카드 안 글자가 본문 16px 그대로라 한 줄에 열 몇 글자밖에 안 들어갔다.
+     여기 모아 두는 이유: 같은 특정도면 나중에 나온 규칙이 이긴다. 위쪽
+     미디어쿼리에 흩어 놓으면 아래에 있는 기본 규칙에 조용히 덮인다
+     (`.hero-cube` 크기에서 한 번 당했다 — 250을 썼는데 327로 그려졌다).
+     새 축소 규칙은 위가 아니라 여기에 추가할 것. */
+  @media (max-width:560px){
+    :root { --gut:16px; }
+    section { padding:56px 0; }
+    h2 { font-size:clamp(22px,6.2vw,28px); }
+    .lead { font-size:15px; }
+    .eyebrow { font-size:11px; margin-bottom:14px; }
+
+    /* 헤더 오른쪽 묶음이 183px이라 GitHub 버튼 오른쪽 끝이 잘려 나갔다. */
+    .bar .wrap { gap:10px; }
+    .brand { font-size:21px; gap:7px; }
+    .brand .wm-img { height:24px; width:105px; }
+    .brand .logo { height:26px; width:26px; }
+    .hdr-right { gap:6px; }
+    .ctl { height:29px; padding:0 9px; font-size:11.5px; }
+    .ctl.js-theme { padding:0 8px; }
+    .js-theme svg { width:15px; height:15px; }
+    .ghub { font-size:11.5px; padding:5px 9px; }
+
+    .rows { margin-top:26px; gap:10px; }
+    .prow { padding:13px 14px; gap:11px; font-size:14px; line-height:1.65; }
+    .prow .ptxt b { font-size:14.5px; }
+    .prow .ex { font-size:11.5px; }
+
+    .layers { margin-top:26px; gap:12px; }
+    .layer { padding:18px 16px; }
+    .layer h3 { font-size:17px; margin:8px 0 6px; }
+    .layer p { font-size:13.5px; }
+
+    .featgrid { gap:12px; }
+    .colhd { padding:14px 16px 12px; }
+    .colhd .ct { font-size:15px; }
+    .feat { padding:13px 16px; }
+    .fhead { gap:7px; margin-bottom:5px; }
+    .fhead .ftitle { font-size:13.5px; }
+    /* 제목이 길면 꼬리표가 아랫줄로 밀리는데, `margin-left:auto` 때문에 혼자
+       오른쪽 끝으로 가서 빈 칸처럼 보였다. 폰에선 제목 뒤에 그대로 붙인다. */
+    .fhead .ftag { margin-left:0; }
+    .fdesc { font-size:12.4px; line-height:1.62; }
+
+    .pairs .phead > div { padding:12px 16px; font-size:13px; }
+    .pairs .pair > div { padding:12px 16px; font-size:13.5px; line-height:1.62; }
+
+    .honest-note { padding:14px 15px; gap:10px; font-size:13.5px; }
+    .quickstart { padding:17px 15px; }
+    .qs-when { font-size:13px; }
+    .qs-do { font-size:13px; line-height:1.65; }
+
+    .trust { margin:36px 0 56px; }
+    .trust > div { padding:16px 14px; }
+    .trust b { font-size:22px; }
+  }
 </style>
 </head>
 <body>
@@ -397,8 +481,8 @@
   <header class="bar"><div class="wrap">
     <a class="brand" href="#ko" aria-label="맨 위로"><span class="wm-img" aria-hidden="true"></span><span class="wm-alt" aria-hidden="true"><span class="logo" aria-hidden="true"></span><span class="wm">hi-vibe</span></span></a>
     <nav>
-      <a href="#audit-ko">나한테 맞나</a>
-      <a href="#problem-ko">문제점</a>
+      <a href="#audit-ko">이런 분께</a>
+      <a href="#problem-ko">AI 실수</a>
       <a href="#how-ko">작동 방식</a>
       <a href="#features-ko">기능</a>
       <a href="#commands-ko">설치 &amp; 명령어</a>
@@ -431,7 +515,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>258</b><span>자동 회귀 테스트</span></div>
+      <div><b>263</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -755,9 +839,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.45.0<small>2026-08-09</small></div><div class="h"><b>카톡에 링크를 붙이면 소개 화면이 그대로 뜹니다.</b> <span>예전엔 작은 정사각 아이콘만 나왔어요. 그리고 폰에서 읽기 불편하던 것들을 고쳤습니다. 카드 글자가 데스크톱과 같은 크기라 한 줄에 열몇 자밖에 안 들어갔고, 표 가운데를 초록 세로줄이 가로지르고 있었어요(화살표를 돌렸더니 글자만이 아니라 상자째 돌아간 것이었습니다). 긴 명령어는 오른쪽이 잘려 읽을 수가 없었고요. 메뉴 이름 "나한테 맞나"는 번역투라 "이런 분께"로, "문제점"은 hi-vibe 단점처럼 읽혀서 "AI 실수"로 바꿨습니다. 320px부터 1440px까지 한·영 양쪽을 재서 넘치는 곳이 없는 걸 확인했어요.</span></div></div>
         <div class="rel"><div class="v">v0.44.1<small>2026-08-08</small></div><div class="h"><b>폰에서 큐브를 첫 화면으로 올렸어요.</b> <span>넓은 화면에서는 글 옆에 큐브가 나란히 보이는데, 좁아지면 한 줄로 쌓이면서 큐브가 글 아래로 밀려 스크롤해야 보였습니다. 이게 뭔지 한눈에 알려주는 게 큐브라 위로 올렸어요. 크기도 250px로 줄여서 큐브·제목·설치 버튼이 한 화면에 들어옵니다. HTML 순서는 안 건드렸어요 — 읽는 순서와 스크린리더에는 제목이 먼저인 게 맞으니까요.</span></div></div>
         <div class="rel"><div class="v">v0.44.0<small>2026-08-08</small></div><div class="h"><b>영문 README에서 사이트를 열면 한국어 페이지가 뜨던 것을 고쳤어요.</b> <span>랜딩은 한·영이 한 파일에 있고 전에 고른 언어를 기억하는데, 링크에 언어 표시가 없어서 <strong>한 번이라도 한국어로 본 사람은 영문 README를 눌러도 한국어가 나왔습니다.</strong> 이제 각 README가 자기 언어를 링크에 실어 보내고, 랜딩은 그걸 저장된 선택보다 먼저 봅니다. 링크를 눌렀다는 건 지금 이 방문에서 가장 분명한 신호니까요. 저장된 선택이 있는 상태로 반대 언어 링크를 눌러 실제로 바뀌는 것까지 브라우저로 확인했어요.</span></div></div>
-        <div class="rel"><div class="v">v0.43.6<small>2026-08-08</small></div><div class="h"><b>바로 앞에서 켠 유리 흡수색을 도로 껐어요.</b> <span>몇 달간 안 켜져 있던 설정이라 켜 보니 정작 <strong>유리 안쪽에 색이 배어나오는 게 원하는 그림이 아니었습니다.</strong> 눈으로 보고 나서야 알 수 있는 종류였어요. 번들은 되돌리고(r129 → r128, git에서 꺼내 바이트까지 원본과 동일) 속성은 아예 지웠습니다 — 조건부로 남겨두면 나중에 번들 올리는 순간 그 색이 도로 켜지니까요. 안 쓰게 된 변수와 테마 설정도 같이 지웠습니다. 원래 모습·경고 0으로 돌아온 것을 브라우저로 확인했어요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -817,7 +901,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>258</b><span>automated regression tests</span></div>
+      <div><b>263</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -1141,9 +1225,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.45.0<small>2026-08-09</small></div><div class="h"><b>Sharing the link now shows the actual landing page, not a small square icon.</b> <span>Alongside that, the phone layout got fixed: card text was still at desktop size, a green vertical stripe cut through the middle of the pain/fix table (rotating the arrow rotated its whole box, not just the glyph), and long commands were clipped at the right edge and unreadable. Two Korean nav labels were reworded. Measured across 320px to 1440px in both languages with nothing overflowing.</span></div></div>
         <div class="rel"><div class="v">v0.44.1<small>2026-08-08</small></div><div class="h"><b>The cube now comes first on a phone.</b> <span>On a wide screen it sits beside the text; once the layout stacks, it was pushed below the copy and needed a scroll to see. The cube is what tells you at a glance what this is, so it moves to the top, and shrinking it to 250px fits the cube, the headline and the install button on one screen. The HTML order is untouched — for reading order and screen readers the heading still comes first.</span></div></div>
         <div class="rel"><div class="v">v0.44.0<small>2026-08-08</small></div><div class="h"><b>Opening the site from the English README could land you on the Korean page.</b> <span>Both languages live in one page and it remembers your last choice, so anyone who had ever viewed it in Korean got Korean even from the English README. Each README now carries its own language in the link, and the page reads that before the stored preference — clicking a language-specific link is the clearest signal for that visit. Verified in a browser, including the case where a stored choice had to be overridden.</span></div></div>
-        <div class="rel"><div class="v">v0.43.6<small>2026-08-08</small></div><div class="h"><b>The glass absorption turned on in the previous release is off again.</b> <span>The setting had been dormant for months, and once actually visible it turned out that colour bleeding through the inside of the glass was not the look wanted — something only judgeable by eye. The bundle is reverted (r129 back to r128, restored from git so it is byte-identical) and the properties are deleted outright: leaving them behind a version check would switch the colour back on the moment anyone upgrades the bundle. The now-unused variable and theme entry went with them, and the original look with zero warnings was confirmed in a browser.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

@@ -5,6 +5,34 @@
 
 ## [Unreleased]
 
+## [0.45.0] - 2026-08-09
+<!-- show:ko **카톡에 링크를 붙이면 소개 화면이 그대로 뜹니다.** 예전엔 작은 정사각 아이콘만 나왔어요. 그리고 폰에서 읽기 불편하던 것들을 고쳤습니다. 카드 글자가 데스크톱과 같은 크기라 한 줄에 열몇 자밖에 안 들어갔고, 표 가운데를 초록 세로줄이 가로지르고 있었어요(화살표를 돌렸더니 글자만이 아니라 상자째 돌아간 것이었습니다). 긴 명령어는 오른쪽이 잘려 읽을 수가 없었고요. 메뉴 이름 "나한테 맞나"는 번역투라 "이런 분께"로, "문제점"은 hi-vibe 단점처럼 읽혀서 "AI 실수"로 바꿨습니다. 320px부터 1440px까지 한·영 양쪽을 재서 넘치는 곳이 없는 걸 확인했어요. -->
+<!-- show:en **Sharing the link now shows the actual landing page, not a small square icon.** Alongside that, the phone layout got fixed: card text was still at desktop size, a green vertical stripe cut through the middle of the pain/fix table (rotating the arrow rotated its whole box, not just the glyph), and long commands were clipped at the right edge and unreadable. Two Korean nav labels were reworded. Measured across 320px to 1440px in both languages with nothing overflowing. -->
+
+### Added
+- **링크 미리보기 카드** (2026-08-09, `docs/images/og-cover.png` 1200x630) — 카톡·슬랙에 링크를 붙이면 랜딩 첫 화면이 그대로 뜬다. 예전엔 `og:image`가 파비콘(정사각)이고 `twitter:card`도 `summary`라 작은 아이콘만 나왔다.
+  - **손으로 그린 게 아니라 페이지를 1200x630으로 띄워 찍은 것이다.** 큐브가 계속 도는 데다 스크램블 중이라 아무 때나 찍으면 조각이 어긋난 채로 잡힌다 — 첫 스크램블이 시작되는 `0.6초` 전에 `spinSpeed:0`으로 다시 올려 완성·정지 상태에서 찍었다.
+  - **첫 화면이 바뀌면 다시 찍어야 한다.** 카톡은 미리보기를 오래 캐시하므로 `?v=` 숫자도 같이 올려야 새 그림이 나간다.
+- **미리보기 재발 방지 검사 5종** (2026-08-09, `test_integrity.py`) — `og:image`가 **실제로 있는 파일**을 가리키는지 · 1200x630인지 · 선언한 크기가 실제 파일과 같은지 · 카드가 큰 이미지형인지 · og와 twitter가 같은 그림인지.
+  - 이 자리를 기계에 맡기는 이유: **깨져도 우리 화면에는 안 보인다.** 남한테 보낸 링크에서만 보인다.
+
+### Fixed
+- **표 한가운데를 세로로 가로지르던 초록 띠** (2026-08-09, 760px 이하) — `.pairs .pair .arrow`에 `transform:rotate(90deg)`가 걸려 있었다. **글자만 도는 게 아니라 상자째 돈다** — 635x30짜리 초록 칸이 30x635가 되어 표 전체를 세로로 관통했다(실측). 회전을 빼고 글자를 `→`에서 `↓`로 바꿔 끼웠다.
+- **폰에서 카드 글자가 데스크톱 크기 그대로였다** (2026-08-09, 560px 이하) — 본문이 16px이라 카드 한 줄에 열몇 자밖에 안 들어갔다. 제목·본문·여백을 줄이고 좌우 여백을 24 → 16px로.
+  - **축소 규칙은 전부 스타일 맨 끝 한 블록에 모았다.** 같은 특정도면 나중에 나온 규칙이 이기는데, 위쪽 미디어쿼리에 흩어 놓으면 아래 기본 규칙에 조용히 덮인다 — 0.44.1에서 큐브 크기로 이미 한 번 당했다(250을 썼는데 327로 그려졌다).
+- **긴 명령어의 오른쪽이 잘려 읽을 수 없었다** (2026-08-09) — `/plugin uninstall hi-vibe@hi-vibe-marketplace`가 546px 화면에서 칸 306 대 글자 353이었다. `white-space:nowrap`을 `overflow-wrap:anywhere`로. **넘칠 때만 끊으므로 넓은 화면에서는 그대로 한 줄이다.**
+  - 처음엔 폰(560px 이하)에만 걸었다가 **561~700px 구간이 그대로 남는 것을 폭을 훑다가 잡았다.** 폭 제한 없이 걸었다.
+- **기능 카드 제목 옆 꼬리표가 아랫줄 오른쪽 끝에 혼자 떨어졌다** (2026-08-09, 560px 이하) — "기억·인수인계·검색"처럼 제목이 길면 `handover · recall`이 밀려 나는데 `margin-left:auto` 때문에 빈 칸을 두고 오른쪽에 붙었다. 폰에선 제목 뒤에 그대로 잇는다.
+- **어두운 띠(`.band`)가 화면보다 넓어 좌우가 잘렸다** (2026-08-09) — `width:100vw`는 **세로 스크롤바 폭까지 포함한다.** 375px 화면에서 띠가 390이 되어 7.5px씩 밀렸다. 부모(`main.wrap`)의 좌우 여백만큼만 빼내는 방식으로 바꾸고, 부모가 최대폭에 걸리는 1080px 위에서만 `vw`를 쓴다.
+  - **경계를 1128(=1080+48)로 잡았다가 1113px 화면에서 좌우 17px씩 떴다.** `box-sizing:border-box`라 최대폭 1080 **안에** 여백이 들어 있다. 폭을 훑어서 잡았다.
+
+### Changed
+- **한국어 메뉴 이름 둘** (2026-08-09) — `나한테 맞나` → `이런 분께`(영문 `Good fit?`을 그대로 옮긴 번역투였다), `문제점` → `AI 실수`(hi-vibe의 단점처럼 읽혔는데, 실제 내용은 AI가 하는 실수다).
+
+### 앞 릴리스 기록 정정
+- **0.44.1에 "360px에서 가로 스크롤이 생긴다"고 적었는데 틀렸다.** `html`에 `overflow-x:clip`이 이미 있어 **화면은 밀리지 않는다**(실제로 `scrollTo(400)`을 걸어 보니 0). 문서 폭이 화면보다 넓었던 것은 맞지만, 증상은 스크롤이 아니라 **삐져나온 부분이 잘려 나가는 것**이었다 — GitHub 버튼 오른쪽 끝과 긴 명령어가 그래서 안 보였다. `scrollWidth`만 보고 스크롤이라 단정한 실수다.
+  - 원인 셋(헤더 묶음 183px · 긴 명령어 · `.band`의 `100vw`)을 전부 고쳐 **문서 폭 401 → 375**가 됐다. 320~1080px 전 구간에서 넘치는 요소 0(한·영 각 19개 폭 실측).
+
 ## [0.44.1] - 2026-08-08
 <!-- show:ko **폰에서 큐브를 첫 화면으로 올렸어요.** 넓은 화면에서는 글 옆에 큐브가 나란히 보이는데, 좁아지면 한 줄로 쌓이면서 큐브가 글 아래로 밀려 스크롤해야 보였습니다. 이게 뭔지 한눈에 알려주는 게 큐브라 위로 올렸어요. 크기도 250px로 줄여서 큐브·제목·설치 버튼이 한 화면에 들어옵니다. HTML 순서는 안 건드렸어요 — 읽는 순서와 스크린리더에는 제목이 먼저인 게 맞으니까요. -->
 <!-- show:en **The cube now comes first on a phone.** On a wide screen it sits beside the text; once the layout stacks, it was pushed below the copy and needed a scroll to see. The cube is what tells you at a glance what this is, so it moves to the top, and shrinking it to 250px fits the cube, the headline and the install button on one screen. The HTML order is untouched — for reading order and screen readers the heading still comes first. -->

@@ -204,5 +204,60 @@ class SiteLinkLanguageTest(unittest.TestCase):
                         "저장된 선택을 URL보다 먼저 읽는다 — 순서가 뒤집혔다")
 
 
+class LinkPreviewTest(unittest.TestCase):
+    """카톡·슬랙에 링크를 붙였을 때 뜨는 미리보기 카드를 지킨다.
+
+    `og:image`가 없는 파일을 가리켜도 페이지는 멀쩡히 열린다 — 깨진 건
+    **남한테 보낸 링크에서만** 보인다. 우리가 볼 일이 없는 자리라 기계가
+    지켜야 한다. 예전엔 파비콘(정사각)을 걸고 `twitter:card`도 `summary`라
+    작은 아이콘만 떴다."""
+
+    def _head(self):
+        page = _read(os.path.join(REPO, "docs", "index.html"))
+        return page[:page.find("<style>")]
+
+    def test_preview_image_file_actually_exists(self):
+        m = re.search(r'property="og:image"\s+content="([^"]+)"', self._head())
+        self.assertTrue(m, "og:image 태그가 없다 — 미리보기에 그림이 안 뜬다")
+        name = m.group(1).split("?")[0].rsplit("/", 1)[-1]
+        path = os.path.join(REPO, "docs", "images", name)
+        self.assertTrue(os.path.exists(path), f"og:image가 없는 파일을 가리킨다: {name}")
+
+    def test_preview_image_is_the_wide_card_shape(self):
+        """1.91:1이 아니면 카톡이 제멋대로 잘라낸다."""
+        import struct
+        head = self._head()
+        name = re.search(r'property="og:image"\s+content="([^"]+)"', head).group(1)
+        name = name.split("?")[0].rsplit("/", 1)[-1]
+        with open(os.path.join(REPO, "docs", "images", name), "rb") as fh:
+            w, h = struct.unpack(">II", fh.read(24)[16:24])
+        self.assertAlmostEqual(w / h, 1.91, delta=0.05,
+                               msg=f"미리보기 그림이 와이드 카드 비율이 아니다: {w}x{h}")
+        self.assertEqual((w, h), (1200, 630), "권장 크기 1200x630에서 벗어났다")
+
+    def test_declared_size_matches_the_real_file(self):
+        """og:image:width/height가 실제와 다르면 크롤러가 잘못 자른다."""
+        import struct
+        head = self._head()
+        name = re.search(r'property="og:image"\s+content="([^"]+)"', head).group(1)
+        name = name.split("?")[0].rsplit("/", 1)[-1]
+        with open(os.path.join(REPO, "docs", "images", name), "rb") as fh:
+            w, h = struct.unpack(">II", fh.read(24)[16:24])
+        for prop, real in (("og:image:width", w), ("og:image:height", h)):
+            m = re.search(r'property="%s"\s+content="(\d+)"' % re.escape(prop), head)
+            self.assertTrue(m, f"{prop} 태그가 없다")
+            self.assertEqual(int(m.group(1)), real, f"{prop}가 실제 그림과 다르다")
+
+    def test_card_is_the_large_image_kind(self):
+        self.assertIn('name="twitter:card" content="summary_large_image"', self._head(),
+                      "카드가 작은 아이콘형(summary)이면 첫 화면이 안 보인다")
+
+    def test_both_preview_images_point_at_the_same_picture(self):
+        head = self._head()
+        og = re.search(r'property="og:image"\s+content="([^"]+)"', head).group(1)
+        tw = re.search(r'name="twitter:image"\s+content="([^"]+)"', head).group(1)
+        self.assertEqual(og, tw, "og와 twitter가 서로 다른 그림을 가리킨다")
+
+
 if __name__ == "__main__":
     unittest.main()
