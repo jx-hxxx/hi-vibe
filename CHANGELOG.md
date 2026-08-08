@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.43.5] - 2026-08-08
+<!-- show:ko **큐브 유리에 의도했던 흡수색이 드디어 켜졌어요.** 설정에 짙은 갈금색이 적혀 있었는데 번들된 three.js가 그 기능이 생기기 직전 버전이라 몇 달간 아무 데도 안 쓰이고 있었습니다. 한 단계만 올려서(r128 → r129, 7KB) 원래 의도한 모습이 됐어요. 조건 분기는 남겨뒀습니다 — 이 큐브 코드를 복사해 쓰는 다른 프로젝트 네 곳이 아직 옛 버전이라, 거기서도 경고 없이 돌아야 하거든요. 브라우저로 버전·적용값·경고를 전부 확인했습니다. -->
+<!-- show:en **The glass cube finally has the absorption colour it was configured for.** A deep amber was set in the theme, but the bundled three.js was one release short of supporting it, so the setting sat unused for months. A single-step upgrade (r128 to r129, 7KB) turns it on. The version guard stays: four other projects copy this cube code and still ship the older bundle, and they must keep running without warnings. Version, applied values and console output were all verified in a real browser. -->
+
+### Changed
+- **번들 three.js r128 → r129** (2026-08-08, `docs/cube/three.min.js`, +7,518바이트) — `thickness`·`attenuationColor`·`attenuationDistance`가 **r129에서 생긴** 속성이라, 랜딩 테마에 적힌 `attenuationColor: 0x7a4a06`이 여태 아무 데도 안 쓰이고 있었다. 한 단계만 올려 켰다 — 그 이상 올리면 색 관리 기본값이 바뀌어 큐브 전체 톤이 달라진다.
+  - **조건 분기(`'thickness' in m`)는 지웠다가 되돌리지 않고 남겼다.** 이 저장소 번들은 r129지만, `cube.js`를 복사해 쓰는 다른 프로젝트 **네 곳이 전부 r128**이다(실측). 분기를 빼면 거기서 경고가 되살아난다. 재사용 모듈이라 번들 버전이 제각각인 것을 전제로 둔다.
+  - **브라우저 실측**: `THREE.REVISION` 129 · 속성 지원 true · 적용값 `1.5 / 7a4a06 / 0.8` 유지 · 콘솔 경고 0 · 에러 0 · 캔버스 정상 렌더.
+  - **처음 확인은 틀렸다** — 파일만 바꾸고 같은 포트로 재접속해 `경고 0`을 봤는데, 브라우저가 옛 `three.min.js`를 캐시하고 있어 **여전히 r128을 보고 있었다.** 새 포트로 붙어 `THREE.REVISION`을 직접 읽고서야 실제 확인이 됐다. 눈에 보이는 결과가 같아 그냥 넘어갈 뻔했다.
+
 ## [0.43.4] - 2026-08-08
 <!-- show:ko **업데이트 타임라인에 마크다운 기호가 글자 그대로 나가고 있었어요.** CHANGELOG를 랜딩으로 옮기는 변환기가 **맨 앞 굵은 글씨 하나만** 처리하고 나머지는 그냥 통과시켰습니다. 그래서 코드 이름을 감싼 백틱과 문장 안쪽 강조 별표가 페이지에 보였어요. 아무도 그 기호를 안 써서 몇 달간 안 드러났던 것뿐이고, 사실은 **"타임라인 글엔 마크다운 쓰지 말 것"이라는 적힌 적 없는 규칙**에 기대고 있었습니다. 이제 백틱은 코드로, 별표는 강조로 바뀝니다. 브라우저로 직접 보고 고쳤어요. -->
 <!-- show:en **Markdown markers were reaching the update timeline as literal characters.** The converter that moves CHANGELOG entries onto the landing page handled only the leading bold and passed everything else through, so backticks around code names and inline emphasis asterisks showed up on the page. It had gone unnoticed for months only because nobody used those markers — the page was really relying on an unwritten "don't use markdown here" rule. Backticks now become code and asterisks become emphasis, verified in a real browser. -->
