@@ -485,10 +485,34 @@
     .prow .ptxt b { font-size:14.5px; }
     .prow .ex { font-size:11.5px; }
 
-    .layers { margin-top:26px; gap:12px; }
-    .layer { padding:18px 16px; }
-    .layer h3 { font-size:17px; margin:8px 0 6px; }
-    .layer p { font-size:13.5px; }
+    .layers { margin-top:24px; gap:10px; }
+    .layer { padding:16px 14px; }
+    .layer .n { font-size:11px; }
+    .layer h3 { font-size:16px; margin:7px 0 5px; }
+    .layer p { font-size:13px; }
+
+    /* 어두운 띠 안 카드(기계가 하는 것 / AI가 하는 것)에는 폰 규칙이 아예
+       없었다 — 데스크톱 여백 26px과 글자 14.5px 그대로라 제일 커 보였다. */
+    .split { gap:14px; margin-top:26px; }
+    .scol { padding:18px 16px 8px; }
+    .scol-head { font-size:11px; gap:7px; }
+    .scol-head .lamp2 { width:10px; height:10px; }
+    .scol h3 { font-size:16.5px; margin:10px 0 2px; }
+    .scol li { padding:12px 0 12px 19px; font-size:13.3px; line-height:1.55; }
+    .scol li::before { top:12px; }
+    .scol li small { font-size:11px; }
+
+    /* 터미널 머리줄: "CLAUDE CODE"가 좁은 폭에서 두 줄로 접히며 제목 위로
+       겹쳤다(머리줄 높이 35 → 54). 장식이라 폰에서는 뺀다.
+       본문은 `white-space:pre`라 명령어가 가로로 잘려 밀어야 보였다
+       (내용 337 대 칸 281) — 접히게 바꾸고 글자도 줄인다. */
+    .hterm .bar { padding:7px 12px; }
+    .hterm .bar .cc { display:none; }
+    .hterm .bar .barleft, .hterm .bar .barright { gap:8px; }
+    .hterm .bar .barlabel, .hterm .bar .runhint { font-size:11px; }
+    .hterm .body { padding:12px 14px 14px; }
+    .hterm pre { font-size:11.5px; line-height:1.65;
+                 white-space:pre-wrap; overflow-wrap:anywhere; overflow-x:visible; }
 
     .featgrid { gap:12px; }
     .colhd { padding:14px 16px 12px; }
@@ -512,6 +536,48 @@
     .trust { margin:36px 0 56px; }
     .trust > div { padding:16px 14px; }
     .trust b { font-size:22px; }
+  }
+
+  /* ===== 좁은 화면(≤640px)에서 표를 세로로 쌓기 =====
+     `table`에 `min-width:520px`이 걸려 있어 좁아지면 `.tscroll`이 가로
+     스크롤을 만든다. 세 번째 칸("발동" / "하는 일")이 화면 밖에 있어
+     **밀어야만 보였다** — 표에서 제일 중요한 칸이 안 보이는 셈이다.
+     한 줄(`tr`)을 카드 하나로 바꾸고 칸을 세로로 쌓는다.
+
+     640px으로 끊는 이유: 표 자체가 520 + 좌우 여백이라 그 아래에서 밀리기
+     시작한다. 폰 축소 블록(560)보다 넓게 잡아야 561~640 구간이 안 남는다
+     — 이번에 긴 명령어를 폰에만 걸었다가 561~700이 그대로 남았다.
+
+     칸 이름은 `thead`에 있는데 세로로 쌓으면 안 보인다. 명령어 표는 칸이
+     스스로 설명되지만(명령어·설명·배지) 스킬 표는 코드 두 개가 나란히 와서
+     구분이 안 돼 꼬리표를 붙인다. 표 종류는 `.cmds`/`.skills`로 구분한다. */
+  @media (max-width:640px){
+    .tbl .tscroll { overflow-x:visible; }
+    .tbl table { min-width:0; display:block; }
+    .tbl thead { display:none; }
+    .tbl tbody { display:block; }
+    .tbl tbody tr { display:block; padding:13px 15px; border-top:1px solid var(--border); }
+    .tbl tbody tr:first-child { border-top:none; }
+    .tbl td { display:block; border:none; padding:0; font-size:13.3px; line-height:1.6; }
+    .tbl td + td { margin-top:5px; }
+    .tbl td:last-child { white-space:normal; width:auto; }
+    .tbl td:first-child code { font-size:13.3px; font-weight:700; }
+
+    /* 명령어 표: 발동 배지는 명령어와 같은 줄 오른쪽 끝에 */
+    .tbl.cmds tbody tr { display:grid; grid-template-columns:1fr auto; column-gap:10px; }
+    .tbl.cmds td:nth-child(1) { grid-area:1 / 1; }
+    .tbl.cmds td:nth-child(3) { grid-area:1 / 2; margin-top:0; justify-self:end; }
+    .tbl.cmds td:nth-child(2) { grid-area:2 / 1 / 3 / 3; margin-top:6px; color:var(--muted); }
+
+    /* 스킬 표: 코드 두 개가 나란히 오면 뭐가 뭔지 모른다 */
+    .tbl.skills td:nth-child(2)::before,
+    .tbl.skills td:nth-child(3)::before {
+      display:block; font-family:var(--mono); font-size:10.5px;
+      letter-spacing:.04em; color:var(--faint); margin-bottom:2px; }
+    #ko .tbl.skills td:nth-child(2)::before { content:"이걸로 불러요"; }
+    #ko .tbl.skills td:nth-child(3)::before { content:"하는 일"; }
+    #en .tbl.skills td:nth-child(2)::before { content:"Called by"; }
+    #en .tbl.skills td:nth-child(3)::before { content:"What it does"; }
   }
 </style>
 </head>
@@ -778,7 +844,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
         하지만 자동 기능(훅)은 <b>쓸 프로젝트마다 최상위 폴더에서</b> <code>/hi-vibe:init</code>을 해야 켜져요. <code>.hi-vibe/</code>가 있는 폴더에서만 돌아요.<br>
         <b>init 안 한 다른 프로젝트엔 전혀 개입하지 않아요.</b> 전역 설치인데도 원하지 않는 곳에서 훅이 도는 걸 막는 <b>안전장치</b>예요.<br>
         <span class="dim">(새 프로젝트에서 쓰려면 그 폴더에서 <code>/hi-vibe:init</code> 한 번.)</span></div></div>
-      <div class="tbl"><div class="tscroll"><table>
+      <div class="tbl cmds"><div class="tscroll"><table>
         <thead><tr><th>명령어</th><th>언제 쓰나</th><th>발동</th></tr></thead>
         <tbody>
           <tr><td><code>/hi-vibe:welcome</code></td><td>처음이라 뭐부터 할지 모를 때</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> 직접</span></td></tr>
@@ -856,7 +922,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
 
       <h3 style="margin-top:44px">뒤에서 뭐가 도나 — 스킬(엔진) ↔ 명령어(버튼)</h3>
       <p class="lead" style="max-width:none">쉬운 명령어는 <b>버튼</b>일 뿐, 실제 일은 뒤의 <b>스킬(엔진)</b>이 해요.<br>같은 엔진을 명령어로도, "평소 말"로도, AI가 알아서도 불러요.</p>
-      <div class="tbl"><div class="tscroll"><table>
+      <div class="tbl skills"><div class="tscroll"><table>
         <thead><tr><th>스킬 (엔진)</th><th>이걸로 불러요</th><th>하는 일</th></tr></thead>
         <tbody>
           <tr><td><code>repo-xray</code></td><td><code>check</code></td><td>구조 스캔 — 중복·죽은 코드·큰 파일</td></tr>
@@ -879,9 +945,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.46.0<small>2026-08-09</small></div><div class="h"><b>폰에서 표를 옆으로 밀지 않아도 됩니다.</b> <span>명령어 표와 스킬 표가 화면보다 넓어서, 제일 중요한 "자동/직접"과 "하는 일" 칸이 화면 밖에 있었어요. 한 줄을 카드 하나로 바꿔 세로로 쌓았습니다. 그리고 카드들이 아직 컸습니다 — 특히 어두운 띠 안의 "기계가 하는 것 / AI가 하는 것" 카드는 폰 규칙이 아예 없어서 데스크톱 크기 그대로였어요. 터미널 그림도 고쳤습니다: "CLAUDE CODE" 글자가 두 줄로 접히며 제목을 덮고 있었고, 설치 명령어는 오른쪽이 잘려 밀어야 보였습니다.</span></div></div>
         <div class="rel"><div class="v">v0.45.2<small>2026-08-09</small></div><div class="h"><b>폰에서 어느 쪽이 문제고 어느 쪽이 해결인지 이제 글로 적혀 있어요.</b> <span>앞 버전에서 카드로 묶기는 했는데, 해결 칸에 깔아둔 초록이 4%라 그냥 회색으로 보였습니다. 색으로만 구분하려던 게 문제였어요. 칸마다 "이런 적 있나요" / "✓ hi-vibe는" 꼬리표를 붙이고 초록도 눈에 보이게 올렸습니다. 빈 자리만 크게 차지하던 화살표 줄은 뺐어요. 이제 색을 못 봐도 글자로 구분됩니다.</span></div></div>
         <div class="rel"><div class="v">v0.45.1<small>2026-08-09</small></div><div class="h"><b>폰에서 "이런 분께" 표가 거꾸로 읽히던 것을 고쳤어요.</b> <span>좌우 두 칸짜리 표라 위에 "혹시 이런 적 있나요?"와 "hi-vibe는 이렇게 도와줍니다" 머리글이 나란히 있었는데, 폰에서는 한 줄로 쌓이니까 <strong>"hi-vibe는 이렇게 도와줍니다" 바로 아래에 문제 문장이 오는</strong> 모양이 됐습니다. 머리글을 숨기고 문제와 해결 한 쌍을 카드 하나로 묶었어요. 겸사겸사 영문판에서 창을 761~803px로 줄이면 오른쪽 GitHub 버튼이 잘리던 것도 찾아서 고쳤습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.45.0<small>2026-08-09</small></div><div class="h"><b>카톡에 링크를 붙이면 소개 화면이 그대로 뜹니다.</b> <span>예전엔 작은 정사각 아이콘만 나왔어요. 그리고 폰에서 읽기 불편하던 것들을 고쳤습니다. 카드 글자가 데스크톱과 같은 크기라 한 줄에 열몇 자밖에 안 들어갔고, 표 가운데를 초록 세로줄이 가로지르고 있었어요(화살표를 돌렸더니 글자만이 아니라 상자째 돌아간 것이었습니다). 긴 명령어는 오른쪽이 잘려 읽을 수가 없었고요. 메뉴 이름 "나한테 맞나"는 번역투라 "이런 분께"로, "문제점"은 hi-vibe 단점처럼 읽혀서 "AI 실수"로 바꿨습니다. 320px부터 1440px까지 한·영 양쪽을 재서 넘치는 곳이 없는 걸 확인했어요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1164,7 +1230,7 @@ Close with just these.
         But the automatic features (hooks) only turn on when you run <code>/hi-vibe:init</code> <b>from each project's top-level folder</b>. They run only in folders where the <code>.hi-vibe/</code> marker was created.<br>
         <b>It never touches other projects you didn't init.</b> Even with a global install, that is the <b>safety guard</b> against hooks running where you don't want them.<br>
         <span class="dim">(To use it in a new project, just <code>/hi-vibe:init</code> once in that folder.)</span></div></div>
-      <div class="tbl"><div class="tscroll"><table>
+      <div class="tbl cmds"><div class="tscroll"><table>
         <thead><tr><th>Command</th><th>When</th><th>Fires</th></tr></thead>
         <tbody>
           <tr><td><code>/hi-vibe:welcome</code></td><td>First time, unsure where to start</td><td><span class="fire man"><svg class="pic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l6 15 2-6 6-2L5 3Z"/></svg> Manual</span></td></tr>
@@ -1242,7 +1308,7 @@ Close with just these.
 
       <h3 style="margin-top:44px">What runs underneath — skills (engines) ↔ commands (buttons)</h3>
       <p class="lead" style="max-width:none">The friendly commands are just <b>buttons</b>; the real work is done by the <b>skill (engine)</b> behind each one.<br>The same engine can be called by a command, by plain talk, or by the AI itself.</p>
-      <div class="tbl"><div class="tscroll"><table>
+      <div class="tbl skills"><div class="tscroll"><table>
         <thead><tr><th>Skill (engine)</th><th>Called by</th><th>What it does</th></tr></thead>
         <tbody>
           <tr><td><code>repo-xray</code></td><td><code>check</code></td><td>Structure scan — duplicates, dead code, big files</td></tr>
@@ -1265,9 +1331,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.46.0<small>2026-08-09</small></div><div class="h"><b>Tables no longer need sideways scrolling on a phone.</b> <span>Both tables were wider than the screen, so the most useful columns sat off-screen. Each row is now a card. The cards elsewhere were still too large — the two in the dark band had no phone rules at all and rendered at desktop size. The terminal mock is fixed too: its "CLAUDE CODE" label wrapped onto a second line and covered the title, and the install commands were clipped at the right edge.</span></div></div>
         <div class="rel"><div class="v">v0.45.2<small>2026-08-09</small></div><div class="h"><b>On a phone, which half is the problem and which is the fix is now written out.</b> <span>The previous release grouped each pair into a card, but the green behind the fix was set at 4% and simply read as grey — relying on colour alone was the mistake. Each half now carries a small label, the green is strong enough to see, and the arrow row that only added empty space is gone. The distinction survives without colour.</span></div></div>
         <div class="rel"><div class="v">v0.45.1<small>2026-08-09</small></div><div class="h"><b>The pain/fix table read backwards on a phone.</b> <span>Its two column headers sat side by side, but once the columns stack, "here is how hi-vibe helps" ends up directly above a problem sentence. The headers are now hidden on small screens and each pain/fix couple is one card. Also fixed while measuring: in English, between 761 and 803px the GitHub button was cut off by the longer nav labels.</span></div></div>
-        <div class="rel"><div class="v">v0.45.0<small>2026-08-09</small></div><div class="h"><b>Sharing the link now shows the actual landing page, not a small square icon.</b> <span>Alongside that, the phone layout got fixed: card text was still at desktop size, a green vertical stripe cut through the middle of the pain/fix table (rotating the arrow rotated its whole box, not just the glyph), and long commands were clipped at the right edge and unreadable. Two Korean nav labels were reworded. Measured across 320px to 1440px in both languages with nothing overflowing.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

@@ -5,6 +5,24 @@
 
 ## [Unreleased]
 
+## [0.46.0] - 2026-08-09
+<!-- show:ko **폰에서 표를 옆으로 밀지 않아도 됩니다.** 명령어 표와 스킬 표가 화면보다 넓어서, 제일 중요한 "자동/직접"과 "하는 일" 칸이 화면 밖에 있었어요. 한 줄을 카드 하나로 바꿔 세로로 쌓았습니다. 그리고 카드들이 아직 컸습니다 — 특히 어두운 띠 안의 "기계가 하는 것 / AI가 하는 것" 카드는 폰 규칙이 아예 없어서 데스크톱 크기 그대로였어요. 터미널 그림도 고쳤습니다: "CLAUDE CODE" 글자가 두 줄로 접히며 제목을 덮고 있었고, 설치 명령어는 오른쪽이 잘려 밀어야 보였습니다. -->
+<!-- show:en **Tables no longer need sideways scrolling on a phone.** Both tables were wider than the screen, so the most useful columns sat off-screen. Each row is now a card. The cards elsewhere were still too large — the two in the dark band had no phone rules at all and rendered at desktop size. The terminal mock is fixed too: its "CLAUDE CODE" label wrapped onto a second line and covered the title, and the install commands were clipped at the right edge. -->
+
+### Fixed
+- **폰에서 표를 옆으로 밀어야 했다** (2026-08-09, 640px 이하) — `table`에 `min-width:520px`이 있어 좁아지면 `.tscroll`이 가로 스크롤을 만든다. **세 번째 칸("발동" / "하는 일")이 화면 밖이라 아예 안 보였다** — 표에서 제일 쓸모 있는 칸이다.
+  - 한 줄(`tr`)을 카드 하나로 바꿔 칸을 세로로 쌓았다. 명령어 표는 `자동`/`직접` 배지를 명령어와 같은 줄 오른쪽 끝에 둔다.
+  - 스킬 표는 코드 두 개(`repo-xray` / `check`)가 나란히 와서 뭐가 뭔지 모른다 — `이걸로 불러요` · `하는 일` 꼬리표를 붙였다. 표 종류는 `.cmds`/`.skills`로 구분한다(HTML 4곳).
+  - **640px으로 끊었다.** 표가 520 + 좌우 여백이라 그 아래에서 밀리기 시작한다. 폰 축소 블록(560)에 넣었으면 561~640 구간이 그대로 남는다 — 긴 명령어에서 이미 한 번 겪은 실수다.
+- **어두운 띠의 두 카드에 폰 규칙이 아예 없었다** (2026-08-09, 560px 이하) — `.scol`은 데스크톱 여백 26px·글자 14.5px 그대로라 화면에서 제일 커 보였다. 여백 18/16, 글자 13.3px로.
+- **세 겹 카드가 아직 컸다** (2026-08-09) — 여백 18/16 → 16/14, 제목 17 → 16px, 본문 13.5 → 13px.
+- **터미널 머리줄에서 글자가 겹쳤다** (2026-08-09) — `CLAUDE CODE` 라벨이 좁은 폭에서 두 줄로 접히며 제목 위로 올라왔다(머리줄 높이 35 → 54 실측). 장식이라 폰에서는 뺐다.
+- **터미널 안 설치 명령어가 오른쪽으로 잘렸다** (2026-08-09) — `white-space:pre`라 안 접힌다(내용 337 대 칸 281). 접히게 바꾸고 글자를 11.5px로.
+- 한·영 x 25개 폭(320~1440px) 재확인 — 넘침 0, 표 가로 밀림 0.
+
+### 오해였던 것
+- **두 번째 터미널이 비어 보인 건 결함이 아니다** — 화면에 들어오면 글자가 한 자씩 찍히는 연출이라, 스크롤 직후 캡처하면 빈 상자로 잡힌다. 2.5초 뒤 118자가 채워지는 것을 확인했다.
+
 ## [0.45.2] - 2026-08-09
 <!-- show:ko **폰에서 어느 쪽이 문제고 어느 쪽이 해결인지 이제 글로 적혀 있어요.** 앞 버전에서 카드로 묶기는 했는데, 해결 칸에 깔아둔 초록이 4%라 그냥 회색으로 보였습니다. 색으로만 구분하려던 게 문제였어요. 칸마다 "이런 적 있나요" / "✓ hi-vibe는" 꼬리표를 붙이고 초록도 눈에 보이게 올렸습니다. 빈 자리만 크게 차지하던 화살표 줄은 뺐어요. 이제 색을 못 봐도 글자로 구분됩니다. -->
 <!-- show:en **On a phone, which half is the problem and which is the fix is now written out.** The previous release grouped each pair into a card, but the green behind the fix was set at 4% and simply read as grey — relying on colour alone was the mistake. Each half now carries a small label, the green is strong enough to see, and the arrow row that only added empty space is gone. The distinction survives without colour. -->
