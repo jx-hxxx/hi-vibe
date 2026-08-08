@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.45.2] - 2026-08-09
+<!-- show:ko **폰에서 어느 쪽이 문제고 어느 쪽이 해결인지 이제 글로 적혀 있어요.** 앞 버전에서 카드로 묶기는 했는데, 해결 칸에 깔아둔 초록이 4%라 그냥 회색으로 보였습니다. 색으로만 구분하려던 게 문제였어요. 칸마다 "이런 적 있나요" / "✓ hi-vibe는" 꼬리표를 붙이고 초록도 눈에 보이게 올렸습니다. 빈 자리만 크게 차지하던 화살표 줄은 뺐어요. 이제 색을 못 봐도 글자로 구분됩니다. -->
+<!-- show:en **On a phone, which half is the problem and which is the fix is now written out.** The previous release grouped each pair into a card, but the green behind the fix was set at 4% and simply read as grey — relying on colour alone was the mistake. Each half now carries a small label, the green is strong enough to see, and the arrow row that only added empty space is gone. The distinction survives without colour. -->
+
+### Fixed
+- **폰에서 문제·해결이 구분되지 않았다** (2026-08-09, 760px 이하) — 해결 칸 배경이 `--good` 4%라 회색으로 보였다. **색 하나에 구분을 맡긴 게 원인이다.**
+  - 칸마다 꼬리표를 글로 붙였다: `이런 적 있나요` / `✓ hi-vibe는`(영문 `Ever had this?` / `✓ hi-vibe`). **글자가 주역이고 색은 거든다** — 색을 못 보는 사람도 구분된다.
+  - 초록을 4% → 11%로. 다크모드에서도 확인했다(밝은 초록 11%).
+  - **화살표 줄은 뺐다.** 머리글이 없는 상태에서 화살표만으로는 방향을 알 수 없었고, 빈 칸만 28px 차지했다.
+  - 꼬리표는 CSS `content`로 넣는다 — 여덟 짝 x 두 언어라 HTML에 넣으면 32곳을 손대야 하고, 데스크톱은 열 머리글이 이미 그 일을 한다. 언어별 문구는 `#ko`/`#en` 아래로 나눴다.
+  - 카드 높이 122 → 141px. 화살표를 뺀 것보다 꼬리표 두 줄이 더 커서 조금 늘었다.
+  - 한·영 x 24개 폭(320~1440px) 재확인 — 넘침 0.
+
 ## [0.45.1] - 2026-08-09
 <!-- show:ko **폰에서 "이런 분께" 표가 거꾸로 읽히던 것을 고쳤어요.** 좌우 두 칸짜리 표라 위에 "혹시 이런 적 있나요?"와 "hi-vibe는 이렇게 도와줍니다" 머리글이 나란히 있었는데, 폰에서는 한 줄로 쌓이니까 **"hi-vibe는 이렇게 도와줍니다" 바로 아래에 문제 문장이 오는** 모양이 됐습니다. 머리글을 숨기고 문제와 해결 한 쌍을 카드 하나로 묶었어요. 겸사겸사 영문판에서 창을 761~803px로 줄이면 오른쪽 GitHub 버튼이 잘리던 것도 찾아서 고쳤습니다. -->
 <!-- show:en **The pain/fix table read backwards on a phone.** Its two column headers sat side by side, but once the columns stack, "here is how hi-vibe helps" ends up directly above a problem sentence. The headers are now hidden on small screens and each pain/fix couple is one card. Also fixed while measuring: in English, between 761 and 803px the GitHub button was cut off by the longer nav labels. -->
