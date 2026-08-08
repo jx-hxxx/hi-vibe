@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.45.1] - 2026-08-09
+<!-- show:ko **폰에서 "이런 분께" 표가 거꾸로 읽히던 것을 고쳤어요.** 좌우 두 칸짜리 표라 위에 "혹시 이런 적 있나요?"와 "hi-vibe는 이렇게 도와줍니다" 머리글이 나란히 있었는데, 폰에서는 한 줄로 쌓이니까 **"hi-vibe는 이렇게 도와줍니다" 바로 아래에 문제 문장이 오는** 모양이 됐습니다. 머리글을 숨기고 문제와 해결 한 쌍을 카드 하나로 묶었어요. 겸사겸사 영문판에서 창을 761~803px로 줄이면 오른쪽 GitHub 버튼이 잘리던 것도 찾아서 고쳤습니다. -->
+<!-- show:en **The pain/fix table read backwards on a phone.** Its two column headers sat side by side, but once the columns stack, "here is how hi-vibe helps" ends up directly above a problem sentence. The headers are now hidden on small screens and each pain/fix couple is one card. Also fixed while measuring: in English, between 761 and 803px the GitHub button was cut off by the longer nav labels. -->
+
+### Fixed
+- **폰에서 대응표의 열 머리글이 뜻을 잃었다** (2026-08-09, 760px 이하) — 한 줄로 쌓이면 "hi-vibe는 이렇게 도와줍니다" 바로 아래에 **문제** 문장이 온다. 머리글을 숨기고 한 짝(문제 → 해결)을 카드 하나로 묶었다. 바깥 테두리·배경을 카드로 내려보내고 짝 사이를 12px 띄웠다 — 어디까지가 한 짝인지가 선이 아니라 **간격**으로 보인다.
+  - 전환 지점을 실측으로 확인했다: 761px 표(3칸)·머리글 보임 / 760px 카드(1칸)·머리글 숨김.
+- **영문판 761~803px에서 헤더 오른쪽이 잘렸다** (2026-08-09) — 영문 메뉴 라벨이 길어 필요한 폭이 788인데 화면은 746이었다. **이번 변경과 무관한 기존 문제**로, 폭을 훑다가 걸렸다.
+  - 메뉴 간격을 20 → 12로 좁혀도 40px밖에 못 벌어 2px이 모자란다. 그래서 **메뉴를 숨기는 지점을 760 → 860px**로, 히어로가 한 줄로 쌓이는 지점과 같게 맞췄다. **끊는 자리를 하나로 모아야 "이 구간만 깨지는" 틈이 안 생긴다.**
+  - 한·영 x 37개 폭(320~1440px) 재확인 — 넘치는 요소 0.
+
+### 알고 남긴 것
+- **창 1081~1095px에서 어두운 띠 안쪽 글이 최대 7.5px 왼쪽으로 어긋난다** — 미디어쿼리는 스크롤바를 **포함한** 창 폭으로 재고 `clientWidth`는 빼고 재기 때문이다. 자리를 차지하는 옛날식 스크롤바에서만 나타나고, 맥처럼 떠 있는 스크롤바에서는 어긋나지 않는다. 경계를 반대로 올리면 그쪽에서 좌우에 흰 틈이 생긴다 — 어느 쪽이든 15px짜리 한 뼘 구간이라 지금 값을 뒀다. 없애려면 `.band`를 `main.wrap` 밖으로 빼야 한다.
+
 ## [0.45.0] - 2026-08-09
 <!-- show:ko **카톡에 링크를 붙이면 소개 화면이 그대로 뜹니다.** 예전엔 작은 정사각 아이콘만 나왔어요. 그리고 폰에서 읽기 불편하던 것들을 고쳤습니다. 카드 글자가 데스크톱과 같은 크기라 한 줄에 열몇 자밖에 안 들어갔고, 표 가운데를 초록 세로줄이 가로지르고 있었어요(화살표를 돌렸더니 글자만이 아니라 상자째 돌아간 것이었습니다). 긴 명령어는 오른쪽이 잘려 읽을 수가 없었고요. 메뉴 이름 "나한테 맞나"는 번역투라 "이런 분께"로, "문제점"은 hi-vibe 단점처럼 읽혀서 "AI 실수"로 바꿨습니다. 320px부터 1440px까지 한·영 양쪽을 재서 넘치는 곳이 없는 걸 확인했어요. -->
 <!-- show:en **Sharing the link now shows the actual landing page, not a small square icon.** Alongside that, the phone layout got fixed: card text was still at desktop size, a green vertical stripe cut through the middle of the pain/fix table (rotating the arrow rotated its whole box, not just the glyph), and long commands were clipped at the right edge and unreadable. Two Korean nav labels were reworded. Measured across 320px to 1440px in both languages with nothing overflowing. -->
