@@ -5,6 +5,20 @@
 
 ## [Unreleased]
 
+## [0.43.4] - 2026-08-08
+<!-- show:ko **업데이트 타임라인에 마크다운 기호가 글자 그대로 나가고 있었어요.** CHANGELOG를 랜딩으로 옮기는 변환기가 **맨 앞 굵은 글씨 하나만** 처리하고 나머지는 그냥 통과시켰습니다. 그래서 코드 이름을 감싼 백틱과 문장 안쪽 강조 별표가 페이지에 보였어요. 아무도 그 기호를 안 써서 몇 달간 안 드러났던 것뿐이고, 사실은 **"타임라인 글엔 마크다운 쓰지 말 것"이라는 적힌 적 없는 규칙**에 기대고 있었습니다. 이제 백틱은 코드로, 별표는 강조로 바뀝니다. 브라우저로 직접 보고 고쳤어요. -->
+<!-- show:en **Markdown markers were reaching the update timeline as literal characters.** The converter that moves CHANGELOG entries onto the landing page handled only the leading bold and passed everything else through, so backticks around code names and inline emphasis asterisks showed up on the page. It had gone unnoticed for months only because nobody used those markers — the page was really relying on an unwritten "don't use markdown here" rule. Backticks now become code and asterisks become emphasis, verified in a real browser. -->
+
+### Fixed
+- **랜딩 타임라인에 백틱·별표가 글자 그대로 나가던 것** (2026-08-08) — `build-showcase.py`의 `render_body`가 **맨 앞 `**굵게**` 하나만** 변환하고 나머지 본문은 이스케이프만 해서 넘겼다. 실측: 페이지에 생백틱 8개 · 생별표 4개.
+  - **적힌 적 없는 규칙에 기대고 있었다.** CHANGELOG는 마크다운이라 코드 이름에 백틱, 문장 중간에 강조를 쓰는 게 자연스러운데, 여태 안 드러난 건 **아무도 안 썼기 때문**이지 안전해서가 아니었다. 사람이 참는 대신 기계가 변환한다.
+  - `` `코드` `` → `<code>`, 문장 안쪽 `**강조**` → `<strong>`. **이스케이프 뒤에** 변환한다 — 순서가 바뀌면 본문의 `<`가 태그가 된다(그 경우도 테스트로 고정).
+  - 두 태그의 CSS를 같이 넣었다. **만들어놓고 스타일이 없으면 글자 크기·색이 튄다** — 그것도 검사가 지킨다.
+  - **브라우저로 확인하고 고쳤다.** 백틱을 고친 뒤 화면을 다시 보다가 별표 누수를 발견했다 — 같은 뿌리인데 한 번에 안 보였다.
+
+### Added
+- **`test_showcase_render.py`** (2026-08-08) — 변환이 ①실제로 일어나는지 ②이스케이프를 깨뜨리지 않는지 ③페이지에 생기호가 남지 않았는지 ④본문에 허용 외 태그가 안 들어가는지 ⑤만든 태그에 스타일이 있는지. 변환을 되돌리면 실패하는 것을 확인했다.
+
 ## [0.43.3] - 2026-08-08
 <!-- show:ko **927줄이 된 훅 공용 파일을 책임별로 쪼갰어요.** `_common.py` 하나에 배관·CI·대화 기록 읽기·리뷰 감시·handover 쓰기가 다 살았습니다. 이번 주에 기능이 붙으면서 자기 기준(400줄)의 두 배를 넘겼어요. 다섯 모듈로 나누고, `_common`은 이름만 지키는 표면으로 남겼습니다 — 훅·테스트가 부르는 이름 25개가 전부 그대로라 호출부는 한 곳도 안 바뀌었어요. 동작 변화 없음: 테스트 246개 그대로 통과, 훅 실측 속도 동일, 실제 21MB 세션 기록으로 세는 값까지 손 grep과 대조했습니다. -->
 <!-- show:en **The shared hook file had grown to 927 lines and is now split by responsibility.** Plumbing, CI health, transcript reading, review watching and handover writing all lived in one `_common.py` — more than double its own 400-line guideline after this week's additions. It is now five modules, with `_common` kept as a stable name surface: all 25 names that hooks and tests call are unchanged, so no call site moved. No behavior change — all 246 tests pass, hook timing is identical, and counts against a real 21MB transcript match a manual grep. -->

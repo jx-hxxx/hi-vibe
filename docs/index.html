@@ -245,7 +245,11 @@
   .rel .v small { display:block; color:var(--faint); font-weight:400; font-size:11.5px; margin-top:3px; }
   .rel .h { font-size:14.5px; }
   .rel .h b { font-weight:700; }
+  /* 문장 안쪽 강조. 제목(<b>)보다 약하게 — 본문 색을 유지하고 굵기만 준다. */
+  .rel .h strong { font-weight:700; color:var(--text); }
   .rel .h span { color:var(--muted); display:block; margin-top:5px; text-wrap:pretty; }
+  /* CHANGELOG의 `백틱`이 여기로 온다 — 본문보다 살짝 작게, 줄높이는 건드리지 않는다. */
+  .rel .h code { font-family:var(--mono); font-size:12.5px; color:var(--accent-ink); }
   .foot-note { font-family:var(--mono); font-size:12px; color:var(--faint); margin-top:22px; line-height:1.7; }
 
   footer { border-top:1px solid var(--border); padding:48px 0 64px; }
@@ -415,7 +419,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>246</b><span>자동 회귀 테스트</span></div>
+      <div><b>255</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -739,9 +743,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
-        <div class="rel"><div class="v">v0.43.3<small>2026-08-08</small></div><div class="h"><b>927줄이 된 훅 공용 파일을 책임별로 쪼갰어요.</b> <span>`_common.py` 하나에 배관·CI·대화 기록 읽기·리뷰 감시·handover 쓰기가 다 살았습니다. 이번 주에 기능이 붙으면서 자기 기준(400줄)의 두 배를 넘겼어요. 다섯 모듈로 나누고, `_common`은 이름만 지키는 표면으로 남겼습니다 — 훅·테스트가 부르는 이름 25개가 전부 그대로라 호출부는 한 곳도 안 바뀌었어요. 동작 변화 없음: 테스트 246개 그대로 통과, 훅 실측 속도 동일, 실제 21MB 세션 기록으로 세는 값까지 손 grep과 대조했습니다.</span></div></div>
+        <div class="rel"><div class="v">v0.43.4<small>2026-08-08</small></div><div class="h"><b>업데이트 타임라인에 마크다운 기호가 글자 그대로 나가고 있었어요.</b> <span>CHANGELOG를 랜딩으로 옮기는 변환기가 <strong>맨 앞 굵은 글씨 하나만</strong> 처리하고 나머지는 그냥 통과시켰습니다. 그래서 코드 이름을 감싼 백틱과 문장 안쪽 강조 별표가 페이지에 보였어요. 아무도 그 기호를 안 써서 몇 달간 안 드러났던 것뿐이고, 사실은 <strong>"타임라인 글엔 마크다운 쓰지 말 것"이라는 적힌 적 없는 규칙</strong>에 기대고 있었습니다. 이제 백틱은 코드로, 별표는 강조로 바뀝니다. 브라우저로 직접 보고 고쳤어요.</span></div></div>
+        <div class="rel"><div class="v">v0.43.3<small>2026-08-08</small></div><div class="h"><b>927줄이 된 훅 공용 파일을 책임별로 쪼갰어요.</b> <span><code>_common.py</code> 하나에 배관·CI·대화 기록 읽기·리뷰 감시·handover 쓰기가 다 살았습니다. 이번 주에 기능이 붙으면서 자기 기준(400줄)의 두 배를 넘겼어요. 다섯 모듈로 나누고, <code>_common</code>은 이름만 지키는 표면으로 남겼습니다 — 훅·테스트가 부르는 이름 25개가 전부 그대로라 호출부는 한 곳도 안 바뀌었어요. 동작 변화 없음: 테스트 246개 그대로 통과, 훅 실측 속도 동일, 실제 21MB 세션 기록으로 세는 값까지 손 grep과 대조했습니다.</span></div></div>
         <div class="rel"><div class="v">v0.43.2<small>2026-08-08</small></div><div class="h"><b>"대화 내용은 이 컴퓨터를 벗어나지 않습니다"를 고쳤어요.</b> <span>hi-vibe 얘기로 쓴 문장인데, 범위를 안 밝히면 Claude Code 전체에 대한 약속으로 읽힙니다 — 그리고 Claude Code는 대화를 Anthropic으로 보내니 그 약속은 사실이 아니에요. "hi-vibe는 대화나 코드를 별도 서버로 보내지 않습니다"로 주어를 못박고, 이 문장이 다시 못 돌아오게 과장 재발 방지 검사에 등록했습니다. 랜딩 큐브의 콘솔 경고 3종도 잡았어요 — 번들된 three.js(r128)에 없는 속성을 넘기고 있던 것이라, 있는 버전에서만 켜지게 바꿨습니다. 화면은 그대로고 경고만 사라집니다.</span></div></div>
-        <div class="rel"><div class="v">v0.43.1<small>2026-08-07</small></div><div class="h"><b>바로 앞 버전에서 낸 결함 두 개를 다시 확인하다 잡았어요.</b> <span>하나는 리뷰 범위가 **중간에 낀 문서 커밋에서 끊기던 것**입니다. "더 가도 새로 나올 게 없으면 멈춘다"로 만들었는데, 문서만 고친 커밋이 하나 끼면 그 뒤가 통째로 안 보였어요. 이 저장소에서 실제로 그랬습니다. 멈추는 기준을 "이미 리뷰한 커밋"으로 바꿔봤더니 **똑같은 함정**에 빠졌고요. 중간에서 멈추는 규칙은 무엇을 기준으로 하든 그 뒤를 가립니다. 그래서 안 멈춥니다. 다른 하나는 속도예요 — git을 스무 번 부르고 마지막 결과만 쓰고 있어서 2.1초 걸리던 걸 0.19초로 줄였습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -801,7 +805,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>246</b><span>automated regression tests</span></div>
+      <div><b>255</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -1125,9 +1129,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
-        <div class="rel"><div class="v">v0.43.3<small>2026-08-08</small></div><div class="h"><b>The shared hook file had grown to 927 lines and is now split by responsibility.</b> <span>Plumbing, CI health, transcript reading, review watching and handover writing all lived in one `_common.py` — more than double its own 400-line guideline after this week's additions. It is now five modules, with `_common` kept as a stable name surface: all 25 names that hooks and tests call are unchanged, so no call site moved. No behavior change — all 246 tests pass, hook timing is identical, and counts against a real 21MB transcript match a manual grep.</span></div></div>
+        <div class="rel"><div class="v">v0.43.4<small>2026-08-08</small></div><div class="h"><b>Markdown markers were reaching the update timeline as literal characters.</b> <span>The converter that moves CHANGELOG entries onto the landing page handled only the leading bold and passed everything else through, so backticks around code names and inline emphasis asterisks showed up on the page. It had gone unnoticed for months only because nobody used those markers — the page was really relying on an unwritten "don't use markdown here" rule. Backticks now become code and asterisks become emphasis, verified in a real browser.</span></div></div>
+        <div class="rel"><div class="v">v0.43.3<small>2026-08-08</small></div><div class="h"><b>The shared hook file had grown to 927 lines and is now split by responsibility.</b> <span>Plumbing, CI health, transcript reading, review watching and handover writing all lived in one <code>_common.py</code> — more than double its own 400-line guideline after this week's additions. It is now five modules, with <code>_common</code> kept as a stable name surface: all 25 names that hooks and tests call are unchanged, so no call site moved. No behavior change — all 246 tests pass, hook timing is identical, and counts against a real 21MB transcript match a manual grep.</span></div></div>
         <div class="rel"><div class="v">v0.43.2<small>2026-08-08</small></div><div class="h"><b>"Your conversation never leaves this machine" is fixed.</b> <span>The sentence was written about hi-vibe, but without naming its subject it reads as a promise about Claude Code as a whole — and Claude Code does send conversations to Anthropic, so that promise was false. It now says "hi-vibe sends nothing to a server of its own", and the old sentence is registered in the overclaim regression test so it cannot return. The landing cube's three console warnings are also gone — properties that don't exist in the bundled three.js (r128) were being passed in; they now apply only where supported. The cube looks exactly the same.</span></div></div>
-        <div class="rel"><div class="v">v0.43.1<small>2026-08-07</small></div><div class="h"><b>Two defects in the version just shipped, caught while re-checking it.</b> <span>The review range stopped at any docs-only commit sitting in the middle: the rule was "stop once nothing new appears", and a commit touching only documentation hid everything behind it — which happened in this very repository. Switching the boundary to "stop at an already-reviewed commit" fell into exactly the same trap. Any mid-walk stop rule hides what lies beyond it, so there is no longer one. The second fix is speed: the walk called git twenty times and used only the last result, taking 2.1s; it now takes 0.19s.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

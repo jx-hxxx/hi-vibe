@@ -50,14 +50,29 @@ def parse_changelog(text):
 
 
 def render_body(raw):
-    """Escape, then turn a leading **bold** into <b>bold</b> + <span>rest</span>."""
+    """Escape, then turn a leading **bold** into <b>bold</b> + <span>rest</span>.
+
+    `백틱`은 <code>로 바꾼다. 예전엔 안 바꿔서 **백틱이 글자 그대로 페이지에
+    나갔다**(v0.43.3에서 8개). CHANGELOG는 마크다운이라 코드 이름에 백틱을
+    쓰는 게 자연스러운데, 여기만 안 바뀌니 "백틱 쓰지 말 것"이라는 적힌
+    적 없는 규칙에 기대고 있었다. 기계가 처리하는 쪽이 맞다.
+
+    이스케이프 **뒤에** 바꾼다 — 순서가 바뀌면 본문의 `<`가 태그가 된다."""
     esc = html.escape(raw, quote=False)
     esc = esc.replace("&lt;br&gt;", "<br>")  # 저자가 넣은 <br>만 실제 줄바꿈으로 (나머지는 이스케이프 유지)
+    esc = re.sub(r"`([^`\n]+)`", r"<code>\1</code>", esc)
     m = re.match(r"\*\*(.+?)\*\*\s*(.*)$", esc)
     if not m:
-        return "<span>{}</span>".format(esc)
-    bold, rest = m.group(1), m.group(2).strip()
+        return "<span>{}</span>".format(_inline(esc))
+    bold, rest = m.group(1), _inline(m.group(2).strip())
     return "<b>{}</b> <span>{}</span>".format(bold, rest) if rest else "<b>{}</b>".format(bold)
+
+
+def _inline(text):
+    """문장 **안쪽** 볼드도 태그로. 맨 앞 볼드만 바꾸던 시절엔 **여기 별표가
+    화면에 그대로 나갔다**(v0.43.1 항목에서 4개). CHANGELOG는 마크다운이라
+    강조를 문장 중간에 쓰는 게 자연스럽고, 백틱과 같은 종류의 누수였다."""
+    return re.sub(r"\*\*([^*\n]+)\*\*", r"<strong>\1</strong>", text)
 
 
 def rels(items, lang):
