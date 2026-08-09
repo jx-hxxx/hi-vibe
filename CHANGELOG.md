@@ -5,6 +5,15 @@
 
 ## [Unreleased]
 
+## [0.46.2] - 2026-08-09
+<!-- show:ko **안내 상자 문장 사이를 띄웠어요.** 앞 버전에서 접힌 줄과 새 문장은 구분되게 했지만, 줄이 다닥다닥 붙어 여전히 글자 벽으로 읽혔습니다. 문장마다 조금씩 띄우고, 소제목 앞은 더 띄웠어요. -->
+<!-- show:en **Sentences inside the callout boxes now breathe.** The previous release made wrapped lines distinguishable from new ones, but the lines were still packed tight and read as a wall. Each sentence gets a little space, and sub-headings get more above them. -->
+
+### Changed
+- **안내 상자 문장 사이 여백** (2026-08-09) — 문장 사이 8px, 소제목 앞 18px. 내어쓰기만으로는 구분은 되어도 읽는 리듬이 없었다.
+  - **소제목 판정을 CSS에서 표시로 옮겼다.** 처음엔 `:has(> b:only-child)`로 골라냈는데 **"굵은 머리말 + 일반 글" 줄까지 잡혔다** — "겹치는 것 —"과 "hi-vibe만 하는 것 —"이 나란한 항목인데 서로 다른 간격을 받았다. 줄 전체가 `<b>` 하나인지는 만들 때 정확히 아는 정보라 `.hd`로 못박고, 그게 실제와 맞는지 검사를 붙였다(16곳, 한·영 8곳씩).
+  - 표시하는 스크립트도 한 번 헛돌았다. 처음 정규식은 **`<b>`로 시작해 `</b>`로 끝나기만 하면** 중간에 일반 글이 있어도 잡아 영문 한 줄을 잘못 표시했다. 태그 짝을 세도록 고쳤다.
+
 ## [0.46.1] - 2026-08-09
 <!-- show:ko **안내 상자에서 문장이 어디서 끝나는지 이제 보입니다.** 줄바꿈으로 나눈 문장과, 길어서 다음 줄로 넘어간 줄이 **똑같이 왼쪽 끝에서 시작해** 구분이 안 됐어요. 넓은 화면(1000px대)에서 특히 심해서 "· ② …" 같은 조각이 새 항목처럼 보였습니다. 이어지는 줄을 안쪽으로 밀어 넣어서, 이제 **맨 왼쪽에서 시작하는 줄은 항상 새 문장**입니다. 접었다 펴는 상세 설명 상자도 같은 문제라 같이 고쳤어요. -->
 <!-- show:en **You can now see where a sentence ends inside the callout boxes.** A line broken by the author and a line that simply wrapped both started at the same left edge, so a fragment like "· ② …" read as a new item — worst around 1000px wide. Continuation lines are now indented, so a line starting at the far left is always a new sentence. The collapsible detail boxes had the same defect and got the same fix. -->

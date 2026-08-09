@@ -260,6 +260,20 @@ class NoteLineBreakTest(unittest.TestCase):
         self.assertIn("display:block", rule.replace(" ", ""), ".ln이 블록이 아니면 내어쓰기가 안 걸린다")
         self.assertIn("text-indent:-", rule.replace(" ", ""), "내어쓰기가 없다")
 
+    def test_heading_lines_are_wholly_bold(self):
+        """`.hd`(앞을 더 띄우는 소제목)는 **줄 전체가 굵은 것**만이다.
+
+        처음엔 CSS `:has(> b:only-child)`로 골라내려 했는데, "굵은 머리말 +
+        일반 글" 줄까지 잡혀서 나란한 항목 둘이 다른 간격을 받았다. 판정을
+        표시로 옮긴 이상, 표시가 실제와 맞는지는 기계가 봐야 한다."""
+        page = _read(os.path.join(REPO, "docs", "index.html"))
+        wrong = []
+        for inner in re.findall(r'<span class="ln hd">(.*?)</span>\s*(?=<span|</div>)', page, re.S):
+            t = inner.strip()
+            if not (t.startswith("<b>") and t.endswith("</b>") and t.count("<b>") == 1):
+                wrong.append(re.sub(r"<[^>]+>", "", t)[:40])
+        self.assertEqual(wrong, [], "줄 전체가 굵지 않은데 소제목(.hd)으로 표시됐다")
+
 
 class LinkPreviewTest(unittest.TestCase):
     """카톡·슬랙에 링크를 붙였을 때 뜨는 미리보기 카드를 지킨다.
