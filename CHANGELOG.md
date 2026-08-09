@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.46.1] - 2026-08-09
+<!-- show:ko **안내 상자에서 문장이 어디서 끝나는지 이제 보입니다.** 줄바꿈으로 나눈 문장과, 길어서 다음 줄로 넘어간 줄이 **똑같이 왼쪽 끝에서 시작해** 구분이 안 됐어요. 넓은 화면(1000px대)에서 특히 심해서 "· ② …" 같은 조각이 새 항목처럼 보였습니다. 이어지는 줄을 안쪽으로 밀어 넣어서, 이제 **맨 왼쪽에서 시작하는 줄은 항상 새 문장**입니다. 접었다 펴는 상세 설명 상자도 같은 문제라 같이 고쳤어요. -->
+<!-- show:en **You can now see where a sentence ends inside the callout boxes.** A line broken by the author and a line that simply wrapped both started at the same left edge, so a fragment like "· ② …" read as a new item — worst around 1000px wide. Continuation lines are now indented, so a line starting at the far left is always a new sentence. The collapsible detail boxes had the same defect and got the same fix. -->
+
+### Fixed
+- **안내 상자에서 접힌 줄과 새 문장이 구분되지 않았다** (2026-08-09, `.honest-note` · `details.note-toggle .tbody`) — `<br>`로만 나눠서 둘 다 왼쪽 끝에서 시작했다.
+  - 각 문장을 블록으로 만들고 내어쓰기를 걸었다(`padding-left:1.05em` + `text-indent:-1.05em`). **맨 왼쪽에서 시작하는 줄은 항상 새 문장**이 된다.
+  - `<br>`만으로는 안 된다 — `text-indent`는 **블록의 첫 줄에만** 걸린다. 그래서 줄마다 `<span class="ln">`으로 감쌌다(75곳, 기계로 변환). `each-line` 값이 바로 이 일을 하지만 브라우저가 거의 지원하지 않는다.
+  - **이 저장소에서 세 번째 같은 실수다.** `.tiers`에서 한 번 겪고 "아이콘 너비만큼 밀어 넣기"로 풀어 놓고도, 옆에 있는 `.honest-note`와 `.tbody`는 그대로 뒀다. 같은 원리를 적용했다.
+- **재발 방지 검사 3종** (2026-08-09, `test_integrity.py`) — 상자 안에 `<br>`가 남아 있는지 · `.ln` 규칙이 실제로 있는지 · 그게 블록이고 내어쓰기가 걸렸는지(감싸기만 하고 스타일이 없으면 헛일이다).
+  - 처음엔 상자를 "다음 상자까지"로 잘라 옆 블록을 같이 물었다 — 엉뚱한 곳을 지적하길래 태그 깊이를 세도록 고쳤다. 그러다 **옆 블록(`.tbody`)도 같은 결함**인 걸 발견해서 함께 고쳤다.
+
 ## [0.46.0] - 2026-08-09
 <!-- show:ko **폰에서 표를 옆으로 밀지 않아도 됩니다.** 명령어 표와 스킬 표가 화면보다 넓어서, 제일 중요한 "자동/직접"과 "하는 일" 칸이 화면 밖에 있었어요. 한 줄을 카드 하나로 바꿔 세로로 쌓았습니다. 그리고 카드들이 아직 컸습니다 — 특히 어두운 띠 안의 "기계가 하는 것 / AI가 하는 것" 카드는 폰 규칙이 아예 없어서 데스크톱 크기 그대로였어요. 터미널 그림도 고쳤습니다: "CLAUDE CODE" 글자가 두 줄로 접히며 제목을 덮고 있었고, 설치 명령어는 오른쪽이 잘려 밀어야 보였습니다. -->
 <!-- show:en **Tables no longer need sideways scrolling on a phone.** Both tables were wider than the screen, so the most useful columns sat off-screen. Each row is now a card. The cards elsewhere were still too large — the two in the dark band had no phone rules at all and rendered at desktop size. The terminal mock is fixed too: its "CLAUDE CODE" label wrapped onto a second line and covered the title, and the install commands were clipped at the right edge. -->

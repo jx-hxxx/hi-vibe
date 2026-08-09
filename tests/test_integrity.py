@@ -204,6 +204,63 @@ class SiteLinkLanguageTest(unittest.TestCase):
                         "저장된 선택을 URL보다 먼저 읽는다 — 순서가 뒤집혔다")
 
 
+class NoteLineBreakTest(unittest.TestCase):
+    """안내 상자의 문장은 `<br>`이 아니라 `<span class="ln">`으로 나눈다.
+
+    `<br>`로 나누면 **줄바꿈으로 나눈 문장**과 **길어서 접힌 줄**이 똑같이
+    왼쪽 끝에서 시작해 구분이 안 된다. 내어쓰기(`text-indent`)는 블록의
+    첫 줄에만 걸리므로 줄마다 블록이 있어야 한다.
+
+    이 저장소에서 같은 실수를 두 번 했다(`.tiers` 한 번, `.honest-note`
+    한 번). 셋째 번을 막는다 — 화면을 좁혀 보기 전에는 안 보이는 종류다.
+    상자 구조 자체를 바꾸게 되면 이 검사도 같이 떠나야 한다."""
+
+    TAG = re.compile(r"<(/?)(\w+)([^>]*?)(/?)>")
+    OPENERS = ('<div class="honest-note">', '<div class="tbody">')
+
+    def _blocks(self):
+        """여는 태그부터 **짝이 맞는** </div>까지. 처음엔 "다음 상자까지"로
+        잘랐다가 옆 블록을 같이 물어 엉뚱한 곳을 지적했다 — 태그 깊이를 센다."""
+        page = _read(os.path.join(REPO, "docs", "index.html"))
+        found = []
+        for opener in self.OPENERS:
+            pos = 0
+            while True:
+                i = page.find(opener, pos)
+                if i < 0:
+                    break
+                depth, end = 0, None
+                for m in self.TAG.finditer(page, i):
+                    if m.group(2).lower() != "div":
+                        continue
+                    depth += -1 if m.group(1) == "/" else 1
+                    if depth == 0:
+                        end = m.end()
+                        break
+                self.assertIsNotNone(end, "짝 없는 div: %s" % opener)
+                found.append(page[i:end])
+                pos = end
+        return found
+
+    def test_notes_exist(self):
+        self.assertGreater(len(self._blocks()), 8, "안내 상자를 못 찾았다 — 검사가 헛돈다")
+
+    def test_no_bare_br_inside_notes(self):
+        offenders = [re.sub(r"<svg.*?</svg>", "", n, flags=re.S)[:70]
+                     for n in self._blocks() if "<br>" in n]
+        self.assertEqual(offenders, [],
+                         "안내 상자 안에 <br>가 있다 — 접힌 줄과 구분이 안 된다. "
+                         '<span class="ln">으로 감싸라.')
+
+    def test_line_blocks_get_the_hanging_indent(self):
+        page = _read(os.path.join(REPO, "docs", "index.html"))
+        m = re.search(r"\.honest-note \.ln[^{]*\{([^}]*)\}", page)
+        self.assertTrue(m, ".honest-note .ln 규칙이 없다 — 감싸기만 하고 스타일이 없으면 헛일이다")
+        rule = m.group(1)
+        self.assertIn("display:block", rule.replace(" ", ""), ".ln이 블록이 아니면 내어쓰기가 안 걸린다")
+        self.assertIn("text-indent:-", rule.replace(" ", ""), "내어쓰기가 없다")
+
+
 class LinkPreviewTest(unittest.TestCase):
     """카톡·슬랙에 링크를 붙였을 때 뜨는 미리보기 카드를 지킨다.
 
