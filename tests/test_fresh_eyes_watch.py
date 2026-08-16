@@ -1,4 +1,4 @@
-"""리뷰는 도는데 **남의 눈(fresh-eyes)만 빠지는 것**을 기계가 알아채는지.
+"""리뷰는 도는데 **fresh-eyes만 빠지는 것**을 기계가 알아채는지.
 
 2026-08-07 실사용: 한 세션이 **하루 종일** 서브에이전트 호출이 막힌 채
 돌았다(세션 설정이 Agent 도구를 금지). 체크리스트는 매번 돌았고 리뷰
@@ -215,7 +215,7 @@ class HookAndDoctorTest(unittest.TestCase):
         r = subprocess.run([sys.executable, DOCTOR, "--root", self.root],
                            capture_output=True, text=True, timeout=90)
         for ln in r.stdout.splitlines():
-            if "남의 눈" in ln:
+            if "fresh-eyes" in ln:
                 return ln
         return ""
 

@@ -330,5 +330,54 @@ class LinkPreviewTest(unittest.TestCase):
         self.assertEqual(og, tw, "og와 twitter가 서로 다른 그림을 가리킨다")
 
 
+class AgentIsCalledFreshEyesTest(unittest.TestCase):
+    """에이전트를 사용자에게 부르는 이름은 `fresh-eyes` 하나여야 한다.
+
+    별명("남의 눈")이 섞이면 사용자가 세션 기록에서 무엇이 돌았는지 못 찾는다.
+    이건 취향이 아니라 사용자가 직접 요청한 것이고(2026-08-17), 프롬프트에
+    적기만 한 규칙은 조용히 되돌아가므로 여기서 기계로 붙잡는다.
+
+    두 자리만 예외다 — ①사용자가 여전히 "남의 눈으로 봐줘"라고 부를 수 있어야
+    하므로 **트리거 문구**는 남긴다 ②금지어 자체를 인용하는 규칙 문장.
+    둘 다 아래 마커로 식별한다.
+    """
+    BANNED = "남의 눈"
+    # 이 문자열이 같은 줄에 있으면 의도된 예외다.
+    ALLOWED_ON_LINE = ("남의 눈으로 봐줘",   # 트리거 문구 (호출 경로 보존)
+                       "바꿔 부르지 마라")   # 금지어를 인용하는 규칙 문장
+    # 사용자 눈에 닿는 글이 나오는 곳. CHANGELOG는 과거 기록이라 뺀다
+    # (랜딩 타임라인은 최신 3개만 렌더링하므로 옛 이름이 화면에 안 나온다).
+    FILES = ("agents/fresh-eyes.md",
+             "skills/write-gate/SKILL.md",
+             "scripts/doctor.py",
+             "docs/index.html")
+
+    def test_no_nickname_in_user_facing_text(self):
+        offenders = []
+        for rel in self.FILES:
+            path = os.path.join(REPO, *rel.split("/"))
+            for n, line in enumerate(_read(path).splitlines(), 1):
+                if self.BANNED not in line:
+                    continue
+                if any(ok in line for ok in self.ALLOWED_ON_LINE):
+                    continue
+                offenders.append(f"{rel}:{n}  {line.strip()[:70]}")
+        self.assertEqual(offenders, [],
+                         "'남의 눈' 대신 'fresh-eyes'로 부를 것:\n" +
+                         "\n".join(offenders))
+
+    def test_verdict_line_uses_the_real_name(self):
+        """판정 첫 줄은 사용자가 가장 많이 보는 문장이다."""
+        agent = _read(os.path.join(REPO, "agents", "fresh-eyes.md"))
+        self.assertIn("fresh-eyes 판정: 통과", agent,
+                      "판정 형식이 바뀌었다 — 첫 줄이 fresh-eyes로 시작해야 한다")
+
+    def test_trigger_phrase_still_works(self):
+        """이름을 바꾸느라 호출 경로를 잃으면 안 된다."""
+        agent = _read(os.path.join(REPO, "agents", "fresh-eyes.md"))
+        self.assertIn("남의 눈으로 봐줘", agent,
+                      "옛 이름으로 부르던 사용자가 에이전트를 못 부르게 된다")
+
+
 if __name__ == "__main__":
     unittest.main()

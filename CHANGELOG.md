@@ -5,6 +5,17 @@
 
 ## [Unreleased]
 
+## [0.46.3] - 2026-08-17
+<!-- show:ko **설계 리뷰 에이전트를 이제 항상 `fresh-eyes`라고 부릅니다.** 같은 하나를 어떤 자리에선 "남의 눈", 어떤 자리에선 `fresh-eyes`라고 불렀어요. 별명이 둘이면 나중에 세션 기록에서 "그때 뭐가 돌았지?"를 찾을 수가 없습니다. 판정 첫 줄·`doctor` 결과·리뷰 보고를 전부 실제 이름으로 통일했어요. **"남의 눈으로 봐줘"라고 부르는 건 그대로 됩니다** — 부르는 말은 남기고 답하는 말만 바꿨어요. -->
+<!-- show:en **The design-review agent is now always called `fresh-eyes`.** One agent had two names: a Korean nickname in some places, the real name in others, so you could not search a session log for what actually ran. The verdict line, `doctor` output, and review reports all use the real name now. Calling it by the old nickname still works — only the answer changed, not the way you ask. -->
+
+### Changed
+- **에이전트 이름을 `fresh-eyes` 하나로 통일** (2026-08-17, 사용자 요청) — 판정 첫 줄(`fresh-eyes 판정: 통과`), `👋` catch 줄, `doctor` 항목 이름, `write-gate`의 리뷰 절 제목까지. 이름이 둘이면 사용자가 세션 기록에서 무엇이 돌았는지 grep으로 못 찾는다.
+  - **트리거 문구는 남겼다** — "남의 눈으로 봐줘"로 부르던 사용자가 에이전트를 못 부르게 되면 이름 통일이 손해가 된다. 부르는 말과 답하는 말을 분리했다.
+  - CHANGELOG의 옛 기록은 그대로 뒀다(당시 실제로 그렇게 불렀다). 랜딩 타임라인은 최신 3개만 렌더링하므로 화면에는 안 나온다.
+- **되돌아가지 않게 검사 3종** (2026-08-17, `test_integrity.py`) — 사용자 눈에 닿는 네 파일에 별명이 남았는지 · 판정 첫 줄 형식 · 트리거 문구 생존. 프롬프트에 "이렇게 불러라"라고 적기만 한 규칙은 조용히 되돌아간다.
+  - 검사를 붙이자마자 **자기 자신에게 걸렸다.** 금지어를 인용하는 규칙 문장이 두 줄로 접혀서, 예외 표시("바꿔 부르지 마라")가 다음 줄로 넘어가 있었다. 문장을 한 줄로 모았다.
+
 ## [0.46.2] - 2026-08-09
 <!-- show:ko **안내 상자 문장 사이를 띄웠어요.** 앞 버전에서 접힌 줄과 새 문장은 구분되게 했지만, 줄이 다닥다닥 붙어 여전히 글자 벽으로 읽혔습니다. 문장마다 조금씩 띄우고, 소제목 앞은 더 띄웠어요. -->
 <!-- show:en **Sentences inside the callout boxes now breathe.** The previous release made wrapped lines distinguishable from new ones, but the lines were still packed tight and read as a wall. Each sentence gets a little space, and sub-headings get more above them. -->

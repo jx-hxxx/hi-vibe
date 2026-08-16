@@ -249,7 +249,7 @@ FRESH_EYES_MIN_REVIEWS = 3   # 이만큼 리뷰가 돌기 전엔 0회여도 판�
 
 
 def check_fresh_eyes(root):
-    """리뷰는 도는데 **남의 눈(fresh-eyes)만 계속 빠지고 있지 않은지.**
+    """리뷰는 도는데 **fresh-eyes만 계속 빠지고 있지 않은지.**
 
     설계상 리뷰는 두 겹이다 — 체크리스트가 "빠뜨림"을, fresh-eyes가 "판단
     착오"를 본다. 그런데 세션 설정이 에이전트 호출을 막으면 **뒤쪽 절반이
@@ -271,21 +271,21 @@ def check_fresh_eyes(root):
     fe = int(data.get("fresh_eyes") or 0)
     marks = int(data.get("marks") or 0)
     if marks == 0 and fe == 0:
-        add("OK", "남의 눈(fresh-eyes)", "아직 리뷰 기록이 없어요 (판단 보류)")
+        add("OK", "fresh-eyes", "아직 리뷰 기록이 없어요 (판단 보류)")
         return
     detail = f"리뷰 {marks}회 중 {fe}회 실행"
     if fe == 0 and marks >= FRESH_EYES_MIN_REVIEWS:
-        add("WARN", "남의 눈(fresh-eyes)",
+        add("WARN", "fresh-eyes",
             f"{detail} — **리뷰의 절반이 계속 빠지고 있습니다.** 체크리스트만 "
             "돌고 설계 검토(과잉 설계·더 단순한 길·숨은 결합)는 한 번도 안 "
             "돌았어요. 대개는 막혀서가 아니라 **AI가 안 부른 것**입니다 — "
             "`요청이 없으면 서브에이전트를 부르지 마라` 같은 세션 지시를 "
             "보고 건너뛰는 경우가 흔한데, init으로 켠 것 자체가 요청이라 "
-            "부르는 게 맞습니다. 다음 리뷰 때 `남의 눈도 돌려줘`라고 한 번 "
+            "부르는 게 맞습니다. 다음 리뷰 때 `fresh-eyes도 돌려줘`라고 한 번 "
             "말해 보세요. 정말 호출이 실패하는 환경이면 그건 그대로 괜찮지만, "
             "모르고 반쪽만 쓰는 것과는 다릅니다.")
     else:
-        add("OK", "남의 눈(fresh-eyes)", detail)
+        add("OK", "fresh-eyes", detail)
 
 
 STALE_AFTER = 6 * 3600   # 훅 흔적이 이만큼 낡으면 "이 세션엔 안 돌았다"로 본다
