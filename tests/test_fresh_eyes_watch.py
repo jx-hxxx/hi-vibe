@@ -310,6 +310,35 @@ class SkipDetectionTest(unittest.TestCase):
         write_lines(self.t, [rec(bash(MARK2_CMD))], mode="a")
         self.assertTrue(self.tick(), "두 번째 리뷰가 첫 실행분을 당겨썼다")
 
+    def age_fresh_eyes(self, seconds):
+        """마지막 fresh-eyes 실행을 과거로 밀어 둔다."""
+        path = os.path.join(self.root, ".hi-vibe", "state", "agents.json")
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+        data["fresh_eyes_last"] = data["fresh_eyes_last"] - seconds
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(data, fh)
+
+    def test_an_unused_run_goes_stale(self):
+        """`agents.json`은 **저장소** 단위다 — 세션이 아니다.
+
+        리뷰해 놓고 mark 없이 창을 닫으면 그 흔적이 파일에 남는다. 유효기간이
+        없으면 며칠 뒤 다른 세션의 첫 mark가 그걸 당겨써서 한 번 공짜로
+        통과한다."""
+        write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"))])
+        self.assertFalse(self.tick())          # 소환만, 표시 없음
+        self.age_fresh_eyes(_common.PENDING_TTL + 60)
+        write_lines(self.t, [rec(bash(MARK2_CMD))], mode="a")
+        self.assertTrue(self.tick(), "며칠 묵은 실행분을 당겨썼다")
+
+    def test_a_recent_run_still_counts(self):
+        """유효기간을 짧게 잡아 헛막으면 제대로 리뷰한 사람을 붙잡는다."""
+        write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"))])
+        self.tick()
+        self.age_fresh_eyes(_common.PENDING_TTL - 600)
+        write_lines(self.t, [rec(bash(MARK2_CMD))], mode="a")
+        self.assertFalse(self.tick(), "아직 유효한 실행분을 버렸다")
+
     def test_no_marker_no_judgment(self):
         """opt-in — `.hi-vibe/`가 없는 프로젝트에서는 막지 않는다."""
         with tempfile.TemporaryDirectory(prefix="vibe-fe-off-") as other:

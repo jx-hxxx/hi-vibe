@@ -5,6 +5,16 @@
 
 ## [Unreleased]
 
+## [0.49.1] - 2026-08-17
+<!-- show:ko **어제 만든 것에서 새는 데 두 곳을 막았습니다.** 하나: 설계 리뷰를 돌려놓고 "리뷰 끝" 표시를 안 한 채 창을 닫으면, 그 흔적이 파일에 남아 **며칠 뒤 다른 작업이 그걸 당겨써서 한 번 공짜로 통과**했어요. 기록이 세션이 아니라 프로젝트 단위로 남기 때문입니다. 이제 6시간 지난 흔적은 안 씁니다. 둘: `doctor`가 아직 "AI가 안 부른 것일 겁니다, 한번 말해 보세요"라고 조언하고 있었는데, 바로 앞 버전에서 훅이 강제하기 시작하면서 그 진단이 뒤집혔어요. 이제 원인을 둘로 갈라 알려줍니다 — 리뷰가 전부 한 파일짜리였거나(정상일 수 있어요), 서브에이전트 호출이 진짜로 실패하고 있거나. -->
+<!-- show:en **Two leaks in yesterday's work, closed.** First: if the design review ran but the "review done" mark never followed and the window was closed, that trace stayed in the file, and days later an unrelated task could spend it for one free pass — the record is per project, not per session. Traces older than six hours are now ignored. Second: `doctor` was still advising "the AI probably just didn't call it, try asking", but the previous release made the hook enforce it, which flips the diagnosis. It now splits the cause in two: either every review was single-file (which can be fine), or subagent calls are genuinely failing. -->
+
+### Fixed
+- **안 쓰인 fresh-eyes 실행분이 영구히 남아 다른 세션이 당겨썼다** (2026-08-17, `_agent_watch.py`) — `agents.json`은 **세션이 아니라 저장소 단위**다. 리뷰만 하고 `mark` 없이 세션이 끝나면 `fresh_eyes_pending=1`이 그대로 남아, 며칠 뒤 다른 세션의 첫 `mark`가 그걸 소진하며 통과했다. `PENDING_TTL`(6시간)을 넘긴 실행분은 버린다.
+  - 6시간인 이유: 리뷰 한 번은 보통 몇 분이라 넉넉하고, **짧게 잡아 헛막는 쪽이 더 비싸다**(제대로 리뷰한 사람을 붙잡게 된다). `doctor.STALE_AFTER`와 값은 같지만 **다른 판단이므로 같이 움직이지 않는다** — 한 상수를 공유하면 한쪽을 튜닝할 때 다른 쪽이 조용히 딸려간다.
+- **`doctor`의 fresh-eyes 진단이 낡았다** (2026-08-17, `doctor.py`) — v0.48.0에서 훅이 강제하기 시작하면서 "대개 AI가 안 부른 것"이라는 진단이 뒤집혔다. 이제 0회면 ①리뷰가 전부 한 파일짜리(훅이 안 막는 구간이라 정상일 수 있다) ②Agent 호출이 실제로 실패, 둘로 갈라 안내한다.
+  - **이건 바로 어제 1번 항목으로 올린 그 결함이다** — 훅을 고쳤는데 그 훅을 설명하는 파일이 안 따라갔다. 사람이 훑어서 잡은 게 아니라, 고친 자리 주변을 다시 훑다가 나왔다.
+
 ## [0.49.0] - 2026-08-17
 <!-- show:ko **설계 리뷰가 이제 읽고 짐작하는 대신 직접 돌려봅니다.** 두 프로젝트 기록을 보니 맞은 지적과 틀린 지적이 딱 이 선에서 갈렸어요 — 실제로 돌려본 건 다 맞았고, diff만 읽고 추론한 건 틀렸습니다. grep으로 문자열이 있는 걸 본 것은 "그래서 실제로 그렇게 동작한다"의 근거가 아닌데 그걸 근거로 삼고 있었어요. 이제 확인할 수 있으면 확인합니다. 대신 **읽기만 하는 명령으로만** — 고치거나 설치하거나 빌드·배포하거나 서버를 띄우는 건 금지입니다. 리뷰가 환경을 바꾸면 그건 리뷰가 아니니까요. 그리고 돌려봐야 아는데 여기서 못 하는 것(브라우저 화면·실제 장 시간)은 버리지 않고 "**확인 필요**"로 따로 빼서, 뭘 해보면 갈리는지까지 알려줍니다. 또 하나: **임시 폴더에 던져 쓰는 일회용 스크립트에는 이제 에러 삼킴 잔소리를 안 합니다.** 배포도 안 되고 내일이면 지울 파일까지 짚으면 정작 진짜 코드의 삼킴이 같이 흘러가거든요. 비밀키는 임시 폴더에서도 그대로 잡습니다. -->
 <!-- show:en **The design review now runs things instead of guessing.** Across two projects the correct findings and the wrong ones split on exactly this line: what was actually executed was right, what was inferred from reading a diff was wrong. Seeing a string in a grep is not evidence that the code behaves that way, yet it was being used as evidence. Now it checks what it can check — read-only: no edits, no installs, no builds or deploys, no servers. A review that changes your environment is not a review. What genuinely needs running but cannot be run there is no longer dropped; it comes back as "needs checking" along with the experiment that would settle it. Separately: throwaway scripts in system temp folders no longer trigger the error-swallowing warning. Nagging about a file that never ships and gets deleted tomorrow is what lets real swallowed errors slide by. Secrets are still caught there. -->

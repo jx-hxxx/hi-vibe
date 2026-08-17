@@ -15,6 +15,11 @@ from _base import file_lock
 FRESH_EYES_TYPE = "hi-vibe:fresh-eyes"
 AGENTS_FILE = "agents.json"
 AGENT_SESSIONS_KEEP = 20
+# fresh-eyes를 돌리고도 mark가 이만큼 안 오면 그 실행은 소진된 것으로 본다.
+# 리뷰 한 번은 보통 몇 분이라 6시간은 넉넉하다 — 짧게 잡아 헛막는 쪽이 더
+# 비싸다(제대로 리뷰한 사람을 붙잡게 된다).
+# `doctor.STALE_AFTER`와 값이 같지만 **다른 판단이다.** 같이 움직이지 않는다.
+PENDING_TTL = 6 * 3600
 # `review_scope.py mark` 실제 호출만 — 커밋 메시지에 섞인 "mark"는 안 센다.
 _MARK_RE = re.compile(r"""review_scope(?:\.py)?["']?\s+mark\b""")
 
@@ -147,7 +152,12 @@ def note_agent_activity(cwd, session_id, fresh_eyes, marks, offset=0):
             data["fresh_eyes"] = int(data.get("fresh_eyes") or 0) + max(0, fresh_eyes)
             data["marks"] = int(data.get("marks") or 0) + max(0, marks)
             # 표시(mark) 직전에 남의 눈이 돌았나. mark가 그 사실을 소진한다.
-            pending = 1 if (int(data.get("fresh_eyes_pending") or 0) or fresh_eyes) else 0
+            # 안 쓰인 채 낡은 것은 버린다 — `agents.json`은 세션이 아니라
+            # **저장소** 단위라, 리뷰해 놓고 mark 없이 창을 닫으면 그 흔적이
+            # 영영 남아 며칠 뒤 다른 세션의 첫 mark가 그걸 당겨쓴다.
+            carried = (int(data.get("fresh_eyes_pending") or 0)
+                       and now - int(data.get("fresh_eyes_last") or 0) <= PENDING_TTL)
+            pending = 1 if (carried or fresh_eyes) else 0
             skipped = bool(marks) and not pending
             data["fresh_eyes_pending"] = 0 if marks else pending
             if fresh_eyes:
