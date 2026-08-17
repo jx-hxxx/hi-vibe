@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.47.0] - 2026-08-17
+<!-- show:ko **설계 리뷰가 제일 잘 잡는 것을 이제 1번으로 봅니다.** 서로 다른 두 프로젝트에서 하루씩 써보고 기록을 대조했더니, 맞힌 발견은 거의 전부 "**고치다 만 것**"이었어요 — 파일 하나를 고쳤는데 그걸 가리키는 다른 파일이 옛날 걸 그대로 가리키고 있거나(`?v=` 캐시 문자열), `import`가 빠졌거나, 짝인 파일이 반쪽만 따라간 것. 그런데 **정작 지침에는 그걸 보라는 말이 없었어요.** 잘 잡는 걸 우연히 잡고 있었던 겁니다. 그래서 1번으로 올렸습니다. 반대로 값이 낮던 항목 둘은 뺐어요: `숨은 결합`은 체크리스트가 **같은 문장으로** 이미 보고 있었고(같은 지적을 두 번 읽게 됨), `미래의 발목`은 두 세션에서 한 건도 안 나왔습니다. 그리고 항목마다 "**안 고치면 무슨 일이 나는지**"를 한 줄로 못 쓰면 버리게 했어요 — "고쳐서 나쁠 건 없다" 같은 걸 걸러내는 문입니다. -->
+<!-- show:en **The design review now leads with what it actually catches.** After a day of real use on two different projects, almost every correct finding was the same shape: a change that stopped halfway. A file was fixed while the file pointing at it still referenced the old version (`?v=` cache strings), an `import` was missing, a mirrored file only half followed. The instructions never asked for any of that — it was being caught by accident. It is now item one. Two low-value items came out: `hidden coupling` was already covered by the checklist in the same words (you were reading the same note twice), and `future friction` produced nothing across both sessions. Every finding must now state in one line what breaks if you skip it; anything that cannot is dropped. -->
+
+### Changed
+- **fresh-eyes 판단 항목 5개 → 4개, 1번은 "끝까지 갔나"** (2026-08-17) — 실사용 기록 대조에 근거한 재배치다. 근거와 보류한 것은 `.claude/CLAUDE.md` 결정 기록에 남겼다.
+  - **신설(1번)**: 바뀐 파일마다 그 파일을 **가리키거나 베낀 다른 파일**이 같이 바뀌었는지 확인 — 캐시 버스팅 `?v=`, `.js`/`.mjs` 미러 짝, 테스트가 복제한 프로덕션 문자열·선택자, 값과 반대로 적힌 주석. 적중한 발견이 거의 전부 이 모양이었는데 **지침에는 없던 항목이다.**
+  - **삭제**: `숨은 결합` — `write-gate` 체크리스트 7번과 **문장이 같았다.** 두 겹으로 두면 사용자가 같은 지적을 두 번 읽는다. / `미래의 발목` — 두 세션 0건. "다음 변경을 어렵게 만드나"는 반박이 불가능해 채워 넣기 좋은 자리였다.
+  - **강등(2~4번)**: 과잉 설계·스코프 크립·더 단순한 길. **지우지는 않았다** — 두 기록 다 *버그 수정* 세션이라 기능을 짓는 상황이 표본에 없다. 없는 것과 안 나올 상황이었던 것은 다르다.
+- **재고 항목마다 "안 고치면 무슨 일이 나는가" 필수** (2026-08-17) — 한 줄로 구체적으로 못 쓰면 항목을 버린다. 카테고리를 골라 죽이는 것보다 낫다: 값 없는 항목이 **어느 항목에서 나오든 같은 문에서 걸린다.** 자기점검 1번의 `file:line` 요구와 합쳐 항목 수는 그대로 뒀다.
+- **같은 주장을 하던 8곳 동기화** (2026-08-17) — 에이전트 설명·`write-gate` 리뷰 절·`doctor` 경고 문구·랜딩 한영 6곳이 전부 "과잉설계·숨은 결합을 본다"고 적고 있었다. 문구가 아니라 **주장으로** grep해서 찾았다(CLAUDE.md 함정 항목대로).
+- **되돌아가지 않게 검사 3종** (2026-08-17, `test_integrity.py`) — 숨은 결합이 fresh-eyes 판단 항목으로 돌아왔는지 · "안 고치면" 요구가 남아 있는지 · 1번이 "끝까지 갔나"인지. **항목 개수는 세지 않는다** — 그건 문서 모양을 붙잡는 것이라 나중에 줄이지도 못하게 된다.
+
 ## [0.46.3] - 2026-08-17
 <!-- show:ko **설계 리뷰 에이전트를 이제 항상 `fresh-eyes`라고 부릅니다.** 같은 하나를 어떤 자리에선 "남의 눈", 어떤 자리에선 `fresh-eyes`라고 불렀어요. 별명이 둘이면 나중에 세션 기록에서 "그때 뭐가 돌았지?"를 찾을 수가 없습니다. 판정 첫 줄·`doctor` 결과·리뷰 보고를 전부 실제 이름으로 통일했어요. **"남의 눈으로 봐줘"라고 부르는 건 그대로 됩니다** — 부르는 말은 남기고 답하는 말만 바꿨어요. -->
 <!-- show:en **The design-review agent is now always called `fresh-eyes`.** One agent had two names: a Korean nickname in some places, the real name in others, so you could not search a session log for what actually ran. The verdict line, `doctor` output, and review reports all use the real name now. Calling it by the old nickname still works — only the answer changed, not the way you ask. -->

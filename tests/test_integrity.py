@@ -379,5 +379,44 @@ class AgentIsCalledFreshEyesTest(unittest.TestCase):
                       "옛 이름으로 부르던 사용자가 에이전트를 못 부르게 된다")
 
 
+class ReviewLayersDoNotOverlapTest(unittest.TestCase):
+    """리뷰 두 겹이 **같은 것을 두 번 보지 않는지.**
+
+    체크리스트(write-gate)는 이 파일 안의 빠뜨림을, fresh-eyes는 파일 사이
+    어긋남과 판단 착오를 본다. 2026-08-17에 `숨은 결합`이 양쪽에 **같은
+    문장으로** 들어 있는 걸 발견해 fresh-eyes 쪽을 뺐다. 항목 개수를 세지
+    않는 이유는 문서 모양을 붙잡지 않기 위해서다 — 겹침만 본다.
+    """
+    AGENT = os.path.join("agents", "fresh-eyes.md")
+    GATE = os.path.join("skills", "write-gate", "SKILL.md")
+    NOT_MY_JOB = "## 판단하지 않을 것"
+
+    def _agent(self):
+        return _read(os.path.join(REPO, self.AGENT))
+
+    def test_hidden_coupling_belongs_to_the_checklist_alone(self):
+        gate = _read(os.path.join(REPO, self.GATE))
+        self.assertIn("숨은 결합을 새로 만들지 않았는가", gate,
+                      "체크리스트에서 숨은 결합이 사라졌다 — 그럼 아무도 안 본다")
+        text = self._agent()
+        split = text.find(self.NOT_MY_JOB)
+        self.assertGreater(split, 0, f"{self.AGENT}에 '판단하지 않을 것' 절이 없다")
+        self.assertNotIn("숨은 결합", text[:split],
+                         "숨은 결합이 fresh-eyes의 판단 항목으로 돌아왔다 — "
+                         "체크리스트 7번과 겹쳐 사용자가 같은 지적을 두 번 읽는다")
+
+    def test_findings_must_state_concrete_damage(self):
+        """값 낮은 항목을 거르는 문이다. 이게 빠지면 '고쳐서 나쁠 건 없다'가 돌아온다."""
+        self.assertIn("안 고치면", self._agent(),
+                      "재고 항목에서 '안 고치면 무슨 일이 나는가' 요구가 사라졌다")
+
+    def test_cross_file_drift_is_the_first_item(self):
+        """제일 잘 잡는 것을 1번에 둔 것이 이번 재배치의 핵심이다."""
+        text = self._agent()
+        head = text[text.find("## 판단할 것"):]
+        self.assertRegex(head[:400], r"1\.\s*\*\*끝까지 갔나",
+                         "'끝까지 갔나'가 1번이 아니다")
+
+
 if __name__ == "__main__":
     unittest.main()
