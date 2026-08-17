@@ -417,6 +417,29 @@ class ReviewLayersDoNotOverlapTest(unittest.TestCase):
         self.assertRegex(head[:400], r"1\.\s*\*\*끝까지 갔나",
                          "'끝까지 갔나'가 1번이 아니다")
 
+    def test_running_things_stays_read_only(self):
+        """리뷰어에게 실행을 허락했으면 **경계도 같이 적혀 있어야 한다.**
+
+        `tools:`에 Bash가 있으므로 "돌려봐라"는 진짜로 돌린다는 뜻이다.
+        빌드·배포·설치·서버를 돌리면 리뷰가 환경을 바꾼다."""
+        text = self._agent()
+        self.assertIn("금지", text, "실행 허용만 있고 금지 목록이 없다")
+        for banned in ("설치", "배포", "서버"):
+            self.assertIn(banned, text, f"'{banned}'가 금지 목록에 없다")
+
+    def test_needs_checking_never_claims_a_catch(self):
+        """`👋` 줄은 **잡은 것**에만 붙는다. 확인 필요는 아직 잡은 게 아니다.
+
+        이 저장소는 '한 파일 안에서 두 문단이 반대를 시키는' 실수를 세 번
+        했다(CLAUDE.md 함정). 새 출력 갈래를 만들 때 catch 규칙도 같이
+        손봤는지를 여기서 붙잡는다."""
+        text = self._agent()
+        if "확인 필요" not in text:
+            self.skipTest("확인 필요 갈래가 없는 버전")
+        catch = text[text.find("## hi-vibe catch"):]
+        self.assertIn("확인 필요", catch,
+                      "확인 필요만 있을 때 👋를 붙일지가 catch 절에 안 적혀 있다")
+
 
 if __name__ == "__main__":
     unittest.main()

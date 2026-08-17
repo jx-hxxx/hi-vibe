@@ -7,6 +7,12 @@
    테스트용 가짜 키는 그 줄에 `hi-vibe: allow-secret` 주석.
    (.env* 파일은 키의 올바른 위치이므로 검사하지 않는다.)
 
+**둘의 적용 범위가 다르다.** 시스템 임시 폴더(스크래치패드 등)에 쓴 파일은
+①에서 뺀다 — 배포도 안 되고 내일이면 지울 일회용 계측 스크립트의 빈 except
+까지 짚으면, 정작 프로덕션 코드의 삼킴이 같은 무게로 흘러간다. 그러나 ②는
+거기서도 검사한다: **임시 폴더에 쓴 키도 진짜 키다.** 실수로 커밋될 수 있고,
+비밀키는 애초에 그물이 좁으면 안 되는 종류다.
+
 경고만 한다: 도구 실행을 막지도, 호스트를 깨지도 않는다 (항상 exit 0).
 Edit/MultiEdit은 old_string과 비교해 '새로 늘어난' 것만 경고한다 —
 기존 코드를 다시 만질 때마다 잔소리하지 않기 위해서다. 비교는 개수가
@@ -16,6 +22,7 @@ Edit/MultiEdit은 old_string과 비교해 '새로 늘어난' 것만 경고한다
 import os
 import re
 import sys
+import tempfile
 from collections import Counter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -63,6 +70,40 @@ SECRET_PATTERNS = [
 SECRET_FALSE_ALARM_RE = re.compile(
     r"(?i)your|example|dummy|placeholder|changeme|xxxx|<[A-Za-z0-9_.\-]{1,40}>"
     r"|\$\{|process\.env|os\.environ|getenv")
+
+
+def _under(path, root):
+    """`path`가 `root` 안인가. 심볼릭 링크를 풀어 비교한다 —
+    macOS에서 `/tmp`는 `/private/tmp`로 풀린다."""
+    r = os.path.realpath(root)
+    return path == r or path.startswith(r + os.sep)
+
+
+def is_throwaway(path, cwd=""):
+    """시스템 임시 폴더 아래이면서 **프로젝트 밖**인가 — 배포되지 않고
+    곧 지워질 자리(세션 스크래치패드의 일회용 계측 스크립트 같은 것).
+
+    이름으로 짐작하지 않는다 — `tmp/`라는 이름의 진짜 소스 폴더가 있을 수
+    있고, 그걸 통째로 놓치면 그물이 조용히 좁아진다.
+
+    **`cwd` 안이면 임시 루트 아래라도 검사한다.** 프로젝트 자체가 임시
+    폴더에 있을 수 있고(검사용 임시 저장소가 그렇다), 그 조건을 빠뜨렸더니
+    그런 프로젝트의 삼킴을 통째로 놓쳤다.
+
+    **삼킴 감지에만 쓴다.** 비밀키는 여기서도 잡아야 한다."""
+    if not path:
+        return False
+    try:
+        real = os.path.realpath(path)
+        if cwd and _under(real, cwd):
+            return False        # 프로젝트 안 — 어디에 있든 검사한다
+        for root in (tempfile.gettempdir(), "/tmp", "/private/tmp",
+                     "/var/folders", "/private/var/folders"):
+            if _under(real, root):
+                return True
+    except (OSError, ValueError):
+        return False    # 판단 못 하면 검사하는 쪽으로 (그물을 좁히지 않는다)
+    return False
 
 
 def _match_region(text, m):
@@ -162,7 +203,7 @@ def main(payload):
 
     messages = []
 
-    if fp.endswith(CODE_EXT):
+    if fp.endswith(CODE_EXT) and not is_throwaway(fp, cwd):
         new_hits, old_hits = [], []
         for new, old in pairs:
             new_hits += find_swallows(new, fp)

@@ -810,6 +810,52 @@ class PostWriteGuardTest(TempProject):
         self.assertEqual(buf.getvalue(), "")
 
 
+class ThrowawayPathTest(TempProject):
+    """임시 폴더의 일회용 스크립트까지 삼킴 경고를 내면 신호가 소음에 묻힌다.
+
+    다만 **비밀키는 거기서도 잡는다** — 임시 폴더에 쓴 키도 진짜 키이고,
+    실수로 커밋될 수 있다. 두 검사의 범위가 다른 것이 이 절의 핵심이다."""
+    SWALLOW = "try:\n    probe()\nexcept:\n    pass\n"
+    FAKE_KEY = 'API_KEY = "' + "sk-ant-" + "a1B2" * 8 + '"\n'
+
+    def tmp_file(self, name="probe.py"):
+        return os.path.join(tempfile.gettempdir(), "vibe-scratch", name)
+
+    def test_swallow_in_a_temp_script_is_not_flagged(self):
+        out = self.run_guard("Write", {"file_path": self.tmp_file(),
+                                       "content": self.SWALLOW})
+        self.assertEqual(out, "", f"임시 스크립트에 잔소리했다: {out}")
+
+    def test_same_swallow_in_the_project_is_still_flagged(self):
+        """범위를 좁혔다고 원래 잡던 걸 놓치면 안 된다."""
+        out = self.run_guard("Write", {
+            "file_path": os.path.join(self.root, "svc.py"),
+            "content": self.SWALLOW})
+        self.assertIn("에러 삼킴", out)
+
+    def test_secrets_are_still_caught_in_temp(self):
+        """**여기가 이 변경에서 제일 틀리기 쉬운 자리다.**"""
+        out = self.run_guard("Write", {"file_path": self.tmp_file("cfg.py"),
+                                       "content": self.FAKE_KEY})
+        self.assertIn("비밀키", out, "임시 폴더라고 키를 놓쳤다")
+
+    def test_a_folder_merely_named_tmp_is_not_temp(self):
+        """이름으로 짐작하면 진짜 소스 폴더(`~/proj/tmp/`)를 통째로 놓친다."""
+        self.assertFalse(post_write_guard.is_throwaway(
+            os.path.join(os.path.expanduser("~"), "proj", "tmp", "helper.py"),
+            self.root))
+
+    def test_a_project_living_in_temp_is_still_checked(self):
+        """**이 조건을 빠뜨려 실제로 놓쳤다.** 프로젝트 자체가 임시 폴더에
+        있을 수 있다 — 검사용 임시 저장소가 정확히 그렇다."""
+        self.assertFalse(post_write_guard.is_throwaway(
+            os.path.join(self.root, "svc.py"), self.root))
+
+    def test_unresolvable_path_is_checked_not_skipped(self):
+        """판단 못 하면 검사하는 쪽으로 — 그물을 좁히지 않는다."""
+        self.assertFalse(post_write_guard.is_throwaway("", self.root))
+
+
 class SecretGuardTest(TempProject):
     FAKE_ANTHROPIC = "sk-ant-" + "a1B2" * 8          # 32자 본문
     FAKE_AWS = "AKIA" + "ABCDEFGHIJKLMNOP"           # AKIA + 16 대문자

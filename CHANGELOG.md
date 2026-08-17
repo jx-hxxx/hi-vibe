@@ -5,6 +5,22 @@
 
 ## [Unreleased]
 
+## [0.49.0] - 2026-08-17
+<!-- show:ko **설계 리뷰가 이제 읽고 짐작하는 대신 직접 돌려봅니다.** 두 프로젝트 기록을 보니 맞은 지적과 틀린 지적이 딱 이 선에서 갈렸어요 — 실제로 돌려본 건 다 맞았고, diff만 읽고 추론한 건 틀렸습니다. grep으로 문자열이 있는 걸 본 것은 "그래서 실제로 그렇게 동작한다"의 근거가 아닌데 그걸 근거로 삼고 있었어요. 이제 확인할 수 있으면 확인합니다. 대신 **읽기만 하는 명령으로만** — 고치거나 설치하거나 빌드·배포하거나 서버를 띄우는 건 금지입니다. 리뷰가 환경을 바꾸면 그건 리뷰가 아니니까요. 그리고 돌려봐야 아는데 여기서 못 하는 것(브라우저 화면·실제 장 시간)은 버리지 않고 "**확인 필요**"로 따로 빼서, 뭘 해보면 갈리는지까지 알려줍니다. 또 하나: **임시 폴더에 던져 쓰는 일회용 스크립트에는 이제 에러 삼킴 잔소리를 안 합니다.** 배포도 안 되고 내일이면 지울 파일까지 짚으면 정작 진짜 코드의 삼킴이 같이 흘러가거든요. 비밀키는 임시 폴더에서도 그대로 잡습니다. -->
+<!-- show:en **The design review now runs things instead of guessing.** Across two projects the correct findings and the wrong ones split on exactly this line: what was actually executed was right, what was inferred from reading a diff was wrong. Seeing a string in a grep is not evidence that the code behaves that way, yet it was being used as evidence. Now it checks what it can check — read-only: no edits, no installs, no builds or deploys, no servers. A review that changes your environment is not a review. What genuinely needs running but cannot be run there is no longer dropped; it comes back as "needs checking" along with the experiment that would settle it. Separately: throwaway scripts in system temp folders no longer trigger the error-swallowing warning. Nagging about a file that never ships and gets deleted tomorrow is what lets real swallowed errors slide by. Secrets are still caught there. -->
+
+### Changed
+- **fresh-eyes에 "추론하지 말고 확인해라"를 못박았다** (2026-08-17, `agents/fresh-eyes.md`) — 실사용 기록에서 **맞은 지적은 돌려본 것, 틀린 지적은 diff만 읽고 추론한 것**으로 갈렸다. 에이전트는 `Bash`를 원래 갖고 있었다 — 도구가 없어서가 아니라 **지침이 읽기를 기본으로 둬서** 안 돌린 것이다.
+  - **경계를 같이 정했다**: 허용은 `git diff/log/show` · `grep` · 문법 검사(`node --check`·`py_compile`) · import·속성 존재 확인. 금지는 파일 수정 · 설치 · 빌드·배포·마이그레이션 · 서버 · 네트워크. **리뷰가 환경을 건드리면 리뷰가 아니다.**
+  - 자기점검 1번을 "`file:line` 근거가 있나"에서 "**읽어서 안 것인가, 돌려봐서 안 것인가**"까지로 올렸다. 앞의 기준은 grep 한 번으로 충족돼서, 틀린 지적이 근거를 갖춘 채로 통과했다.
+- **출력에 "확인 필요" 갈래를 추가** (2026-08-17) — 돌려봐야 아는데 리뷰 자리에서 못 돌리는 것(브라우저 렌더·실제 장 시간·외부 API)을 버리거나 재고 권장에 섞지 않고 따로 낸다. 각 항목에 "이렇게 돌려보면 갈린다"를 적어 **판단을 계측 지시로 바꿔** 넘긴다.
+  - `👋` catch 줄은 **확인 필요에는 안 붙는다** — 아직 잡은 게 아니라 재보라는 말이다. 이 저장소는 "한 파일 안에서 두 문단이 반대를 시키는" 실수를 세 번 했으므로, 새 갈래를 만들면서 catch 규칙도 같이 손봤는지를 검사로 붙잡는다.
+- **임시 폴더의 일회용 스크립트는 에러 삼킴 감지에서 뺀다** (2026-08-17, `post_write_guard.py`) — 배포되지 않고 곧 지울 계측 스크립트의 빈 `except`까지 짚으면, 정작 프로덕션 코드의 삼킴이 같은 무게로 흘러간다.
+  - **비밀키는 거기서도 잡는다.** 임시 폴더에 쓴 키도 진짜 키이고 실수로 커밋될 수 있다. CLAUDE.md에 "비밀키는 `check`의 저장소 전체 스캔이 **유일한 그물**"이라고 적혀 있는 종류라 그물을 좁히지 않는다.
+  - **이름으로 짐작하지 않는다.** `tmp/`라는 이름의 진짜 소스 폴더가 있을 수 있어, 실제 임시 루트와 대조하고 심볼릭 링크를 푼다(macOS에서 `/tmp` → `/private/tmp`).
+  - **검사를 쓰다가 결함을 잡았다**: 첫 구현은 "임시 폴더 아래면 뺀다"였는데, **프로젝트 자체가 임시 폴더에 있으면 삼킴 감지가 통째로 꺼졌다**(검사용 임시 저장소가 정확히 그 경우다). `cwd` 안이면 임시 루트 아래라도 검사하도록 고쳤다.
+- **검사 8종 추가** → 294개. 실행 허용에 **금지 목록이 같이 적혀 있는지**까지 검사한다 — 리뷰어에게 Bash를 열어준 이상 경계가 문서에서 사라지면 안 된다.
+
 ## [0.48.0] - 2026-08-17
 <!-- show:ko **"리뷰 다 했어요"만으로는 이제 안 넘어갑니다.** 리뷰는 두 겹이에요 — 체크리스트가 빠뜨림을 훑고, 코드를 짠 기억이 없는 딴 클로드가 설계를 봅니다. 그런데 훅이 잠금을 푸는 열쇠는 **"리뷰 끝났다는 표시"** 하나였어요. 그러니까 앞쪽 절반만 돌리고 표시해도 훅이 만족했고, 딴 클로드를 부르라는 건 문서에 적힌 문장 하나뿐이었습니다. 실제로 그 층이 조용히 빠지는 걸 겪었고요. 이제 훅이 **대화 기록을 직접 세서** 딴 클로드가 안 돌았으면 다시 붙잡습니다. AI가 신고해 주기를 기다리지 않아요. 다만 **파일 2개 이상일 때만** 막습니다 — 오타 하나 고칠 때마다 서브에이전트를 부르게 하면 그건 잔소리니까요. 그리고 같은 파일로 두 번은 안 막습니다. -->
 <!-- show:en **"Review done" is no longer enough on its own.** The review has two layers: a checklist for what got skipped, and a fresh Claude with no memory of writing the code for the design. But the only key that unlocked the hook was the "review finished" mark, so running just the first half and marking it satisfied the hook. Calling the fresh Claude was enforced by nothing but a sentence in a document, and that layer really did go missing. The hook now counts the calls in the transcript itself and holds the turn again if the fresh Claude never ran. It only does this when 2 or more files are involved: demanding a subagent for a one-line typo fix is nagging, not safety. It never blocks twice for the same files. -->
