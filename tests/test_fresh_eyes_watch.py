@@ -31,6 +31,9 @@ STOP = os.path.join(REPO, "hooks", "scripts", "stop_nudge.py")
 DOCTOR = os.path.join(REPO, "scripts", "doctor.py")
 MARK_CMD = ('python3 "/plugins/hi-vibe/skills/write-gate/scripts/'
             'review_scope.py" mark backend/live.py --root .')
+# 파일 2개 — 훅이 fresh-eyes를 강제하는 문턱(FRESH_EYES_MIN_FILES)을 넘는다.
+MARK2_CMD = ('python3 "/plugins/hi-vibe/skills/write-gate/scripts/'
+             'review_scope.py" mark backend/live.py web/app.js --root .')
 
 
 def rec(*blocks):
@@ -76,7 +79,7 @@ class CountingTest(unittest.TestCase):
             rec(bash(MARK_CMD)),
             rec(agent("hi-vibe:fresh-eyes"), bash(MARK_CMD)),
         ])
-        fe, mk, _ = self.count()
+        fe, mk, _, _files = self.count()
         self.assertEqual((fe, mk), (2, 2))
 
     def test_other_agents_do_not_count(self):
@@ -104,7 +107,7 @@ class CountingTest(unittest.TestCase):
 
     def test_resumes_from_offset_and_does_not_recount(self):
         write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"))])
-        fe, _mk, off = self.count()
+        fe, _mk, off, _files = self.count()
         self.assertEqual(fe, 1)
         self.assertEqual(self.count(off)[0], 0, "같은 줄을 또 셌다")
         write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"))], mode="a")
@@ -125,7 +128,7 @@ class CountingTest(unittest.TestCase):
         with open(self.t, "w", encoding="utf-8") as f:
             f.write(rec(agent("hi-vibe:fresh-eyes")) + "\n")
             f.write(rec(agent("hi-vibe:fresh-eyes"))[:40])   # 미완성
-        fe, _mk, off = self.count()
+        fe, _mk, off, _files = self.count()
         self.assertEqual(fe, 1)
         with open(self.t, "a", encoding="utf-8") as f:       # 나머지가 마저 쓰임
             f.write(rec(agent("hi-vibe:fresh-eyes"))[40:] + "\n")
@@ -147,7 +150,7 @@ class AccumulationTest(unittest.TestCase):
     def tick(self, sid="sid-1"):
         """Stop 훅 한 번 = 위치 읽기 → 새로 세기 → 누계에 더하기."""
         off = _common.agent_offset(self.root, sid)
-        fe, mk, off2 = _common.review_activity(self.t, off)
+        fe, mk, off2, _files = _common.review_activity(self.t, off)
         _common.note_agent_activity(self.root, sid, fe, mk, off2)
 
     def totals(self):
@@ -247,6 +250,131 @@ class HookAndDoctorTest(unittest.TestCase):
         write_lines(self.t, [rec(bash(MARK_CMD))])
         self.run_stop()
         self.assertIn("✅", self.doctor_line())
+
+
+class MarkedFilesTest(unittest.TestCase):
+    """mark 명령에서 **파일 인자만** 뽑는다 — 몇 개인지가 차단 판단에 쓰인다."""
+
+    def test_reads_every_file_argument(self):
+        self.assertEqual(_common.marked_files(MARK2_CMD),
+                         ["backend/live.py", "web/app.js"])
+
+    def test_options_are_not_files(self):
+        """`--root .`의 `.`을 파일로 세면 한 파일짜리가 두 개가 된다."""
+        self.assertEqual(_common.marked_files(MARK_CMD), ["backend/live.py"])
+
+    def test_not_a_mark_command(self):
+        self.assertEqual(_common.marked_files('git commit -m "mark it"'), [])
+
+
+class SkipDetectionTest(unittest.TestCase):
+    """`fresh-eyes 없이 mark`를 훅이 알아채는지.
+
+    턴이 갈려도 놓치면 안 된다 — 에이전트를 부른 턴과 표시하는 턴이 다를 수
+    있고, 그때마다 헛경보가 나면 아무도 안 믿는다."""
+
+    def setUp(self):
+        self._d = tempfile.TemporaryDirectory(prefix="vibe-fe-skip-")
+        self.root = self._d.name
+        os.makedirs(os.path.join(self.root, ".hi-vibe"))
+        self.t = os.path.join(self.root, "t.jsonl")
+
+    def tearDown(self):
+        self._d.cleanup()
+
+    def tick(self, sid="s"):
+        """Stop 훅 한 번. 반환 = 이번 구간에 fresh-eyes 없이 표시했나."""
+        off = _common.agent_offset(self.root, sid)
+        fe, mk, off2, _files = _common.review_activity(self.t, off)
+        return _common.note_agent_activity(self.root, sid, fe, mk, off2)
+
+    def test_mark_alone_is_flagged(self):
+        write_lines(self.t, [rec(bash(MARK2_CMD))])
+        self.assertTrue(self.tick(), "체크리스트만 돌고 표시했는데 못 잡았다")
+
+    def test_fresh_eyes_in_the_same_turn_clears_it(self):
+        write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"), bash(MARK2_CMD))])
+        self.assertFalse(self.tick())
+
+    def test_fresh_eyes_in_an_earlier_turn_still_counts(self):
+        """**헛경보가 제일 나기 쉬운 자리다.** 소환과 표시는 턴이 갈릴 수 있다."""
+        write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"))])
+        self.assertFalse(self.tick(), "에이전트만 돈 턴을 잡으면 안 된다")
+        write_lines(self.t, [rec(bash(MARK2_CMD))], mode="a")
+        self.assertFalse(self.tick(), "앞 턴에 돈 fresh-eyes를 못 봤다")
+
+    def test_one_run_does_not_cover_two_reviews(self):
+        """표시가 실행분을 **소진**한다 — 안 그러면 한 번 부르고 계속 통과한다."""
+        write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"), bash(MARK2_CMD))])
+        self.assertFalse(self.tick())
+        write_lines(self.t, [rec(bash(MARK2_CMD))], mode="a")
+        self.assertTrue(self.tick(), "두 번째 리뷰가 첫 실행분을 당겨썼다")
+
+    def test_no_marker_no_judgment(self):
+        """opt-in — `.hi-vibe/`가 없는 프로젝트에서는 막지 않는다."""
+        with tempfile.TemporaryDirectory(prefix="vibe-fe-off-") as other:
+            self.assertFalse(_common.note_agent_activity(other, "s", 0, 1, 10))
+
+
+class BlockWithoutFreshEyesTest(unittest.TestCase):
+    """훅을 실제로 돌려 **턴을 막는지** 본다.
+
+    이 검사가 지키는 것: 예전엔 `mark`가 잠금을 푸는 유일한 열쇠라, 체크리스트만
+    돌리고 표시하면 훅이 만족했다. fresh-eyes를 부르라는 건 `.md` 문장 하나뿐
+    이었고, 그 층이 조용히 빠지는 걸 이미 겪었다(2026-08-07)."""
+
+    def setUp(self):
+        self._d = tempfile.TemporaryDirectory(prefix="vibe-fe-block-")
+        self.root = self._d.name
+        os.makedirs(os.path.join(self.root, ".hi-vibe"))
+        subprocess.run(["git", "init", "-q"], cwd=self.root, check=True)
+        self.t = os.path.join(self.root, "t.jsonl")
+
+    def tearDown(self):
+        self._d.cleanup()
+
+    def stop(self, sid="s1"):
+        """Stop 훅 한 번. 반환 = 훅이 낸 JSON(dict)."""
+        r = subprocess.run(
+            [sys.executable, STOP],
+            input=json.dumps({"cwd": self.root, "session_id": sid,
+                              "transcript_path": self.t}),
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(r.returncode, 0, f"훅이 호스트를 깼다: {r.stderr}")
+        try:
+            return json.loads(r.stdout.strip().splitlines()[-1])
+        except (ValueError, IndexError):
+            return {}
+
+    def test_blocks_when_marked_without_fresh_eyes(self):
+        write_lines(self.t, [rec(bash(MARK2_CMD))])
+        out = self.stop()
+        self.assertEqual(out.get("decision"), "block", f"안 막았다: {out}")
+        self.assertIn("fresh-eyes", out.get("reason", ""))
+
+    def test_lets_it_pass_when_fresh_eyes_ran(self):
+        write_lines(self.t, [rec(agent("hi-vibe:fresh-eyes"), bash(MARK2_CMD))])
+        self.assertNotEqual(self.stop().get("decision"), "block",
+                            "제대로 리뷰했는데 막았다")
+
+    def test_single_file_is_left_to_the_skill(self):
+        """**의도된 한계다.** 파일 하나면 '파일 사이 어긋남'이 존재할 수 없어
+        기계로 안 막는다 — write-gate의 판단에 맡긴다."""
+        write_lines(self.t, [rec(bash(MARK_CMD))])
+        self.assertNotEqual(self.stop().get("decision"), "block")
+
+    def test_same_file_marked_twice_is_still_one_file(self):
+        """한 파일짜리 리뷰를 재시도한 것뿐인데 문턱을 넘으면 안 된다."""
+        write_lines(self.t, [rec(bash(MARK_CMD), bash(MARK_CMD))])
+        self.assertNotEqual(self.stop().get("decision"), "block")
+
+    def test_does_not_block_twice_for_the_same_files(self):
+        """사용자가 '넘어가'라고 했는데 계속 붙잡으면 플러그인이 지워진다."""
+        write_lines(self.t, [rec(bash(MARK2_CMD))])
+        self.assertEqual(self.stop().get("decision"), "block")
+        write_lines(self.t, [rec(bash(MARK2_CMD))], mode="a")
+        self.assertNotEqual(self.stop().get("decision"), "block",
+                            "같은 파일로 두 번 막았다")
 
 
 if __name__ == "__main__":

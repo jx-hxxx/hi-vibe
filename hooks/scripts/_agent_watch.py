@@ -19,8 +19,25 @@ AGENT_SESSIONS_KEEP = 20
 _MARK_RE = re.compile(r"""review_scope(?:\.py)?["']?\s+mark\b""")
 
 
+def marked_files(command):
+    """`review_scope … mark a.py b.py --root .`의 **파일 인자만**.
+
+    몇 개 파일을 리뷰했다고 표시하는지는 훅의 차단 판단에 쓰인다 — 파일이
+    둘 이상이면 "파일 사이 어긋남"이 존재할 수 있고, 그게 fresh-eyes 1번
+    항목이다. 옵션(`--root …`)이 나오면 거기서 끊는다."""
+    m = _MARK_RE.search(command or "")
+    if not m:
+        return []
+    files = []
+    for tok in command[m.end():].split():
+        if tok.startswith("-"):
+            break               # 여기부터는 옵션 구간
+        files.append(tok.strip("\"'"))
+    return files
+
+
 def review_activity(path, offset=0):
-    """`offset` 이후에 새로 생긴 (fresh-eyes 실행 수, mark 수, 다음 offset).
+    """`offset` 이후 새로 생긴 (fresh-eyes 수, mark 수, 다음 offset, 표시된 파일들).
 
     왜 AI에게 안 묻나: `write-gate`는 fresh-eyes를 생략하면 한 줄로 밝히라고
     지시하지만, 그건 **AI 주의력에 기대는 층**이라 조용히 빠질 수 있다.
@@ -42,6 +59,7 @@ def review_activity(path, offset=0):
 
     반쯤 쓰인 마지막 줄은 넘기지 않는다 — 마지막 개행까지만 소비한다."""
     fresh_eyes = marks = 0
+    marked = []
     try:
         if offset > os.path.getsize(path):
             offset = 0          # 파일이 갈렸다(같은 경로를 새 세션이 쓴 경우)
@@ -49,10 +67,10 @@ def review_activity(path, offset=0):
             fh.seek(offset)
             chunk = fh.read()
     except OSError:
-        return 0, 0, offset
+        return 0, 0, offset, []
     cut = chunk.rfind(b"\n")
     if cut < 0:
-        return 0, 0, offset     # 아직 완결된 줄이 없다
+        return 0, 0, offset, []  # 아직 완결된 줄이 없다
     new_offset = offset + cut + 1
     for raw in chunk[:cut + 1].splitlines():
         try:
@@ -70,9 +88,11 @@ def review_activity(path, offset=0):
                 if inp.get("subagent_type") == FRESH_EYES_TYPE:
                     fresh_eyes += 1
             elif c.get("name") == "Bash":
-                if _MARK_RE.search(inp.get("command") or ""):
+                cmd = inp.get("command") or ""
+                if _MARK_RE.search(cmd):
                     marks += 1
-    return fresh_eyes, marks, new_offset
+                    marked += marked_files(cmd)
+    return fresh_eyes, marks, new_offset, marked
 
 
 def agent_offset(cwd, session_id):
@@ -92,12 +112,20 @@ def note_agent_activity(cwd, session_id, fresh_eyes, marks, offset=0):
     진다.
 
     `.hi-vibe/`가 없으면 아무것도 만들지 않는다 — 마커를 훅이 만들면
-    opt-in 원칙이 깨진다(heartbeat와 같은 이유)."""
+    opt-in 원칙이 깨진다(heartbeat와 같은 이유).
+
+    **반환: 이번 구간에 "fresh-eyes 없이 mark만" 있었나.** 리뷰를 끝냈다고
+    표시하는 건 AI가 Bash로 하는 자기신고인데, 그 앞에 남의 눈이 실제로
+    돌았는지는 트랜스크립트에만 있다. `fresh_eyes_pending`(0/1)이 "표시하기
+    전에 fresh-eyes가 돌았나"를 들고 있다가 mark에서 소진된다 — 호출이
+    두 턴에 걸쳐 있어도(에이전트 소환 턴 / 표시 턴) 놓치지 않는다.
+    실패는 전부 False다(막지 않는다)."""
     if not os.path.isdir(os.path.join(cwd or "", ".hi-vibe")):
-        return
+        return False
     state_dir = os.path.join(cwd, ".hi-vibe", "state")
     path = os.path.join(state_dir, AGENTS_FILE)
     sid = str(session_id)
+    skipped = False
     try:
         os.makedirs(state_dir, exist_ok=True)
         with file_lock(path):
@@ -114,10 +142,14 @@ def note_agent_activity(cwd, session_id, fresh_eyes, marks, offset=0):
                 seen = {}
             prev = seen.get(sid) if isinstance(seen.get(sid), dict) else {}
             if not fresh_eyes and not marks and offset <= int(prev.get("offset") or 0):
-                return                       # 새로 읽은 것도, 새로 센 것도 없다
+                return False                 # 새로 읽은 것도, 새로 센 것도 없다
             now = int(time.time())
             data["fresh_eyes"] = int(data.get("fresh_eyes") or 0) + max(0, fresh_eyes)
             data["marks"] = int(data.get("marks") or 0) + max(0, marks)
+            # 표시(mark) 직전에 남의 눈이 돌았나. mark가 그 사실을 소진한다.
+            pending = 1 if (int(data.get("fresh_eyes_pending") or 0) or fresh_eyes) else 0
+            skipped = bool(marks) and not pending
+            data["fresh_eyes_pending"] = 0 if marks else pending
             if fresh_eyes:
                 data["fresh_eyes_last"] = now
             seen[sid] = {"offset": int(offset), "t": now}
@@ -132,7 +164,8 @@ def note_agent_activity(cwd, session_id, fresh_eyes, marks, offset=0):
                 json.dump(data, fh, ensure_ascii=False, indent=2, sort_keys=True)
             os.replace(tmp, path)
     except OSError:
-        pass    # 기록 실패는 리뷰 동작과 무관 — 다음 턴에 다시 시도된다
+        return False    # 기록 실패로는 막지 않는다 (fail-open)
+    return skipped
 
 
 def read_agent_activity(cwd):

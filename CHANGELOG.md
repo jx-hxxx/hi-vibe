@@ -5,6 +5,25 @@
 
 ## [Unreleased]
 
+## [0.48.0] - 2026-08-17
+<!-- show:ko **"리뷰 다 했어요"만으로는 이제 안 넘어갑니다.** 리뷰는 두 겹이에요 — 체크리스트가 빠뜨림을 훑고, 코드를 짠 기억이 없는 딴 클로드가 설계를 봅니다. 그런데 훅이 잠금을 푸는 열쇠는 **"리뷰 끝났다는 표시"** 하나였어요. 그러니까 앞쪽 절반만 돌리고 표시해도 훅이 만족했고, 딴 클로드를 부르라는 건 문서에 적힌 문장 하나뿐이었습니다. 실제로 그 층이 조용히 빠지는 걸 겪었고요. 이제 훅이 **대화 기록을 직접 세서** 딴 클로드가 안 돌았으면 다시 붙잡습니다. AI가 신고해 주기를 기다리지 않아요. 다만 **파일 2개 이상일 때만** 막습니다 — 오타 하나 고칠 때마다 서브에이전트를 부르게 하면 그건 잔소리니까요. 그리고 같은 파일로 두 번은 안 막습니다. -->
+<!-- show:en **"Review done" is no longer enough on its own.** The review has two layers: a checklist for what got skipped, and a fresh Claude with no memory of writing the code for the design. But the only key that unlocked the hook was the "review finished" mark, so running just the first half and marking it satisfied the hook. Calling the fresh Claude was enforced by nothing but a sentence in a document, and that layer really did go missing. The hook now counts the calls in the transcript itself and holds the turn again if the fresh Claude never ran. It only does this when 2 or more files are involved: demanding a subagent for a one-line typo fix is nagging, not safety. It never blocks twice for the same files. -->
+
+### Added
+- **Stop 훅이 fresh-eyes 실행을 강제한다** (2026-08-17, `stop_nudge.py` · `_agent_watch.py`) — 차단 사유가 하나에서 둘로 늘었다: ①리뷰 안 받은 변경이 남음 ②**리뷰 완료로 표시했는데 fresh-eyes는 안 돎.**
+  - **훅은 이미 세고 있었는데 안 쓰고 있었다.** `review_activity()`가 트랜스크립트에서 `subagent_type: hi-vibe:fresh-eyes` 호출을 세어 `agents.json`에 쌓고 있었지만, **차단 판단에는 안 들어갔다.** `doctor`도 0회일 때만 경고해서 "리뷰 59회 중 11회" 같은 부분 누락은 조용히 통과했다. 측정은 되는데 안 쓰던 숫자를 판단에 넣었다.
+  - **자기신고가 아니다.** `mark`는 AI가 Bash로 부르는 자기신고지만, fresh-eyes 호출 여부는 대화 기록에 남는 사실이다. 훅만 그 기록을 볼 수 있다.
+  - **턴이 갈려도 안 헛짚는다.** 에이전트를 부른 턴과 표시하는 턴이 다를 수 있어서, `fresh_eyes_pending`(0/1)이 "표시 전에 돌았나"를 들고 있다가 mark에서 **소진된다.** 한 번 부르고 계속 통과하는 것도 이걸로 막힌다.
+  - **문턱은 파일 2개.** 임의값이 아니라 fresh-eyes 1번 항목("고친 파일을 가리키는 다른 파일이 같이 바뀌었나")이 파일 둘 이상일 때만 성립하기 때문이다. **한 파일짜리는 기계로 안 막는 것이 의도된 한계다** — 1로 내리면 오타 수정마다 서브에이전트를 부르게 되고, 그건 이 훅이 스스로 정한 "잔소리 훅은 플러그인 삭제로 이어진다"는 경계와 부딪친다.
+  - **같은 파일로 두 번 안 막는다.** 사유별로 기억 파일을 나눴다(`last_block` · `last_fe_block`) — 한 파일을 돌려쓰면 뒤에 막은 사유가 앞의 기억을 덮어써 같은 변경에 두 번 걸린다.
+  - 실패는 전부 통과다(fail-open): 기록 실패·`.hi-vibe/` 없음·파싱 실패 어디서든 막지 않는다.
+- **검사 13종** (2026-08-17, `test_fresh_eyes_watch.py`) — mark 명령에서 파일 인자만 뽑는지(`--root .`의 `.`을 파일로 세면 한 개짜리가 두 개가 된다) · 턴이 갈린 소환을 헛짚지 않는지 · 한 번 실행이 두 리뷰를 못 덮는지 · 실제로 턴을 막는지 · 한 파일은 안 막는지 · 같은 파일로 두 번 안 막는지.
+  - **검사를 쓰다가 결함을 하나 잡았다**: 같은 파일을 두 번 표시하면 파일 2개로 세어져, 한 파일짜리 리뷰를 재시도한 것만으로 문턱을 넘었다. 중복을 접고 세도록 고쳤다.
+
+### Changed
+- **`review_activity()`가 표시된 파일 목록까지 돌려준다** (3-튜플 → 4-튜플). 몇 개 파일을 리뷰했다고 표시하는지가 차단 문턱 판단에 필요하다.
+- **훅 차단 동작을 설명하는 자리 동기화** — `stop_nudge.py` 첫 주석 · `write-gate` 완료 기록 절 · 랜딩 한영 "훅이 하는 일" 목록.
+
 ## [0.47.0] - 2026-08-17
 <!-- show:ko **설계 리뷰가 제일 잘 잡는 것을 이제 1번으로 봅니다.** 서로 다른 두 프로젝트에서 하루씩 써보고 기록을 대조했더니, 맞힌 발견은 거의 전부 "**고치다 만 것**"이었어요 — 파일 하나를 고쳤는데 그걸 가리키는 다른 파일이 옛날 걸 그대로 가리키고 있거나(`?v=` 캐시 문자열), `import`가 빠졌거나, 짝인 파일이 반쪽만 따라간 것. 그런데 **정작 지침에는 그걸 보라는 말이 없었어요.** 잘 잡는 걸 우연히 잡고 있었던 겁니다. 그래서 1번으로 올렸습니다. 반대로 값이 낮던 항목 둘은 뺐어요: `숨은 결합`은 체크리스트가 **같은 문장으로** 이미 보고 있었고(같은 지적을 두 번 읽게 됨), `미래의 발목`은 두 세션에서 한 건도 안 나왔습니다. 그리고 항목마다 "**안 고치면 무슨 일이 나는지**"를 한 줄로 못 쓰면 버리게 했어요 — "고쳐서 나쁠 건 없다" 같은 걸 걸러내는 문입니다. -->
 <!-- show:en **The design review now leads with what it actually catches.** After a day of real use on two different projects, almost every correct finding was the same shape: a change that stopped halfway. A file was fixed while the file pointing at it still referenced the old version (`?v=` cache strings), an `import` was missing, a mirrored file only half followed. The instructions never asked for any of that — it was being caught by accident. It is now item one. Two low-value items came out: `hidden coupling` was already covered by the checklist in the same words (you were reading the same note twice), and `future friction` produced nothing across both sessions. Every finding must now state in one line what breaks if you skip it; anything that cannot is dropped. -->

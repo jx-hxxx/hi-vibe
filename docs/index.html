@@ -640,7 +640,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>273</b><span>자동 회귀 테스트</span></div>
+      <div><b>286</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -803,6 +803,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
             <li>대화가 사라지기 전에 진행상황 저장<small>자동 정리·/compact 직전 · /clear · 창 닫을 때</small></li>
             <li>새로 시작할 때 규칙 다시 챙겨주기<small>새 대화 시작할 때</small></li>
             <li>아무도 안 본 코드 변경이 있으면 대화를 붙잡고 리뷰를 시키기<small>대화가 끝나려 할 때 · 리뷰 <b>수행</b>은 Claude가</small></li>
+            <li>리뷰를 끝냈다는데 <b>딴 클로드는 안 불렀으면</b> 다시 붙잡기<small>대화 기록을 훅이 직접 세요 · 파일 2개 이상일 때</small></li>
           </ul>
         </div>
         <div class="scol ai">
@@ -934,9 +935,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.48.0<small>2026-08-17</small></div><div class="h"><b>"리뷰 다 했어요"만으로는 이제 안 넘어갑니다.</b> <span>리뷰는 두 겹이에요 — 체크리스트가 빠뜨림을 훑고, 코드를 짠 기억이 없는 딴 클로드가 설계를 봅니다. 그런데 훅이 잠금을 푸는 열쇠는 <strong>"리뷰 끝났다는 표시"</strong> 하나였어요. 그러니까 앞쪽 절반만 돌리고 표시해도 훅이 만족했고, 딴 클로드를 부르라는 건 문서에 적힌 문장 하나뿐이었습니다. 실제로 그 층이 조용히 빠지는 걸 겪었고요. 이제 훅이 <strong>대화 기록을 직접 세서</strong> 딴 클로드가 안 돌았으면 다시 붙잡습니다. AI가 신고해 주기를 기다리지 않아요. 다만 <strong>파일 2개 이상일 때만</strong> 막습니다 — 오타 하나 고칠 때마다 서브에이전트를 부르게 하면 그건 잔소리니까요. 그리고 같은 파일로 두 번은 안 막습니다.</span></div></div>
         <div class="rel"><div class="v">v0.47.0<small>2026-08-17</small></div><div class="h"><b>설계 리뷰가 제일 잘 잡는 것을 이제 1번으로 봅니다.</b> <span>서로 다른 두 프로젝트에서 하루씩 써보고 기록을 대조했더니, 맞힌 발견은 거의 전부 "<strong>고치다 만 것</strong>"이었어요 — 파일 하나를 고쳤는데 그걸 가리키는 다른 파일이 옛날 걸 그대로 가리키고 있거나(<code>?v=</code> 캐시 문자열), <code>import</code>가 빠졌거나, 짝인 파일이 반쪽만 따라간 것. 그런데 <strong>정작 지침에는 그걸 보라는 말이 없었어요.</strong> 잘 잡는 걸 우연히 잡고 있었던 겁니다. 그래서 1번으로 올렸습니다. 반대로 값이 낮던 항목 둘은 뺐어요: <code>숨은 결합</code>은 체크리스트가 <strong>같은 문장으로</strong> 이미 보고 있었고(같은 지적을 두 번 읽게 됨), <code>미래의 발목</code>은 두 세션에서 한 건도 안 나왔습니다. 그리고 항목마다 "<strong>안 고치면 무슨 일이 나는지</strong>"를 한 줄로 못 쓰면 버리게 했어요 — "고쳐서 나쁠 건 없다" 같은 걸 걸러내는 문입니다.</span></div></div>
         <div class="rel"><div class="v">v0.46.3<small>2026-08-17</small></div><div class="h"><b>설계 리뷰 에이전트를 이제 항상 <code>fresh-eyes</code>라고 부릅니다.</b> <span>같은 하나를 어떤 자리에선 "남의 눈", 어떤 자리에선 <code>fresh-eyes</code>라고 불렀어요. 별명이 둘이면 나중에 세션 기록에서 "그때 뭐가 돌았지?"를 찾을 수가 없습니다. 판정 첫 줄·<code>doctor</code> 결과·리뷰 보고를 전부 실제 이름으로 통일했어요. <strong>"남의 눈으로 봐줘"라고 부르는 건 그대로 됩니다</strong> — 부르는 말은 남기고 답하는 말만 바꿨어요.</span></div></div>
-        <div class="rel"><div class="v">v0.46.2<small>2026-08-09</small></div><div class="h"><b>안내 상자 문장 사이를 띄웠어요.</b> <span>앞 버전에서 접힌 줄과 새 문장은 구분되게 했지만, 줄이 다닥다닥 붙어 여전히 글자 벽으로 읽혔습니다. 문장마다 조금씩 띄우고, 소제목 앞은 더 띄웠어요.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -996,7 +997,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>273</b><span>automated regression tests</span></div>
+      <div><b>286</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -1159,6 +1160,7 @@ Close with just these.
             <li>Save your progress before the conversation goes away<small>on auto-compact or /compact · on /clear · when you close the window</small></li>
             <li>Re-arm the rules on a fresh start<small>when a new chat begins</small></li>
             <li>Hold the turn open and demand a review when nobody looked at your changes<small>as the chat tries to end · the review itself is Claude's work</small></li>
+            <li>Hold it again if the review was marked done but <b>the fresh Claude never ran</b><small>counted from the transcript by the hook · when 2+ files are involved</small></li>
           </ul>
         </div>
         <div class="scol ai">
@@ -1290,9 +1292,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.48.0<small>2026-08-17</small></div><div class="h"><b>"Review done" is no longer enough on its own.</b> <span>The review has two layers: a checklist for what got skipped, and a fresh Claude with no memory of writing the code for the design. But the only key that unlocked the hook was the "review finished" mark, so running just the first half and marking it satisfied the hook. Calling the fresh Claude was enforced by nothing but a sentence in a document, and that layer really did go missing. The hook now counts the calls in the transcript itself and holds the turn again if the fresh Claude never ran. It only does this when 2 or more files are involved: demanding a subagent for a one-line typo fix is nagging, not safety. It never blocks twice for the same files.</span></div></div>
         <div class="rel"><div class="v">v0.47.0<small>2026-08-17</small></div><div class="h"><b>The design review now leads with what it actually catches.</b> <span>After a day of real use on two different projects, almost every correct finding was the same shape: a change that stopped halfway. A file was fixed while the file pointing at it still referenced the old version (<code>?v=</code> cache strings), an <code>import</code> was missing, a mirrored file only half followed. The instructions never asked for any of that — it was being caught by accident. It is now item one. Two low-value items came out: <code>hidden coupling</code> was already covered by the checklist in the same words (you were reading the same note twice), and <code>future friction</code> produced nothing across both sessions. Every finding must now state in one line what breaks if you skip it; anything that cannot is dropped.</span></div></div>
         <div class="rel"><div class="v">v0.46.3<small>2026-08-17</small></div><div class="h"><b>The design-review agent is now always called <code>fresh-eyes</code>.</b> <span>One agent had two names: a Korean nickname in some places, the real name in others, so you could not search a session log for what actually ran. The verdict line, <code>doctor</code> output, and review reports all use the real name now. Calling it by the old nickname still works — only the answer changed, not the way you ask.</span></div></div>
-        <div class="rel"><div class="v">v0.46.2<small>2026-08-09</small></div><div class="h"><b>Sentences inside the callout boxes now breathe.</b> <span>The previous release made wrapped lines distinguishable from new ones, but the lines were still packed tight and read as a wall. Each sentence gets a little space, and sub-headings get more above them.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

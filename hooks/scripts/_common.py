@@ -43,7 +43,7 @@ from _transcript import (                              # noqa: E402
 )
 from _agent_watch import (                             # noqa: E402
     AGENT_SESSIONS_KEEP, AGENTS_FILE, FRESH_EYES_TYPE, agent_offset,
-    note_agent_activity, read_agent_activity, review_activity,
+    marked_files, note_agent_activity, read_agent_activity, review_activity,
 )
 from _handover import (                                # noqa: E402
     WRITTEN_FILE, WRITTEN_KEEP, handover_already_written, handover_body,
