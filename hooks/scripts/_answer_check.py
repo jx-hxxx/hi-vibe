@@ -123,19 +123,21 @@ def metaphors(text, path=WORDLIST):
 
 # ── 근거 ──────────────────────────────────────────────────────────────
 
-_READ_TOOLS = ("Read", "Grep", "Glob", "NotebookRead", "Task", "Agent",
-               "WebFetch", "WebSearch")
 # Bash로 읽는 흔한 방법. 이 저장소 작업은 Bash로 파일을 읽는 일이 많아서
 # Bash를 통째로 빼면 "읽었는데 안 읽었다"고 잘못 표시한다.
 _BASH_READ_RE = re.compile(
     r"\b(?:cat|head|tail|sed|grep|rg|ugrep|less|awk|find|ls|git\s+(?:show|log|diff|blame))\b")
 
+# 끝을 `\b`로 잡으면 **한글 조사가 붙었을 때 안 걸린다** — 파이썬에서 한글도
+# `\w`라서 `stop_nudge.py의`에는 경계가 생기지 않는다. 실제로 이 검사를
+# 처음 돌렸을 때 조용히 0건이 나왔다. ASCII 낱말 문자만 배제한다.
 _FILEISH = re.compile(
-    r"[\w./-]*\w+\.(?:py|js|mjs|cjs|jsx|ts|tsx|html|css|json|ya?ml|md|sh|toml)\b")
+    r"[\w./-]*\w+\.(?:py|js|mjs|cjs|jsx|ts|tsx|html|css|json|ya?ml|md|sh|toml)"
+    r"(?![A-Za-z0-9_])")
 
 
 def last_turn(path):
-    """(이번 턴에 내가 쓴 텍스트, 이번 턴에 쓴 도구 이름 집합).
+    """(이번 턴에 내가 쓴 텍스트, 이번 턴에 **실제로 건드린 파일** basename 집합).
 
     '이번 턴'은 **마지막 사용자 메시지 이후**다. 도구 결과로 들어온 user
     항목과 훅이 주입한 것은 사용자 메시지가 아니므로 경계로 세지 않는다."""
@@ -146,7 +148,7 @@ def last_turn(path):
         except Exception:
             continue
 
-    start = 0
+    start = -1
     for i, e in enumerate(entries):
         if e.get("type") != "user":
             continue
@@ -161,7 +163,7 @@ def last_turn(path):
             continue                       # 훅·시스템 주입
         start = i
 
-    said, tools = [], set()
+    said, touched = [], set()
     for e in entries[start + 1:]:
         if e.get("type") != "assistant":
             continue
@@ -177,17 +179,28 @@ def last_turn(path):
             if b.get("type") == "text":
                 said.append(b.get("text", ""))
             elif b.get("type") == "tool_use":
-                name = b.get("name", "")
-                tools.add(name)
-                if name == "Bash" and _BASH_READ_RE.search(
-                        (b.get("input") or {}).get("command", "")):
-                    tools.add("Bash:read")
-    return "\n".join(said), tools
+                touched |= _touched_by(b.get("name", ""), b.get("input") or {})
+    return "\n".join(said), touched
 
 
-def read_happened(tools):
-    """이번 턴에 무언가를 실제로 열어 봤나."""
-    return bool(tools & set(_READ_TOOLS)) or "Bash:read" in tools
+def _touched_by(name, inp):
+    """이 도구 호출이 **어느 파일을** 열었나(basename 집합).
+
+    "무언가 읽었나"로는 부족하다는 것이 2026-09-05 세 번째 실패로 드러났다.
+    그때 나는 기술문서를 grep해 놓고 `ai_replay.py`의 동작을 단정했다.
+    도구는 돌았으니 "읽음"으로 통과했지만, 정작 말한 파일은 안 열었다.
+    그래서 **말한 파일과 연 파일을 맞춰 본다.**"""
+    hits = set()
+    for key in ("file_path", "notebook_path", "path"):
+        v = inp.get(key)
+        if isinstance(v, str) and v:
+            hits.add(os.path.basename(v.rstrip("/")))
+    if name == "Bash":
+        cmd = inp.get("command", "")
+        if _BASH_READ_RE.search(cmd):
+            for m in _FILEISH.finditer(cmd):
+                hits.add(os.path.basename(m.group(0)))
+    return {h for h in hits if h}
 
 
 def _repo_files(cwd):
@@ -202,21 +215,22 @@ def _repo_files(cwd):
     return {os.path.basename(p) for p in r.stdout.split()}
 
 
-def unverified_mentions(cwd, said, tools):
-    """답변이 언급한 **이 저장소에 실재하는** 파일들 — 아무것도 안 열었을 때만.
+def unverified_mentions(cwd, said, touched):
+    """답변이 동작을 설명한 파일 중 **이번 턴에 열지 않은** 것들.
 
-    왜 실재하는 것만 세나: 일반적인 파일명(`package.json`)이나 예시를 말한
-    것까지 세면 매번 뜨고, 매번 뜨는 표시는 아무도 안 본다. 저장소에 진짜
-    있는 파일을 지목했다는 것은 **이 코드가 이렇게 동작한다**고 말하고 있을
-    가능성이 높다는 뜻이다."""
-    if read_happened(tools):
-        return []
+    왜 저장소에 실재하는 것만 세나: 일반적인 파일명(`package.json`)이나
+    예시까지 세면 매번 뜨고, 매번 뜨는 표시는 아무도 안 본다.
+
+    왜 파일 단위인가: "무언가 읽었나"는 통과시키기 너무 쉽다. 다른 파일을
+    열어 놓고 이 파일을 설명해도 통과했다(2026-09-05 실측). 반대로 파일
+    단위면 통과하는 유일한 방법이 **그 파일을 여는 것**이라, 빠져나가는
+    행동과 올바른 행동이 같아진다."""
     known = _repo_files(cwd)
     if not known:
         return []
     hits = []
     for m in _FILEISH.finditer(said):
         base = os.path.basename(m.group(0))
-        if base in known and base not in hits:
+        if base in known and base not in touched and base not in hits:
             hits.append(base)
     return hits

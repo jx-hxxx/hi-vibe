@@ -48,8 +48,7 @@ from _agent_watch import (                             # noqa: E402
     review_activity,
 )
 from _answer_check import (                             # noqa: E402
-    WORDLIST, informal_sentences, last_turn, metaphors, read_happened,
-    unverified_mentions,
+    WORDLIST, informal_sentences, last_turn, metaphors, unverified_mentions,
 )
 from _handover import (                                # noqa: E402
     WRITTEN_FILE, WRITTEN_KEEP, handover_already_written, handover_body,

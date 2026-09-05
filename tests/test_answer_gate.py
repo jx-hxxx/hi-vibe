@@ -116,50 +116,92 @@ def _tool(name, inp=None):
         {"type": "tool_use", "name": name, "input": inp or {}}]}}
 
 
-class TurnBoundaryTest(unittest.TestCase):
+class EvidenceTest(unittest.TestCase):
+    """근거는 **파일 단위**로 본다 — "무언가 읽었나"로는 못 잡는다."""
+
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
+        self.repo = os.path.dirname(os.path.dirname(HOOKS.rstrip(os.sep)))
 
     def tearDown(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def test_only_the_latest_turn_is_read(self):
-        """이전 턴에서 파일을 읽었다고 이번 턴이 확인된 것은 아니다."""
-        path = _transcript(self.tmp, [
-            _user("첫 질문"), _tool("Read", {"file_path": "a.py"}), _say("확인했습니다."),
-            _user("둘째 질문"), _say("기억으로 답합니다."),
+    def _turn(self, blocks):
+        return _answer_check.last_turn(_transcript(self.tmp, blocks))
+
+    def test_reading_another_file_does_not_verify_this_one(self):
+        """2026-09-05 세 번째 실패의 정확한 모양.
+
+        기술문서를 grep해 놓고 다른 파일의 동작을 단정했다. "무언가 읽었나"
+        기준이었다면 도구가 돌았으니 통과했다 — 실측으로 확인한 구멍이다."""
+        said, touched = self._turn([
+            _user("틀린거임?"),
+            _tool("Grep", {"pattern": "x", "path": "CHANGELOG.md"}),
+            _say("stop_nudge.py의 172행이 문서를 제외합니다."),
         ])
-        said, tools = _answer_check.last_turn(path)
-        self.assertIn("기억으로", said)
-        self.assertNotIn("확인했습니다", said)
-        self.assertFalse(_answer_check.read_happened(tools))
+        self.assertIn("CHANGELOG.md", touched)
+        self.assertEqual(
+            _answer_check.unverified_mentions(self.repo, said, touched),
+            ["stop_nudge.py"])
+
+    def test_opening_the_named_file_passes(self):
+        said, touched = self._turn([
+            _user("확인해줘"),
+            _tool("Bash", {"command": "sed -n 170,175p hooks/scripts/stop_nudge.py"}),
+            _say("stop_nudge.py의 172행이 문서를 제외합니다."),
+        ])
+        self.assertEqual(
+            _answer_check.unverified_mentions(self.repo, said, touched), [])
+
+    def test_korean_particle_after_filename_still_matches(self):
+        """`stop_nudge.py의`처럼 조사가 붙어도 잡아야 한다.
+
+        파이썬에서 한글도 `\\w`라, 끝을 `\\b`로 잡으면 경계가 안 생겨
+        **검사가 조용히 0건이 된다.** 처음 만들 때 실제로 그렇게 됐다."""
+        said, touched = self._turn([_user("q"), _say("stop_nudge.py의 동작입니다.")])
+        self.assertEqual(
+            _answer_check.unverified_mentions(self.repo, said, touched),
+            ["stop_nudge.py"])
+
+    def test_files_not_in_this_repo_are_ignored(self):
+        """일반적인 파일명까지 세면 매번 뜨고, 매번 뜨는 표시는 안 보게 된다."""
+        said, touched = self._turn([_user("q"), _say("보통 package.json에 적습니다.")])
+        self.assertEqual(
+            _answer_check.unverified_mentions(self.repo, said, touched), [])
+
+    def test_only_the_latest_turn_counts(self):
+        """이전 턴에 읽었다고 이번 턴이 확인된 것은 아니다."""
+        said, touched = self._turn([
+            _user("첫 질문"),
+            _tool("Read", {"file_path": "hooks/scripts/stop_nudge.py"}),
+            _say("확인했습니다."),
+            _user("둘째 질문"),
+            _say("stop_nudge.py는 이렇게 동작합니다."),
+        ])
+        self.assertEqual(touched, set())
+        self.assertEqual(
+            _answer_check.unverified_mentions(self.repo, said, touched),
+            ["stop_nudge.py"])
 
     def test_tool_results_do_not_start_a_new_turn(self):
-        """도구 결과는 사람이 보낸 메시지가 아니다."""
-        path = _transcript(self.tmp, [
+        said, touched = self._turn([
             _user("질문"),
-            _tool("Read", {"file_path": "a.py"}),
+            _tool("Read", {"file_path": "hooks/scripts/stop_nudge.py"}),
             {"type": "user", "message": {"role": "user", "content": [
                 {"type": "tool_result", "content": "..."}]}},
-            _say("답입니다."),
+            _say("stop_nudge.py를 확인했습니다."),
         ])
-        _said, tools = _answer_check.last_turn(path)
-        self.assertTrue(_answer_check.read_happened(tools))
+        self.assertIn("stop_nudge.py", touched)
 
-    def test_bash_reading_counts_as_reading(self):
-        """이 저장소는 Bash로 파일을 읽는 일이 많다 — 통째로 빼면 오탐이 난다."""
-        path = _transcript(self.tmp, [
-            _user("질문"), _tool("Bash", {"command": "sed -n 1,20p app.py"}), _say("답입니다."),
+    def test_bash_writing_does_not_count_as_opening(self):
+        said, touched = self._turn([
+            _user("질문"),
+            _tool("Bash", {"command": "echo x > hooks/scripts/stop_nudge.py"}),
+            _say("stop_nudge.py는 이렇게 동작합니다."),
         ])
-        _said, tools = _answer_check.last_turn(path)
-        self.assertTrue(_answer_check.read_happened(tools))
-
-    def test_bash_writing_does_not_count_as_reading(self):
-        path = _transcript(self.tmp, [
-            _user("질문"), _tool("Bash", {"command": "echo x > a.py"}), _say("답입니다."),
-        ])
-        _said, tools = _answer_check.last_turn(path)
-        self.assertFalse(_answer_check.read_happened(tools))
+        self.assertEqual(
+            _answer_check.unverified_mentions(self.repo, said, touched),
+            ["stop_nudge.py"])
 
 
 class GateTest(unittest.TestCase):
@@ -199,6 +241,13 @@ class GateTest(unittest.TestCase):
         blocks = [_user("질문"), _say("이건 아닌 것 같은데 다시 보자.")]
         self.assertEqual(self._run(blocks).get("decision"), "block")
         self.assertNotEqual(self._run(blocks).get("decision"), "block")
+
+    def test_unopened_file_mention_is_blocked(self):
+        os.makedirs(os.path.join(self.tmp, ".git"), exist_ok=True)
+        out = self._run([_user("질문"), _say("stop_nudge.py는 이렇게 동작합니다.")])
+        # 임시 폴더는 이 저장소가 아니라 git ls-files가 비어 검사가 생략된다.
+        # 차단 여부가 아니라 **말투로는 안 걸린다**는 것만 고정한다.
+        self.assertNotIn("말투", out.get("reason", ""))
 
     def test_gate_is_off_without_the_hi_vibe_marker(self):
         """opt-in 원칙 — init 안 한 프로젝트는 건드리지 않는다."""

@@ -7,18 +7,26 @@
      문장을 만들 능력은 이미 있다). 사용자가 여러 번 지적했는데도 반복된
      실패라, 문서에 적어 두는 층으로는 안 된다는 것이 이미 확인됐다.
 
-  2) 근거 — 저장소에 실재하는 파일을 지목해 설명하면서 이번 턴에 아무것도
-     열어 보지 않았으면 **한 줄 표시만 남긴다. 막지 않는다.**
+  2) 근거 — 저장소에 실재하는 파일을 지목해 설명하면서 **그 파일을** 이번
+     턴에 열지 않았으면 **막는다.**
 
-**왜 2)는 안 막나.** 막으면 통과하는 가장 싼 방법이 "아무 파일이나 한 번
-여는 것"이 된다. 이 저장소는 이미 그 함정에 빠진 적이 있다 — 리뷰를 하지
-않고 "리뷰 끝" 표시만 해서 통과하던 것을 v0.48.0에서 막아야 했다. 형식만
-채우게 만드는 강제는 검사가 아니라 검사처럼 보이는 것이다.
+**왜 파일 단위인가.** 처음에는 "이번 턴에 무언가 읽었나"로 만들었고, 그러면
+막을 수 없다고 봤다 — 통과하는 가장 싼 방법이 "아무 파일이나 한 번 여는
+것"이 되기 때문이다. 이 저장소는 그 함정을 이미 겪었다(리뷰 없이 `mark`만
+해서 통과하던 것을 v0.48.0에서 막았다).
 
-그리고 "이 문장이 동작을 단정하는가"는 기계가 판정할 수 없다. 판정할 수
-없는 것을 막으면 오탐이 쌓이고, 오탐이 쌓이면 사람이 검사를 끈다. 그래서
-판정 대신 **사실만 드러내고** 판단은 사람에게 넘긴다 — 읽은 것이 없다는
-사실은 기록에 그대로 있으므로 이 표시에는 추측이 없다.
+그런데 그 설계로는 **정작 잡아야 할 실패를 못 잡았다.** 2026-09-05 세 번째
+실패에서 나는 기술문서를 grep해 놓고 `ai_replay.py`의 동작을 단정했다.
+도구는 돌았으니 "읽음"으로 통과한다. 실측으로 확인했다.
+
+**말한 파일과 연 파일을 맞춰 보면 그 문제가 사라진다.** 통과하는 유일한
+방법이 "그 파일을 여는 것"이 되므로, 빠져나가는 행동과 올바른 행동이 같다.
+형식만 채우는 통과가 성립하지 않으니 막아도 된다.
+
+남는 한계: "이 문장이 동작을 단정하는가"는 여전히 기계가 못 가린다. 그래서
+파일 이름을 스치듯 언급만 해도 걸릴 수 있다. 그 대가로 세 번 반복된 실패를
+막는다 — 헛걸림은 파일 한 번 여는 비용이고, 놓침은 사용자가 틀린 설명을
+믿는 비용이다.
 """
 import hashlib
 import os
@@ -58,13 +66,19 @@ def tone_reason(bad, figs):
     return "\n".join(parts)
 
 
-def evidence_note(hits):
+def evidence_reason(hits):
+    """차단 사유 = 열어 보라는 지시. 어느 파일인지 그대로 준다."""
+    shown = ", ".join(f"`{h}`" for h in hits[:6])
+    more = f" (그 밖 {len(hits) - 6}개)" if len(hits) > 6 else ""
     return (
-        "hi-vibe: 이번 답변은 "
-        + ", ".join(hits[:4])
-        + ("등을" if len(hits) > 4 else "을")
-        + " 언급했지만 파일을 한 번도 열지 않았습니다.\n"
-        "동작 설명이라면 확인 후 답한 것인지 확인해 보세요."
+        f"hi-vibe 근거 검사: {shown}{more}를 설명하면서 **이번 턴에 그 파일을 "
+        "열지 않았다.**\n\n"
+        "기억으로 쓴 설명은 확인한 설명과 똑같이 확신에 차서 나온다 — 틀렸다는 "
+        "신호가 안 뜬다. 그래서 사람이 아니라 기계가 센다.\n"
+        "**지금 그 파일을 열고, 본 것과 답이 같은지 확인한 뒤 답하라.** 다르면 "
+        "고쳐 쓰고, 같으면 그대로 두되 근거가 된 줄을 밝혀라.\n"
+        "설명이 아니라 스치듯 언급한 것뿐이면 그 이름을 빼고 다시 써라 — "
+        "이 검사는 '동작을 단정하는가'를 가리지 못하므로 그 판단은 네가 한다."
     )
 
 
@@ -77,7 +91,7 @@ def main(payload):
     if not transcript:
         return
 
-    said, tools = _answer_check.last_turn(transcript)
+    said, touched = _answer_check.last_turn(transcript)
     if not said.strip():
         return
 
@@ -98,28 +112,31 @@ def main(payload):
                          reason=tone_reason(bad, figs))
             return
 
-    # 2) 근거 — 막지 않고 표시만.
-    hits = _answer_check.unverified_mentions(cwd, said, tools)
-    if hits:
-        _common.emit("Stop", system_message=evidence_note(hits))
+    # 2) 근거 — 말한 파일을 안 열었으면 막는다. 말투와 같은 이유로 한 번만.
+    hits = _answer_check.unverified_mentions(cwd, said, touched)
+    if hits and not payload.get("stop_hook_active"):
+        fingerprint = "ev:" + hashlib.sha1(
+            "\n".join(hits).encode("utf-8")).hexdigest()
+        if not _already_blocked(flag_dir, fingerprint, "last_evidence_block"):
+            _remember_block(flag_dir, fingerprint, "last_evidence_block")
+            _common.emit("Stop", decision="block",
+                         reason=evidence_reason(hits))
 
 
-def _flag(flag_dir):
-    return os.path.join(flag_dir, "last_tone_block")
-
-
-def _already_blocked(flag_dir, fingerprint):
+def _already_blocked(flag_dir, fingerprint, name="last_tone_block"):
+    """사유마다 파일을 따로 쓴다 — 한 파일을 돌려쓰면 뒤에 막은 사유가 앞의
+    기억을 덮어써서, 같은 답변에 두 번 걸린다(stop_nudge와 같은 이유)."""
     try:
-        with open(_flag(flag_dir), encoding="utf-8") as fh:
+        with open(os.path.join(flag_dir, name), encoding="utf-8") as fh:
             return fh.read().strip() == fingerprint
     except OSError:
         return False
 
 
-def _remember_block(flag_dir, fingerprint):
+def _remember_block(flag_dir, fingerprint, name="last_tone_block"):
     try:
         os.makedirs(flag_dir, exist_ok=True)
-        with open(_flag(flag_dir), "w", encoding="utf-8") as fh:
+        with open(os.path.join(flag_dir, name), "w", encoding="utf-8") as fh:
             fh.write(fingerprint + "\n")
     except OSError:
         pass  # 기록 못 해도 막는 것 자체는 유효 — 다음 턴에 한 번 더 걸릴 뿐
