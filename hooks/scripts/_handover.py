@@ -150,8 +150,13 @@ def rotate(handover_path, keep=10, limit=20):
         if len(entries) <= limit:
             return
         keep_entries, old = entries[:keep], entries[keep:]
-        with open(handover_path, "w", encoding="utf-8") as f:
-            f.write(header + "\n" + "\n".join(keep_entries))
+        # **순서가 안전장치다.** 아카이브에 먼저 붙여 쓰고, 그게 성공한 뒤에만
+        # 원본을 자른다. 반대 순서였을 때(~2026-09-05)는 자른 직후 아카이브
+        # 쓰기가 실패하면 옮기려던 항목이 어디에도 남지 않았고, 아래
+        # `except`가 그 사실까지 삼켜 조용히 사라졌다. 다른 삼킴 자리들은
+        # "실패해도 상태가 이전과 같다"가 성립하는데 여기만 이전보다
+        # 나빠졌다. 지금 순서에서 최악은 "양쪽에 중복 보관"이고 그건 눈에
+        # 보이며 되돌릴 수 있다.
         archive = os.path.join(os.path.dirname(handover_path), "handover-archive.md")
         prev = ""
         if os.path.isfile(archive):
@@ -161,6 +166,8 @@ def rotate(handover_path, keep=10, limit=20):
             prev = "# Handover Archive\n"
         with open(archive, "w", encoding="utf-8") as f:
             f.write(prev.rstrip() + "\n\n" + "\n".join(old) + "\n")
+        with open(handover_path, "w", encoding="utf-8") as f:
+            f.write(header + "\n" + "\n".join(keep_entries))
     except Exception:
         pass
 

@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+### Fixed
+- **인수인계 로테이션이 실패하면 옮기려던 항목이 조용히 사라졌다** (2026-09-05, `_handover.py`) — `rotate()`가 `handover.md`를 **먼저 자르고** 그 다음 `handover-archive.md`에 붙여 썼다. 아카이브 쓰기가 실패하면 잘려 나간 항목은 어디에도 없고, 함수 전체를 감싼 `except Exception: pass`가 그 사실까지 삼켰다. 순서를 뒤집어 **아카이브가 성공한 뒤에만** 원본을 자른다 — 실패했을 때의 최악이 "양쪽에 중복 보관"이 되고, 그건 눈에 보이며 되돌릴 수 있다.
+  - 다른 삼킴 자리(하트비트·락·CI 캐시·플래그 청소)와 갈리는 지점은 하나다: **실패해도 상태가 이전과 같은가.** 나머지는 전부 같고 여기만 이전보다 나빠졌다. fail-open 원칙을 버리는 게 아니라, 삼켜도 되는 자리인지를 그 기준으로 가른다.
+  - `repo-xray` 스캔이 후보로 올리고 `proof-eyes`가 코드를 열어 확정했다. 같은 스캔의 나머지 후보 17건은 전부 오탐·의도된 것으로 걸러졌다.
+
+### Changed
+- **`.html` 원고를 고칠 때 코드 리뷰가 걸리지 않는다** (2026-09-05, `review_scope.py`) — `.html`은 코드이면서 **원고**이기도 한데, 문단을 나누거나 문장을 고치는 것까지 리뷰 대상이 됐다. 그 결과 개행 한 번에 설계 리뷰가 따라붙었고, 실제 세션이 **리뷰를 우회하는 쪽으로 꺾였다**(2026-09-05 관측). 검사가 너무 자주 걸리면 검사 자체가 무력화된다.
+  - **확장자로 빼지 않는다.** `.html`을 통째로 제외하면 v0.36.0에서 막았던 구멍(프론트 로직이 통째로 레이더 밖)이 도로 열린다. 대신 **바뀐 줄의 내용**으로 가른다: 속성 없는 문단 태그(`<p>`·`<li>`·`<strong>` 등)만 쓴 줄은 원고로 보고, `<div class=...>`·`<script>`·CSS 중괄호·속성 `=`가 한 줄이라도 섞이면 그 파일은 그대로 리뷰 대상이다. **애매하면 리뷰하는 쪽**으로 남긴다.
+  - 새로 만든 `.html`은 언제나 리뷰한다 — diff 기준점이 없어 "무엇이 바뀌었나"를 물을 수 없다.
+  - **뺐다는 사실을 숨기지 않는다.** `review_scope list`가 `text_only`로 그대로 내놓는다. 검사 층이 조용히 빠지면 어떻게 되는지 이미 겪었다(2026-08-07).
+  - 남는 한계: 이력이 10커밋보다 짧은 저장소에서는 `last_commit` 계단이 그 파일이 처음 생긴 커밋까지 보게 되어 원고 판정이 걸리지 않는다.
+
 ## [0.49.1] - 2026-08-17
 <!-- show:ko **어제 만든 것에서 새는 데 두 곳을 막았습니다.** 하나: 설계 리뷰를 돌려놓고 "리뷰 끝" 표시를 안 한 채 창을 닫으면, 그 흔적이 파일에 남아 **며칠 뒤 다른 작업이 그걸 당겨써서 한 번 공짜로 통과**했어요. 기록이 세션이 아니라 프로젝트 단위로 남기 때문입니다. 이제 6시간 지난 흔적은 안 씁니다. 둘: `doctor`가 아직 "AI가 안 부른 것일 겁니다, 한번 말해 보세요"라고 조언하고 있었는데, 바로 앞 버전에서 훅이 강제하기 시작하면서 그 진단이 뒤집혔어요. 이제 원인을 둘로 갈라 알려줍니다 — 리뷰가 전부 한 파일짜리였거나(정상일 수 있어요), 서브에이전트 호출이 진짜로 실패하고 있거나. -->
 <!-- show:en **Two leaks in yesterday's work, closed.** First: if the design review ran but the "review done" mark never followed and the window was closed, that trace stayed in the file, and days later an unrelated task could spend it for one free pass — the record is per project, not per session. Traces older than six hours are now ignored. Second: `doctor` was still advising "the AI probably just didn't call it, try asking", but the previous release made the hook enforce it, which flips the diagnosis. It now splits the cause in two: either every review was single-file (which can be fine), or subagent calls are genuinely failing. -->

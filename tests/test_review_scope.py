@@ -51,6 +51,73 @@ class ReviewScopeTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.root, ignore_errors=True)
 
+    def test_prose_only_html_change_leaves_review_scope(self):
+        """`.html` 안의 **글자만** 바뀐 변경은 리뷰 범위에서 뺀다.
+
+        `.html`은 코드이면서 원고다. 문단을 나누는 것까지 코드 리뷰로 잡으면
+        리뷰가 하루에 몇 번씩 걸리고, 그러면 사람이 리뷰 자체를 우회하기
+        시작한다(2026-09-05에 실제로 그렇게 됐다). 같은 턴의 `.py` 변경은
+        그대로 걸려야 하므로 함께 확인한다."""
+        _write(self.root, "doc.html",
+               '<div class="wrap">\n  <p>한 문단</p>\n</div>\n')
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "doc")
+        _write(self.root, "app.py", "y = 2\n")
+        _write(self.root, "doc.html",
+               '<div class="wrap">\n  <p>한 문단</p>\n  <p>둘로 나눔</p>\n</div>\n')
+        out = _list(self.root)
+        self.assertIn("app.py", out["to_review"])
+        self.assertNotIn("doc.html", out["to_review"])
+        self.assertIn("doc.html", out["text_only"])   # 뺐다는 사실은 드러낸다
+
+    def test_prose_only_commit_leaves_nothing_to_review(self):
+        """원고 변경만 커밋하면 리뷰할 것이 남지 않는다.
+
+        MAX_LOOKBACK(10커밋)보다 이력이 긴, 실제 저장소에 가까운 상황이다.
+        이력이 그보다 짧으면 `last_commit` 계단이 그 파일이 **처음 생긴**
+        커밋까지 보게 되고, 그 커밋에는 태그·속성이 들어 있어 원고 판정이
+        걸리지 않는다 — 갓 만든 저장소에서는 그대로 리뷰 대상이다."""
+        _write(self.root, "doc.html",
+               '<div class="wrap">\n  <p>한 문단</p>\n</div>\n')
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "doc")
+        for i in range(review_scope.MAX_LOOKBACK + 2):
+            _write(self.root, f"f{i}.txt", f"{i}\n")
+            _git(self.root, "add", "-A")
+            _git(self.root, "commit", "-qm", f"c{i}")
+        _write(self.root, "doc.html",
+               '<div class="wrap">\n  <p>한 문단</p>\n  <p>둘로 나눔</p>\n</div>\n')
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "prose")
+        out = _list(self.root)
+        self.assertEqual(out["to_review"], [])
+        self.assertEqual(out["fingerprint"], "")     # 훅이 막지 않는다
+        self.assertIn("doc.html", out["text_only"])
+
+    def test_html_attribute_change_stays_in_review_scope(self):
+        """같은 파일이라도 속성이 바뀌면 리뷰 대상이다.
+
+        확장자로 빼는 게 아니라 바뀐 줄의 내용으로 가르므로, 원고 사이에
+        속성·스크립트가 한 줄이라도 섞이면 그 파일은 그대로 걸린다."""
+        _write(self.root, "doc.html",
+               '<div class="wrap">\n  <p>한 문단</p>\n</div>\n')
+        _git(self.root, "add", "-A")
+        _git(self.root, "commit", "-qm", "doc")
+        _write(self.root, "doc.html",
+               '<div class="wrap dark">\n  <p>한 문단</p>\n</div>\n')
+        out = _list(self.root)
+        self.assertIn("doc.html", out["to_review"])
+        self.assertNotIn("doc.html", out["text_only"])
+
+    def test_new_html_file_is_always_reviewed(self):
+        """새로 만든 `.html`은 내용이 원고뿐이어도 리뷰 대상이다.
+
+        diff 기준점이 없어 "무엇이 바뀌었나"를 물을 수 없다 — 파일 전체가
+        새 것이므로 원고 판정이 적용되지 않는다."""
+        _write(self.root, "new.html", '<p>원고만 있는 새 파일</p>\n')
+        out = _list(self.root)
+        self.assertIn("new.html", out["to_review"])
+
     def test_deleted_file_is_reported(self):
         """지운 파일도 리뷰 대상이다.
 

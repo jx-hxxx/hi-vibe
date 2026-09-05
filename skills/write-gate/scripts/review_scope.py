@@ -50,6 +50,75 @@ def _reviewable(name):
     return bool(name) and name.lower().endswith(CODE_EXT) and not SKIP_RE.search(name)
 
 
+# `.html`은 코드이면서 **원고**이기도 하다. 문단을 나누거나 문장을 고치는
+# 변경까지 코드 리뷰로 잡으면 리뷰가 하루에 몇 번씩 걸리고, 그러면 사람이
+# 리뷰를 우회하기 시작한다 — 2026-09-05에 실제로 그렇게 됐다(개행 한 번마다
+# 설계 리뷰가 따라붙어서, 세션이 리뷰를 부르는 쪽으로 꺾였다). 그렇다고
+# `.html`을 통째로 빼면 2026-08-07에 막았던 구멍(프론트 로직이 통째로 레이더
+# 밖)이 도로 열린다.
+#
+# 그래서 확장자가 아니라 **바뀐 줄의 내용**으로 가른다. 아래 태그만 쓰고
+# 속성이 없는 줄은 원고로 보고, 그 밖의 것(`<div class=...>`·`<script>`·CSS
+# 중괄호·속성 `=`)이 한 줄이라도 섞이면 그 파일은 그대로 리뷰 대상이다.
+# **좁게** 잡는 게 핵심이다 — 애매하면 리뷰하는 쪽으로 남는다.
+MARKUP_EXT = (".html", ".css")
+PROSE_TAGS = ("p", "br", "li", "ul", "ol", "strong", "em", "b", "i", "u",
+              "span", "small", "h1", "h2", "h3", "h4", "h5", "h6",
+              "blockquote", "code", "pre", "hr", "sup", "sub")
+_BARE_TAG = re.compile(r"</?(?:%s)\s*/?>" % "|".join(PROSE_TAGS), re.I)
+_CODEISH = re.compile(r"[<>{}=]")
+
+# 이번 실행에서 원고로 보고 **뺀** 파일들. 짧게 사는 CLI 프로세스라 전역으로
+# 들고 있다가 `cmd_list`가 그대로 출력한다 — 뺐다는 사실을 숨기지 않기
+# 위해서다. 검사 층이 조용히 빠지면 어떻게 되는지 이미 겪었다(2026-08-07).
+_TEXT_ONLY = set()
+
+
+def _is_prose_line(body):
+    """속성 없는 문단 태그를 걷어낸 뒤에도 코드 기호가 남는가."""
+    return not _CODEISH.search(_BARE_TAG.sub("", body))
+
+
+def _prose_only_markup(root, base, names):
+    """마크업 파일 중 **글자만 바뀐** 것들. git diff 한 번으로 끝낸다.
+
+    diff에 안 잡히는 파일(untracked 새 파일)은 여기 들어오지 않으므로,
+    새로 만든 `.html`은 언제나 리뷰 대상으로 남는다."""
+    targets = sorted(f for f in names if f.lower().endswith(MARKUP_EXT))
+    if not targets or not base:
+        return set()
+    out = _git(["diff", "--unified=0", base, "--"] + targets, root)
+    if not out.strip():
+        return set()
+    prose = set()
+    for chunk in ("\n" + out).split("\ndiff --git ")[1:]:
+        lines = chunk.splitlines()
+        path = ""
+        for ln in lines:
+            if ln.startswith("+++ b/"):
+                path = ln[6:].strip()
+                break
+        if not path or path == "/dev/null":
+            continue
+        changed, ok, in_body = 0, True, False
+        for ln in lines:
+            if ln.startswith("@@"):
+                in_body = True
+                continue
+            if not in_body or ln[:1] not in "+-":
+                continue
+            body = ln[1:].strip()
+            if not body:
+                continue
+            changed += 1
+            if not _is_prose_line(body):
+                ok = False
+                break
+        if ok and changed:
+            prose.add(path)
+    return prose
+
+
 def _git(args, root):
     try:
         r = subprocess.run(["git"] + args, cwd=root, capture_output=True,
@@ -67,10 +136,17 @@ SCOPE_LABELS = {
 }
 
 
-def _code_files(root, names):
-    """이름 집합에서 **지금 존재하는** 코드 파일만."""
+def _code_files(root, names, base=None):
+    """이름 집합에서 **지금 존재하는** 코드 파일만.
+
+    `base`를 주면 마크업 파일 중 글자만 바뀐 것은 뺀다 —
+    `_prose_only_markup` 주석 참고."""
+    prose = _prose_only_markup(root, base, names)
+    _TEXT_ONLY.update(prose)
     out = []
     for f in names:
+        if f in prose:
+            continue
         if _reviewable(f) and os.path.isfile(os.path.join(root, f)):
             out.append(f)
     return sorted(out)
@@ -142,7 +218,7 @@ def _unreviewed_commits(root):
     base, names = _last_code_commit_range(root)
     if base is None:
         return "HEAD~1", [], []
-    return base, _code_files(root, names), _deleted_code_files(root, names)
+    return base, _code_files(root, names, base), _deleted_code_files(root, names)
 
 
 def scope(root):
@@ -152,16 +228,18 @@ def scope(root):
     (첫 커밋뿐인 저장소)이라는 뜻이다. 계단을 내려갈지는 그 단계에 바뀐
     코드 파일이 있느냐로만 정한다 — 리뷰를 마쳐서 비는 것과 구분해야
     옛날 커밋이 도로 끌려오지 않는다."""
+    _TEXT_ONLY.clear()   # 한 프로세스에서 두 번 불릴 수 있다(_pending·cmd_list)
     names = _diff_names(root, "HEAD")
     for line in _git(["ls-files", "--others", "--exclude-standard"], root).splitlines():
         names.add(line.strip())
-    files, gone = _code_files(root, names), _deleted_code_files(root, names)
+    files, gone = _code_files(root, names, "HEAD"), _deleted_code_files(root, names)
     if files or gone:
         return "uncommitted", "HEAD", files, gone
 
     if _rev_exists(root, "@{upstream}"):
         names = _diff_names(root, "@{upstream}")
-        files, gone = _code_files(root, names), _deleted_code_files(root, names)
+        files, gone = (_code_files(root, names, "@{upstream}"),
+                       _deleted_code_files(root, names))
         if files or gone:
             return "unpushed", "@{upstream}", files, gone
 
@@ -321,6 +399,8 @@ def cmd_list(root):
         "fingerprint": _fingerprint(root, to_review, deleted),  # 훅의 재차단 방지용
         "to_review": to_review,        # 파일명 배열 (하위호환 유지)
         "skipped": skipped,
+        # 마크업인데 글자만 바뀌어 리뷰에서 뺀 것. 숨기지 않고 그대로 밝힌다.
+        "text_only": sorted(_TEXT_ONLY),
         "sizes": sizes,                # {파일: 변경 줄 수} — 병렬 판단 근거
         # 400줄 초과 파일만. growth가 양수면 이번에 더 키운 것, 음수면 줄인 것.
         "oversized": oversized(root, set(to_review), base),

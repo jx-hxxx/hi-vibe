@@ -182,6 +182,22 @@ class CommonTest(TempProject):
         self.assertFalse(os.path.isfile(os.path.join(self.root, "handover-archive.md")))
         self.assertIn("entry-0", self.read_handover())
 
+    def test_rotate_keeps_entries_when_archive_write_fails(self):
+        """아카이브를 못 쓰면 원본을 자르지 않는다 — 순서가 안전장치다.
+
+        예전 순서(자르기 → 아카이브)에서는 아카이브 쓰기가 실패하면 옮기려던
+        항목이 어디에도 남지 않았고, `rotate`의 `except`가 그 사실까지 삼켜
+        조용히 사라졌다. 지금은 아카이브가 먼저라 실패했을 때의 최악이
+        "양쪽에 중복 보관"이고, 그건 눈에 보인다."""
+        for i in range(25):
+            _common.prepend_entry(self.handover, f"## entry-{i}\n\n- x")
+        # 아카이브 자리를 디렉터리로 막아 쓰기를 실패시킨다.
+        os.mkdir(os.path.join(self.root, "handover-archive.md"))
+        _common.rotate(self.handover)
+        kept = self.read_handover()
+        self.assertIn("entry-0", kept)    # 옮기려던 것이 그대로 남아 있다
+        self.assertIn("entry-24", kept)
+
     def test_parse_transcript(self):
         transcript = os.path.join(self.root, "t.jsonl")
         lines = [
