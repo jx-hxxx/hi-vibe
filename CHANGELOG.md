@@ -5,6 +5,10 @@
 
 ## [Unreleased]
 
+## [0.50.0] - 2026-09-05
+<!-- show:ko **이번엔 훅이 코드가 아니라 제가 쓴 문장을 봅니다.** 코드에는 검사와 리뷰가 있는데 대화에는 아무 장치가 없었어요. 그래서 같은 실패가 하루에 세 번 반복됐습니다 — 격식체로 써 달라는 말을 어기고, "체결이 흐르는 차트가 뜨고"처럼 비유로 사실을 흐리고, 파일을 열지도 않고 "이 코드는 이렇게 동작합니다"라고 단정했어요. 말로 약속해서는 안 고쳐진다는 게 그날로 확인돼서 기계 층으로 내렸습니다. 말투는 금지어 목록이 아니라 **허용 목록**으로 봅니다. `-잖아·-거든`을 나열하면 새 말투가 나올 때마다 새거든요. 대신 문장이 격식체로 끝났는가만 보면 목록에 없는 말투도 전부 걸립니다. 근거는 **말한 파일과 연 파일을 맞춰** 봅니다. 처음엔 "뭐라도 읽었나"로 만들었는데, 그러면 다른 파일을 열어 놓고 이 파일을 설명해도 통과하더군요. 실제 대화 기록 3,709턴에 돌려서 헛걸림을 재고 다듬었습니다. -->
+<!-- show:en **This release points the hooks at what I write, not just at code.** Code had tests and reviews; conversation had nothing, and the same failure repeated three times in one day: ignoring the requested register, blurring facts into metaphor, and asserting how code behaves without opening the file. Promising to do better had already failed, so it moved down into the machine layer. Register is checked with an **allowlist**, not a banned-word list: listing casual endings leaks every time a new one appears, while asking whether the sentence ended formally catches the ones nobody listed. Evidence is checked **per file** — the first design only asked whether anything had been read, which let a different file's grep vouch for this file's behavior. Tuned against 3,709 real conversation turns. -->
+
 ### Added
 - **답변 검사 훅 — 훅이 이제 내가 쓴 문장을 읽는다** (2026-09-05, `answer_gate.py`·`_answer_check.py`) — 코드에는 테스트와 fresh-eyes가 있는데 **대화에는 아무 장치가 없었다.** 같은 날 한 세션에서 격식체 지시를 여러 번 어기고, 비유로 사실을 흐리고, 확인하지 않은 동작을 단정하는 일이 반복됐다. 문서에 적어 두는 층으로는 안 된다는 것이 그날로 확인돼 기계 층으로 내렸다.
   - **말투는 허용 목록으로 판정한다.** `-잖아·-거든`을 나열하는 금지 목록은 새 말투가 하나 나올 때마다 샌다(사용자 지적). 대신 문장이 `니다·니까·십시오·세요·까요`로 끝나는가만 본다 — 목록에 없는 말투도 전부 걸리고 빠져나갈 구멍이 없다. 마침표로 끝나는 문장만 대상이라 목록 라벨·표는 그대로 두고, 코드 블록·인용부호 안은 검사하지 않는다(사용자의 반말을 인용할 수 있어야 한다).
@@ -13,6 +17,7 @@
     - 처음에는 "이번 턴에 무언가 읽었나"로 만들고 막지 않기로 했다 — 통과하는 가장 싼 방법이 "아무 파일이나 한 번 여는 것"이 되기 때문이다(v0.48.0에서 겪은 함정과 같다). **그런데 그 설계로는 정작 잡아야 할 실패를 못 잡았다.** 같은 날 세 번째 실패는 기술문서를 grep해 놓고 다른 파일의 동작을 단정한 것이었고, 도구는 돌았으니 "읽음"으로 통과한다. 실측으로 확인하고 설계를 바꿨다.
     - 파일 단위로 맞추면 **통과하는 유일한 방법이 그 파일을 여는 것**이 된다. 빠져나가는 행동과 올바른 행동이 같으므로 막아도 형식만 채우는 통과가 성립하지 않는다.
     - **한글 조사에 걸려 조용히 0건이 될 뻔했다** — 파이썬에서 한글도 `\w`라 `stop_nudge.py의`에는 `\b` 경계가 안 생긴다. 회귀 테스트로 고정했다.
+  - **실제 대화 기록 3,709턴으로 헛걸림을 재고 다듬었다.** 처음 판정은 말투 57%·비유 10.5%가 걸렸다 — 그대로 냈으면 두 턴에 한 번 막혀서 사용자가 훅을 껐을 것이다. 네 가지가 원인이었고 전부 고쳤다: ①문장 끝 괄호 설명 때문에 종결어미가 가려짐(`...표시됩니다 (에러 0개).`) ②해요체(`~하고요`·`~이네요`)를 허용 목록에서 빠뜨림 ③**서술어로 끝나지 않은 라벨을 문장으로 셈**(`그 외 항목 통과.` — 차단의 절반이 이것) ④`뜨다`·`죽다`는 대화에서 표준 기술 한국어인데 비유로 잡음. 최종 **말투 11.9% · 비유 1.8% · 근거 2.5%**이고, 남은 말투 차단의 대부분은 `~거죠·~이야·~거야`처럼 실제로 고쳐야 할 것이다.
   - **남는 한계**: "이 문장이 동작을 단정하는가"는 여전히 기계가 못 가린다. 파일 이름을 스치듯 언급만 해도 걸릴 수 있다. 헛걸림은 파일 한 번 여는 비용이고 놓침은 사용자가 틀린 설명을 믿는 비용이라, 걸리는 쪽으로 뒀다.
   - `stop_hook_active`와 내용 지문으로 **같은 답변에 두 번 막지 않는다** — 고치는 중에 무한히 걸리면 빠져나갈 수 없다.
   - `doctor`가 이 훅을 **걸릴 문장을 실제로 넣어** 검사한다. 빈 입력으로는 조용히 죽은 것과 통과한 것을 구분하지 못한다.

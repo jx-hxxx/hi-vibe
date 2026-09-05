@@ -34,9 +34,27 @@ class ToneTest(unittest.TestCase):
     def test_informal_endings_are_caught(self):
         for text in ["이건 좀 아닌 것 같은데 다시 보자.",
                      "왜 이렇게 됐는지 나도 모르겠어.",
-                     "원인은 캐시 때문임.",
+                     "그게 바로 그거였죠.",
                      "그건 아까 말했잖아."]:
             self.assertTrue(_answer_check.informal_sentences(text), text)
+
+    def test_label_lines_are_not_sentences(self):
+        """실측에서 차단의 절반이 이것이었다 — 문장이 아니라 상태 라벨이다.
+
+        서술어로 끝나지 않으면 문장이 아니다. 이걸 안 보면 `그 외 항목 통과.`
+        같은 줄이 전부 걸려서 차단률이 57%가 된다(실측)."""
+        for text in ["그 외 항목 통과.", "검사 완료.", "위험 패턴 검출 없음."]:
+            self.assertEqual(_answer_check.informal_sentences(text), [], text)
+
+    def test_trailing_parenthetical_does_not_hide_the_ending(self):
+        """`...뜹니다 (버튼 정상, 에러 0개).`은 종결어미가 멀쩡하다.
+
+        괄호를 안 떼면 끝 글자가 `개`가 되어 걸린다 — 실측 오탐 1위였다."""
+        self.assertEqual(
+            _answer_check.informal_sentences("로그인 화면까지 표시됩니다 (에러 0개)."), [])
+
+    def test_embedded_question_is_a_fragment(self):
+        self.assertEqual(_answer_check.informal_sentences("제대로 도는지."), [])
 
     def test_unlisted_informal_style_is_still_caught(self):
         """금지 목록이었다면 샜을 말투. 허용 목록이라 걸린다.

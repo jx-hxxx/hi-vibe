@@ -32,13 +32,35 @@ import _transcript
 # 하십시오체(니다·니까·십시오)와 해요체(세요·까요)를 함께 허용한다. 질문과
 # 권유는 해요체가 자연스럽고("말씀해주세요"), 사용자가 문제 삼은 것은
 # 반말·축약체(-잖아, -더라고, -임)이지 해요체가 아니다.
-_FORMAL_TAIL = re.compile(r"(?:니다|니까|십시오|세요|셔요|까요|줄까요)$")
+# `요`로 끝나는 것은 전부 허용한다(해요체). 실측에서 오탐의 큰 몫이었다 —
+# "새 세션 시작이네요", "앞뒤가 안 맞기도 하고요"는 공손한 말인데 걸렸다.
+# 반말은 `요`로 끝나지 않으므로 허용 목록의 성질은 그대로다.
+_FORMAL_TAIL = re.compile(r"(?:니다|니까|십시오|요)$")
+
+# **서술어로 끝났는가.** 이걸 먼저 보지 않으면 라벨이 문장으로 세어진다 —
+# 실측에서 차단의 절반이 `그 외 항목 통과.`·`검사 완료.` 같은 것이었다.
+# 한국어 서술어의 마지막 글자는 닫힌 집합에 가까우므로, 여기 없으면 명사로
+# 끝난 것이고 곧 라벨이다. 새 구어체가 나와도 이 글자들 중 하나로 끝나므로
+# 허용 목록의 성질은 유지된다.
+_PREDICATE_TAIL = re.compile(r"[다지죠네어아야군걸게데까오소냐마자래대든봐돼해듯]$")
+# **못 잡는 것: `-음/-임`체**(`원인은 캐시 때문임.`). 라벨이 같은 글자로 끝나서
+# (`검출 없음.`·`확인됨.`) 넣으면 오탐이 크게 는다. 사용자가 금지한 목록에도
+# 없어서 지금은 뺐다 — 지적받으면 `음임`을 위 목록에 더하면 된다.
+
+# `~하는지.`·`~인지.`는 안긴 물음이라 문장이 아니라 조각이다. `지`를 서술어
+# 목록에서 빼면 `그렇지.` 같은 반말을 놓치므로, 이 꼴만 따로 뺀다.
+_EMBEDDED_Q = re.compile(r"(?:는|은|ㄴ|을|를|인)지$")
 
 _HANGUL = re.compile(r"[가-힣]")
 # 문장 경계: 마침표·물음표 **뒤에 공백이나 끝**이 와야 한다. 숫자 사이의
 # 마침표(0.14%)나 파일명(app.py)에서 자르지 않기 위한 조건이다.
-_SENT_SPLIT = re.compile(r"(?<=[.?!])(?=\s|$)")
+_SENT_SPLIT = re.compile(r"(?<=[.?!])[*_`\"'”’)\]]*(?=\s|$)")
 _TRAIL_PUNCT = re.compile(r'[.?!\s"\'”’」』)\]]+$')
+
+
+# 문장 끝에 붙는 괄호 설명. `...뜹니다 (버튼 정상, 에러 0개).`처럼 쓰면
+# 종결어미는 멀쩡한데 끝 글자가 `개`가 되어 걸렸다(실측 오탐 1위).
+_PAREN = re.compile(r"[(（][^()（）]*[)）]")
 
 
 def _strip_uncheckable(text):
@@ -52,7 +74,11 @@ def _strip_uncheckable(text):
     out = []
     for ln in text.splitlines():
         s = ln.strip()
-        if s.startswith((">", "#", "|", "---", "===")):    # 인용·제목·표·구분선
+        # 인용·제목·표·구분선, 그리고 **목록 항목**. 목록은 라벨이라 명사로
+        # 끝나는 게 정상인데, 마침표가 붙으면 문장으로 잘못 세어진다.
+        if s.startswith((">", "#", "|", "---", "===", "- ", "* ", "• ")):
+            continue
+        if re.match(r"\d+[.)]\s", s):                     # 1. 2) 같은 번호 목록
             continue
         out.append(ln)
     return "\n".join(out)
@@ -71,11 +97,16 @@ def informal_sentences(text):
             continue                       # 문장이 아니라 조각 — 대상 아님
         if not _HANGUL.search(s):
             continue                       # 영문·코드 문장은 대상 아님
-        core = _TRAIL_PUNCT.sub("", s)
+        core = _TRAIL_PUNCT.sub("", _PAREN.sub("", s).strip())
         if not core or not _HANGUL.search(core[-1:]):
             continue                       # 숫자·기호로 끝남 — 판정 보류
-        if not _FORMAL_TAIL.search(core):
-            bad.append(s[:80])
+        if _FORMAL_TAIL.search(core):
+            continue
+        if not _PREDICATE_TAIL.search(core):
+            continue                       # 명사로 끝남 = 라벨이지 문장이 아니다
+        if _EMBEDDED_Q.search(core):
+            continue                       # `~했는지.` = 안긴 물음, 끊긴 조각이다
+        bad.append(s[:80])
     return bad
 
 
@@ -131,8 +162,12 @@ _BASH_READ_RE = re.compile(
 # 끝을 `\b`로 잡으면 **한글 조사가 붙었을 때 안 걸린다** — 파이썬에서 한글도
 # `\w`라서 `stop_nudge.py의`에는 경계가 생기지 않는다. 실제로 이 검사를
 # 처음 돌렸을 때 조용히 0건이 나왔다. ASCII 낱말 문자만 배제한다.
+# **코드 파일만 센다.** `.md`를 넣었더니 걸린 것의 대부분이 `CLAUDE.md`·
+# `MODULE.md`처럼 "이 문서를 갱신하세요" 같은 안내였다(실측). 문서 이름을
+# 부르는 것은 동작을 단정하는 것이 아니다. 잡으려는 실패는 "코드가 이렇게
+# 동작한다"이므로 대상도 코드로 좁힌다.
 _FILEISH = re.compile(
-    r"[\w./-]*\w+\.(?:py|js|mjs|cjs|jsx|ts|tsx|html|css|json|ya?ml|md|sh|toml)"
+    r"[\w./-]*\w+\.(?:py|js|mjs|cjs|jsx|ts|tsx|css|sh)"
     r"(?![A-Za-z0-9_])")
 
 
