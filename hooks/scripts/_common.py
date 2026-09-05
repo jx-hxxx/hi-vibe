@@ -7,8 +7,9 @@
     _transcript.py   대화 기록 읽기 — 요청·수정 파일·Bash 흔적·테스트 결과
     _agent_watch.py  리뷰 활동 감시 — fresh-eyes가 실제로 도는지
     _handover.py     handover 쓰기 — 이어갈 단서 남기기·회전·중복 방지
+    _answer_check.py 답변 검사 — 내가 쓴 문장의 말투·비유·근거
 
-이 파일이 남아 있는 이유: 훅 5종·테스트·스킬이 전부 `_common.X`로 부른다.
+이 파일이 남아 있는 이유: 훅 스크립트 6개·테스트·스킬이 전부 `_common.X`로 부른다.
 그 호출부를 전부 고치는 것보다 이름의 자리를 지키는 쪽이 기계적이고,
 나중에 내부를 또 옮겨도 호출부가 안 흔들린다.
 
@@ -45,6 +46,10 @@ from _agent_watch import (                             # noqa: E402
     AGENT_SESSIONS_KEEP, AGENTS_FILE, FRESH_EYES_TYPE, PENDING_TTL,
     agent_offset, marked_files, note_agent_activity, read_agent_activity,
     review_activity,
+)
+from _answer_check import (                             # noqa: E402
+    WORDLIST, informal_sentences, last_turn, metaphors, read_happened,
+    unverified_mentions,
 )
 from _handover import (                                # noqa: E402
     WRITTEN_FILE, WRITTEN_KEEP, handover_already_written, handover_body,

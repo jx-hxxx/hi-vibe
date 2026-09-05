@@ -19,7 +19,7 @@ import time
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOOK_SCRIPTS = ["session_start.py", "pre_compact.py", "session_end.py",
-                "stop_nudge.py", "post_write_guard.py"]
+                "stop_nudge.py", "post_write_guard.py", "answer_gate.py"]
 
 results = []  # (status, label, detail)  status: OK | WARN | FAIL
 
@@ -41,7 +41,7 @@ def check_python3():
     python3 = shutil.which("python3")
     if not python3:
         add("FAIL", "python3 실행 파일",
-            "PATH에 python3가 없음 — 훅 5종이 전부 조용히 비활성 상태. "
+            "PATH에 python3가 없음 — 훅 스크립트 6개가 전부 조용히 비활성 상태. "
             "macOS: `xcode-select --install` 또는 brew install python. "
             "Windows: python.org 설치 후 python3 별칭 필요.")
         return None
@@ -65,12 +65,12 @@ def check_plugin_files():
     if missing:
         add("FAIL", "플러그인 파일", "누락: " + ", ".join(missing) + " — 재설치 필요")
         return False
-    add("OK", "플러그인 파일", "훅 5종 + hooks.json + 스캐너 모두 존재")
+    add("OK", "플러그인 파일", "훅 스크립트 6개 + hooks.json + 스캐너 모두 존재")
     return True
 
 
 def check_hooks_live(python3):
-    """임시 init 프로젝트를 만들어 훅 5종을 끝까지 실제로 돌려본다."""
+    """임시 init 프로젝트를 만들어 훅 스크립트 6개를 끝까지 실제로 돌려본다."""
     with tempfile.TemporaryDirectory(prefix="vibe-doctor-") as tmp:
         os.makedirs(os.path.join(tmp, ".hi-vibe"), exist_ok=True)  # init 마커(gate)
         with open(os.path.join(tmp, "handover.md"), "w", encoding="utf-8") as f:
@@ -111,9 +111,27 @@ def check_hooks_live(python3):
 
         p = run_hook(python3, "stop_nudge.py", {"cwd": tmp, "session_id": "doctor", "transcript_path": ""}, tmp)
         if p.returncode == 0:
-            add("OK", "Stop 훅", "실행 가능 확인 (빈 입력에 exit 0)")
+            add("OK", "Stop 훅(변경 검사)", "실행 가능 확인 (빈 입력에 exit 0)")
         else:
-            add("FAIL", "Stop 훅", f"exit {p.returncode}")
+            add("FAIL", "Stop 훅(변경 검사)", f"exit {p.returncode}")
+
+        # 답변 검사는 **빈 입력으로는 아무것도 증명하지 못한다** — 걸릴 문장을
+        # 실제로 넣어 막는 것까지 확인한다(조용히 죽으면 그대로 통과하므로).
+        tpath = os.path.join(tmp, "t.jsonl")
+        with open(tpath, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"type": "user", "message": {
+                "role": "user", "content": "확인해줘"}}, ensure_ascii=False) + "\n")
+            f.write(json.dumps({"type": "assistant", "message": {
+                "role": "assistant", "content": [
+                    {"type": "text", "text": "이건 좀 아닌 것 같은데 다시 보자."}]}},
+                ensure_ascii=False) + "\n")
+        p = run_hook(python3, "answer_gate.py",
+                     {"cwd": tmp, "session_id": "doctor", "transcript_path": tpath}, tmp)
+        if p.returncode == 0 and "말투" in p.stdout:
+            add("OK", "Stop 훅(답변 검사)", "격식체 아닌 문장을 막는 것 확인")
+        else:
+            add("FAIL", "Stop 훅(답변 검사)",
+                f"exit {p.returncode}, 감지 실패 — 말투·비유 검사가 조용히 죽어 있다")
 
 
 def check_scanner(python3):

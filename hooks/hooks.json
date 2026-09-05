@@ -1,5 +1,5 @@
 {
-  "description": "hi-vibe: compact 직전·/clear·세션 종료 시 handover 자동 기록, 세션 시작 컨텍스트 주입, 에러 삼킴 감지, 리뷰 안 받은 변경 자동 리뷰",
+  "description": "hi-vibe: compact 직전·/clear·세션 종료 시 handover 자동 기록, 세션 시작 컨텍스트 주입, 에러 삼킴 감지, 리뷰 안 받은 변경 자동 리뷰, 답변 말투·비유·근거 검사",
   "hooks": {
     "PostToolUse": [
       {
@@ -55,6 +55,11 @@
           {
             "type": "command",
             "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/stop_nudge.py\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/answer_gate.py\"",
             "timeout": 10
           }
         ]
