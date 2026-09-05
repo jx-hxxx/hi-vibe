@@ -5,6 +5,19 @@
 
 ## [Unreleased]
 
+## [0.51.0] - 2026-09-05
+<!-- show:ko **바로 앞 판에서 하나를 되돌립니다.** 말투 검사를 기본으로 켜서 냈는데, 그건 제 취향을 남의 프로젝트에 강제하는 것이었어요. 반말로 편하게 쓰고 싶은 분에게 격식체를 강요하면 그분은 플러그인을 지웁니다. 그래서 **말투와 비유 검사는 기본에서 뺐어요.** 원하는 프로젝트만 `.hi-vibe/tone` 파일을 만들면 켜지고, 그 파일에 줄을 적으면 그 프로젝트가 싫어하는 표현이 목록에 더해집니다. **근거 검사는 그대로 둡니다** — "이 파일은 이렇게 동작해요"라고 설명하면서 그 파일을 안 열었으면 막는 것은 취향이 아니라 맞고 틀림의 문제니까요. 랜딩에도 이 검사 설명을 넣었습니다. -->
+<!-- show:en **Reverting one thing from the previous release.** The register check shipped on by default, which imposed one project's taste on everyone else's. Forcing formal Korean on someone who writes casually is how a plugin gets uninstalled. **Register and metaphor checks are now off by default** — a project turns them on by creating `.hi-vibe/tone`, and any lines in that file are added to the phrases that project does not want. **The evidence check stays on**: blocking an answer that explains how a file behaves when that file was never opened is not taste, it is right or wrong. The landing page now describes it too. -->
+
+### Changed
+- **말투·비유 검사를 기본에서 뺐다 (opt-in)** (2026-09-05, `_answer_check.py`·`answer_gate.py`) — v0.50.0은 이 검사를 켠 채로 나갔는데, **어떤 말투로 쓸지는 프로젝트 주인의 취향이지 보편 규칙이 아니다.** hi-vibe는 공개 플러그인이라 반말로 편하게 쓰려는 사람에게 격식체를 강제하면 그 사람은 플러그인을 지운다. 안전장치가 취향을 강제하기 시작하면 안전장치까지 같이 버려진다.
+  - 켜는 법: 프로젝트에 `.hi-vibe/tone` 파일을 만든다. 비어 있으면 기본 목록으로 돌고, 줄을 적으면 그 표현이 비유 목록에 더해진다. `init`은 이 파일을 만들지 않는다.
+  - **근거 검사는 기본 유지**다. "이 파일은 이렇게 동작한다"고 설명하면서 그 파일을 안 열었으면 막는 것은 취향이 아니라 맞고 틀림의 문제이고, 실측 차단률도 2.5%로 낮다.
+
+### Added
+- **랜딩에 근거 검사 설명을 넣었다** (2026-09-05, `docs/index.html` 한/영) — 기능 설명의 유일본은 랜딩인데, v0.50.0에서 훅이 하는 일이 늘었는데도 설명이 안 따라갔다. CLAUDE.md가 경고한 "동작 하나가 여러 곳에 산다"에 그대로 걸렸다.
+
+
 ## [0.50.0] - 2026-09-05
 <!-- show:ko **이번엔 훅이 코드가 아니라 제가 쓴 문장을 봅니다.** 코드에는 검사와 리뷰가 있는데 대화에는 아무 장치가 없었어요. 그래서 같은 실패가 하루에 세 번 반복됐습니다 — 격식체로 써 달라는 말을 어기고, "체결이 흐르는 차트가 뜨고"처럼 비유로 사실을 흐리고, 파일을 열지도 않고 "이 코드는 이렇게 동작합니다"라고 단정했어요. 말로 약속해서는 안 고쳐진다는 게 그날로 확인돼서 기계 층으로 내렸습니다. 말투는 금지어 목록이 아니라 **허용 목록**으로 봅니다. `-잖아·-거든`을 나열하면 새 말투가 나올 때마다 새거든요. 대신 문장이 격식체로 끝났는가만 보면 목록에 없는 말투도 전부 걸립니다. 근거는 **말한 파일과 연 파일을 맞춰** 봅니다. 처음엔 "뭐라도 읽었나"로 만들었는데, 그러면 다른 파일을 열어 놓고 이 파일을 설명해도 통과하더군요. 실제 대화 기록 3,709턴에 돌려서 헛걸림을 재고 다듬었습니다. -->
 <!-- show:en **This release points the hooks at what I write, not just at code.** Code had tests and reviews; conversation had nothing, and the same failure repeated three times in one day: ignoring the requested register, blurring facts into metaphor, and asserting how code behaves without opening the file. Promising to do better had already failed, so it moved down into the machine layer. Register is checked with an **allowlist**, not a banned-word list: listing casual endings leaks every time a new one appears, while asking whether the sentence ended formally catches the ones nobody listed. Evidence is checked **per file** — the first design only asked whether anything had been read, which let a different file's grep vouch for this file's behavior. Tuned against 3,709 real conversation turns. -->

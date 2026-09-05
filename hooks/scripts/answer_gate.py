@@ -2,7 +2,10 @@
 
 두 가지를 본다. **다루는 방법이 다르다는 것이 이 훅의 핵심이다.**
 
-  1) 말투 — 격식체로 끝나지 않은 문장, 또는 비유 표현이 있으면 **막는다.**
+  1) 말투·비유 — 격식체로 끝나지 않은 문장이나 비유 표현이 있으면 **막는다.**
+     단 **기본으로 꺼져 있다** — `.hi-vibe/tone` 파일을 만든 프로젝트에서만
+     돈다. 어떤 말투로 쓸지는 프로젝트 주인의 취향이지 보편 규칙이 아니고,
+     반말로 편하게 쓰려는 사람에게 격식체를 강제하면 플러그인을 지운다.
      기계가 판정할 수 있고, 막으면 실제로 고쳐진다(다시 쓰면 되며 올바른
      문장을 만들 능력은 이미 있다). 사용자가 여러 번 지적했는데도 반복된
      실패라, 문서에 적어 두는 층으로는 안 된다는 것이 이미 확인됐다.
@@ -100,8 +103,9 @@ def main(payload):
     # 1) 말투 — 막는다. 단 **같은 답변으로 두 번 막지 않는다.**
     #    `stop_hook_active`는 이 훅 때문에 턴이 이어진 상태라는 뜻이다.
     #    그때 또 막으면 고치는 중에 무한히 걸린다.
-    bad = _answer_check.informal_sentences(said)
-    figs = _answer_check.metaphors(said)
+    tone_on = _answer_check.tone_enabled(cwd)
+    bad = _answer_check.informal_sentences(said) if tone_on else []
+    figs = _answer_check.metaphors(said, cwd=cwd) if tone_on else []
     if (bad or figs) and not payload.get("stop_hook_active"):
         fingerprint = hashlib.sha1(
             ("\n".join(bad) + "\n" + "\n".join(s for s, _ in figs)

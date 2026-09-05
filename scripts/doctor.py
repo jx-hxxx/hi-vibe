@@ -117,6 +117,9 @@ def check_hooks_live(python3):
 
         # 답변 검사는 **빈 입력으로는 아무것도 증명하지 못한다** — 걸릴 문장을
         # 실제로 넣어 막는 것까지 확인한다(조용히 죽으면 그대로 통과하므로).
+        # 말투 검사는 기본으로 꺼져 있다 — 켜는 마커를 만들어야 검사가 된다.
+        with open(os.path.join(tmp, ".hi-vibe", "tone"), "w", encoding="utf-8") as f:
+            f.write("")
         tpath = os.path.join(tmp, "t.jsonl")
         with open(tpath, "w", encoding="utf-8") as f:
             f.write(json.dumps({"type": "user", "message": {

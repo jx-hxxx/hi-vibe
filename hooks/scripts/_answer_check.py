@@ -124,20 +124,36 @@ def informal_sentences(text):
 WORDLIST = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "informal_words.txt")
 
-
-def _banned_words(path=WORDLIST):
-    try:
-        with open(path, encoding="utf-8") as fh:
-            lines = fh.read().splitlines()
-    except OSError:
-        return []          # 목록을 못 읽으면 이 검사만 건너뛴다(fail-open)
-    return [w.strip() for w in lines
-            if w.strip() and not w.lstrip().startswith("#")]
+# **말투·비유 검사는 기본으로 끈다.** 어떤 말투로 쓸지는 프로젝트 주인의
+# 취향이지 보편적인 규칙이 아니다. 반말로 편하게 쓰고 싶은 사람에게 격식체를
+# 강제하면 그 사람은 플러그인을 지운다. 원하는 프로젝트가 이 파일을 만들어
+# 켠다(빈 파일이면 기본 목록, 줄을 적으면 그 표현이 목록에 더해진다).
+TONE_MARKER = os.path.join(".hi-vibe", "tone")
 
 
-def metaphors(text, path=WORDLIST):
+def tone_enabled(cwd):
+    return os.path.isfile(os.path.join(cwd or "", TONE_MARKER))
+
+
+def _banned_words(path=WORDLIST, cwd=None):
+    """기본 목록 + 프로젝트가 `.hi-vibe/tone`에 적어 넣은 표현."""
+    words = []
+    for src in (path, os.path.join(cwd or "", TONE_MARKER) if cwd else None):
+        if not src:
+            continue
+        try:
+            with open(src, encoding="utf-8") as fh:
+                lines = fh.read().splitlines()
+        except OSError:
+            continue       # 못 읽으면 그 목록만 건너뛴다(fail-open)
+        words += [w.strip() for w in lines
+                  if w.strip() and not w.lstrip().startswith("#")]
+    return words
+
+
+def metaphors(text, path=WORDLIST, cwd=None):
     """비유 표현이 들어간 문장들. 없으면 빈 리스트."""
-    words = _banned_words(path)
+    words = _banned_words(path, cwd)
     if not words:
         return []
     body = _strip_uncheckable(text)

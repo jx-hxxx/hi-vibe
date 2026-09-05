@@ -226,6 +226,9 @@ class GateTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         os.makedirs(os.path.join(self.tmp, ".hi-vibe"), exist_ok=True)
+        # 말투 검사는 opt-in — 켜는 마커를 만들어야 돈다.
+        with open(os.path.join(self.tmp, ".hi-vibe", "tone"), "w") as fh:
+            fh.write("")
 
     def tearDown(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
@@ -266,6 +269,17 @@ class GateTest(unittest.TestCase):
         # 임시 폴더는 이 저장소가 아니라 git ls-files가 비어 검사가 생략된다.
         # 차단 여부가 아니라 **말투로는 안 걸린다**는 것만 고정한다.
         self.assertNotIn("말투", out.get("reason", ""))
+
+    def test_tone_is_off_unless_the_project_asks_for_it(self):
+        """말투는 취향이라 기본값이 아니다 — 공개 플러그인의 기본이 되면 안 된다."""
+        os.remove(os.path.join(self.tmp, ".hi-vibe", "tone"))
+        out = self._run([_user("질문"), _say("이건 아닌 것 같은데 다시 보자.")])
+        self.assertNotEqual(out.get("decision"), "block")
+
+    def test_project_can_add_its_own_banned_words(self):
+        with open(os.path.join(self.tmp, ".hi-vibe", "tone"), "w", encoding="utf-8") as fh:
+            fh.write("# 이 프로젝트가 싫어하는 표현\n뭉개집니다\n")
+        self.assertTrue(_answer_check.metaphors("경계가 뭉개집니다.", cwd=self.tmp))
 
     def test_gate_is_off_without_the_hi_vibe_marker(self):
         """opt-in 원칙 — init 안 한 프로젝트는 건드리지 않는다."""
