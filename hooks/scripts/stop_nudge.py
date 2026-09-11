@@ -105,48 +105,46 @@ def _remember_block(flag_dir, fingerprint, name="last_block"):
 
 
 def review_reason(scope):
-    """차단 사유 = 에이전트가 받을 지시. 무엇을·왜·어떻게 끝내는지까지 담는다."""
+    """차단 사유 = 에이전트가 받을 지시.
+
+    **짧게 유지한다.** 이 문자열은 모델에게만 가는 게 아니라 사용자 터미널에
+    그대로 찍힌다 — 절차를 여기 다 옮겨 적으면 매 턴 화면을 덮는다. 절차의
+    유일본은 `write-gate/SKILL.md`의 `Mode: review`이고, 여기서는 무엇이·
+    어떻게 멈추는지·빠져나가는 길만 말한다."""
     files = scope.get("to_review", [])
     gone = scope.get("deleted", [])
-    shown = ", ".join(files[:8]) if files else "(수정된 파일 없음)"
-    more = "" if len(files) <= 8 else f" 외 {len(files) - 8}개"
+    shown = ", ".join(files[:5]) if files else "(수정된 파일 없음)"
+    more = "" if len(files) <= 5 else f" 외 {len(files) - 5}개"
     deleted_line = ""
     if gone:
         # 지운 파일은 열어볼 수 없다 — 남은 호출부가 진짜 위험이다.
-        deleted_line = ("삭제된 코드 파일: " + ", ".join(gone[:8]) +
-                        ("" if len(gone) <= 8 else f" 외 {len(gone) - 8}개") +
-                        ". 이 파일들을 부르던 곳이 남아 있는지 반드시 확인하세요.\n")
+        deleted_line = ("삭제됨: " + ", ".join(gone[:5]) +
+                        ("" if len(gone) <= 5 else f" 외 {len(gone) - 5}개") +
+                        " — 남은 호출부 확인.\n")
     return (
-        "hi-vibe: 아직 리뷰 안 받은 코드 변경이 있습니다 "
-        f"({scope.get('scope_label', '')}, {scope.get('file_count', 0)}파일 "
-        f"{scope.get('total_changed_lines', 0)}줄): {shown}{more}.\n"
+        f"hi-vibe: 리뷰 안 받은 코드 변경 {scope.get('file_count', 0)}파일 "
+        f"{scope.get('total_changed_lines', 0)}줄"
+        f"({scope.get('scope_label', '')}): {shown}{more}.\n"
         + deleted_line
-        + "지금 write-gate 스킬의 `Mode: review`를 그대로 수행하세요 "
-        "(범위 계산 → 체크리스트 → fresh-eyes → mark).\n"
-        "리뷰를 마치면 review_scope.py mark 로 표시해야 이 알림이 멈춥니다.\n"
-        "단, 사용자가 방금 '넘어가'/'나중에'/'가볍게'라고 했으면 그 뜻을 "
-        "따르세요 — 같은 변경으로는 다시 막지 않습니다."
+        + "write-gate `Mode: review` 수행 → 끝나면 `review_scope.py mark`. "
+        "사용자가 '넘어가'/'나중에'라고 했으면 그 뜻을 따르세요."
     )
 
 
 def fresh_eyes_reason(files):
-    """리뷰를 마쳤다고 표시했는데 fresh-eyes가 안 돈 경우의 지시."""
-    shown = ", ".join(files[:8])
-    more = "" if len(files) <= 8 else f" 외 {len(files) - 8}개"
+    """리뷰를 마쳤다고 표시했는데 fresh-eyes가 안 돈 경우의 지시.
+
+    review_reason과 같은 이유로 짧게 유지한다 — 사용자 화면에 그대로 찍힌다."""
+    shown = ", ".join(files[:5])
+    more = "" if len(files) <= 5 else f" 외 {len(files) - 5}개"
     return (
-        f"hi-vibe: 방금 리뷰 완료로 표시한 {len(files)}개 파일({shown}{more})에 "
-        "**fresh-eyes가 안 돌았습니다.** 체크리스트만 돌고 설계 검토는 빠진 "
-        "상태입니다 — 리뷰는 두 겹인데 뒤쪽 절반이 없습니다.\n"
-        "지금 fresh-eyes 에이전트를 소환하세요(Agent 도구, subagent_type "
-        "`hi-vibe:fresh-eyes`). 전달할 것은 ①사용자의 원래 요구사항 한 줄 "
-        "②이번에 바꾼 파일 목록뿐입니다 — **설계 이유나 변명은 전달하지 "
-        "마세요.** 작성자의 착각을 물려주면 깨끗한 눈이 사라집니다.\n"
-        "돌고 나면 review_scope.py mark 를 같은 파일들로 한 번 더 실행하세요 "
-        "(표시는 여러 번 해도 안전하고, 그래야 다음 리뷰가 이 실행분을 "
-        "당겨쓰지 않습니다).\n"
-        "이 판정은 AI 신고가 아니라 대화 기록을 훅이 직접 세어 나온 것입니다. "
-        "단, Agent 호출이 **실제로 실패**하거나 사용자가 '넘어가'라고 했으면 "
-        "그 사실을 한 줄로 밝히고 진행하세요 — 같은 파일로는 다시 막지 않습니다."
+        f"hi-vibe: 리뷰 완료로 표시한 {len(files)}개 파일({shown}{more})에 "
+        "fresh-eyes가 안 돌았습니다 — 리뷰 두 겹 중 설계 검토가 빠졌습니다.\n"
+        "Agent 도구로 `hi-vibe:fresh-eyes` 소환 — 전달은 사용자 요구사항 한 "
+        "줄과 파일 목록뿐(설계 이유·변명은 전달 금지). 끝나면 같은 파일로 "
+        "`review_scope.py mark`.\n"
+        "Agent 호출이 실제로 실패했거나 사용자가 '넘어가'라고 했으면 한 줄로 "
+        "밝히고 진행하세요."
     )
 
 

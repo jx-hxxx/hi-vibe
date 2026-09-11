@@ -640,7 +640,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>336</b><span>자동 회귀 테스트</span></div>
+      <div><b>338</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -941,9 +941,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.53.0<small>2026-09-11</small></div><div class="h"><b><code>/clear</code>로 세션을 끊어도 이어갈 맥락을 제대로 넘겨줍니다.</b> <span>컨텍스트를 아끼려 <code>/clear</code>를 자주 쓰면 그때마다 handover 기록이 다음 세션의 유일한 단서가 되는데, 지금까지 <code>/clear</code> 직후에는 그 기록의 <strong>앞 4줄만</strong> 들어갔습니다. 그 4줄은 제목·빈 줄·Git·첫 항목이라 정작 이어받는 데 필요한 줄이 잘려 나갔고, "다음 세션에서 다듬어 주세요"라고 적어둔 뼈대를 다듬으라는 지시도 없었습니다. 이제 <code>/clear</code>는 compact과 같은 대우를 받습니다 — 최신 항목 전량과 다듬기 지시가 함께 들어갑니다. 그리고 <strong>훅이 턴을 막을 때 나오던 설명이 짧아졌습니다.</strong> 차단 사유는 모델에게 가는 지시이면서 동시에 화면에 그대로 찍히는 글인데, 리뷰 절차를 통째로 옮겨 적어 매번 화면을 덮고 있었습니다. 절차의 유일본은 스킬에 두고, 사유에는 무엇이 걸렸는지·어떻게 멈추는지만 남겼습니다.</span></div></div>
         <div class="rel"><div class="v">v0.52.1<small>2026-09-11</small></div><div class="h"><b>골드 큐브가 검게 보이던 조명을 바로잡았습니다.</b> <span>골드 테마가 주변광 색을 넘기고 있었지만 렌더러는 파란 기본값을 하드코딩해, 주황 재질과 색 성분이 거의 겹치지 않는 어두운 면이 검게 보였습니다. 실제 테마 값을 조명에 연결하고 캐시버스팅을 붙여 수정본을 바로 받게 했습니다.</span></div></div>
         <div class="rel"><div class="v">v0.52.0<small>2026-09-11</small></div><div class="h"><b>성능 개선 수치에도 다시 확인할 수 있는 영수증을 남깁니다.</b> <span>비교 가능한 전후 수치가 나오면 <code>evidence/METRICS.md</code>에 측정 명령·환경·표본·커밋·원본 결과를 함께 기록해, CHANGELOG의 숫자가 나중에 출처 없는 문장이 되지 않게 했어요. 정확도는 <code>%p</code>와 상대 개선율을 구분하고, 조건이 다르거나 원본이 없으면 확정 성과로 꾸미지 않습니다. 동시에 모든 모드가 함께 읽던 <code>write-gate</code>를 361줄→70줄로 줄이고 상세 리뷰와 측정 규칙을 필요할 때만 읽는 참조로 옮겼습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.51.0<small>2026-09-05</small></div><div class="h"><b>바로 앞 판에서 하나를 되돌립니다.</b> <span>말투 검사를 기본으로 켜서 냈는데, 그건 제 취향을 남의 프로젝트에 강제하는 것이었어요. 반말로 편하게 쓰고 싶은 분에게 격식체를 강요하면 그분은 플러그인을 지웁니다. 그래서 <strong>말투와 비유 검사는 기본에서 뺐어요.</strong> 원하는 프로젝트만 <code>.hi-vibe/tone</code> 파일을 만들면 켜지고, 그 파일에 줄을 적으면 그 프로젝트가 싫어하는 표현이 목록에 더해집니다. <strong>근거 검사는 그대로 둡니다</strong> — "이 파일은 이렇게 동작해요"라고 설명하면서 그 파일을 안 열었으면 막는 것은 취향이 아니라 맞고 틀림의 문제니까요. 랜딩에도 이 검사 설명을 넣었습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1003,7 +1003,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>336</b><span>automated regression tests</span></div>
+      <div><b>338</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -1299,9 +1299,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.53.0<small>2026-09-11</small></div><div class="h"><b>Clearing a session now hands over context that is actually usable.</b> <span>Using <code>/clear</code> to save context makes the handover record the next session's only lead, yet a clear re-injected just the <strong>first four lines</strong> of it — a title, a blank line, the Git status, and one item, cutting off the lines that mattered. The instruction to polish that auto-generated skeleton was missing too. A clear now gets the same treatment as a compact: the full latest entry plus the polish instruction. Separately, <strong>hook block messages are much shorter.</strong> A block reason is both the model's instruction and text printed straight to the terminal, and it had the entire review procedure copied into it, covering the screen on every block. The procedure now lives only in the skill; the reason states what was caught and how to clear it.</span></div></div>
         <div class="rel"><div class="v">v0.52.1<small>2026-09-11</small></div><div class="h"><b>Fixed the gold cube rendering with black faces.</b> <span>The gold theme supplied an ambient-light color, but the renderer ignored it and kept a hard-coded blue default. That left orange materials with almost no matching ambient color, so shadowed faces appeared black. The scene now uses the theme value, with a cache-busted script URL so browsers receive the fix immediately.</span></div></div>
         <div class="rel"><div class="v">v0.52.0<small>2026-09-11</small></div><div class="h"><b>Performance claims now keep a receipt you can inspect later.</b> <span>When comparable before/after values exist, <code>evidence/METRICS.md</code> records the command, environment, sample, commit, and raw result so a number in the CHANGELOG does not lose its source. Accuracy keeps percentage-point and relative improvement separate, and results with mismatched conditions or missing raw evidence are not dressed up as confirmed gains. The always-loaded <code>write-gate</code> was also reduced from 361 lines to 70, with detailed review and measurement rules loaded only when needed.</span></div></div>
-        <div class="rel"><div class="v">v0.51.0<small>2026-09-05</small></div><div class="h"><b>Reverting one thing from the previous release.</b> <span>The register check shipped on by default, which imposed one project's taste on everyone else's. Forcing formal Korean on someone who writes casually is how a plugin gets uninstalled. <strong>Register and metaphor checks are now off by default</strong> — a project turns them on by creating <code>.hi-vibe/tone</code>, and any lines in that file are added to the phrases that project does not want. <strong>The evidence check stays on</strong>: blocking an answer that explains how a file behaves when that file was never opened is not taste, it is right or wrong. The landing page now describes it too.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

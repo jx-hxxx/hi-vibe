@@ -79,12 +79,30 @@ def main(payload):
     elif source in ("startup", "resume", "clear"):
         # clear = 컨텍스트를 통째로 비운 직후 → handover 재주입이 가장 필요한
         # 순간이므로 startup과 동일하게 규율+최신 인수인계를 다시 넣는다.
-        entry = _common.latest_entry(handover, max_chars=400)
+        #
+        # **인수인계를 넣는 양은 clear와 startup이 다르다.** clear는 같은
+        # 사람이 같은 일을 그 자리에서 이어가는 것이라 직전 항목이 그대로
+        # 실행 가능한 맥락이다 — compact과 같은 대우를 한다(전량 + 다듬기
+        # 지시). 예전엔 앞 4줄만 넣었는데, 그 4줄은 제목·빈 줄·Git·첫 항목
+        # 이라 정작 이어받는 데 필요한 줄이 잘렸다. 게다가 SessionEnd가
+        # 남기는 항목은 "다음 세션에서 다듬어 주세요"가 붙은 뼈대인데,
+        # 다듬으라는 지시가 없으면 뼈대가 뼈대로 남는다.
+        # startup·resume은 며칠 뒤일 수도 있어 직전 항목이 지금 하려는 일과
+        # 무관할 수 있다 — 맛보기 4줄로 둔다.
+        is_clear = source == "clear"
+        entry = _common.latest_entry(handover, max_chars=1200 if is_clear else 400)
         parts = ["이 세션은 hi-vibe가 켜져 있습니다. 사용자에게 첫 응답을 "
                  "👋로 가볍게 인사하며 시작하세요.", CHARTER]
         if entry:
-            head = "\n".join(entry.splitlines()[:4])
-            parts.append("직전 인수인계(handover.md 최신 항목):\n" + head)
+            if is_clear:
+                parts.append(
+                    "직전 인수인계(handover.md 최신 항목). /clear 직전에 훅이 "
+                    "자동으로 남긴 뼈대일 수 있습니다 — 이어서 일하되, 이 "
+                    "항목을 지금 아는 맥락으로 한 번 다듬으세요(타임스탬프 "
+                    "유지, '(다듬음)' 표시):\n" + entry)
+            else:
+                parts.append("직전 인수인계(handover.md 최신 항목):\n"
+                             + "\n".join(entry.splitlines()[:4]))
         ci = _common.ci_health(cwd)
         if ci and ci["failures"] >= CI_FAILURE_THRESHOLD:
             parts.append(_ci_warning(ci))
@@ -96,7 +114,10 @@ def main(payload):
                 "**켜라고 밀지 말고**, 이미 만든 코드가 많으면 위반이 쏟아질 수 "
                 "있다는 것도 같이 짚으세요. 이 안내는 한 번만 나갑니다."
             )
-        _common.emit("SessionStart", additional_context="\n\n".join(parts)[:1100])
+        # 상한은 인수인계 분량에 맞춘다. 1100에 묶어두면 늘린 항목이 뒤의
+        # CI 경고를 밀어내 잘라버린다 — 경고가 조용히 사라지는 쪽이 더 나쁘다.
+        _common.emit("SessionStart",
+                     additional_context="\n\n".join(parts)[:2400 if is_clear else 1100])
 
 
 if __name__ == "__main__":

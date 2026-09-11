@@ -699,6 +699,31 @@ class SessionStartTest(TempProject):
         out = self.run_start("clear")
         self.assertIn("hi-vibe 규율", out)
 
+    def test_clear_reinjects_full_handover_with_polish_order(self):
+        """/clear는 같은 작업을 그 자리에서 이어가는 것이라 직전 항목이 그대로
+        필요하다. 앞 4줄만 넣던 때는 제목·빈 줄·Git·첫 항목까지만 들어가
+        '미결' 같은 정작 이어받을 줄이 잘렸다. 다듬기 지시도 빠져 있어서
+        SessionEnd가 남긴 뼈대가 뼈대로 남았다."""
+        _common.prepend_entry(self.handover, "\n".join([
+            "## 2026-01-02 00:00 (/clear 직전, session abcd1234)", "",
+            "- Git: main, 3 changed", "- 사용자 요청(최근):", "  - 첫 요청",
+            "- 수정 파일:", "  - `a.py`", "- 미결: 배포 뒤 확인할 것",
+            "", "⚠️ 자동 생성(/clear 직전) — 다음 세션에서 이 항목을 다듬어 주세요.",
+        ]))
+        out = self.run_start("clear")
+        self.assertIn("미결", out)          # 4줄 자르기로는 못 들어오던 줄
+        self.assertIn("다듬", out)          # 뼈대를 다듬으라는 지시
+
+    def test_startup_keeps_handover_teaser_short(self):
+        """startup은 며칠 뒤일 수도 있어 직전 항목이 지금 일과 무관할 수 있다 —
+        맛보기만 넣는다(clear와 일부러 다르게 둔 경계)."""
+        _common.prepend_entry(self.handover, "\n".join([
+            "## 2026-01-02 00:00", "", "- Git: main", "- 사용자 요청(최근):",
+            "  - 첫 요청", "- 미결: 배포 뒤 확인할 것",
+        ]))
+        out = self.run_start("startup")
+        self.assertNotIn("미결", out)
+
     def test_compact_injects_handover_entry(self):
         _common.prepend_entry(self.handover, "## 2026-01-02 00:00\n\n- 직전 작업 맥락")
         out = self.run_start("compact")

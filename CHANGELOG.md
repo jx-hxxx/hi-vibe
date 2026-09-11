@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.53.0] - 2026-09-11
+<!-- show:ko **`/clear`로 세션을 끊어도 이어갈 맥락을 제대로 넘겨줍니다.** 컨텍스트를 아끼려 `/clear`를 자주 쓰면 그때마다 handover 기록이 다음 세션의 유일한 단서가 되는데, 지금까지 `/clear` 직후에는 그 기록의 **앞 4줄만** 들어갔습니다. 그 4줄은 제목·빈 줄·Git·첫 항목이라 정작 이어받는 데 필요한 줄이 잘려 나갔고, "다음 세션에서 다듬어 주세요"라고 적어둔 뼈대를 다듬으라는 지시도 없었습니다. 이제 `/clear`는 compact과 같은 대우를 받습니다 — 최신 항목 전량과 다듬기 지시가 함께 들어갑니다. 그리고 **훅이 턴을 막을 때 나오던 설명이 짧아졌습니다.** 차단 사유는 모델에게 가는 지시이면서 동시에 화면에 그대로 찍히는 글인데, 리뷰 절차를 통째로 옮겨 적어 매번 화면을 덮고 있었습니다. 절차의 유일본은 스킬에 두고, 사유에는 무엇이 걸렸는지·어떻게 멈추는지만 남겼습니다. -->
+<!-- show:en **Clearing a session now hands over context that is actually usable.** Using `/clear` to save context makes the handover record the next session's only lead, yet a clear re-injected just the **first four lines** of it — a title, a blank line, the Git status, and one item, cutting off the lines that mattered. The instruction to polish that auto-generated skeleton was missing too. A clear now gets the same treatment as a compact: the full latest entry plus the polish instruction. Separately, **hook block messages are much shorter.** A block reason is both the model's instruction and text printed straight to the terminal, and it had the entire review procedure copied into it, covering the screen on every block. The procedure now lives only in the skill; the reason states what was caught and how to clear it. -->
+
+### Changed
+- **`/clear` 직후 handover 재주입을 compact과 같은 대우로** (2026-09-11, `session_start.py`) — clear 경로는 최신 항목을 400자로 자른 뒤 **앞 4줄만** 넣었다. 그 4줄은 제목·빈 줄·Git·첫 항목이라 정작 이어받는 데 필요한 줄(미결·배포 뒤 확인할 것)이 잘렸다. 게다가 SessionEnd가 남기는 항목에는 "다음 세션에서 다듬어 주세요"가 붙는데 재주입에는 다듬기 지시가 없어 뼈대가 뼈대로 남았다. clear는 1200자 전량 + 다듬기 지시로 바꾸고, 늘어난 분량이 뒤의 CI 경고를 밀어내지 않도록 상한을 1100→2400자로 올렸다. startup·resume은 며칠 뒤일 수도 있어 직전 항목이 지금 하려는 일과 무관할 수 있으므로 맛보기 4줄을 유지한다. 이 경계(clear는 전량·startup은 맛보기)를 회귀 테스트 2개로 고정했다(전체 336→338개).
+- **Stop 훅 차단 사유를 짧게** (2026-09-11, `stop_nudge.py`·`answer_gate.py`) — 차단 사유는 모델에게만 가는 게 아니라 사용자 터미널에 그대로 찍힌다. 리뷰 절차(범위 계산 → 체크리스트 → fresh-eyes → mark)와 말투 판정 규칙 설명이 사유에 통째로 들어 있어 막을 때마다 화면을 덮었고, 같은 절차가 `write-gate/SKILL.md`에도 있어 사본이 둘이었다. 사유는 **무엇이 걸렸나·어떻게 멈추나·빠져나가는 길**만 남겼다(같은 입력 기준 실측: 리뷰 사유 458→273자, fresh-eyes 사유 521→256자, 말투 사유 317→188자). 절차의 유일본은 스킬이다.
+
 ## [0.52.1] - 2026-09-11
 <!-- show:ko **골드 큐브가 검게 보이던 조명을 바로잡았습니다.** 골드 테마가 주변광 색을 넘기고 있었지만 렌더러는 파란 기본값을 하드코딩해, 주황 재질과 색 성분이 거의 겹치지 않는 어두운 면이 검게 보였습니다. 실제 테마 값을 조명에 연결하고 캐시버스팅을 붙여 수정본을 바로 받게 했습니다. -->
 <!-- show:en **Fixed the gold cube rendering with black faces.** The gold theme supplied an ambient-light color, but the renderer ignored it and kept a hard-coded blue default. That left orange materials with almost no matching ambient color, so shadowed faces appeared black. The scene now uses the theme value, with a cache-busted script URL so browsers receive the fix immediately. -->
