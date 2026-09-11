@@ -40,13 +40,17 @@ import _answer_check
 import _common
 
 
-def tone_reason(bad, figs):
-    """차단 사유 = 다시 쓰라는 지시. 걸린 문장만 보여주고 짧게 끝낸다.
+TONE_DETAIL = ".hi-vibe/state/tone-block.md"
 
-    이 문자열은 사용자 터미널에 그대로 찍힌다 — 판정 규칙의 설명(허용 목록·
-    치환 예시)은 화면을 덮을 뿐 고치는 데 필요하지 않다. 걸린 문장 자체가
-    이미 무엇이 문제인지 말한다."""
-    parts = ["hi-vibe 말투 검사 — 아래 문장만 고쳐 쓰세요."]
+
+def tone_reason(bad, figs, cwd=None):
+    """차단 사유 한 줄 + 자세한 건 파일로.
+
+    이 문자열은 사용자 터미널에 `Stop hook error:` 뒤에 그대로 찍힌다. 걸린
+    문장을 여기 늘어놓으면 사용자 화면이 검사 결과로 덮이는데, 그걸 읽어야
+    하는 건 사용자가 아니라 모델이다(2026-09-12 사용자 지적). 그래서 목록과
+    고치는 방법은 파일에 쓰고, 화면에는 한 줄만 남긴다."""
+    parts = []
     if bad:
         shown = "\n".join(f"  - {s}" for s in bad[:5])
         more = f"\n  (그 밖 {len(bad) - 5}개)" if len(bad) > 5 else ""
@@ -64,7 +68,28 @@ def tone_reason(bad, figs):
         "그 자리에서 지어낸 축약어가 있으면 함께 풀어 쓰세요. "
         "코드 블록·인용·목록 라벨은 검사 대상이 아닙니다."
     )
-    return "\n".join(parts)
+    detail = "\n\n".join(parts)
+    written = _write_detail(cwd, detail)
+    counts = " · ".join(
+        x for x in (f"격식체 {len(bad)}곳" if bad else "", f"비유 {len(figs)}곳" if figs else "") if x)
+    if written:
+        return f"hi-vibe 말투 검사 — {counts}. `{TONE_DETAIL}`를 읽고 고치세요."
+    return "hi-vibe 말투 검사 — " + counts + "\n" + detail
+
+
+def _write_detail(cwd, detail):
+    """걸린 문장을 파일로. 못 쓰면 False — 그때는 사유에 그대로 실어야 한다,
+    모델이 무엇이 걸렸는지 알 방법이 그것뿐이기 때문이다."""
+    if not cwd:
+        return False
+    try:
+        path = os.path.join(cwd, TONE_DETAIL)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(detail + "\n")
+        return True
+    except OSError:
+        return False
 
 
 def evidence_reason(hits):
@@ -108,7 +133,7 @@ def main(payload):
         if not _already_blocked(flag_dir, fingerprint):
             _remember_block(flag_dir, fingerprint)
             _common.emit("Stop", decision="block",
-                         reason=tone_reason(bad, figs))
+                         reason=tone_reason(bad, figs, cwd))
             return
 
     # 2) 근거 — 말한 파일을 안 열었으면 막는다. 말투와 같은 이유로 한 번만.

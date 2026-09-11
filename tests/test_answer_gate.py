@@ -312,3 +312,24 @@ class HookRegistrationTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ToneBlockIsOneLine(unittest.TestCase):
+    """차단 사유는 사용자 화면에 찍힌다 — 목록은 파일로, 화면엔 한 줄."""
+
+    def test_detail_goes_to_a_file_and_the_reason_stays_one_line(self):
+        d = tempfile.mkdtemp()
+        reason = answer_gate.tone_reason(["이거 함.", "저거 함."],
+                                         [("시간을 먹는다", "먹는다")], d)
+        self.assertEqual(len(reason.splitlines()), 1)
+        self.assertIn("격식체 2곳", reason)
+        self.assertIn("비유 1곳", reason)
+        detail = open(os.path.join(d, answer_gate.TONE_DETAIL), encoding="utf-8").read()
+        self.assertIn("이거 함.", detail)
+        self.assertIn("먹는다", detail)
+        self.assertIn("답변 전체를 다시 출력하지 마세요", detail)
+
+    def test_unwritable_cwd_falls_back_to_the_full_reason(self):
+        # 파일을 못 쓰면 모델이 무엇이 걸렸는지 알 길이 사유뿐이다.
+        reason = answer_gate.tone_reason(["이거 함."], [], None)
+        self.assertIn("이거 함.", reason)
