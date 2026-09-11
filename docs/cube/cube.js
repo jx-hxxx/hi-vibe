@@ -78,7 +78,7 @@
     var envRT = pmrem.fromEquirectangular(envTex);
     scene.environment = envRT.texture;
 
-    scene.add(new THREE.AmbientLight(0x8898d0, 0.5));
+    scene.add(new THREE.AmbientLight(AMBIENT, 0.5));
     var key = new THREE.DirectionalLight(0xffffff, 0.7); key.position.set(5, 8, 6); scene.add(key);
     var rim = new THREE.PointLight(0xffffff, 0.45, 30); rim.position.set(-5, 3, 6); scene.add(rim);
 

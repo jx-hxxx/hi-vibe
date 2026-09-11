@@ -640,7 +640,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>334</b><span>자동 회귀 테스트</span></div>
+      <div><b>336</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -941,9 +941,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.52.1<small>2026-09-11</small></div><div class="h"><b>골드 큐브가 검게 보이던 조명을 바로잡았습니다.</b> <span>골드 테마가 주변광 색을 넘기고 있었지만 렌더러는 파란 기본값을 하드코딩해, 주황 재질과 색 성분이 거의 겹치지 않는 어두운 면이 검게 보였습니다. 실제 테마 값을 조명에 연결하고 캐시버스팅을 붙여 수정본을 바로 받게 했습니다.</span></div></div>
         <div class="rel"><div class="v">v0.52.0<small>2026-09-11</small></div><div class="h"><b>성능 개선 수치에도 다시 확인할 수 있는 영수증을 남깁니다.</b> <span>비교 가능한 전후 수치가 나오면 <code>evidence/METRICS.md</code>에 측정 명령·환경·표본·커밋·원본 결과를 함께 기록해, CHANGELOG의 숫자가 나중에 출처 없는 문장이 되지 않게 했어요. 정확도는 <code>%p</code>와 상대 개선율을 구분하고, 조건이 다르거나 원본이 없으면 확정 성과로 꾸미지 않습니다. 동시에 모든 모드가 함께 읽던 <code>write-gate</code>를 361줄→70줄로 줄이고 상세 리뷰와 측정 규칙을 필요할 때만 읽는 참조로 옮겼습니다.</span></div></div>
         <div class="rel"><div class="v">v0.51.0<small>2026-09-05</small></div><div class="h"><b>바로 앞 판에서 하나를 되돌립니다.</b> <span>말투 검사를 기본으로 켜서 냈는데, 그건 제 취향을 남의 프로젝트에 강제하는 것이었어요. 반말로 편하게 쓰고 싶은 분에게 격식체를 강요하면 그분은 플러그인을 지웁니다. 그래서 <strong>말투와 비유 검사는 기본에서 뺐어요.</strong> 원하는 프로젝트만 <code>.hi-vibe/tone</code> 파일을 만들면 켜지고, 그 파일에 줄을 적으면 그 프로젝트가 싫어하는 표현이 목록에 더해집니다. <strong>근거 검사는 그대로 둡니다</strong> — "이 파일은 이렇게 동작해요"라고 설명하면서 그 파일을 안 열었으면 막는 것은 취향이 아니라 맞고 틀림의 문제니까요. 랜딩에도 이 검사 설명을 넣었습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.50.0<small>2026-09-05</small></div><div class="h"><b>이번엔 훅이 코드가 아니라 제가 쓴 문장을 봅니다.</b> <span>코드에는 검사와 리뷰가 있는데 대화에는 아무 장치가 없었어요. 그래서 같은 실패가 하루에 세 번 반복됐습니다 — 격식체로 써 달라는 말을 어기고, "체결이 흐르는 차트가 뜨고"처럼 비유로 사실을 흐리고, 파일을 열지도 않고 "이 코드는 이렇게 동작합니다"라고 단정했어요. 말로 약속해서는 안 고쳐진다는 게 그날로 확인돼서 기계 층으로 내렸습니다. 말투는 금지어 목록이 아니라 <strong>허용 목록</strong>으로 봅니다. <code>-잖아·-거든</code>을 나열하면 새 말투가 나올 때마다 새거든요. 대신 문장이 격식체로 끝났는가만 보면 목록에 없는 말투도 전부 걸립니다. 근거는 <strong>말한 파일과 연 파일을 맞춰</strong> 봅니다. 처음엔 "뭐라도 읽었나"로 만들었는데, 그러면 다른 파일을 열어 놓고 이 파일을 설명해도 통과하더군요. 실제 대화 기록 3,709턴에 돌려서 헛걸림을 재고 다듬었습니다.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1003,7 +1003,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>334</b><span>automated regression tests</span></div>
+      <div><b>336</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -1299,9 +1299,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.52.1<small>2026-09-11</small></div><div class="h"><b>Fixed the gold cube rendering with black faces.</b> <span>The gold theme supplied an ambient-light color, but the renderer ignored it and kept a hard-coded blue default. That left orange materials with almost no matching ambient color, so shadowed faces appeared black. The scene now uses the theme value, with a cache-busted script URL so browsers receive the fix immediately.</span></div></div>
         <div class="rel"><div class="v">v0.52.0<small>2026-09-11</small></div><div class="h"><b>Performance claims now keep a receipt you can inspect later.</b> <span>When comparable before/after values exist, <code>evidence/METRICS.md</code> records the command, environment, sample, commit, and raw result so a number in the CHANGELOG does not lose its source. Accuracy keeps percentage-point and relative improvement separate, and results with mismatched conditions or missing raw evidence are not dressed up as confirmed gains. The always-loaded <code>write-gate</code> was also reduced from 361 lines to 70, with detailed review and measurement rules loaded only when needed.</span></div></div>
         <div class="rel"><div class="v">v0.51.0<small>2026-09-05</small></div><div class="h"><b>Reverting one thing from the previous release.</b> <span>The register check shipped on by default, which imposed one project's taste on everyone else's. Forcing formal Korean on someone who writes casually is how a plugin gets uninstalled. <strong>Register and metaphor checks are now off by default</strong> — a project turns them on by creating <code>.hi-vibe/tone</code>, and any lines in that file are added to the phrases that project does not want. <strong>The evidence check stays on</strong>: blocking an answer that explains how a file behaves when that file was never opened is not taste, it is right or wrong. The landing page now describes it too.</span></div></div>
-        <div class="rel"><div class="v">v0.50.0<small>2026-09-05</small></div><div class="h"><b>This release points the hooks at what I write, not just at code.</b> <span>Code had tests and reviews; conversation had nothing, and the same failure repeated three times in one day: ignoring the requested register, blurring facts into metaphor, and asserting how code behaves without opening the file. Promising to do better had already failed, so it moved down into the machine layer. Register is checked with an <strong>allowlist</strong>, not a banned-word list: listing casual endings leaks every time a new one appears, while asking whether the sentence ended formally catches the ones nobody listed. Evidence is checked <strong>per file</strong> — the first design only asked whether anything had been read, which let a different file's grep vouch for this file's behavior. Tuned against 3,709 real conversation turns.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -1378,7 +1378,7 @@ Close with just these.
 </script>
 
 <script src="cube/three.min.js"></script>
-<script src="cube/cube.js"></script>
+<script src="cube/cube.js?v=52.1"></script>
 <script>
 (function(){
   if (!window.MeetingCube) return;

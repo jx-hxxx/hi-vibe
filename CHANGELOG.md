@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.52.1] - 2026-09-11
+<!-- show:ko **골드 큐브가 검게 보이던 조명을 바로잡았습니다.** 골드 테마가 주변광 색을 넘기고 있었지만 렌더러는 파란 기본값을 하드코딩해, 주황 재질과 색 성분이 거의 겹치지 않는 어두운 면이 검게 보였습니다. 실제 테마 값을 조명에 연결하고 캐시버스팅을 붙여 수정본을 바로 받게 했습니다. -->
+<!-- show:en **Fixed the gold cube rendering with black faces.** The gold theme supplied an ambient-light color, but the renderer ignored it and kept a hard-coded blue default. That left orange materials with almost no matching ambient color, so shadowed faces appeared black. The scene now uses the theme value, with a cache-busted script URL so browsers receive the fix immediately. -->
+
+### Fixed
+- **골드 3D 큐브의 면이 검게 렌더링됨** (2026-09-11, `docs/cube/cube.js`) — `THEME.ambientColor`를 `AMBIENT`에 받아 놓고 실제 `AmbientLight`에는 파란 기본값 `0x8898d0`을 하드코딩했다. 골드 테마의 주황 재질과 파란 주변광의 색 성분이 거의 겹치지 않아 직사광을 덜 받는 면이 검게 보였다. 조명이 `AMBIENT`를 사용하도록 연결하고 `cube.js?v=52.1`로 캐시버스팅했다. 테마 값 사용과 캐시버스팅 회귀 테스트 2개를 추가했다(전체 334→336개).
+
 ## [0.52.0] - 2026-09-11
 <!-- show:ko **성능 개선 수치에도 다시 확인할 수 있는 영수증을 남깁니다.** 비교 가능한 전후 수치가 나오면 `evidence/METRICS.md`에 측정 명령·환경·표본·커밋·원본 결과를 함께 기록해, CHANGELOG의 숫자가 나중에 출처 없는 문장이 되지 않게 했어요. 정확도는 `%p`와 상대 개선율을 구분하고, 조건이 다르거나 원본이 없으면 확정 성과로 꾸미지 않습니다. 동시에 모든 모드가 함께 읽던 `write-gate`를 361줄→70줄로 줄이고 상세 리뷰와 측정 규칙을 필요할 때만 읽는 참조로 옮겼습니다. -->
 <!-- show:en **Performance claims now keep a receipt you can inspect later.** When comparable before/after values exist, `evidence/METRICS.md` records the command, environment, sample, commit, and raw result so a number in the CHANGELOG does not lose its source. Accuracy keeps percentage-point and relative improvement separate, and results with mismatched conditions or missing raw evidence are not dressed up as confirmed gains. The always-loaded `write-gate` was also reduced from 361 lines to 70, with detailed review and measurement rules loaded only when needed. -->
