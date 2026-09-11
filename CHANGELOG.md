@@ -5,6 +5,18 @@
 
 ## [Unreleased]
 
+## [0.52.0] - 2026-09-11
+<!-- show:ko **성능 개선 수치에도 다시 확인할 수 있는 영수증을 남깁니다.** 비교 가능한 전후 수치가 나오면 `evidence/METRICS.md`에 측정 명령·환경·표본·커밋·원본 결과를 함께 기록해, CHANGELOG의 숫자가 나중에 출처 없는 문장이 되지 않게 했어요. 정확도는 `%p`와 상대 개선율을 구분하고, 조건이 다르거나 원본이 없으면 확정 성과로 꾸미지 않습니다. 동시에 모든 모드가 함께 읽던 `write-gate`를 361줄→70줄로 줄이고 상세 리뷰와 측정 규칙을 필요할 때만 읽는 참조로 옮겼습니다. -->
+<!-- show:en **Performance claims now keep a receipt you can inspect later.** When comparable before/after values exist, `evidence/METRICS.md` records the command, environment, sample, commit, and raw result so a number in the CHANGELOG does not lose its source. Accuracy keeps percentage-point and relative improvement separate, and results with mismatched conditions or missing raw evidence are not dressed up as confirmed gains. The always-loaded `write-gate` was also reduced from 361 lines to 70, with detailed review and measurement rules loaded only when needed. -->
+
+### Added
+- **재현 가능한 정량 성과 기록** (2026-09-11, `docs-keeper` evidence 모드·`METRICS.md.tpl`·`metrics-evidence.md`) — 변경 전후 수치가 같은 지표와 조건에서 실측됐을 때만 `evidence/METRICS.md`를 만들고 측정 명령·환경·표본·관련 커밋·원본 결과·한계를 함께 보관한다. 시간/호출 수와 정확도/처리량의 개선율 공식을 구분하고, 정확도는 `%p`와 상대 개선율을 따로 적으며, 기준값 0·조건 불일치·원본 부재를 확정 성과로 기록하지 않는다. CHANGELOG에는 근거 위치를 연결한다.
+- **측정 근거·컨텍스트 예산 회귀 테스트 5개** (`test_metrics_evidence.py`) — 근거 템플릿의 필수 재현 필드, 숫자가 있을 때만 조건부 규칙을 읽는 연결, `write-gate` 본문 180줄 상한을 CI에서 지킨다. 전체 테스트 329→334개.
+
+### Changed
+- **`write-gate` 상시 로딩 본문 361줄→70줄** — find와 review의 긴 절차가 한 파일에 있어 코드 작성 전에도 리뷰 사례·보고 형식까지 전부 읽혔다. 공통 분기와 핵심 순서만 `SKILL.md`에 남기고 기존 리뷰 계약은 `references/review-checklist.md`, 정량 성과 계약은 `references/metrics-evidence.md`로 분리했다. 리뷰 시 기존 계약은 그대로 읽고, 측정 규칙은 정량 주장이 있을 때만 읽는다. 줄 수 감소율 80.6%; 실제 토큰 사용량 감소율은 측정하지 않았다. 근거: `evidence/METRICS.md#write-gate-상시-로딩-지침-축소`.
+- **공개 설명과 플러그인 버전 동기화** — README·소개 사이트의 문서 지도와 자동 동작 표에 정량 근거 기록을 추가하고 플러그인 버전을 0.52.0으로 올렸다.
+
 ## [0.51.0] - 2026-09-05
 <!-- show:ko **바로 앞 판에서 하나를 되돌립니다.** 말투 검사를 기본으로 켜서 냈는데, 그건 제 취향을 남의 프로젝트에 강제하는 것이었어요. 반말로 편하게 쓰고 싶은 분에게 격식체를 강요하면 그분은 플러그인을 지웁니다. 그래서 **말투와 비유 검사는 기본에서 뺐어요.** 원하는 프로젝트만 `.hi-vibe/tone` 파일을 만들면 켜지고, 그 파일에 줄을 적으면 그 프로젝트가 싫어하는 표현이 목록에 더해집니다. **근거 검사는 그대로 둡니다** — "이 파일은 이렇게 동작해요"라고 설명하면서 그 파일을 안 열었으면 막는 것은 취향이 아니라 맞고 틀림의 문제니까요. 랜딩에도 이 검사 설명을 넣었습니다. -->
 <!-- show:en **Reverting one thing from the previous release.** The register check shipped on by default, which imposed one project's taste on everyone else's. Forcing formal Korean on someone who writes casually is how a plugin gets uninstalled. **Register and metaphor checks are now off by default** — a project turns them on by creating `.hi-vibe/tone`, and any lines in that file are added to the phrases that project does not want. **The evidence check stays on**: blocking an answer that explains how a file behaves when that file was never opened is not taste, it is right or wrong. The landing page now describes it too. -->

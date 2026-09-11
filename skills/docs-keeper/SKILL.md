@@ -1,11 +1,12 @@
 ---
 name: docs-keeper
 description: >-
-  Maintains the four living documents of a hi-vibe project: CLAUDE.md
+  Maintains the living records of a hi-vibe project: CLAUDE.md
   (lean project context — constraints, pitfalls, rationale), per-folder
   MODULE.md (detailed design), handover.md
   (session-to-session context log), CHANGELOG.md (substantive change
-  history, Keep a Changelog). Use for /hi-vibe:init, :handover, :log,
+  history, Keep a Changelog), plus evidence/METRICS.md when measured
+  before/after results appear. Use for /hi-vibe:init, :handover, :log,
   :recall, :welcome, and whenever the user asks to 문서 정리, 인수인계
   기록, 체인지로그 작성, CLAUDE.md 갱신, "이 폴더 문서 만들어줘", or after
   a structural change that must be reflected in docs. Also use (mode:
@@ -18,7 +19,7 @@ user-invocable: false   # 사용자 표면은 /hi-vibe:* 명령 10개다. 스킬
 
 # docs-keeper
 
-You maintain four documents. Each has one job — never blur them:
+Each record has one job — never blur them:
 
 | 문서 | 한 줄 정의 | 갱신 시점 |
 |---|---|---|
@@ -26,6 +27,7 @@ You maintain four documents. Each has one job — never blur them:
 | `<folder>/MODULE.md` | 그 폴더의 상세 설계 | 폴더 내용이 바뀔 때 |
 | `handover.md` | 세션 맥락 (왜/어디까지 했나) | 세션 끝·compact 직전 |
 | `CHANGELOG.md` | 결과 (무엇이 바뀌었나) | 실질 변경 직후 |
+| `evidence/METRICS.md` | 증명 (정량 성과를 어떻게 재현하나) | 비교 가능한 실측이 생겼을 때만 |
 
 Templates: `templates/*.tpl` in this skill's directory.
 All user-facing prose you write into these docs follows the **user's
@@ -71,6 +73,8 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
    - Do NOT create MODULE.md at init. 폴더별 상세 설계는 그 폴더가 실제로
      복잡해졌을 때 생긴다 (step 3a). 처음부터 빈 MODULE.md를 뿌리면
      아무도 안 채운 껍데기만 남는다.
+   - Do NOT create `evidence/METRICS.md` at init. 비교 가능한 전후 실측이
+     처음 생길 때만 `templates/METRICS.md.tpl`로 만든다.
 3a. Lazy docs — create each one the moment it is first needed, not before:
    - `<folder>/MODULE.md`: create when that folder's design first needs
      recording — a structural change lands in it, `review` finds it has
@@ -172,6 +176,25 @@ Rotation: if the file has more than 20 entries, move the older half to
    **원인을 모른 채 고쳤으면 모른다고 적는다.** 추측을 원인으로 쓰지 마라 —
    틀린 원인은 기록이 없느니만 못하다(다음 사람이 그걸 믿고 엉뚱한 데를 판다).
 5. Do not renumber or edit released sections.
+
+## Mode: evidence
+
+정량 성과를 주장할 때만 Git에 포함되는 `evidence/METRICS.md`에 근거를 남긴다.
+수치가 없거나 비교 조건이 다르면 이 모드를 실행하지 않는다.
+
+1. 먼저 `write-gate/references/metrics-evidence.md`의 기록 조건과 계산 규칙을
+   적용한다. **근거가 없으면** 확정 수치로 기록하지 않고 `추정` 또는
+   `원본 결과 없음`이라고 표시한다.
+2. 파일이 없으면 `templates/METRICS.md.tpl`로 만든다. 이미 있으면 기존 항목을
+   덮어쓰지 않고 새 제목으로 추가한다.
+3. 변경 전·후, 단위, 계산식, 측정 명령, 환경, 표본, 관련 커밋, 원본 결과,
+   한계를 기록한다. 정확도 변화는 `%p`와 상대 개선율을 구분한다.
+4. 작은 원본 출력은 `evidence/raw/`에 보관한다. 비밀키·토큰·쿠키·개인정보와
+   `.env` 값은 저장하지 않는다. 큰 로그는 명령·요약·외부 위치만 남긴다.
+5. 관련 CHANGELOG 항목 끝에 `evidence/METRICS.md`의 제목이나 원본 경로를
+   연결한다. 측정 근거가 없는 CHANGELOG 숫자는 새로 만들어내지 않는다.
+6. 벤치마크 재실행이 외부 API 호출, 비용, 데이터 변경을 일으킬 수 있으면
+   재실행하지 않는다. 보유한 결과만 기록하고 부족한 근거를 명시한다.
 
 ## Mode: recall
 

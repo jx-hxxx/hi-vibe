@@ -640,7 +640,7 @@
     </section>
 
     <div class="trust" aria-label="검증 근거">
-      <div><b>329</b><span>자동 회귀 테스트</span></div>
+      <div><b>334</b><span>자동 회귀 테스트</span></div>
       <div><b>5종</b><span>실제 생명주기 훅</span></div>
       <div><b>init</b><span>한 프로젝트에서만 켜져요</span></div>
       <div><b>MIT</b><span>코드 다 공개 · 오픈소스</span></div>
@@ -675,6 +675,11 @@
           <div class="pain">전에 해결한 오류의 원인과 과정을 다시 찾기 어려웠다</div>
           <div class="arrow" aria-hidden="true">→</div>
           <div class="fix">변경 이유와 <b>트러블슈팅 과정을 프로젝트에 남깁니다</b></div>
+        </div>
+        <div class="pair">
+          <div class="pain">성능이 좋아졌는데 나중에 수치의 측정 조건을 기억하지 못했다</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="fix">전후 수치와 <b>명령·환경·표본·원본 근거를 함께 남깁니다</b></div>
         </div>
       </div>
       <p class="fitnote">Python 프로젝트와 Claude Code 중심의 개인 개발 흐름에 맞춰 만들었어요. 짧은 실습이나 이미 리뷰·문서 자동화가 갖춰진 팀에서는 효과가 작을 수 있어요.</p>
@@ -764,6 +769,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
           <li><code>handover.md</code><span>세션 인수인계 — 다음 대화가 <b>이어갈 단서</b>를 남겨요(최근 요청·수정 파일·Git·테스트 상태). 대화 정리(compact) 직전 · <code>/clear</code> · 창을 닫을 때 자동 기록돼요 <b>(init 때)</b></span></li>
           <li class="sub"><code>api/MODULE.md</code><span>그 폴더의 상세 설계·데이터·주의점 — <b>폴더가 복잡해질 때</b> 생겨요 (폴더마다 하나씩)</span></li>
           <li><code>CHANGELOG.md</code><span>트러블슈팅 기록 — 뭐가 언제 왜 바뀌었나. 버그를 고쳤으면 <b>증상과 원인</b>까지 남겨요("고쳤다"만 있으면 나중에 소용없으니까). <b>(init 때)</b></span></li>
+          <li><code>evidence/METRICS.md</code><span>정량 성과 근거 — 비교 가능한 전후 수치가 생겼을 때만 측정 명령·환경·표본·원본 결과와 함께 만들어요</span></li>
         </ul>
       </div>
 
@@ -892,7 +898,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
         <div class="qs-row"><div class="qs-when">자동만 잠깐 끄기</div><div class="qs-do">Claude에게 <b>“이 프로젝트에선 hi-vibe 꺼줘”</b> <span class="dim">또는 <code>touch .hi-vibe/optout</code> · 훅만 조용해지고 명령어는 그대로 써요</span></div></div>
         <div class="qs-row"><div class="qs-when">이 프로젝트에서 빼기</div><div class="qs-do"><code>rm -rf .hi-vibe .repo-xray</code> <span class="dim">(<code>init</code> 안 한 상태로 돌아가요)</span></div></div>
         <div class="qs-row"><div class="qs-when">플러그인 자체를 지우기</div><div class="qs-do"><code>/plugin uninstall hi-vibe@hi-vibe-marketplace</code> <span class="dim">(모든 프로젝트에서 사라져요)</span></div></div>
-        <div class="qs-row"><div class="qs-when">만들어진 문서는?</div><div class="qs-do"><b>그대로 남아요</b> <span class="dim"><code>CLAUDE.md</code>·<code>handover.md</code>·<code>CHANGELOG.md</code>는 전부 여러분의 파일이에요. 필요 없으면 직접 지우시면 돼요</span></div></div>
+        <div class="qs-row"><div class="qs-when">만들어진 문서는?</div><div class="qs-do"><b>그대로 남아요</b> <span class="dim"><code>CLAUDE.md</code>·<code>handover.md</code>·<code>CHANGELOG.md</code>·<code>evidence/METRICS.md</code>는 전부 여러분의 파일이에요. 필요 없으면 직접 지우시면 돼요</span></div></div>
       </div>
 
       <p class="lead small" style="margin:26px 0 4px;font-size:14px">더 자세히 — 헷갈리기 쉬운 것들 (펼쳐 보기)</p>
@@ -920,7 +926,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
         <tbody>
           <tr><td><code>repo-xray</code></td><td><code>check</code></td><td>구조 스캔 — 중복·죽은 코드·큰 파일</td></tr>
           <tr><td><code>write-gate</code></td><td><code>find</code> · <code>review</code></td><td>코드 작성 전·후 게이트</td></tr>
-          <tr><td><code>docs-keeper</code></td><td><code>handover</code> · <code>log</code> · <code>recall</code> · <code>init</code> · <code>welcome</code></td><td>문서 자동화 + 첫 안내</td></tr>
+          <tr><td><code>docs-keeper</code></td><td><code>handover</code> · <code>log</code> · <code>evidence</code> · <code>recall</code> · <code>init</code> · <code>welcome</code></td><td>문서·측정 근거 자동화 + 첫 안내</td></tr>
           <tr><td><code>guards-setup</code></td><td><code>gate</code></td><td>린트·CI 관문 설치</td></tr>
           <tr><td><code>grounded-answers</code></td><td>(자동) “얼마야 · 지원돼?” 등</td><td>확인 안 하고 단정하는 것 방지</td></tr>
           <tr><td><code>root-cause-first</code></td><td>(자동) 버그·에러 고칠 때</td><td>땜빵 대신 근본 원인</td></tr>
@@ -935,9 +941,9 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
       <p class="lead" style="max-width:none">”설명이 안 낡게 해줍니다”를 말로만 하지 않아요. 아래 업데이트 목록은 hi-vibe가 스스로 관리하는 <code>CHANGELOG</code>에서 자동으로 만들어져요 —<br>릴리스할 때마다 손으로 옮겨 적지 않아요. <b>자동인 건 이 목록이고, 페이지의 나머지는 손으로 써요.</b></p>
       <div class="timeline">
 <!--SHOWCASE:ko-start-->
+        <div class="rel"><div class="v">v0.52.0<small>2026-09-11</small></div><div class="h"><b>성능 개선 수치에도 다시 확인할 수 있는 영수증을 남깁니다.</b> <span>비교 가능한 전후 수치가 나오면 <code>evidence/METRICS.md</code>에 측정 명령·환경·표본·커밋·원본 결과를 함께 기록해, CHANGELOG의 숫자가 나중에 출처 없는 문장이 되지 않게 했어요. 정확도는 <code>%p</code>와 상대 개선율을 구분하고, 조건이 다르거나 원본이 없으면 확정 성과로 꾸미지 않습니다. 동시에 모든 모드가 함께 읽던 <code>write-gate</code>를 361줄→70줄로 줄이고 상세 리뷰와 측정 규칙을 필요할 때만 읽는 참조로 옮겼습니다.</span></div></div>
         <div class="rel"><div class="v">v0.51.0<small>2026-09-05</small></div><div class="h"><b>바로 앞 판에서 하나를 되돌립니다.</b> <span>말투 검사를 기본으로 켜서 냈는데, 그건 제 취향을 남의 프로젝트에 강제하는 것이었어요. 반말로 편하게 쓰고 싶은 분에게 격식체를 강요하면 그분은 플러그인을 지웁니다. 그래서 <strong>말투와 비유 검사는 기본에서 뺐어요.</strong> 원하는 프로젝트만 <code>.hi-vibe/tone</code> 파일을 만들면 켜지고, 그 파일에 줄을 적으면 그 프로젝트가 싫어하는 표현이 목록에 더해집니다. <strong>근거 검사는 그대로 둡니다</strong> — "이 파일은 이렇게 동작해요"라고 설명하면서 그 파일을 안 열었으면 막는 것은 취향이 아니라 맞고 틀림의 문제니까요. 랜딩에도 이 검사 설명을 넣었습니다.</span></div></div>
         <div class="rel"><div class="v">v0.50.0<small>2026-09-05</small></div><div class="h"><b>이번엔 훅이 코드가 아니라 제가 쓴 문장을 봅니다.</b> <span>코드에는 검사와 리뷰가 있는데 대화에는 아무 장치가 없었어요. 그래서 같은 실패가 하루에 세 번 반복됐습니다 — 격식체로 써 달라는 말을 어기고, "체결이 흐르는 차트가 뜨고"처럼 비유로 사실을 흐리고, 파일을 열지도 않고 "이 코드는 이렇게 동작합니다"라고 단정했어요. 말로 약속해서는 안 고쳐진다는 게 그날로 확인돼서 기계 층으로 내렸습니다. 말투는 금지어 목록이 아니라 <strong>허용 목록</strong>으로 봅니다. <code>-잖아·-거든</code>을 나열하면 새 말투가 나올 때마다 새거든요. 대신 문장이 격식체로 끝났는가만 보면 목록에 없는 말투도 전부 걸립니다. 근거는 <strong>말한 파일과 연 파일을 맞춰</strong> 봅니다. 처음엔 "뭐라도 읽었나"로 만들었는데, 그러면 다른 파일을 열어 놓고 이 파일을 설명해도 통과하더군요. 실제 대화 기록 3,709턴에 돌려서 헛걸림을 재고 다듬었습니다.</span></div></div>
-        <div class="rel"><div class="v">v0.49.1<small>2026-08-17</small></div><div class="h"><b>어제 만든 것에서 새는 데 두 곳을 막았습니다.</b> <span>하나: 설계 리뷰를 돌려놓고 "리뷰 끝" 표시를 안 한 채 창을 닫으면, 그 흔적이 파일에 남아 <strong>며칠 뒤 다른 작업이 그걸 당겨써서 한 번 공짜로 통과</strong>했어요. 기록이 세션이 아니라 프로젝트 단위로 남기 때문입니다. 이제 6시간 지난 흔적은 안 씁니다. 둘: <code>doctor</code>가 아직 "AI가 안 부른 것일 겁니다, 한번 말해 보세요"라고 조언하고 있었는데, 바로 앞 버전에서 훅이 강제하기 시작하면서 그 진단이 뒤집혔어요. 이제 원인을 둘로 갈라 알려줍니다 — 리뷰가 전부 한 파일짜리였거나(정상일 수 있어요), 서브에이전트 호출이 진짜로 실패하고 있거나.</span></div></div>
 <!--SHOWCASE:ko-end-->
       </div>
       <p class="foot-note">* 이 목록은 릴리스마다 CHANGELOG에서 자동으로 생성돼요. (scripts/build-showcase.py + GitHub Actions)</p>
@@ -997,7 +1003,7 @@ hi-vibe의 실제 구현과 아래 프로젝트의 코드를 확인하고,
     </section>
 
     <div class="trust" aria-label="Evidence">
-      <div><b>329</b><span>automated regression tests</span></div>
+      <div><b>334</b><span>automated regression tests</span></div>
       <div><b>5</b><span>real lifecycle hooks</span></div>
       <div><b>opt-in</b><span>only where you run init</span></div>
       <div><b>MIT</b><span>fully open source</span></div>
@@ -1121,6 +1127,7 @@ Close with just these.
           <li><code>handover.md</code><span>Session handover — it leaves the next chat <b>enough to pick up from</b> (recent requests, edited files, Git &amp; test state). Auto-recorded right before compaction, on <code>/clear</code>, and when you close the window <b>(at init)</b></span></li>
           <li class="sub"><code>api/MODULE.md</code><span>A folder's design, data &amp; gotchas — created <b>when the folder grows complex</b> (one per folder)</span></li>
           <li><code>CHANGELOG.md</code><span>Troubleshooting log — what changed, when, and why. For bug fixes it keeps the <b>symptom and the cause</b> too ("fixed it" alone is useless later). <b>(at init)</b></span></li>
+          <li><code>evidence/METRICS.md</code><span>Measurement evidence — created only when comparable before/after results exist, with the command, environment, sample, and raw result</span></li>
         </ul>
       </div>
 
@@ -1249,7 +1256,7 @@ Close with just these.
         <div class="qs-row"><div class="qs-when">Silence the automation</div><div class="qs-do">Tell Claude <b>“turn hi-vibe off in this project”</b> <span class="dim">or <code>touch .hi-vibe/optout</code> · only the hooks go quiet; the commands still work</span></div></div>
         <div class="qs-row"><div class="qs-when">Remove it from this project</div><div class="qs-do"><code>rm -rf .hi-vibe .repo-xray</code> <span class="dim">(back to never having run <code>init</code>)</span></div></div>
         <div class="qs-row"><div class="qs-when">Uninstall the plugin</div><div class="qs-do"><code>/plugin uninstall hi-vibe@hi-vibe-marketplace</code> <span class="dim">(gone from every project)</span></div></div>
-        <div class="qs-row"><div class="qs-when">What about the documents?</div><div class="qs-do"><b>They stay</b> <span class="dim"><code>CLAUDE.md</code>, <code>handover.md</code> and <code>CHANGELOG.md</code> are yours. Delete them yourself if you don't want them</span></div></div>
+        <div class="qs-row"><div class="qs-when">What about the documents?</div><div class="qs-do"><b>They stay</b> <span class="dim"><code>CLAUDE.md</code>, <code>handover.md</code>, <code>CHANGELOG.md</code>, and <code>evidence/METRICS.md</code> are yours. Delete them yourself if you don't want them</span></div></div>
       </div>
 
       <p class="lead small" style="margin:26px 0 4px;font-size:14px">More detail — easy-to-confuse things (expand)</p>
@@ -1277,7 +1284,7 @@ Close with just these.
         <tbody>
           <tr><td><code>repo-xray</code></td><td><code>check</code></td><td>Structure scan — duplicates, dead code, big files</td></tr>
           <tr><td><code>write-gate</code></td><td><code>find</code> · <code>review</code></td><td>Pre- and post-write gates</td></tr>
-          <tr><td><code>docs-keeper</code></td><td><code>handover</code> · <code>log</code> · <code>recall</code> · <code>init</code> · <code>welcome</code></td><td>Doc automation + onboarding</td></tr>
+          <tr><td><code>docs-keeper</code></td><td><code>handover</code> · <code>log</code> · <code>evidence</code> · <code>recall</code> · <code>init</code> · <code>welcome</code></td><td>Docs and measurement evidence + onboarding</td></tr>
           <tr><td><code>guards-setup</code></td><td><code>gate</code></td><td>Install lint/CI guards</td></tr>
           <tr><td><code>grounded-answers</code></td><td>(auto) “how much? · supported?”</td><td>Stops asserting facts without checking</td></tr>
           <tr><td><code>root-cause-first</code></td><td>(auto) when fixing a bug/error</td><td>Root cause, not a band-aid</td></tr>
@@ -1292,9 +1299,9 @@ Close with just these.
       <p class="lead" style="max-width:none">We don’t just say “we keep docs from going stale.” This update list is built from the <code>CHANGELOG</code> hi-vibe maintains for itself —<br>nobody copies it over by hand at release time. <b>This list is the automatic part; the rest of the page is written by hand.</b></p>
       <div class="timeline">
 <!--SHOWCASE:en-start-->
+        <div class="rel"><div class="v">v0.52.0<small>2026-09-11</small></div><div class="h"><b>Performance claims now keep a receipt you can inspect later.</b> <span>When comparable before/after values exist, <code>evidence/METRICS.md</code> records the command, environment, sample, commit, and raw result so a number in the CHANGELOG does not lose its source. Accuracy keeps percentage-point and relative improvement separate, and results with mismatched conditions or missing raw evidence are not dressed up as confirmed gains. The always-loaded <code>write-gate</code> was also reduced from 361 lines to 70, with detailed review and measurement rules loaded only when needed.</span></div></div>
         <div class="rel"><div class="v">v0.51.0<small>2026-09-05</small></div><div class="h"><b>Reverting one thing from the previous release.</b> <span>The register check shipped on by default, which imposed one project's taste on everyone else's. Forcing formal Korean on someone who writes casually is how a plugin gets uninstalled. <strong>Register and metaphor checks are now off by default</strong> — a project turns them on by creating <code>.hi-vibe/tone</code>, and any lines in that file are added to the phrases that project does not want. <strong>The evidence check stays on</strong>: blocking an answer that explains how a file behaves when that file was never opened is not taste, it is right or wrong. The landing page now describes it too.</span></div></div>
         <div class="rel"><div class="v">v0.50.0<small>2026-09-05</small></div><div class="h"><b>This release points the hooks at what I write, not just at code.</b> <span>Code had tests and reviews; conversation had nothing, and the same failure repeated three times in one day: ignoring the requested register, blurring facts into metaphor, and asserting how code behaves without opening the file. Promising to do better had already failed, so it moved down into the machine layer. Register is checked with an <strong>allowlist</strong>, not a banned-word list: listing casual endings leaks every time a new one appears, while asking whether the sentence ended formally catches the ones nobody listed. Evidence is checked <strong>per file</strong> — the first design only asked whether anything had been read, which let a different file's grep vouch for this file's behavior. Tuned against 3,709 real conversation turns.</span></div></div>
-        <div class="rel"><div class="v">v0.49.1<small>2026-08-17</small></div><div class="h"><b>Two leaks in yesterday's work, closed.</b> <span>First: if the design review ran but the "review done" mark never followed and the window was closed, that trace stayed in the file, and days later an unrelated task could spend it for one free pass — the record is per project, not per session. Traces older than six hours are now ignored. Second: <code>doctor</code> was still advising "the AI probably just didn't call it, try asking", but the previous release made the hook enforce it, which flips the diagnosis. It now splits the cause in two: either every review was single-file (which can be fine), or subagent calls are genuinely failing.</span></div></div>
 <!--SHOWCASE:en-end-->
       </div>
       <p class="foot-note">* This list is auto-generated from the CHANGELOG on every release. (scripts/build-showcase.py + GitHub Actions)</p>

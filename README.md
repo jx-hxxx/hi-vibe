@@ -56,6 +56,7 @@ the review, the records and the search for existing code fire on their own.
 | Before you build | Say "build me X" and it **searches for an existing implementation first** |
 | While Claude writes code | Flags errors swallowed in silence and secrets left in the source |
 | Once a feature is done | **The conversation doesn't end until it has been reviewed** — a checklist plus a second Claude that never wrote the code |
+| When comparable before/after numbers appear | Records the command, environment, sample, and result in `evidence/METRICS.md` |
 | On compact, `/clear`, or closing | Leaves the next chat enough to pick up from in `handover.md` |
 | When a new session starts | Reads that back, along with the project's own rules |
 

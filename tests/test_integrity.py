@@ -388,7 +388,7 @@ class ReviewLayersDoNotOverlapTest(unittest.TestCase):
     않는 이유는 문서 모양을 붙잡지 않기 위해서다 — 겹침만 본다.
     """
     AGENT = os.path.join("agents", "fresh-eyes.md")
-    GATE = os.path.join("skills", "write-gate", "SKILL.md")
+    GATE = os.path.join("skills", "write-gate", "references", "review-checklist.md")
     NOT_MY_JOB = "## 판단하지 않을 것"
 
     def _agent(self):
