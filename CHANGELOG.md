@@ -5,6 +5,11 @@
 
 ## [Unreleased]
 
+## [0.53.1] - 2026-09-11
+
+### Changed
+- **Stop 훅이 막았을 때 답변 전체를 다시 내지 않게** (2026-09-11, `answer_gate.py`) — 말투·근거 검사가 `block`을 내면 앞 답은 이미 화면에 나간 뒤라 지울 수 없는데, 사유가 "답변을 다시 쓰세요"라고 해서 모델이 같은 뭉텅이를 통째로 한 번 더 찍었다. 사용자 화면에는 결론 블록이 두 벌씩 쌓였다(2026-09-11 사용자 지적, "고질적"). 사유를 **걸린 문장만 고쳐 쓰고 전체 재출력 금지**로 바꿨다. 근거 검사도 같은 원칙 — 같으면 근거 줄 한 줄, 다르면 달라진 부분만. 판정 규칙은 그대로이고 문구만 바뀌므로 테스트 28건 변동 없음.
+
 ## [0.53.0] - 2026-09-11
 <!-- show:ko **`/clear`로 세션을 끊어도 이어갈 맥락을 제대로 넘겨줍니다.** 컨텍스트를 아끼려 `/clear`를 자주 쓰면 그때마다 handover 기록이 다음 세션의 유일한 단서가 되는데, 지금까지 `/clear` 직후에는 그 기록의 **앞 4줄만** 들어갔습니다. 그 4줄은 제목·빈 줄·Git·첫 항목이라 정작 이어받는 데 필요한 줄이 잘려 나갔고, "다음 세션에서 다듬어 주세요"라고 적어둔 뼈대를 다듬으라는 지시도 없었습니다. 이제 `/clear`는 compact과 같은 대우를 받습니다 — 최신 항목 전량과 다듬기 지시가 함께 들어갑니다. 그리고 **훅이 턴을 막을 때 나오던 설명이 짧아졌습니다.** 차단 사유는 모델에게 가는 지시이면서 동시에 화면에 그대로 찍히는 글인데, 리뷰 절차를 통째로 옮겨 적어 매번 화면을 덮고 있었습니다. 절차의 유일본은 스킬에 두고, 사유에는 무엇이 걸렸는지·어떻게 멈추는지만 남겼습니다. -->
 <!-- show:en **Clearing a session now hands over context that is actually usable.** Using `/clear` to save context makes the handover record the next session's only lead, yet a clear re-injected just the **first four lines** of it — a title, a blank line, the Git status, and one item, cutting off the lines that mattered. The instruction to polish that auto-generated skeleton was missing too. A clear now gets the same treatment as a compact: the full latest entry plus the polish instruction. Separately, **hook block messages are much shorter.** A block reason is both the model's instruction and text printed straight to the terminal, and it had the entire review procedure copied into it, covering the screen on every block. The procedure now lives only in the skill; the reason states what was caught and how to clear it. -->
