@@ -12,7 +12,11 @@ Stop에 걸어 두면 자기참조 고리가 생겼다(2026-09-12 실측, 2시�
 사용자가 "커밋해줘"라고 말한 시점은 사용자가 직접 찍는 작업의 끝이라, 근사할
 필요가 없고 고리도 원리적으로 생기지 않는다(커밋 시도는 한 번이다).
 
-범위도 여기서 정확해진다: 미커밋 전체가 아니라 **staged 파일만** 본다.
+범위는 **안 커밋한 변경 전부**다 — stage된 것만이 아니다. `git add -A &&
+git commit ...`처럼 스테이징이 커밋과 같은 Bash 한 줄에 있으면 PreToolUse가
+걸리는 시점엔 인덱스가 비어 있어, "커밋할 코드 없음"으로 읽고 조용히 통과한다
+(2026-09-13 실측: 한 프로젝트 커밋 8개 중 7개가 이 형태라 한 번도 안 걸렸다).
+대가는 안 채로 고른 것이다 — 커밋에 안 들어갈 파일까지 리뷰 범위에 든다.
 
 계약 차이에 주의 — Stop의 `decision="block"`은 턴을 못 끝내게 하고, 여기서
 쓰는 PreToolUse deny는 **그 도구 호출을 취소한다**. 커밋은 일어나지 않는다.
@@ -22,7 +26,7 @@ Stop에 걸어 두면 자기참조 고리가 생겼다(2026-09-12 실측, 2시�
 
 막는 조건을 좁게 지킨다:
   - `.hi-vibe/`가 없으면 아예 안 걸린다 (project_gate)
-  - stage된 **코드 파일**이 없으면 안 걸린다 (문서만 커밋하는 경우)
+  - 바뀐 **코드 파일**이 없으면 안 걸린다 (문서만 건드린 경우)
   - fresh-eyes가 이미 돌았으면 안 걸린다
   - **한 커밋 경계에서 한 번만 막는다** — 에이전트 호출이 실제로 막힌 환경
     (Agent 도구 금지 세션을 겪었다, 2026-08-07)에서 커밋이 영구히 불가능해
@@ -65,8 +69,8 @@ def is_git_commit(command):
         and not _DRY_RE.search(command)
 
 
-def staged_scope(cwd):
-    """review_scope.py staged 결과(dict). 어떤 실패에서도 None → 안 막는다.
+def pending_scope(cwd):
+    """review_scope.py precommit 결과(dict). 어떤 실패에서도 None → 안 막는다.
 
     스캐너를 별도 프로세스로 부르는 이유는 stop_nudge와 같다 — 확장자 목록·
     제외 규칙의 유일본이 그 스크립트이고, 여기에 사본을 만들면 조용히 갈린다."""
@@ -74,7 +78,7 @@ def staged_scope(cwd):
         return None
     try:
         r = subprocess.run([sys.executable or "python3", REVIEW_SCOPE,
-                            "staged", "--root", cwd],
+                            "precommit", "--root", cwd],
                            capture_output=True, text=True, timeout=SCOPE_TIMEOUT)
     except (OSError, subprocess.SubprocessError):
         return None
@@ -116,7 +120,7 @@ def reason(info):
     shown = ", ".join(files[:5])
     more = "" if len(files) <= 5 else f" 외 {len(files) - 5}개"
     return (
-        f"hi-vibe: 커밋 직전 설계 검토가 안 돌았습니다 — staged "
+        f"hi-vibe: 커밋 직전 설계 검토가 안 돌았습니다 — 미커밋 "
         f"{len(files)}파일 {info.get('total_changed_lines', 0)}줄"
         f": {shown}{more}.\n"
         "Agent 도구로 `hi-vibe:fresh-eyes` 소환 — 전달은 사용자 요구사항 한 "
@@ -139,9 +143,9 @@ def main(payload):
 
     _common.touch_heartbeat(cwd, "PreToolUse")
 
-    info = staged_scope(cwd)
+    info = pending_scope(cwd)
     if not info or not info.get("files"):
-        return          # stage된 코드 파일이 없다 — 문서·설정만 커밋하는 경우
+        return          # 바뀐 코드 파일이 없다 — 문서·설정만 건드린 경우
 
     transcript = payload.get("transcript_path", "")
     if not transcript or not os.path.isfile(transcript):

@@ -10,8 +10,11 @@
 작업의 끝을 근사하지 않고 사용자가 직접 찍는 자리다.
 
 여기서 지키는 경계:
-  - 막는다: staged 코드 파일이 있고 fresh-eyes가 안 돌았을 때
-  - 안 막는다: 문서만 커밋 · 커밋이 아닌 명령 · `--dry-run` · 마커 없는 프로젝트
+  - 막는다: **안 커밋한** 코드 파일이 있고 fresh-eyes가 안 돌았을 때.
+    stage 여부를 안 본다 — `git add -A && git commit`은 스테이징이 커밋과
+    같은 Bash 한 줄이라, 훅이 걸리는 시점의 인덱스는 비어 있다
+    (2026-09-13 실측: 한 프로젝트 커밋 8개 중 7개가 이 형태라 한 번도 안 걸렸다).
+  - 안 막는다: 문서만 건드림 · 커밋이 아닌 명령 · `--dry-run` · 마커 없는 프로젝트
   - **한 커밋 경계에서 한 번만** 막는다 (에이전트 호출이 막힌 환경에서
     커밋이 영구히 불가능해지면 못 막는 것보다 나쁘다 — 2026-08-07)
 """
@@ -60,6 +63,14 @@ class CommitGateTest(unittest.TestCase):
         with open(self.t, mode, encoding="utf-8") as f:
             f.write("".join(ln + "\n" for ln in lines) or "\n")
 
+    def edit(self, name="feat.py", body="def a():\n    return 1\n"):
+        """stage하지 않고 파일만 쓴다 — 실제 커밋의 흔한 모습이다."""
+        path = os.path.join(self.root, name)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(body)
+        return path
+
     def stage(self, name="feat.py", body="def a():\n    return 1\n"):
         path = os.path.join(self.root, name)
         os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -98,9 +109,24 @@ class CommitGateTest(unittest.TestCase):
         self.assertEqual(self.denied(out), "deny", f"안 막았다: {out}")
         self.assertIn("fresh-eyes", self.reason(out))
 
-    def test_reason_names_the_staged_files(self):
-        """무엇을 리뷰해야 하는지가 사유에 있어야 한다 — 미커밋 전체가 아니라
-        **커밋에 들어가는 것**만."""
+    def test_denies_when_staging_is_in_the_same_command(self):
+        """**이 구멍 때문에 범위를 넓혔다.** `git add -A && git commit`은
+        스테이징이 커밋과 같은 명령에 있어, PreToolUse가 걸리는 시점의 인덱스는
+        비어 있다. stage된 것만 보면 여기서 통째로 샌다."""
+        self.edit()
+        out = self.gate("git add -A && git commit -m x")
+        self.assertEqual(self.denied(out), "deny", f"안 막았다: {out}")
+        self.assertIn("feat.py", self.reason(out))
+
+    def test_dirty_code_blocks_a_docs_only_commit(self):
+        """**알고 고른 대가다.** 문서만 stage해도 작업하다 만 코드가 남아 있으면
+        막는다. 억울하면 "그냥 커밋해"로 지나간다(같은 커밋은 두 번 안 막는다)."""
+        self.edit()                       # 커밋에 안 넣을 지저분한 코드
+        self.stage("README.md", "# hi\n")
+        self.assertEqual(self.denied(self.gate()), "deny")
+
+    def test_reason_names_the_files_to_review(self):
+        """무엇을 리뷰해야 하는지가 사유에 있어야 한다."""
         self.stage("web/app.js", "export const a = 1;\n")
         self.stage("feat.py")
         reason = self.reason(self.gate())
@@ -123,7 +149,9 @@ class CommitGateTest(unittest.TestCase):
         self.assertNotEqual(self.denied(self.gate()), "deny", "두 번 막았다")
 
     def test_docs_only_commit_is_not_touched(self):
+        """바뀐 것이 문서뿐이면 (stage됐든 아니든) 막지 않는다."""
         self.stage("README.md", "# hi\n")
+        self.edit("NOTES.md", "just prose\n")
         self.assertNotEqual(self.denied(self.gate()), "deny")
 
     def test_not_a_commit_command(self):

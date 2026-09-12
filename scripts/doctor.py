@@ -141,13 +141,23 @@ def check_hooks_live(python3):
 
 
 def check_commit_gate(python3, tmp):
-    """커밋 직전 게이트는 **실제로 막는 것까지** 봐야 한다 — 빈 입력이나
-    staged 없는 상태로는 조용히 죽은 것과 통과한 것이 구분되지 않는다."""
+    """커밋 직전 게이트는 **실제로 막는 것까지** 봐야 한다 — 빈 입력으로는
+    조용히 죽은 것과 통과한 것이 구분되지 않는다.
+
+    **일부러 stage하지 않는다.** 실제 커밋은 `git add -A && git commit`처럼
+    한 줄인 경우가 많고, 그때 훅이 보는 인덱스는 비어 있다. stage한 상태로만
+    검사하면 바로 그 구멍이 이 자가진단을 통과해 버린다."""
+    env = dict(os.environ, GIT_AUTHOR_NAME="doctor", GIT_AUTHOR_EMAIL="d@x",
+               GIT_COMMITTER_NAME="doctor", GIT_COMMITTER_EMAIL="d@x")
     subprocess.run(["git", "init", "-q"], cwd=tmp, timeout=20)
+    seed = os.path.join(tmp, "seed.md")
+    with open(seed, "w", encoding="utf-8") as f:
+        f.write("seed\n")
+    subprocess.run(["git", "add", "seed.md"], cwd=tmp, timeout=20)
+    subprocess.run(["git", "commit", "-qm", "seed"], cwd=tmp, timeout=20, env=env)
     target = os.path.join(tmp, "gate_probe.py")
     with open(target, "w", encoding="utf-8") as f:
         f.write("def probe():\n    return 1\n")
-    subprocess.run(["git", "add", "gate_probe.py"], cwd=tmp, timeout=20)
     tpath = os.path.join(tmp, "commit-t.jsonl")
     with open(tpath, "w", encoding="utf-8") as f:      # fresh-eyes 흔적 없음
         f.write(json.dumps({"type": "assistant", "message": {
@@ -155,7 +165,8 @@ def check_commit_gate(python3, tmp):
             ensure_ascii=False) + "\n")
     p = run_hook(python3, "pre_commit_gate.py", {
         "cwd": tmp, "session_id": "doctor", "transcript_path": tpath,
-        "tool_name": "Bash", "tool_input": {"command": "git commit -m x"},
+        "tool_name": "Bash",
+        "tool_input": {"command": "git add -A && git commit -m x"},
     }, tmp)
     if p.returncode == 0 and "deny" in p.stdout:
         add("OK", "PreToolUse 훅(커밋 게이트)", "설계 검토 없는 커밋을 막는 것 확인")

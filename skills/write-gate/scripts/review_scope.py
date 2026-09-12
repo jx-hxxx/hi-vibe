@@ -9,7 +9,7 @@ The "what changed" and "did it change since I reviewed it" judgments are done
 here in code (deterministic), NOT by the AI — the AI is unreliable at hashing.
 
   list  [--root R]        -> JSON {"scope":..., "to_review":[...], "skipped":[...]}
-  staged [--root R]       -> JSON {"files":[...], "head":...} — 커밋에 들어갈 것만
+  precommit [--root R]    -> JSON {"files":[...], "head":...} — 안 커밋한 변경 전부
   mark  <file...> [--root R]  -> record those files' current hashes as reviewed
 
 Scope is a ladder, so committing or pushing never leaves review with nothing
@@ -432,36 +432,45 @@ def cmd_chunk(root, n):
     return 0
 
 
-def staged_scope(root):
-    """지금 stage된 코드 파일과 HEAD. 커밋 직전 게이트가 쓴다.
+def precommit_scope(root):
+    """커밋 직전 게이트가 볼 것 — **안 커밋한 변경 전부**와 HEAD.
 
-    `list`와 달리 **이미 리뷰했는지를 보지 않는다** — 커밋에 무엇이 들어가는지만
+    stage된 것만 보지 않는다. `git add -A && git commit ...`처럼 스테이징이
+    커밋과 **같은 Bash 한 줄**에 들어 있으면, PreToolUse는 그 줄이 실행되기
+    전에 걸리므로 인덱스가 비어 있다 — 게이트는 "커밋할 코드 없음"으로 읽고
+    조용히 통과한다. 2026-09-13 실측: 한 프로젝트의 커밋 8개 중 7개가 이
+    형태여서 게이트가 **한 번도 걸리지 않았다**. 근사가 아니라 가장 흔한
+    커밋 형태에서 통째로 새는 구멍이었다.
+
+    대가는 안 채로 고른 것이다: **커밋에 안 들어갈 지저분한 파일까지 범위에
+    든다.** 문서 한 줄만 커밋해도 작업하다 만 코드가 남아 있으면 걸린다.
+    억울하게 막히면 "그냥 커밋해"로 지나간다 — 같은 커밋은 두 번 안 막는다.
+
+    `list`와 달리 **이미 리뷰했는지를 보지 않는다** — 무엇이 걸려 있는지만
     말하고, "리뷰가 필요한가"는 부르는 쪽(훅)이 판단한다. 여기서 둘을 겸하면
     같은 판단이 두 곳에 생긴다."""
-    def _names(filt):
-        out = _git(["diff", "--cached", "--name-only", "--diff-filter=" + filt], root)
-        return sorted(f for f in (ln.strip() for ln in out.splitlines())
-                      if _reviewable(f))
-
-    lines = 0
-    for ln in _git(["diff", "--cached", "--numstat"], root).splitlines():
-        parts = ln.split("\t")
-        if len(parts) == 3 and _reviewable(parts[2].strip()):
-            for n in parts[:2]:
-                lines += int(n) if n.isdigit() else 0   # 바이너리는 "-"
+    _TEXT_ONLY.clear()   # 한 프로세스에서 scope()와 같이 불릴 수 있다
     head = _git(["rev-parse", "HEAD"], root).strip()
+    # 첫 커밋 전에는 비교 기준이 없다 — 추적되는 것 전부가 곧 새 코드다.
+    base = "HEAD" if head else None
+    names = _diff_names(root, base) if base else {
+        ln.strip() for ln in _git(["ls-files"], root).splitlines()}
+    for line in _git(["ls-files", "--others", "--exclude-standard"],
+                     root).splitlines():
+        names.add(line.strip())
+    files = _code_files(root, names, base)
     return {
-        "files": _names("ACMR"),
-        "deleted": _names("D"),
-        "total_changed_lines": lines,
+        "files": files,
+        "deleted": _deleted_code_files(root, names),
+        "total_changed_lines": sum(changed_lines(root, set(files), base).values()),
         # 첫 커밋 전에는 HEAD가 없다 — 그때는 빈 문자열이고, 게이트는
         # 그 값을 그대로 예산 키로 쓴다(커밋이 생기면 자동으로 달라진다).
         "head": head,
     }
 
 
-def cmd_staged(root):
-    info = staged_scope(root)
+def cmd_precommit(root):
+    info = precommit_scope(root)
     info["file_count"] = len(info["files"])
     print(json.dumps(info, ensure_ascii=False, indent=2))
     return 0
@@ -489,12 +498,12 @@ def main():
             root = args[i + 1]
             del args[i:i + 2]
     if not args:
-        print("usage: review_scope.py list | staged | chunk <N> | mark <file...> [--root R]")
+        print("usage: review_scope.py list | precommit | chunk <N> | mark <file...> [--root R]")
         return 1
     if args[0] == "list":
         return cmd_list(root)
-    if args[0] == "staged":
-        return cmd_staged(root)
+    if args[0] == "precommit":
+        return cmd_precommit(root)
     if args[0] == "chunk":
         try:
             n = int(args[1])
