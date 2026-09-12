@@ -3,9 +3,23 @@
 이 파일은 hi-vibe 플러그인 자체의 변경 이력입니다.
 형식: [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) · 버전: [Semantic Versioning](https://semver.org/lang/ko/)
 
-## [Unreleased]
+## [0.54.0] - 2026-09-13
+<!-- show:ko **리뷰가 리뷰를 부르던 고리를 끊었습니다.** 코드를 고치면 훅이 대화를 붙잡고 리뷰를 시키는데, 그 리뷰가 결함을 찾아 파일을 고치면 **또 새 변경이 되어 다시 막혔어요.** 리뷰가 일을 잘할수록 다음 차단을 스스로 만드는 구조였고, 실측으로 2시간 세션에서 다섯 번 막혀 서브에이전트 아홉 개 중 일곱 개가 이 고리에서 나왔습니다(사용자 요청은 세 건이었어요). 그래서 **비싼 검토(fresh-eyes)를 “커밋해줘”라고 말한 지점으로 옮겼습니다.** 훅은 ‘턴이 끝났다’만 알고 ‘작업이 끝났다’를 모르는데, 커밋은 **사용자가 직접 찍는 작업의 끝**이라 추측할 필요가 없고 커밋 시도는 한 번이라 고리가 생기지 않아요. 보는 범위도 **커밋에 들어갈 파일만**으로 좁아집니다. 턴이 끝날 때 도는 짧은 체크리스트는 그대로 남습니다 — 싼 층이라 매번 돌아도 되니까요. 병렬 리뷰도 기본을 순차로 되돌렸어요(파일 15개·1,500줄을 넘을 때만 둘로 나눕니다). **대가도 밝혀 둡니다: 커밋을 하지 않는 흐름에서는 설계 검토가 기계로 강제되지 않습니다** — 원할 때 “설계 검토해줘”라고 하면 됩니다. -->
+<!-- show:en **Broke the loop where a review caused the next review.** The hook holds the turn open until changed code has been reviewed — but when that review found a defect and fixed a file, the fix was itself a new change, so the hook blocked again. The better the review worked, the more it triggered itself: measured at five blocks in a two-hour session, with seven of nine subagents coming from that loop for three user requests. So the expensive half — the clean-context design review — **moved to the moment you say “commit this.”** A hook can tell that a turn ended but not that the work ended; a commit is **the end you mark yourself**, and it is attempted once, so the loop cannot form. The review also narrows to the staged files. The cheap checklist still runs when a turn ends. Parallel review went back to sequential by default (split only past 15 files and 1,500 lines). **The trade-off, stated plainly: if you never commit, the design review is never machine-enforced** — just ask for one when you want it. -->
+
+### Added
+- **커밋 직전 설계 검토 게이트** (2026-09-13, `pre_commit_gate.py`·`PreToolUse`·`review_scope.py staged`) — `git commit`을 실행하려 할 때 stage된 코드 파일에 fresh-eyes가 안 돌았으면 **그 커밋 호출을 취소**하고(PreToolUse deny) 파일 목록과 함께 소환을 지시한다. 훅 6종·스크립트 7개가 됐고, `doctor`가 실제로 막히는지까지 검사한다.
+  - **왜 커밋 지점인가**: 훅은 '턴이 끝났다'만 알고 '작업이 끝났다'를 모른다. 사용자가 "커밋해줘"라고 말한 자리는 **사용자가 직접 찍는 작업의 끝**이라 근사가 필요 없다. 범위도 미커밋 전체가 아니라 staged 파일로 좁아진다.
+  - **한 커밋 경계에서 한 번만 막는다.** Agent 호출이 실제로 막힌 환경을 겪었으므로(2026-08-07) 커밋이 영구 불가능해지는 쪽이 못 막는 것보다 나쁘다.
+  - **남는 한계 둘**: ①커밋을 안 하는 흐름에서는 fresh-eyes가 기계로 강제되지 않는다(횟수를 줄이려 택한 대가) ②커밋 명령 탐지는 근사다 — 별칭(`git ci`)·래퍼 스크립트는 빠진다. `git config commit.template`처럼 커밋이 아닌 것은 안 걸리도록 회귀 테스트로 고정했다.
+  - 회귀 테스트 10건 추가(`test_commit_gate.py`).
 
 ### Changed
+- **Stop 훅에서 fresh-eyes 강제를 뺐다 — 자기참조 고리였다** (2026-09-13, `stop_nudge.py`) — 턴 끝에 세우면 **리뷰가 파일을 고치는 순간 다음 차단의 조건이 생긴다**: 막힘 → fresh-eyes → 수정 → 내용 지문 변경 → 또 막힘. 지문 기반 "같은 변경은 두 번 막지 않기"는 지문도 내용에서 나오므로 무력했다. 실측(2026-09-12): 2시간 세션에서 5회 차단, 서브에이전트 9개 중 7개가 이 고리에서 나왔고 사용자 요청은 3건이었다. 리뷰가 작업보다 비쌌다.
+  - 강제는 커밋 게이트로 옮겼고, **체크리스트는 그대로 턴 끝에 남는다** — 메인 세션이 직접 읽는 층이라 싸다. 비싼 것은 서브에이전트 하나였다.
+  - 사라진 것: `FRESH_EYES_MIN_FILES`(표시한 파일 2개 문턱)와 fresh-eyes 차단 사유. 근거와 대가는 `.claude/CLAUDE.md` 결정 기록에 남겼다.
+- **Stop 훅의 리뷰 차단도 세션당 1회로 고정** (2026-09-13, `stop_nudge.py`) — 같은 고리를 체크리스트 쪽도 탄다. 싸긴 하지만 매 턴 붙잡을 이유가 없다. 세션 플래그(`<sid>.blocked`)를 `_prune_flags` 상한에도 넣었다 — `.nudged`만 정리하던 자리라 한쪽만 무한히 쌓일 뻔했다.
+- **리뷰 병렬화 기본값을 순차로 뒤집었다** (2026-09-13, `write-gate`) — 예전 문턱("파일 여러 개 + 수백 줄")이 낮아 보통 크기의 작업마다 리뷰어 3~6개가 붙었다. 깊이가 얕아지는 것을 걱정해 병렬을 기본으로 뒀는데, **실제로 일어난 실패는 리뷰 때문에 작업을 못 하는 것**이었다. 이제 기본은 순차이고, **파일 15개+ 이면서 1,500줄+** 일 때만 **버킷 2개**로 나눈다.
 - **말투 차단 사유를 화면 한 줄로** (2026-09-12, `answer_gate.py`) — 사유는 사용자 터미널에 `Stop hook error:` 뒤로 그대로 찍힌다. 걸린 문장 5개와 고치는 방법이 거기 들어 있어 검사 결과가 답변 화면을 덮었다(2026-09-12 사용자 지적: "걍 hi-vibe 말투 검사 이렇게만 나와도 될듯"). 그 목록을 읽어야 하는 건 사용자가 아니라 모델이므로, 목록과 지시는 `.hi-vibe/state/tone-block.md`에 쓰고 화면에는 `hi-vibe 말투 검사 — 격식체 2곳 · 비유 1곳. \`.hi-vibe/state/tone-block.md\`를 읽고 고치세요.` 한 줄만 남긴다. 파일을 못 쓰면 예전처럼 사유에 전부 싣는다 — 그때는 모델이 알 길이 사유뿐이다. 회귀 테스트 2건 추가(338→340개).
 
 ## [0.53.1] - 2026-09-11

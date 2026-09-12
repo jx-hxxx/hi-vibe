@@ -430,6 +430,24 @@ class StopBlockTest(TempProject):
         second = self.run_nudge(sid="b2")   # 사용자가 넘겼어도 다시 막지 않는다
         self.assertNotIn("block", second)
 
+    def test_does_not_block_twice_in_one_session_even_for_new_changes(self):
+        """막힘 → 리뷰 → **리뷰가 파일을 고침** → 새 지문 → 또 막힘.
+
+        지문 중복 방지만으로는 이 고리를 못 끊는다. 실측(MoToo 2026-09-12):
+        2시간 세션에서 5회 막혔고 서브에이전트 9개 중 7개가 여기서 나왔다.
+        작업 하나에 리뷰는 한 번이면 되므로 세션당 1회로 예산을 고정한다."""
+        self.assertIn("block", self.run_nudge(sid="loop"))
+        with open(os.path.join(self.root, "feat.py"), "a", encoding="utf-8") as f:
+            f.write("\ndef b():\n    return 2\n")   # 리뷰가 고친 셈 — 지문이 달라진다
+        self.assertNotIn("block", self.run_nudge(sid="loop"))
+
+    def test_a_different_session_still_gets_one_block(self):
+        """예산은 세션당이다 — 다음 세션까지 조용해지면 그건 훅을 끈 것이다."""
+        self.assertIn("block", self.run_nudge(sid="s1"))
+        with open(os.path.join(self.root, "feat.py"), "a", encoding="utf-8") as f:
+            f.write("\ndef c():\n    return 3\n")
+        self.assertIn("block", self.run_nudge(sid="s2"))
+
     def test_blocks_again_after_code_changes(self):
         self.assertIn("block", self.run_nudge())
         with open(os.path.join(self.root, "feat.py"), "w", encoding="utf-8") as f:

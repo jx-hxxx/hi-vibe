@@ -30,8 +30,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _base import (                                    # noqa: E402
-    HEARTBEAT_FILE, emit, file_lock, git_status, project_gate, read_heartbeat,
-    read_payload, run, touch_heartbeat, _run_git,
+    HEARTBEAT_FILE, emit, emit_deny, file_lock, git_status, project_gate,
+    read_heartbeat, read_payload, run, touch_heartbeat, _run_git,
 )
 from _ci import (                                      # noqa: E402
     CI_CACHE_TTL, CI_QUERY_TIMEOUT, ci_guard_missing, ci_health,

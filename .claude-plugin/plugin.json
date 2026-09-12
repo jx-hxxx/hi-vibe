@@ -1,6 +1,6 @@
 {
   "name": "hi-vibe",
-  "version": "0.53.1",
+  "version": "0.54.0",
   "description": "Vibe-coding seatbelt for Claude Code — durable docs and measurement evidence + AI discipline (root-cause first, no unfounded claims) + machine enforcement (ruff/eslint/import cycles).",
   "author": {
     "name": "jx-hxxx"

@@ -154,6 +154,26 @@ def emit(event_name, additional_context=None, system_message=None,
         print(json.dumps(out, ensure_ascii=False))
 
 
+def emit_deny(reason):
+    """PreToolUse에서 **도구 실행 자체를 막는다.** Stop의 `decision="block"`과
+    다른 계약이다 — 저쪽은 턴을 못 끝내게 하고, 이쪽은 그 도구 호출을 취소한다.
+
+    `reason`은 취소 이유로 모델에게 가고 사용자 화면에도 찍힌다. Stop 사유와
+    같은 규칙으로 **짧게** 유지한다(2026-09-11에 사유가 화면을 덮었다).
+
+    구 형식(`decision`/`reason`)도 같이 낸다 — 호스트 버전에 따라 어느 쪽을
+    읽는지가 다르고, 둘은 같은 것을 말하므로 충돌하지 않는다."""
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason[:4000],
+        },
+        "decision": "block",
+        "reason": reason[:4000],
+    }, ensure_ascii=False))
+
+
 @contextlib.contextmanager
 def file_lock(target_path):
     """target_path 쓰기를 프로세스 간 직렬화한다. 여러 세션(터미널)이

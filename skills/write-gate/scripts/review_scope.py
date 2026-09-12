@@ -9,6 +9,7 @@ The "what changed" and "did it change since I reviewed it" judgments are done
 here in code (deterministic), NOT by the AI — the AI is unreliable at hashing.
 
   list  [--root R]        -> JSON {"scope":..., "to_review":[...], "skipped":[...]}
+  staged [--root R]       -> JSON {"files":[...], "head":...} — 커밋에 들어갈 것만
   mark  <file...> [--root R]  -> record those files' current hashes as reviewed
 
 Scope is a ladder, so committing or pushing never leaves review with nothing
@@ -431,6 +432,41 @@ def cmd_chunk(root, n):
     return 0
 
 
+def staged_scope(root):
+    """지금 stage된 코드 파일과 HEAD. 커밋 직전 게이트가 쓴다.
+
+    `list`와 달리 **이미 리뷰했는지를 보지 않는다** — 커밋에 무엇이 들어가는지만
+    말하고, "리뷰가 필요한가"는 부르는 쪽(훅)이 판단한다. 여기서 둘을 겸하면
+    같은 판단이 두 곳에 생긴다."""
+    def _names(filt):
+        out = _git(["diff", "--cached", "--name-only", "--diff-filter=" + filt], root)
+        return sorted(f for f in (ln.strip() for ln in out.splitlines())
+                      if _reviewable(f))
+
+    lines = 0
+    for ln in _git(["diff", "--cached", "--numstat"], root).splitlines():
+        parts = ln.split("\t")
+        if len(parts) == 3 and _reviewable(parts[2].strip()):
+            for n in parts[:2]:
+                lines += int(n) if n.isdigit() else 0   # 바이너리는 "-"
+    head = _git(["rev-parse", "HEAD"], root).strip()
+    return {
+        "files": _names("ACMR"),
+        "deleted": _names("D"),
+        "total_changed_lines": lines,
+        # 첫 커밋 전에는 HEAD가 없다 — 그때는 빈 문자열이고, 게이트는
+        # 그 값을 그대로 예산 키로 쓴다(커밋이 생기면 자동으로 달라진다).
+        "head": head,
+    }
+
+
+def cmd_staged(root):
+    info = staged_scope(root)
+    info["file_count"] = len(info["files"])
+    print(json.dumps(info, ensure_ascii=False, indent=2))
+    return 0
+
+
 def cmd_mark(root, files):
     state = load_state(root)
     n = 0
@@ -453,10 +489,12 @@ def main():
             root = args[i + 1]
             del args[i:i + 2]
     if not args:
-        print("usage: review_scope.py list | chunk <N> | mark <file...> [--root R]")
+        print("usage: review_scope.py list | staged | chunk <N> | mark <file...> [--root R]")
         return 1
     if args[0] == "list":
         return cmd_list(root)
+    if args[0] == "staged":
+        return cmd_staged(root)
     if args[0] == "chunk":
         try:
             n = int(args[1])

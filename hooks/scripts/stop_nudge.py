@@ -1,13 +1,12 @@
 """Stop: 리뷰가 안 끝난 채로 턴이 끝나려 하면 막고 리뷰를 지시한다.
 
-   막는 사유는 둘이다:
-     1) 아직 리뷰 안 받은 코드 변경이 남아 있다
-     2) 리뷰를 끝냈다고 표시(mark)했는데 **fresh-eyes는 안 돌았다**
+   막는 사유는 하나다: **아직 리뷰(체크리스트) 안 받은 코드 변경이 남아 있다.**
 
-   2)가 있는 이유: 1)만 있을 때는 mark가 잠금을 푸는 유일한 열쇠였다. 즉
-   체크리스트만 돌리고 표시해도 훅은 만족했고, 남의 눈을 부르라는 지시는
-   `.md` 문장 하나뿐이었다. 그 층이 조용히 빠지는 걸 이미 겪었다(2026-08-07).
-   세고만 있던 숫자를 판단에 넣은 것이 2)다.
+   예전엔 "mark했는데 fresh-eyes는 안 돌았다"도 여기서 막았다. 그 강제는
+   2026-09-13에 `pre_commit_gate.py`(커밋 직전)로 옮겼다 — 턴마다 걸리는 자리에
+   두면 **리뷰가 파일을 고쳐 다음 차단을 스스로 만드는 고리**가 생긴다(실측
+   2시간 세션 5회). 이 훅은 싼 검사(체크리스트)만 세우고, 비싼 서브에이전트
+   검토는 사용자가 "커밋해줘"라고 말한 지점에서 한 번 선다.
 
    막는 것까지가 이 훅의 일이고 리뷰를 수행하는 건 Claude다. 이 구분이
    흐려진 문장이 여기서 문서로 여러 번 새어 나갔다.
@@ -33,14 +32,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _common
 
 DOC_SUFFIXES = (".md", ".txt", ".rst")
-MAX_FLAGS = 200  # 세션당 1개씩 쌓이는 .nudged 플래그의 상한
+MAX_FLAGS = 200  # 세션당 1개씩 쌓이는 세션 플래그(.nudged·.blocked)의 상한
 SCOPE_TIMEOUT = 8  # 훅 자체 제한(10초)보다 짧게 — 넘기면 막지 않고 통과
-
-# fresh-eyes 없이 리뷰를 끝냈다고 표시했을 때 **몇 개 파일부터 막을 것인가.**
-# 2인 이유는 임의의 값이 아니다: fresh-eyes 1번 항목이 "고친 파일을 가리키는
-# 다른 파일이 같이 바뀌었나"인데, 그 어긋남은 **파일이 둘 이상일 때만 존재**
-# 한다. 한 파일짜리 변경은 계속 write-gate의 판단에 맡긴다(기계로 안 막는다).
-FRESH_EYES_MIN_FILES = 2
 
 REVIEW_SCOPE = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
@@ -48,10 +41,13 @@ REVIEW_SCOPE = os.path.join(
 
 
 def _prune_flags(flag_dir):
-    """오래된 .nudged 플래그를 상한 이하로 정리 (무한 누적 방지)."""
+    """오래된 세션 플래그를 상한 이하로 정리 (무한 누적 방지).
+
+    확장자를 늘릴 땐 여기 목록도 같이 늘려야 한다 — `.blocked`를 만들 때
+    이 자리를 빠뜨려서 한쪽만 무한히 쌓일 뻔했다."""
     try:
         flags = [os.path.join(flag_dir, f) for f in os.listdir(flag_dir)
-                 if f.endswith(".nudged")]
+                 if f.endswith((".nudged", ".blocked"))]
         if len(flags) <= MAX_FLAGS:
             return
         flags.sort(key=os.path.getmtime)  # 오래된 것부터
@@ -79,26 +75,47 @@ def review_scope(cwd):
         return None
 
 
-def _block_flag(flag_dir, name="last_block"):
-    return os.path.join(flag_dir, name)
+def _block_flag(flag_dir):
+    return os.path.join(flag_dir, "last_block")
 
 
-def _already_blocked(flag_dir, fingerprint, name="last_block"):
-    """같은 내용으로 이미 막은 적이 있나 — 한 번 넘긴 변경으로 또 막지 않는다.
-
-    사유마다 파일을 따로 쓴다. 한 파일을 돌려쓰면 뒤에 막은 사유가 앞의
-    기억을 덮어써서, 같은 변경에 두 번 걸리게 된다."""
+def _already_blocked(flag_dir, fingerprint):
+    """같은 내용으로 이미 막은 적이 있나 — 한 번 넘긴 변경으로 또 막지 않는다."""
     try:
-        with open(_block_flag(flag_dir, name), encoding="utf-8") as fh:
+        with open(_block_flag(flag_dir), encoding="utf-8") as fh:
             return fh.read().strip() == fingerprint
     except OSError:
         return False
 
 
-def _remember_block(flag_dir, fingerprint, name="last_block"):
+def _session_blocked(flag_dir, sid):
+    """이 세션에서 이미 한 번 막았나.
+
+    지문(fingerprint) 중복 방지만으로는 루프를 못 막는다는 것이 실측으로
+    드러났다(MoToo 2026-09-12, 2시간 세션에서 **5회** 차단). 이유는 단순하다:
+    막으면 리뷰가 돌고, **리뷰가 파일을 고치면 새 변경이 생겨** 지문이 달라진다.
+    그래서 "같은 변경으로 두 번 막지 않는다"는 방어가 통째로 무력해진다.
+      막힘 → 리뷰 → 리뷰가 수정 → 새 지문 → 또 막힘 → …
+    그 세션은 사용자 요청 3건에 서브에이전트 9개 중 7개를 이 고리에서 썼다.
+
+    비싼 절반(fresh-eyes)은 `pre_commit_gate.py`로 옮겼고, 남은 체크리스트도
+    같은 고리를 탄다 — 싸긴 하지만 매 턴 붙잡을 이유는 없다. 훅은 '턴이
+    끝났다'만 알 뿐 '작업이 끝났다'를 모르므로, 세션당 1회로 예산을 고정한다."""
+    return os.path.isfile(os.path.join(flag_dir, f"{sid}.blocked"))
+
+
+def _remember_session_block(flag_dir, sid):
     try:
         os.makedirs(flag_dir, exist_ok=True)
-        with open(_block_flag(flag_dir, name), "w", encoding="utf-8") as fh:
+        open(os.path.join(flag_dir, f"{sid}.blocked"), "w").close()
+    except OSError:
+        pass          # 못 남겨도 지문 중복 방지가 남는다 — 최악이 예전 동작
+
+
+def _remember_block(flag_dir, fingerprint):
+    try:
+        os.makedirs(flag_dir, exist_ok=True)
+        with open(_block_flag(flag_dir), "w", encoding="utf-8") as fh:
             fh.write(fingerprint + "\n")
     except OSError:
         pass  # 기록 못 해도 막는 것 자체는 유효 — 다음 턴에 한 번 더 걸릴 뿐
@@ -131,23 +148,6 @@ def review_reason(scope):
     )
 
 
-def fresh_eyes_reason(files):
-    """리뷰를 마쳤다고 표시했는데 fresh-eyes가 안 돈 경우의 지시.
-
-    review_reason과 같은 이유로 짧게 유지한다 — 사용자 화면에 그대로 찍힌다."""
-    shown = ", ".join(files[:5])
-    more = "" if len(files) <= 5 else f" 외 {len(files) - 5}개"
-    return (
-        f"hi-vibe: 리뷰 완료로 표시한 {len(files)}개 파일({shown}{more})에 "
-        "fresh-eyes가 안 돌았습니다 — 리뷰 두 겹 중 설계 검토가 빠졌습니다.\n"
-        "Agent 도구로 `hi-vibe:fresh-eyes` 소환 — 전달은 사용자 요구사항 한 "
-        "줄과 파일 목록뿐(설계 이유·변명은 전달 금지). 끝나면 같은 파일로 "
-        "`review_scope.py mark`.\n"
-        "Agent 호출이 실제로 실패했거나 사용자가 '넘어가'라고 했으면 한 줄로 "
-        "밝히고 진행하세요."
-    )
-
-
 def main(payload):
     cwd = payload.get("cwd", "")
     if not _common.project_gate(cwd):
@@ -162,8 +162,8 @@ def main(payload):
     # AI가 Bash로 부르는 별도 프로세스라 대화 기록에 접근하지 못한다.
     sid = str(payload.get("session_id", "unknown"))
     off = _common.agent_offset(cwd, sid)
-    fe, mk, off2, marked = _common.review_activity(transcript, off)
-    fresh_eyes_skipped = _common.note_agent_activity(cwd, sid, fe, mk, off2)
+    fe, mk, off2, _ = _common.review_activity(transcript, off)
+    _common.note_agent_activity(cwd, sid, fe, mk, off2)
 
     _, edited = _common.parse_transcript(transcript)
     writes, catches = _common.session_activity(transcript)
@@ -181,37 +181,21 @@ def main(payload):
         scope = review_scope(cwd)
         if scope and (scope.get("to_review") or scope.get("deleted")):
             fingerprint = scope.get("fingerprint") or ""
-            if fingerprint and not _already_blocked(flag_dir, fingerprint):
+            if (fingerprint and not _already_blocked(flag_dir, fingerprint)
+                    and not _session_blocked(flag_dir, sid)):
                 _remember_block(flag_dir, fingerprint)
+                _remember_session_block(flag_dir, sid)
                 _common.emit("Stop", decision="block",
                              reason=review_reason(scope))
                 return
 
-    # 2) 리뷰를 끝냈다고 **표시했는데 fresh-eyes는 안 돈** 경우.
-    #    1)만 있을 때는 표시(mark)가 잠금을 푸는 유일한 열쇠였다 — 즉
-    #    체크리스트만 돌리고 표시해도 훅은 만족했고, 남의 눈을 부르라는
-    #    지시는 `.md` 문장 하나뿐이었다. 그 층이 조용히 빠지는 걸 이미
-    #    겪었으므로(2026-08-07) 세고만 있던 숫자를 판단에 넣는다.
-    #
-    #    파일 2개 이상일 때만 막는다 (FRESH_EYES_MIN_FILES 주석 참고).
-    #    "표시했는데 안 돌았다"는 사실 자체가 새 mark가 있을 때만 생기므로,
-    #    사용자가 넘어가라고 해서 그냥 멈추면 다음 턴엔 안 걸린다.
-    #    같은 파일을 두 번 표시한 것을 두 파일로 세면 안 된다 — 한 파일짜리
-    #    리뷰를 재시도한 것뿐인데 문턱을 넘어버린다. 중복을 먼저 접는다.
-    files = sorted(set(marked))
-    if fresh_eyes_skipped and len(files) >= FRESH_EYES_MIN_FILES:
-        fingerprint = "fe:" + "|".join(files)
-        if not _already_blocked(flag_dir, fingerprint, "last_fe_block"):
-            _remember_block(flag_dir, fingerprint, "last_fe_block")
-            _common.emit("Stop", decision="block",
-                         reason=fresh_eyes_reason(files))
-            return
-
-    # 3) 막을 게 없을 때만, 살아있음 요약을 세션당 한 번 남긴다.
+    # fresh-eyes(설계 검토) 강제는 여기 없다 — `pre_commit_gate.py`가 커밋
+    # 직전에 세운다. 세는 일은 계속 한다(`note_agent_activity`): doctor가
+    # "리뷰는 도는데 에이전트만 안 돈다"를 보려면 그 숫자가 필요하다.
+    # 2) 막을 게 없을 때만, 살아있음 요약을 세션당 한 번 남긴다.
     #    잡은 게 0건이어도 "검사 N회"로 조용히 돌고 있었음을 증명한다.
     if writes <= 0:
         return
-    sid = str(payload.get("session_id", "unknown"))
     flag = os.path.join(flag_dir, f"{sid}.nudged")
     if os.path.isfile(flag):
         return

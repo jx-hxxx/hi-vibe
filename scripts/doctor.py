@@ -19,7 +19,8 @@ import time
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOOK_SCRIPTS = ["session_start.py", "pre_compact.py", "session_end.py",
-                "stop_nudge.py", "post_write_guard.py", "answer_gate.py"]
+                "stop_nudge.py", "post_write_guard.py", "answer_gate.py",
+                "pre_commit_gate.py"]
 
 results = []  # (status, label, detail)  status: OK | WARN | FAIL
 
@@ -41,7 +42,7 @@ def check_python3():
     python3 = shutil.which("python3")
     if not python3:
         add("FAIL", "python3 실행 파일",
-            "PATH에 python3가 없음 — 훅 스크립트 6개가 전부 조용히 비활성 상태. "
+            "PATH에 python3가 없음 — 훅 스크립트 7개가 전부 조용히 비활성 상태. "
             "macOS: `xcode-select --install` 또는 brew install python. "
             "Windows: python.org 설치 후 python3 별칭 필요.")
         return None
@@ -65,12 +66,12 @@ def check_plugin_files():
     if missing:
         add("FAIL", "플러그인 파일", "누락: " + ", ".join(missing) + " — 재설치 필요")
         return False
-    add("OK", "플러그인 파일", "훅 스크립트 6개 + hooks.json + 스캐너 모두 존재")
+    add("OK", "플러그인 파일", "훅 스크립트 7개 + hooks.json + 스캐너 모두 존재")
     return True
 
 
 def check_hooks_live(python3):
-    """임시 init 프로젝트를 만들어 훅 스크립트 6개를 끝까지 실제로 돌려본다."""
+    """임시 init 프로젝트를 만들어 훅 스크립트 7개를 끝까지 실제로 돌려본다."""
     with tempfile.TemporaryDirectory(prefix="vibe-doctor-") as tmp:
         os.makedirs(os.path.join(tmp, ".hi-vibe"), exist_ok=True)  # init 마커(gate)
         with open(os.path.join(tmp, "handover.md"), "w", encoding="utf-8") as f:
@@ -135,6 +136,32 @@ def check_hooks_live(python3):
         else:
             add("FAIL", "Stop 훅(답변 검사)",
                 f"exit {p.returncode}, 감지 실패 — 말투·비유 검사가 조용히 죽어 있다")
+
+        check_commit_gate(python3, tmp)
+
+
+def check_commit_gate(python3, tmp):
+    """커밋 직전 게이트는 **실제로 막는 것까지** 봐야 한다 — 빈 입력이나
+    staged 없는 상태로는 조용히 죽은 것과 통과한 것이 구분되지 않는다."""
+    subprocess.run(["git", "init", "-q"], cwd=tmp, timeout=20)
+    target = os.path.join(tmp, "gate_probe.py")
+    with open(target, "w", encoding="utf-8") as f:
+        f.write("def probe():\n    return 1\n")
+    subprocess.run(["git", "add", "gate_probe.py"], cwd=tmp, timeout=20)
+    tpath = os.path.join(tmp, "commit-t.jsonl")
+    with open(tpath, "w", encoding="utf-8") as f:      # fresh-eyes 흔적 없음
+        f.write(json.dumps({"type": "assistant", "message": {
+            "role": "assistant", "content": [{"type": "text", "text": "커밋할게요."}]}},
+            ensure_ascii=False) + "\n")
+    p = run_hook(python3, "pre_commit_gate.py", {
+        "cwd": tmp, "session_id": "doctor", "transcript_path": tpath,
+        "tool_name": "Bash", "tool_input": {"command": "git commit -m x"},
+    }, tmp)
+    if p.returncode == 0 and "deny" in p.stdout:
+        add("OK", "PreToolUse 훅(커밋 게이트)", "설계 검토 없는 커밋을 막는 것 확인")
+    else:
+        add("FAIL", "PreToolUse 훅(커밋 게이트)",
+            f"exit {p.returncode}, 감지 실패 — 커밋 직전 fresh-eyes 강제가 죽어 있다")
 
 
 def check_scanner(python3):
@@ -277,7 +304,9 @@ def check_fresh_eyes(root):
     조용히 안 돈다.** 실제로 한 세션이 하루 종일 그 상태로 돌았고 아무 데도
     안 남았다. 훅 죽음은 heartbeat가 잡는데 에이전트 죽음은 아무도 안 봤다.
 
-    숫자는 Stop 훅이 트랜스크립트에서 직접 센 것이라 AI 신고에 안 기댄다."""
+    숫자는 Stop 훅이 트랜스크립트에서 직접 센 것이라 AI 신고에 안 기댄다.
+    (강제는 `pre_commit_gate.py`가 커밋 직전에 한다 — 세는 것과 막는 것이
+    다른 훅에 있으므로, 이 숫자가 0인데 커밋이 있었다면 그게 신호다.)"""
     if not os.path.isdir(os.path.join(root, ".hi-vibe")):
         return
     data = {}
@@ -300,10 +329,10 @@ def check_fresh_eyes(root):
             f"{detail} — **리뷰의 절반이 계속 빠지고 있습니다.** 체크리스트만 "
             "돌고 설계 검토(절반만 고친 데·다른 파일이 안 따라간 데·과잉 "
             "설계)는 한 번도 안 돌았어요. "
-            "이제 훅이 **파일 2개 이상**을 fresh-eyes 없이 표시하면 막으므로, "
-            "그런데도 0회라면 원인은 대개 둘 중 하나입니다: ①리뷰가 전부 한 "
-            "파일짜리였다(훅이 안 막는 구간이라 정상일 수 있어요) ②**Agent "
-            "호출이 실제로 실패하고 있다.** ②라면 서브에이전트를 못 쓰는 "
+            "설계 검토는 이제 **커밋 직전**에 서므로, 0회라면 원인은 대개 둘 "
+            "중 하나입니다: ①커밋을 아직 안 했다(기계로 강제되지 않는 구간이라 "
+            "정상일 수 있어요 — 원하면 `설계 검토해줘`라고 하면 됩니다) "
+            "②**Agent 호출이 실제로 실패하고 있다.** ②라면 서브에이전트를 못 쓰는 "
             "환경이라는 뜻이고, 그건 그대로 괜찮지만 **모르고 반쪽만 쓰는 것과 "
             "다릅니다** — 다음 리뷰 때 `fresh-eyes도 돌려줘`라고 해보면 어느 "
             "쪽인지 바로 갈립니다.")
