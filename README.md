@@ -59,6 +59,7 @@ the review, the records and the search for existing code fire on their own.
 | When comparable before/after numbers appear | Records the command, environment, sample, and result in `evidence/METRICS.md` |
 | On compact, `/clear`, or closing | Leaves the next chat enough to pick up from in `handover.md` |
 | When a new session starts | Reads that back, along with the project's own rules |
+| As context nears your threshold (30% by default) | Tells Claude the usage, so it can suggest `/clear` or `/compact` at a good break |
 
 ## Worth knowing
 

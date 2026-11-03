@@ -20,7 +20,7 @@ import time
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOOK_SCRIPTS = ["session_start.py", "pre_compact.py", "session_end.py",
                 "stop_nudge.py", "post_write_guard.py", "answer_gate.py",
-                "pre_commit_gate.py"]
+                "pre_commit_gate.py", "context_nudge.py"]
 
 results = []  # (status, label, detail)  status: OK | WARN | FAIL
 
@@ -42,7 +42,7 @@ def check_python3():
     python3 = shutil.which("python3")
     if not python3:
         add("FAIL", "python3 실행 파일",
-            "PATH에 python3가 없음 — 훅 스크립트 7개가 전부 조용히 비활성 상태. "
+            "PATH에 python3가 없음 — 훅 스크립트 8개가 전부 조용히 비활성 상태. "
             "macOS: `xcode-select --install` 또는 brew install python. "
             "Windows: python.org 설치 후 python3 별칭 필요.")
         return None
@@ -66,12 +66,12 @@ def check_plugin_files():
     if missing:
         add("FAIL", "플러그인 파일", "누락: " + ", ".join(missing) + " — 재설치 필요")
         return False
-    add("OK", "플러그인 파일", "훅 스크립트 7개 + hooks.json + 스캐너 모두 존재")
+    add("OK", "플러그인 파일", "훅 스크립트 8개 + hooks.json + 스캐너 모두 존재")
     return True
 
 
 def check_hooks_live(python3):
-    """임시 init 프로젝트를 만들어 훅 스크립트 7개를 끝까지 실제로 돌려본다."""
+    """임시 init 프로젝트를 만들어 훅 스크립트 8개를 끝까지 실제로 돌려본다."""
     with tempfile.TemporaryDirectory(prefix="vibe-doctor-") as tmp:
         os.makedirs(os.path.join(tmp, ".hi-vibe"), exist_ok=True)  # init 마커(gate)
         with open(os.path.join(tmp, "handover.md"), "w", encoding="utf-8") as f:
@@ -137,6 +137,7 @@ def check_hooks_live(python3):
             add("FAIL", "Stop 훅(답변 검사)",
                 f"exit {p.returncode}, 감지 실패 — 말투·비유 검사가 조용히 죽어 있다")
 
+        check_context_nudge(python3, tmp)
         check_commit_gate(python3, tmp)
 
 
@@ -349,6 +350,34 @@ def check_fresh_eyes(root):
             "쪽인지 바로 갈립니다.")
     else:
         add("OK", "fresh-eyes", detail)
+
+
+def check_context_nudge(python3, tmp):
+    """컨텍스트 안내도 **빈 입력으로는 증명이 안 된다** — 기준을 넘긴 사용량을
+    실제로 넣어 안내가 나오는지, `off`면 조용한지까지 본다."""
+    tpath = os.path.join(tmp, "ctx.jsonl")
+    with open(tpath, "w", encoding="utf-8") as f:
+        f.write(json.dumps({"type": "assistant", "message": {
+            "role": "assistant", "content": [{"type": "text", "text": "ok"}],
+            "usage": {"input_tokens": 10, "cache_read_input_tokens": 70_000,
+                      "cache_creation_input_tokens": 0}}}) + "\n")
+    payload = {"cwd": tmp, "session_id": "doctor-ctx", "transcript_path": tpath}
+    conf = os.path.join(tmp, ".hi-vibe", "context")
+    with open(conf, "w", encoding="utf-8") as f:
+        f.write("window=200000\n")  # 한도 묻기 문구가 섞여 통과하지 않게 막는다
+    p = run_hook(python3, "context_nudge.py", payload, tmp)
+    if not (p.returncode == 0 and "35%" in p.stdout and "초과" in p.stdout):
+        add("FAIL", "UserPromptSubmit 훅(컨텍스트 안내)",
+            f"exit {p.returncode}, 35%(70K/200K)에서 안내가 안 나옴")
+        return
+    with open(conf, "w", encoding="utf-8") as f:
+        f.write("off\n")
+    p = run_hook(python3, "context_nudge.py", payload, tmp)
+    os.remove(conf)
+    if p.returncode == 0 and not p.stdout.strip():
+        add("OK", "UserPromptSubmit 훅(컨텍스트 안내)", "기준 근처에서 안내, off면 조용함 확인")
+    else:
+        add("FAIL", "UserPromptSubmit 훅(컨텍스트 안내)", "`.hi-vibe/context`에 off를 적어도 안내가 나옴")
 
 
 STALE_AFTER = 6 * 3600   # 훅 흔적이 이만큼 낡으면 "이 세션엔 안 돌았다"로 본다

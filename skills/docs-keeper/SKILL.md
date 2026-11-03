@@ -93,6 +93,16 @@ Never paste MODULE.md content, code, or long lists into CLAUDE.md.
    may already have their own `handover.md`, so we must not key on it
    (that would misfire and could let a hook overwrite their file). Do not
    consider init complete until `.hi-vibe/` exists.
+4a. **컨텍스트 정리 안내 — 한 번에 묻는다** (AskUserQuestion, 질문 3개). 모델은 자기
+   컨텍스트 %를 못 보므로 `context_nudge.py` 훅이 숫자를 넣고, 기준 근처에서
+   /compact·/clear 시점을 권하게 한다. 묻는 것: ① 켤지 — "켜기 (추천)"를 첫 선택지로
+   ② 몇 %부터 안내받을지 — "30% (추천)" / 50% / 70% ③ 쓰는 모델의 컨텍스트 한도 —
+   "모름 (자동, 추천)" / 200K / 1M. 답을 `.hi-vibe/context` 한 줄로 쓴다:
+   끄면 `off`, 켜면 `warn=<%>`에 한도를 고른 경우만 ` window=<토큰>`
+   (예: `warn=30 window=1000000`). 파일이 없으면 훅은 켜짐·30%·자동으로 동작한다 —
+   init 전부터 쓰던 프로젝트도 업데이트만으로 켜진다. 한도를 "모름"으로 두면 훅이
+   대화 중 한 번 화면의 컨텍스트 %를 묻게 하고, 그 답으로 `window=`를 채운다. 사용자가 나중에 바꾸고
+   싶다고 하면 이 파일만 고친다.
 5. Ensure `.env*` (see below), `.hi-vibe/`, `.repo-xray/`, `handover.md`,
    `handover-archive.md`, and `handover.md.lock` (the transient write-lock
    file for concurrent sessions) are in `.gitignore`. The two dirs are caches;

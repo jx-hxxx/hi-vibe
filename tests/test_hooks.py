@@ -667,7 +667,8 @@ class SessionStartTest(TempProject):
         self.assertIn("hi-vibe 규율", out)
 
     def test_startup_injects_context_tip(self):
-        """세션 시작에 컨텍스트 관리 팁(/compact 권유)이 한 줄 주입돼야 한다 (#4)."""
+        """세션 시작에 컨텍스트 관리 팁이 한 줄 주입돼야 한다 (#4). 권유 판단 규칙의
+        원본은 context_nudge.py 하나 — 여기선 그걸 따르라는 연결만 (v0.55.0)."""
         out = self.run_start("startup")
         self.assertIn("/compact", out)
 
